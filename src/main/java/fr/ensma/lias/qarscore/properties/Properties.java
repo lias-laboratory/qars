@@ -28,15 +28,15 @@ import com.hp.hpl.jena.sdb.store.LayoutType;
  */
 public class Properties {
 
-    public static LayoutType DEFAULT_DB_LAYOUT = LayoutType.LayoutTripleNodesHash;
+    private static LayoutType DEFAULT_DB_LAYOUT = LayoutType.LayoutTripleNodesHash;
     
-    public static DatabaseType SDB_DB_SUPPORT_TYPE = DatabaseType.PostgreSQL;
+    private static DatabaseType SDB_DB_SUPPORT_TYPE = DatabaseType.PostgreSQL;
     
-    public static String DEFAULT_ONTO_LANG = "OWL";
+    private static String DEFAULT_ONTO_LANG = "OWL";
     
-    public static OntModelSpec DEFAULT_MODEL_SPECIFICATION = OntModelSpec.OWL_MEM;
+    private static OntModelSpec DEFAULT_MODEL_SPECIFICATION = OntModelSpec.OWL_MEM;
     
-    public static String TDB_PATH = System.getProperty("user.dir")
+    private static String TDB_PATH = System.getProperty("user.dir")
 	    + "\\src\\test\\ressources\\TDB\\";
 
     /**
@@ -52,4 +52,68 @@ public class Properties {
 	}
 	return null;
     }
+
+    /**
+     * @return the SDB_DB_SUPPORT_TYPE
+     */
+    public static DatabaseType getSdbSupportType() {
+        return SDB_DB_SUPPORT_TYPE;
+    }
+
+    /**
+     * set Postgres as support of SDB jena tripleStore
+     */
+    public static void setPostgresSdbSupport() {
+        SDB_DB_SUPPORT_TYPE = DatabaseType.PostgreSQL;
+    }
+
+    /**
+     * @return the DEFAULT_ONTO_LANG
+     */
+    public static String getOntoLang() {
+        return DEFAULT_ONTO_LANG;
+    }
+
+    /**
+     * @param lang the DEFAULT_ONTO_LANG to set
+     */
+    public static void setOntoLang(String lang) {
+        DEFAULT_ONTO_LANG = lang;
+    }
+
+    /**
+     * @return the DEFAULT_DB_LAYOUT
+     */
+    public static LayoutType getSdbLayout() {
+        return DEFAULT_DB_LAYOUT;
+    }
+
+    /**
+     * @param layout the DEFAULT_DB_LAYOUT to set
+     */
+    public static void setSdbLayout(LayoutType layout) {
+        DEFAULT_DB_LAYOUT = layout;
+    }
+
+    /**
+     * @return the DEFAULT_MODEL_SPECIFICATION
+     */
+    public static OntModelSpec getModelMemSpec() {
+        return DEFAULT_MODEL_SPECIFICATION;
+    }
+
+    /**
+     * @param ontoSpec the DEFAULT_MODEL_SPECIFICATION to set
+     */
+    public static void setModelMemSpec(OntModelSpec ontoSpec) {
+        DEFAULT_MODEL_SPECIFICATION = ontoSpec;
+    }
+
+    /**
+     * @return the tDB_PATH
+     */
+    public static String getTDB_PATH() {
+        return TDB_PATH;
+    }
+    
 }

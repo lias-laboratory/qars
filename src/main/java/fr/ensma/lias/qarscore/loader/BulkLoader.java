@@ -20,13 +20,13 @@
 package fr.ensma.lias.qarscore.loader;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.Dataset;
@@ -39,6 +39,7 @@ import com.hp.hpl.jena.sdb.sql.SDBConnection;
 import com.hp.hpl.jena.sdb.store.StoreFactory;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
+import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -57,9 +58,8 @@ public class BulkLoader {
      * @param password
      * @param nameDB
      */
-    public static void loadPostgresSBDDataset(List<File> dataFiles,
-	    String lang, String url, String login, String password,
-	    String nameDB) {
+    public static void loadPostgresSBDDataset(File[] dataFiles, String lang,
+	    String url, String login, String password, String nameDB) {
 
 	Connection connect = null;
 
@@ -93,15 +93,15 @@ public class BulkLoader {
 	}
 
 	SDBConnection connectSDB = SDBFactory.createConnection(connect);
-	StoreDesc storeDesc = new StoreDesc(Properties.DEFAULT_DB_LAYOUT,
-		Properties.SDB_DB_SUPPORT_TYPE);
+	StoreDesc storeDesc = new StoreDesc(Properties.getSdbLayout(),
+		Properties.getSdbSupportType());
 	Store store = StoreFactory.create(storeDesc, connectSDB);
 	store.getTableFormatter().create();
 	store.getTableFormatter().truncate();
 	Model dataModel = SDBFactory.connectDefaultModel(store);
 
 	OntModel ontoModel = ModelFactory.createOntologyModel(
-		Properties.DEFAULT_MODEL_SPECIFICATION, dataModel);
+		Properties.getModelMemSpec(), dataModel);
 
 	for (File dataFile : dataFiles) {
 
@@ -125,15 +125,15 @@ public class BulkLoader {
      * @param lang
      * @param folder
      */
-    public static void loadTDBDataset(List<File> dataFiles, String lang,
+    public static void loadTDBDataset(File[] dataFiles, String lang,
 	    String folder) {
 
-	Dataset dataset = TDBFactory
-		.createDataset(Properties.TDB_PATH + folder);
+	Dataset dataset = TDBFactory.createDataset(Properties.getTDB_PATH()
+		+ folder);
 	Model dataModel = dataset.getDefaultModel();
 
 	OntModel ontoModel = ModelFactory.createOntologyModel(
-		Properties.DEFAULT_MODEL_SPECIFICATION, dataModel);
+		Properties.getModelMemSpec(), dataModel);
 
 	for (File dataFile : dataFiles) {
 
@@ -147,5 +147,129 @@ public class BulkLoader {
 	    }
 	}
 	dataModel.commit();
+    }
+
+    /**
+     * main of BulkLoader, use for loading a specific data set in a TDB or SDB
+     * Jena triple store BulkLoader Folder/File name, Onto_Lang, "TDB"
+     * BulkLoader Folder/File name, Onto_Lang, "SDB", login, password, dbname
+     * 
+     * @param args
+     * @throws NotYetImplementedException
+     */
+    public static void main(String[] args) throws NotYetImplementedException {
+
+	int argsLenth = args.length;
+	if (argsLenth < 3) {
+	    throw new IllegalArgumentException("illegal number of parameter");
+	}
+
+	String nameFolder = args[0];
+	File dataFolder = new File(nameFolder);
+	File[] dataFiles;
+
+	if (!dataFolder.exists()) {
+	    throw new IllegalArgumentException("File doesn't exist");
+	}
+
+	FilenameFilter fileExt;
+	switch (args[1].toUpperCase()) {
+
+	case "OWL":
+	    fileExt = new FilenameFilter() {
+		@Override
+		public boolean accept(File sourceFolder, String name) {
+		    return name.toLowerCase().endsWith(".owl");
+		}
+	    };
+	    break;
+
+	case "N3":
+	    fileExt = new FilenameFilter() {
+		@Override
+		public boolean accept(File sourceFolder, String name) {
+		    return name.toLowerCase().endsWith(".n3");
+		}
+	    };
+	    break;
+
+	case "RDF":
+	    fileExt = new FilenameFilter() {
+		@Override
+		public boolean accept(File sourceFolder, String name) {
+		    return name.toLowerCase().endsWith(".rdf");
+		}
+	    };
+	    break;
+
+	case "NT":
+	    fileExt = new FilenameFilter() {
+		@Override
+		public boolean accept(File sourceFolder, String name) {
+		    return name.toLowerCase().endsWith(".nt");
+		}
+	    };
+	    break;
+
+	case "DAML":
+	    fileExt = new FilenameFilter() {
+		@Override
+		public boolean accept(File sourceFolder, String name) {
+		    return name.toLowerCase().endsWith(".daml");
+		}
+	    };
+	    break;
+
+	default:
+	    throw new IllegalArgumentException("wrong ontology language");
+	}
+
+	if (dataFolder.isDirectory()) {
+	    dataFiles = dataFolder.listFiles(fileExt);
+	} else {
+	    if (fileExt
+		    .accept(dataFolder.getParentFile(), dataFolder.getName())) {
+		dataFiles = new File[1];
+		dataFiles[0] = dataFolder;
+	    } else {
+		throw new IllegalArgumentException(
+			"Incompatible File and language");
+	    }
+	}
+	
+	String dbname;
+	switch (args[2].toUpperCase()) {
+	case "TDB":
+	   
+	    if (argsLenth == 4) {
+		dbname = args[3];
+	    } else {
+		dbname = dataFolder.getName();
+		dbname.substring(0, dbname.lastIndexOf('.'));
+	    }
+
+	    loadTDBDataset(dataFiles, args[1], dbname);
+	    break;
+	    
+	case "POSTGRES":
+	    
+	    if ((argsLenth < 6) || (argsLenth > 7)) {
+		throw new IllegalArgumentException(
+			"illegal number of parameter");
+	    }
+	    if (argsLenth == 7) {
+		dbname = args[6];
+	    } else {
+		dbname = dataFolder.getName();
+		dbname.substring(0, dbname.lastIndexOf('.'));
+	    }
+	    loadPostgresSBDDataset(dataFiles, args[1], args[3], args[4],
+		    args[5], dbname);
+	    break;
+	    
+	default:
+	    throw new NotYetImplementedException(
+		    "SDB Support not yet implemented");
+	}
     }
 }

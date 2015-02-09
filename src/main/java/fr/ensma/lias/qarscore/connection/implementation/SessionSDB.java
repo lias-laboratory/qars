@@ -79,14 +79,14 @@ public class SessionSDB implements Session {
     private SessionSDB(Connection connect) {
 
 	SDBConnection connectSDB = SDBFactory.createConnection(connect);
-	StoreDesc storeDesc = new StoreDesc(Properties.DEFAULT_DB_LAYOUT,
-		Properties.SDB_DB_SUPPORT_TYPE);
+	StoreDesc storeDesc = new StoreDesc(Properties.getSdbLayout(),
+		Properties.getSdbSupportType());
 	store = StoreFactory.create(storeDesc, connectSDB);
 
 	dataset = SDBFactory.connectDataset(store);
 	dataModel = SDBFactory.connectDefaultModel(store);
 	ontoModel = ModelFactory.createOntologyModel(
-		Properties.DEFAULT_MODEL_SPECIFICATION, dataModel);
+		Properties.getModelMemSpec(), dataModel);
     }
 
     @Override
