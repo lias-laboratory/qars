@@ -32,28 +32,28 @@ public interface RelaxationStrategies {
      * return a query failure cause
      * @return
      */
-    public CQuery getAFailingCause(CQuery query);
+    CQuery getAFailingCause(CQuery query);
     
     /**
      * Says if a CQuery is a MFS or not
      * @param query
      * @return
      */
-    public boolean isAFailingCause(CQuery query);
+    boolean isAFailingCause(CQuery query);
 
     /**
      * Return the list of all the MFS of the CQuery query
      * @param query
      * @return
      */
-    public List<CQuery> getFailingCauses(CQuery query);
+    List<CQuery> getFailingCauses(CQuery query);
     
     /**
      * Return all the maximal success subqueries of a CQuery query
      * @param query
      * @return
      */
-    public List<CQuery> getSuccessSubQueries(CQuery query);
+    List<CQuery> getSuccessSubQueries(CQuery query);
     
     /**
      * Says if the CQuery query has at least K answers in the dataset
@@ -61,5 +61,5 @@ public interface RelaxationStrategies {
      * @param k
      * @return
      */
-    public boolean hasLeastKAnswers(CQuery query, int k);
+    boolean hasLeastKAnswers(CQuery query, int k);
 }

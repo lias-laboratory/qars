@@ -67,7 +67,6 @@ public class SessionTDB implements Session {
     }
 
     private SessionTDB(String folder) {
-
 	dataset = TDBFactory.createDataset(Properties.getTDB_PATH() + folder);
 	dataModel = dataset.getDefaultModel();
 	ontoModel = ModelFactory.createOntologyModel(
