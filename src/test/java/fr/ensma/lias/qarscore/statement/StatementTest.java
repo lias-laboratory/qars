@@ -38,31 +38,31 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class StatementTest extends SessionTDBTest {
 
     private Session session;
-    private Statement queryStatement;
     
-    private final String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
-		 + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
-		 + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-		 + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-		 + "PREFIX owl:  <http://www.w3.org/2002/07/owl#> "
-		 + "PREFIX xdt:  <http://www.w3.org/2001/XMLSchema#> ";
+    private Statement queryStatement;
 
-    //Not Empty query, six answers
+    private final String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
+	    + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
+	    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+	    + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+	    + "PREFIX owl:  <http://www.w3.org/2002/07/owl#> "
+	    + "PREFIX xdt:  <http://www.w3.org/2001/XMLSchema#> ";
+
+    // Not Empty query, six answers
     private final String LUBM_QUERY = LUBM_PREFIX
-					+ "SELECT ?X  "
-					+ "WHERE { ?X rdf:type ub:Publication . "
-					+ "?X ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0> . "
-					+ "}";
+	    + "SELECT ?X  "
+	    + "WHERE { ?X rdf:type ub:Publication . "
+	    + "?X ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0> . "
+	    + "}";
 
     /**
      */
     @Before
     public void setUp() {
-	
 	super.setUp();
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
-	
+
 	session = SessionFactory.getTDBSession("LUBM1");
 	queryStatement = StatementFactory.getStatement(session);
     }
@@ -71,24 +71,21 @@ public class StatementTest extends SessionTDBTest {
     public void teardDown() {
 	super.teardDown();
     }
-    
+
     @Test
     public void testPrepareQuery() {
-	
 	queryStatement.preparedQuery(LUBM_QUERY);
-	Assert.assertNotNull(queryStatement.getQuery());	
+	Assert.assertNotNull(queryStatement.getQuery());
     }
 
     @Test
     public void testExecuteQuery() {
-	
 	queryStatement.preparedQuery(LUBM_QUERY);
-	Assert.assertNotNull(queryStatement.getQuery());	
-	
+	Assert.assertNotNull(queryStatement.getQuery());
+
 	ResultSet result = queryStatement.executeSPARQLQuery();
 	Assert.assertNotNull(result);
-	
+
 	Assert.assertTrue(result.hasNext());
     }
-    
 }

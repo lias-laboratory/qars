@@ -48,8 +48,7 @@ public class SessionSDBTest {
     private final String POSTGRES_DB_PASSWORD = "psql";
     
     @Before
-    public void setUp() {
-	
+    public void setUp() {	
 	File[] datafiles = new  File[1];
 	datafiles[0]= new File(System.getProperty("user.dir")
 			+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
@@ -58,8 +57,7 @@ public class SessionSDBTest {
      }
     
     @After
-    public void teardDown() {
-	
+    public void teardDown() {	
 	Connection connect = null;
 	
 	try {
@@ -85,8 +83,6 @@ public class SessionSDBTest {
 	Assert.assertNotNull(session.getDataset());
 	Assert.assertNotNull(session.getDataModel());
 	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	
+	Assert.assertNull(session.getDataStore());	
     }
-
 }

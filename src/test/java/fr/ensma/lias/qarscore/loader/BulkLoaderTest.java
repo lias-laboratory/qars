@@ -36,26 +36,27 @@ public class BulkLoaderTest {
 
     /** URL of SDB database on postgres **/
     private final String POSTGRES_DB_URL = "jdbc:postgresql://localhost:5432/";
-    
+
     /** User credentials */
     private final String POSTGRES_DB_USER = "postgres";
     private final String POSTGRES_DB_PASSWORD = "psql";
 
     /**
-     * Method for deleting a directory after deleting all the files and folder in this directory
+     * Method for deleting a directory after deleting all the files and folder
+     * in this directory
+     * 
      * @param folder
-     * @return 
+     * @return
      */
-    private boolean deleteDirectory(File folder){
-	
-	if(!folder.isDirectory()){
+    private boolean deleteDirectory(File folder) {
+	if (!folder.isDirectory()) {
 	    return folder.delete();
 	}
-	
-	 for (File dataFile: folder.listFiles()){
-	     deleteDirectory(dataFile);
-	 }
-	 
+
+	for (File dataFile : folder.listFiles()) {
+	    deleteDirectory(dataFile);
+	}
+
 	return folder.delete();
     }
 
@@ -63,59 +64,58 @@ public class BulkLoaderTest {
      * Delete the TDB folder if it exist and creates a new
      */
     @Before
-    public void setUp(){
-	
+    public void setUp() {
 	File folderTDB = new File(Properties.getTDB_PATH());
-	if(folderTDB.exists()){
+	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
-	    }
+	}
 	folderTDB.mkdirs();
-	
+
     }
 
     /**
-     * Delete a TDB folder 
+     * Delete a TDB folder
      */
     @After
-    public void tearDown(){
-	
+    public void tearDown() {
 	File folderTDB = new File(Properties.getTDB_PATH());
 	deleteDirectory(folderTDB);
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadPostgresSBDDataset(java.io.File[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadPostgresSBDDataset(java.io.File[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
+     * .
      */
     @Test
     public void testLoadPostgresSBDDataset() {
-	
-	File[] datafiles = new  File[1];
-	datafiles[0]= new File(System.getProperty("user.dir")
-			+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
-	
-	BulkLoader.loadPostgresSBDDataset(datafiles, "OWL", POSTGRES_DB_URL, POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
+	File[] datafiles = new File[1];
+	datafiles[0] = new File(System.getProperty("user.dir")
+		+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
+
+	BulkLoader.loadPostgresSBDDataset(datafiles, "OWL", POSTGRES_DB_URL,
+		POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadTDBDataset(java.io.File[], java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadTDBDataset(java.io.File[], java.lang.String, java.lang.String)}
      */
     @Test
     public void testLoadTDBDataset() {
-	
-	File[] datafiles = new  File[1];
-	datafiles[0]= new File(System.getProperty("user.dir")
-			+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
-	
+	File[] datafiles = new File[1];
+	datafiles[0] = new File(System.getProperty("user.dir")
+		+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
+
 	BulkLoader.loadTDBDataset(datafiles, "OWL", "LUBM1");
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.loader.BulkLoader#main(java.lang.String[])}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.loader.BulkLoader#main(java.lang.String[])}
      */
     @Test
     public void testMain() {
-	
-
 	String[] args = new String[3];
 	args[0] = System.getProperty("user.dir")
 		+ "/src/test/ressources/DataSources/LUBM1";

@@ -38,33 +38,32 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class SessionTDBTest {
 
     /**
-     * Method for deleting a directory after deleting all the files and folder in this directory
+     * Method for deleting a directory after deleting all the files and folder
+     * in this directory
+     * 
      * @param folder
-     * @return 
+     * @return
      */
-    private boolean deleteDirectory(File folder){
-	
-	if(!folder.isDirectory()){
+    private boolean deleteDirectory(File folder) {
+	if (!folder.isDirectory()) {
 	    return folder.delete();
 	}
-	
-	 for (File dataFile: folder.listFiles()){
-	     deleteDirectory(dataFile);
-	 }
-	 
+
+	for (File dataFile : folder.listFiles()) {
+	    deleteDirectory(dataFile);
+	}
+
 	return folder.delete();
     }
 
-    
     @Before
     public void setUp() {
-	
 	File folderTDB = new File(Properties.getTDB_PATH());
-	if(folderTDB.exists()){
+	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
-	    }
+	}
 	folderTDB.mkdirs();
-	
+
 	String[] args = new String[3];
 	args[0] = System.getProperty("user.dir")
 		+ "/src/test/ressources/DataSources/LUBM1";
@@ -77,29 +76,25 @@ public class SessionTDBTest {
 	    Assert.fail();
 	}
     }
-    
+
     @After
     public void teardDown() {
-	
 	File folderTDB = new File(Properties.getTDB_PATH());
-	if(folderTDB.exists()){
+	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
-	    }
+	}
     }
 
     @Test
     public void testSessionTDB() {
-
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
-	
+
 	Session session = SessionFactory.getTDBSession("LUBM1");
 
 	Assert.assertNotNull(session.getDataset());
 	Assert.assertNotNull(session.getDataModel());
 	Assert.assertNotNull(session.getOntologyModel());
 	Assert.assertNull(session.getDataStore());
-	
     }
-
 }

@@ -29,14 +29,14 @@ import com.hp.hpl.jena.sdb.store.LayoutType;
 public class Properties {
 
     private static LayoutType DEFAULT_DB_LAYOUT = LayoutType.LayoutTripleNodesHash;
-    
+
     private static DatabaseType SDB_DB_SUPPORT_TYPE = DatabaseType.PostgreSQL;
-    
-    //"RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". 
+
+    // "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3".
     private static String DEFAULT_ONTO_LANG = "RDF/XML";
-    
+
     private static OntModelSpec DEFAULT_MODEL_SPECIFICATION = OntModelSpec.OWL_MEM;
-    
+
     private static String TDB_PATH = System.getProperty("user.dir")
 	    + "\\target\\TDB\\";
 
@@ -58,56 +58,57 @@ public class Properties {
      * @return the SDB_DB_SUPPORT_TYPE
      */
     public static DatabaseType getSdbSupportType() {
-        return SDB_DB_SUPPORT_TYPE;
+	return SDB_DB_SUPPORT_TYPE;
     }
 
     /**
      * set Postgres as support of SDB jena tripleStore
      */
     public static void setPostgresSdbSupport() {
-        SDB_DB_SUPPORT_TYPE = DatabaseType.PostgreSQL;
+	SDB_DB_SUPPORT_TYPE = DatabaseType.PostgreSQL;
     }
 
     /**
      * @return the DEFAULT_ONTO_LANG
      */
     public static String getOntoLang() {
-        return DEFAULT_ONTO_LANG;
+	return DEFAULT_ONTO_LANG;
     }
 
     /**
-     * @param lang the DEFAULT_ONTO_LANG to set
+     * @param lang
+     *            the DEFAULT_ONTO_LANG to set
      */
     public static void setOntoLang(String lang) {
-	
+
 	switch (lang.toUpperCase()) {
 
 	case "OWL":
-	    DEFAULT_ONTO_LANG ="RDF/XML";
+	    DEFAULT_ONTO_LANG = "RDF/XML";
 	    break;
 
 	case "DAML":
-	    DEFAULT_ONTO_LANG ="RDF/XML";
+	    DEFAULT_ONTO_LANG = "RDF/XML";
 	    break;
-	    
+
 	case "RDF":
-	    DEFAULT_ONTO_LANG ="RDF/XML";
+	    DEFAULT_ONTO_LANG = "RDF/XML";
 	    break;
 
 	case "N3":
-	    DEFAULT_ONTO_LANG ="N3";
+	    DEFAULT_ONTO_LANG = "N3";
 	    break;
 
 	case "NT":
-	    DEFAULT_ONTO_LANG ="NT";
+	    DEFAULT_ONTO_LANG = "NT";
 	    break;
 
 	case "TURTLE":
-	    DEFAULT_ONTO_LANG ="TTL";
+	    DEFAULT_ONTO_LANG = "TTL";
 	    break;
 
 	default:
-	    DEFAULT_ONTO_LANG ="RDF/XML";
+	    DEFAULT_ONTO_LANG = "RDF/XML";
 	}
     }
 
@@ -115,35 +116,37 @@ public class Properties {
      * @return the DEFAULT_DB_LAYOUT
      */
     public static LayoutType getSdbLayout() {
-        return DEFAULT_DB_LAYOUT;
+	return DEFAULT_DB_LAYOUT;
     }
 
     /**
-     * @param layout the DEFAULT_DB_LAYOUT to set
+     * @param layout
+     *            the DEFAULT_DB_LAYOUT to set
      */
     public static void setSdbLayout(LayoutType layout) {
-        DEFAULT_DB_LAYOUT = layout;
+	DEFAULT_DB_LAYOUT = layout;
     }
 
     /**
      * @return the DEFAULT_MODEL_SPECIFICATION
      */
     public static OntModelSpec getModelMemSpec() {
-        return DEFAULT_MODEL_SPECIFICATION;
+	return DEFAULT_MODEL_SPECIFICATION;
     }
 
     /**
-     * @param ontoSpec the DEFAULT_MODEL_SPECIFICATION to set
+     * @param ontoSpec
+     *            the DEFAULT_MODEL_SPECIFICATION to set
      */
     public static void setModelMemSpec(OntModelSpec ontoSpec) {
-        DEFAULT_MODEL_SPECIFICATION = ontoSpec;
+	DEFAULT_MODEL_SPECIFICATION = ontoSpec;
     }
 
     /**
      * @return the tDB_PATH
      */
     public static String getTDB_PATH() {
-        return TDB_PATH;
+	return TDB_PATH;
     }
-    
+
 }
