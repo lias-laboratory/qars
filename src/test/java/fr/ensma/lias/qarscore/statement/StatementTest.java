@@ -19,21 +19,23 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.statement;
 
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
+import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
  */
-public class StatementTest {
+public class StatementTest extends SessionTDBTest {
 
     private Session session;
     private Statement queryStatement;
@@ -53,18 +55,23 @@ public class StatementTest {
 					+ "}";
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 	
+	super.setUp();
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
 	
-	session = SessionFactory.getTDBSession("LUBM100");
+	session = SessionFactory.getTDBSession("LUBM1");
 	queryStatement = StatementFactory.getStatement(session);
     }
 
+    @After
+    public void teardDown() {
+	super.teardDown();
+    }
+    
     @Test
     public void testPrepareQuery() {
 	

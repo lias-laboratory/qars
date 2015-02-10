@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.loader;
+package fr.ensma.lias.qarscore.connection;
 
 import java.io.File;
 
@@ -26,20 +26,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.hp.hpl.jena.ontology.OntModelSpec;
+
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
+import fr.ensma.lias.qarscore.loader.BulkLoader;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
  */
-public class BulkLoaderTest {
-
-    /** URL of SDB database on postgres **/
-    private final String POSTGRES_DB_URL = "jdbc:postgresql://localhost:5432/";
-    
-    /** User credentials */
-    private final String POSTGRES_DB_USER = "postgres";
-    private final String POSTGRES_DB_PASSWORD = "psql";
+public class SessionTDBTest {
 
     /**
      * Method for deleting a directory after deleting all the files and folder in this directory
@@ -59,11 +55,9 @@ public class BulkLoaderTest {
 	return folder.delete();
     }
 
-    /**
-     * Delete the TDB folder if it exist and creates a new
-     */
+    
     @Before
-    public void setUp(){
+    public void setUp() {
 	
 	File folderTDB = new File(Properties.getTDB_PATH());
 	if(folderTDB.exists()){
@@ -71,51 +65,6 @@ public class BulkLoaderTest {
 	    }
 	folderTDB.mkdirs();
 	
-    }
-
-    /**
-     * Delete a TDB folder 
-     */
-    @After
-    public void tearDown(){
-	
-	File folderTDB = new File(Properties.getTDB_PATH());
-	deleteDirectory(folderTDB);
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadPostgresSBDDataset(java.io.File[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
-     */
-    @Test
-    public void testLoadPostgresSBDDataset() {
-	
-	File[] datafiles = new  File[1];
-	datafiles[0]= new File(System.getProperty("user.dir")
-			+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
-	
-	BulkLoader.loadPostgresSBDDataset(datafiles, "OWL", POSTGRES_DB_URL, POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadTDBDataset(java.io.File[], java.lang.String, java.lang.String)}.
-     */
-    @Test
-    public void testLoadTDBDataset() {
-	
-	File[] datafiles = new  File[1];
-	datafiles[0]= new File(System.getProperty("user.dir")
-			+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
-	
-	BulkLoader.loadTDBDataset(datafiles, "OWL", "LUBM1");
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.loader.BulkLoader#main(java.lang.String[])}.
-     */
-    @Test
-    public void testMain() {
-	
-
 	String[] args = new String[3];
 	args[0] = System.getProperty("user.dir")
 		+ "/src/test/ressources/DataSources/LUBM1";
@@ -127,6 +76,30 @@ public class BulkLoaderTest {
 	    e.printStackTrace();
 	    Assert.fail();
 	}
+    }
+    
+    @After
+    public void teardDown() {
+	
+	File folderTDB = new File(Properties.getTDB_PATH());
+	if(folderTDB.exists()){
+	    deleteDirectory(folderTDB);
+	    }
+    }
+
+    @Test
+    public void testSessionTDB() {
+
+	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
+	Properties.setOntoLang("OWL");
+	
+	Session session = SessionFactory.getTDBSession("LUBM1");
+
+	Assert.assertNotNull(session.getDataset());
+	Assert.assertNotNull(session.getDataModel());
+	Assert.assertNotNull(session.getOntologyModel());
+	Assert.assertNull(session.getDataStore());
+	
     }
 
 }

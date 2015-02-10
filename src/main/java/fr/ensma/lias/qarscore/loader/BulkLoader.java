@@ -47,6 +47,24 @@ import fr.ensma.lias.qarscore.properties.Properties;
  */
 public class BulkLoader {
 
+    private static void dropDatabase(String url, String login, String password, String nameDB) throws SQLException, ClassNotFoundException{
+	
+	Connection connect = null;
+
+	Class.forName(Properties.getSDBDriverJDBC());
+	connect = DriverManager.getConnection(url, login, password);
+
+	Statement stmt = connect.createStatement();
+	stmt.executeUpdate("DROP DATABASE IF EXISTS " + nameDB);
+	stmt.executeUpdate("CREATE DATABASE " + nameDB);
+	stmt.close();
+
+	if (connect != null) {
+	    connect.close();
+	}
+
+    }
+    
     /**
      * Load a set of Graph data present in a list of data files into a jena sdb
      * dataset with Postgres Database.
@@ -63,23 +81,11 @@ public class BulkLoader {
 
 	Connection connect = null;
 
+	nameDB = nameDB.toLowerCase();
 	try {
-	    Class.forName(Properties.getSDBDriverJDBC());
-	    connect = DriverManager.getConnection(url, login, password);
-	} catch (SQLException e) {
-	    e.printStackTrace();
-	} catch (ClassNotFoundException e) {
-	    e.printStackTrace();
-	}
-
-	try {
-	    Statement stmt = connect.createStatement();
-	    stmt.executeUpdate("DROP DATABASE " + nameDB);
-	    stmt.executeUpdate("CREATE DATABASE " + nameDB);
-	    stmt.close();
-	    connect.close();
-	} catch (SQLException e) {
-	    e.printStackTrace();
+	    dropDatabase(url, login, password, nameDB);
+	} catch (ClassNotFoundException | SQLException e1) {
+	    e1.printStackTrace();
 	}
 
 	try {
@@ -102,14 +108,16 @@ public class BulkLoader {
 
 	OntModel ontoModel = ModelFactory.createOntologyModel(
 		Properties.getModelMemSpec(), dataModel);
-
+	
+	Properties.setOntoLang(lang);
+	
 	for (File dataFile : dataFiles) {
 
 	    URI currentUri = dataFile.toURI();
 	    String currentUrl = null;
 	    try {
 		currentUrl = currentUri.toURL().toString();
-		ontoModel.read(currentUrl, lang);
+		ontoModel.read(currentUrl, Properties.getOntoLang());
 	    } catch (MalformedURLException e) {
 		e.printStackTrace();
 	    }
@@ -135,13 +143,15 @@ public class BulkLoader {
 	OntModel ontoModel = ModelFactory.createOntologyModel(
 		Properties.getModelMemSpec(), dataModel);
 
+	Properties.setOntoLang(lang);
+	
 	for (File dataFile : dataFiles) {
 
 	    URI currentUri = dataFile.toURI();
 	    String currentUrl = null;
 	    try {
 		currentUrl = currentUri.toURL().toString();
-		ontoModel.read(currentUrl, lang);
+		ontoModel.read(currentUrl, Properties.getOntoLang());
 	    } catch (MalformedURLException e) {
 		e.printStackTrace();
 	    }
@@ -167,7 +177,7 @@ public class BulkLoader {
 	String nameFolder = args[0];
 	File dataFolder = new File(nameFolder);
 	File[] dataFiles;
-
+	
 	if (!dataFolder.exists()) {
 	    throw new IllegalArgumentException("File doesn't exist");
 	}
@@ -220,6 +230,15 @@ public class BulkLoader {
 	    };
 	    break;
 
+	case "TURTLE":
+	    fileExt = new FilenameFilter() {
+		@Override
+		public boolean accept(File sourceFolder, String name) {
+		    return name.toLowerCase().endsWith(".ttl");
+		}
+	    };
+	    break;
+
 	default:
 	    throw new IllegalArgumentException("wrong ontology language");
 	}
@@ -245,9 +264,10 @@ public class BulkLoader {
 		dbname = args[3];
 	    } else {
 		dbname = dataFolder.getName();
-		dbname.substring(0, dbname.lastIndexOf('.'));
+		if(!dataFolder.isDirectory()){
+		    dbname = dbname.substring(0, dbname.lastIndexOf('.'));
+		}		
 	    }
-
 	    loadTDBDataset(dataFiles, args[1], dbname);
 	    break;
 	    
@@ -261,7 +281,9 @@ public class BulkLoader {
 		dbname = args[6];
 	    } else {
 		dbname = dataFolder.getName();
-		dbname.substring(0, dbname.lastIndexOf('.'));
+		if(!dataFolder.isDirectory()){
+		    dbname = dbname.substring(0, dbname.lastIndexOf('.'));
+		}		
 	    }
 	    loadPostgresSBDDataset(dataFiles, args[1], args[3], args[4],
 		    args[5], dbname);

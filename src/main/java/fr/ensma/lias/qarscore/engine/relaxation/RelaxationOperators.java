@@ -22,13 +22,6 @@ package fr.ensma.lias.qarscore.engine.relaxation;
 /**
  * @author Geraud FOKOU
  */
-public class RelaxationOperators {
-
-    /**
-     * 
-     */
-    public RelaxationOperators() {
-	// TODO Auto-generated constructor stub
-    }
+public interface RelaxationOperators {
 
 }

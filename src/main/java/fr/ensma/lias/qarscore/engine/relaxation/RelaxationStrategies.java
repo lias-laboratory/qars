@@ -19,16 +19,47 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
+import java.util.List;
+
+import fr.ensma.lias.qarscore.engine.query.CQuery;
+
 /**
  * @author Geraud FOKOU
  */
-public class RelaxationStrategies {
+public interface RelaxationStrategies {
+    
+    /**
+     * return a query failure cause
+     * @return
+     */
+    public CQuery getAFailingCause(CQuery query);
+    
+    /**
+     * Says if a CQuery is a MFS or not
+     * @param query
+     * @return
+     */
+    public boolean isAFailingCause(CQuery query);
 
     /**
-     * 
+     * Return the list of all the MFS of the CQuery query
+     * @param query
+     * @return
      */
-    public RelaxationStrategies() {
-	// TODO Auto-generated constructor stub
-    }
-
+    public List<CQuery> getFailingCauses(CQuery query);
+    
+    /**
+     * Return all the maximal success subqueries of a CQuery query
+     * @param query
+     * @return
+     */
+    public List<CQuery> getSuccessSubQueries(CQuery query);
+    
+    /**
+     * Says if the CQuery query has at least K answers in the dataset
+     * @param query
+     * @param k
+     * @return
+     */
+    public boolean hasLeastKAnswers(CQuery query, int k);
 }

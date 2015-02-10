@@ -32,12 +32,13 @@ public class Properties {
     
     private static DatabaseType SDB_DB_SUPPORT_TYPE = DatabaseType.PostgreSQL;
     
-    private static String DEFAULT_ONTO_LANG = "OWL";
+    //"RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". 
+    private static String DEFAULT_ONTO_LANG = "RDF/XML";
     
     private static OntModelSpec DEFAULT_MODEL_SPECIFICATION = OntModelSpec.OWL_MEM;
     
     private static String TDB_PATH = System.getProperty("user.dir")
-	    + "\\src\\test\\ressources\\TDB\\";
+	    + "\\target\\TDB\\";
 
     /**
      * return the appropriate jdbc class's name for the current SDB database
@@ -78,7 +79,36 @@ public class Properties {
      * @param lang the DEFAULT_ONTO_LANG to set
      */
     public static void setOntoLang(String lang) {
-        DEFAULT_ONTO_LANG = lang;
+	
+	switch (lang.toUpperCase()) {
+
+	case "OWL":
+	    DEFAULT_ONTO_LANG ="RDF/XML";
+	    break;
+
+	case "DAML":
+	    DEFAULT_ONTO_LANG ="RDF/XML";
+	    break;
+	    
+	case "RDF":
+	    DEFAULT_ONTO_LANG ="RDF/XML";
+	    break;
+
+	case "N3":
+	    DEFAULT_ONTO_LANG ="N3";
+	    break;
+
+	case "NT":
+	    DEFAULT_ONTO_LANG ="NT";
+	    break;
+
+	case "TURTLE":
+	    DEFAULT_ONTO_LANG ="TTL";
+	    break;
+
+	default:
+	    DEFAULT_ONTO_LANG ="RDF/XML";
+	}
     }
 
     /**
