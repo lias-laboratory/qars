@@ -61,5 +61,5 @@ public interface RelaxationStrategies {
      * @param k
      * @return
      */
-    public boolean hasLeastKAnswers(CQuery query, int k);
+    public boolean hasLeastKAnswers(CQuery query);
 }

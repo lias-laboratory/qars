@@ -55,6 +55,9 @@ public class CQuery {
 	elementList = elt;
 	groupList = gr;
 	selectedQueryVar = selectedVar;
+	if(selectedQueryVar==null){
+	    selectedQueryVar = getMentionedQueryVar();
+	}
     }
 
     /**
@@ -69,18 +72,6 @@ public class CQuery {
 	    List<ElementGroup> gr, List<Node> selectedVar) {
 
 	return new CQuery(elt, gr, selectedVar);
-    }
-
-    /**
-     * Create a CQuery copy of another CQuery query
-     * 
-     * @param query
-     * @return
-     */
-    protected static CQuery createCQuery(CQuery query) {
-
-	return new CQuery(query.getElementList(), query.getGroupList(),
-		query.getSelectedQueryVar());
     }
 
     /**

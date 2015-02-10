@@ -138,9 +138,52 @@ public class CQueryFactory {
 	return CQuery.createCQuery(elementList, groupList, selectedQueryVar);
     }
 
-    public static CQuery create(String query) throws NotYetImplementedException {
+    /**
+     * Create a copy a CQuery
+     * @param query
+     * @return
+     */
+    public static CQuery cloneCQuery(CQuery query){
 	
-	return CQuery.createCQuery(createCQuery(QueryFactory.create(query)));
+	groupList = new ArrayList<ElementGroup>();
+	elementList = new ArrayList<CElement>();
+
+	for( CElement elt:query.getElementList()){
+	    elementList.add(elt);
+	}
+	
+	for( ElementGroup groupe:query.getGroupList()){
+	    groupList.add(groupe);
+	}
+
+	List<Node> selectedQueryVar = new ArrayList<Node>();
+	
+	for( Node varNode:query.getSelectedQueryVar()){
+	    selectedQueryVar.add(varNode);
+	}
+
+	return CQuery.createCQuery(elementList, groupList, selectedQueryVar);
+    }
+    
+    /**
+     * Create a conjunctive query with a SPARQL string query
+     * @param query
+     * @return
+     * @throws NotYetImplementedException
+     */
+    public static CQuery createCQuery(String query) throws NotYetImplementedException {
+	
+	return createCQuery(QueryFactory.create(query));
+    }
+    
+    /**
+     * creates a start query with a list of elements
+     * @param elements
+     * @return
+     */
+    public static CQuery createCQuery(List<CElement> elements){
+	
+	return CQuery.createCQuery(elementList, null, null);
     }
 
 }
