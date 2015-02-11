@@ -86,7 +86,7 @@ public class BulkLoaderTest {
      * {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadPostgresSBDDataset(java.io.File[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
      * .
      */
-    @Test
+    //@Test
     public void testLoadPostgresSBDDataset() {
 	File[] datafiles = new File[1];
 	datafiles[0] = new File(System.getProperty("user.dir")
