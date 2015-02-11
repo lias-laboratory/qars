@@ -38,85 +38,158 @@ import fr.ensma.lias.qarscore.engine.relaxation.RelaxationStrategies;
 public class LatticeStrategy implements RelaxationStrategies {
 
     private final int K_ANSWERS;
-    private Session session;
-    
+    private final Session session;
+    private List<CQuery> failingCauses;
+    private List<CQuery> maximalSubqueries;
+
     /**
+     * Get a lattice strategy relaxation for a session s and a number answers of
+     * wanted answers
      * 
+     * @param s
+     * @param answers
+     * @return
      */
-    public LatticeStrategy() {
-	K_ANSWERS = 1;
-	// TODO Auto-generated constructor stub
+    protected static LatticeStrategy getLatticeStrategy(Session s, int answers) {
+	return new LatticeStrategy(s, answers);
+    }
+
+    /**
+     * private constructor
+     */
+    private LatticeStrategy(Session s, int answers) {
+	K_ANSWERS = answers;
+	session = s;
     }
 
     @Override
     public CQuery getAFailingCause(CQuery query) {
-	
-	if(!query.isValidQuery()){
+
+	if (!query.isValidQuery()) {
 	    return null;
 	}
-	
-	if(query.getElementList().size()==1){
+
+	if (query.getElementList().size() == 1) {
 	    return CQueryFactory.cloneCQuery(query);
 	}
-	
+
 	List<CElement> causes = new ArrayList<CElement>();
 	CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-	for( CElement elt:query.getElementList()){
+	for (CElement elt : query.getElementList()) {
 	    tempQuery.getElementList().remove(elt);
 	    CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
 	    temp.getElementList().addAll(causes);
-	    if(temp.isValidQuery()){
-		if(!hasLeastKAnswers(temp, K_ANSWERS)){
+	    if (temp.isValidQuery()) {
+		if (!hasLeastKAnswers(temp)) {
 		    causes.add(elt);
 		}
 	    }
 	}
-	
 	return CQueryFactory.createCQuery(causes);
     }
 
     @Override
     public boolean isAFailingCause(CQuery query) {
-	// TODO Auto-generated method stub
-	return false;
+
+	if (!query.isValidQuery()) {
+	    return false;
+	}
+
+	for (CElement elt : query.getElementList()) {
+	    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+	    tempQuery.getElementList().remove(elt);
+	    if (tempQuery.isValidQuery()) {
+		if (!hasLeastKAnswers(tempQuery)) {
+		    return false;
+		}
+	    }
+	}
+	return true;
     }
 
     @Override
     public List<CQuery> getFailingCauses(CQuery query) {
-	// TODO Auto-generated method stub
-	return null;
+
+	if (!query.isValidQuery()) {
+	    return failingCauses;
+	}
+
+	maximalSubqueries = new ArrayList<CQuery>();
+
+	if (hasLeastKAnswers(query)) {
+	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
+	    return failingCauses;
+	}
+
+	failingCauses = new ArrayList<CQuery>();
+	failingCauses.add(getAFailingCause(query));
+
+	ArrayList<CQuery> potentialsMaximalSubqueries = new ArrayList<CQuery>();
+	for (CElement elt : failingCauses.get(failingCauses.size() - 1)
+		.getElementList()) {
+	    CQuery tempquery = CQueryFactory.cloneCQuery(query);
+	    tempquery.getElementList().remove(elt);
+	    potentialsMaximalSubqueries.add(tempquery);
+	}
+
+	while (potentialsMaximalSubqueries.size() != 0) {
+	    CQuery tempquery = potentialsMaximalSubqueries.get(0);
+
+	    if (hasLeastKAnswers(tempquery)) {
+		maximalSubqueries.add(CQueryFactory.cloneCQuery(tempquery));
+		potentialsMaximalSubqueries.remove(0);
+		continue;
+	    }
+
+	    failingCauses.add(getAFailingCause(tempquery));
+	    ArrayList<CQuery> templist = potentialsMaximalSubqueries;
+	    potentialsMaximalSubqueries = new ArrayList<CQuery>();
+
+	    for (CQuery potentialElt : templist) {
+		if (potentialElt.getElementList().containsAll(
+			failingCauses.get(failingCauses.size() - 1)
+				.getElementList())) {
+		    for (CElement elt : failingCauses.get(
+			    failingCauses.size() - 1).getElementList()) {
+			CQuery temp = CQueryFactory.cloneCQuery(tempquery);
+			temp.getElementList().remove(elt);
+			potentialsMaximalSubqueries.add(temp);
+		    }
+		} else {
+		    potentialsMaximalSubqueries.add(potentialElt);
+		}
+	    }
+	}
+	return failingCauses;
     }
 
     @Override
-    public List<CQuery> getSuccessSubQueries(CQuery query) {
-	// TODO Auto-generated method stub
-	return null;
+    public List<CQuery> getSuccessSubQueries() {
+
+	return maximalSubqueries;
     }
 
     @Override
     public boolean hasLeastKAnswers(CQuery query) {
-	
-	if(!query.isValidQuery()){
+
+	if (!query.isValidQuery()) {
 	    return false;
 	}
-			
+
 	int nbSolution = 0;
 	try {
-	    QueryExecution qexec = QueryExecutionFactory.create(, dataset);
+	    QueryExecution qexec = QueryExecutionFactory.create(
+		    query.getSPARQLQury(), session.getDataset());
 	    try {
-	    	ResultSet results = qexec.execSelect();
-	    	while (results.hasNext() && (nbSolution <= K_ANSWERS)) {
-	    		results.nextSolution();
-	    		nbSolution++;
-	    	}
+		ResultSet results = qexec.execSelect();
+		while (results.hasNext() && (nbSolution < K_ANSWERS)) {
+		    nbSolution++;
+		}
 	    } finally {
 		qexec.close();
 	    }
 	} finally {
 	}
 	return nbSolution >= K_ANSWERS;
-
-	return false;
     }
-
 }

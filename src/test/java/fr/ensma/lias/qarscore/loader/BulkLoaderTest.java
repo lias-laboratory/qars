@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
-import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
@@ -65,7 +64,7 @@ public class BulkLoaderTest {
      */
     @Before
     public void setUp() {
-	File folderTDB = new File(Properties.getTDB_PATH());
+	File folderTDB = new File(System.getProperty("user.dir")+"\\target\\TDB\\LUBM1");
 	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
 	}
@@ -78,7 +77,7 @@ public class BulkLoaderTest {
      */
     @After
     public void tearDown() {
-	File folderTDB = new File(Properties.getTDB_PATH());
+	File folderTDB = new File(System.getProperty("user.dir")+"\\target\\TDB\\LUBM1");
 	deleteDirectory(folderTDB);
     }
 
@@ -107,7 +106,7 @@ public class BulkLoaderTest {
 	datafiles[0] = new File(System.getProperty("user.dir")
 		+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
 
-	BulkLoader.loadTDBDataset(datafiles, "OWL", "LUBM1");
+	BulkLoader.loadTDBDataset(datafiles, "OWL", System.getProperty("user.dir")+"\\target\\TDB\\LUBM1");
     }
 
     /**
@@ -116,11 +115,12 @@ public class BulkLoaderTest {
      */
     @Test
     public void testMain() {
-	String[] args = new String[3];
+	String[] args = new String[4];
 	args[0] = System.getProperty("user.dir")
 		+ "/src/test/ressources/DataSources/LUBM1";
 	args[1] = "OWL";
 	args[2] = "TDB";
+	args[3] = System.getProperty("user.dir")+"\\target\\TDB\\LUBM1";
 	try {
 	    BulkLoader.main(args);
 	} catch (NotYetImplementedException e) {

@@ -37,9 +37,6 @@ public class Properties {
 
     private static OntModelSpec DEFAULT_MODEL_SPECIFICATION = OntModelSpec.OWL_MEM;
 
-    private static String TDB_PATH = System.getProperty("user.dir")
-	    + "\\target\\TDB\\";
-
     /**
      * return the appropriate jdbc class's name for the current SDB database
      * type
@@ -140,13 +137,6 @@ public class Properties {
      */
     public static void setModelMemSpec(OntModelSpec ontoSpec) {
 	DEFAULT_MODEL_SPECIFICATION = ontoSpec;
-    }
-
-    /**
-     * @return the tDB_PATH
-     */
-    public static String getTDB_PATH() {
-	return TDB_PATH;
     }
 
 }

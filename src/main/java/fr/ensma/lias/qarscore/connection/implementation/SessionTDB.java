@@ -45,14 +45,14 @@ public class SessionTDB implements Session {
     protected Dataset dataset;
 
     /**
-     * DataModel of semantic data
+     * model of semantic data
      */
-    protected Model dataModel;
+    protected Model model;
 
     /**
-     * Ontology model for data
+     * Ontology model of semantic data
      */
-    protected OntModel ontoModel;
+    protected OntModel ontologyModel;
 
     /**
      * Construct a TDB Session if there isn't existed
@@ -66,11 +66,11 @@ public class SessionTDB implements Session {
 	return session;
     }
 
-    private SessionTDB(String folder) {
-	dataset = TDBFactory.createDataset(Properties.getTDB_PATH() + folder);
-	dataModel = dataset.getDefaultModel();
-	ontoModel = ModelFactory.createOntologyModel(
-		Properties.getModelMemSpec(), dataModel);
+    private SessionTDB(String folderTDB) {
+	dataset = TDBFactory.createDataset(folderTDB);
+	model = dataset.getDefaultModel();
+	ontologyModel = ModelFactory.createOntologyModel(
+		Properties.getModelMemSpec(), model);
     }
 
     @Override
@@ -79,13 +79,13 @@ public class SessionTDB implements Session {
     }
 
     @Override
-    public Model getDataModel() {
-	return dataModel;
+    public Model getModel() {
+	return model;
     }
 
     @Override
     public OntModel getOntologyModel() {
-	return ontoModel;
+	return ontologyModel;
     }
 
     /**

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.syntax.ElementFilter;
 import com.hp.hpl.jena.sparql.syntax.ElementGroup;
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
@@ -55,7 +56,7 @@ public class CQuery {
 	elementList = elt;
 	groupList = gr;
 	selectedQueryVar = selectedVar;
-	if(selectedQueryVar==null){
+	if (selectedQueryVar == null) {
 	    selectedQueryVar = getMentionedQueryVar();
 	}
     }
@@ -170,12 +171,41 @@ public class CQuery {
 	boolean isValid = true;
 	for (int i = 0; i < this.getElementList().size(); i++) {
 	    if (this.getElementList().get(i).getElement() instanceof ElementFilter) {
-		isValid = isValid && triplePatternVarnames.containsAll(this.getElementList()
-			.get(i).getMentionnedVar());
+		isValid = isValid
+			&& triplePatternVarnames.containsAll(this
+				.getElementList().get(i).getMentionnedVar());
 	    }
 	}
-	
+
 	return isValid;
     }
 
+    /**
+     * Return the corresponding SPARQL Query
+     * 
+     * @return
+     */
+    public Query getSPARQLQury() {
+
+	if (!isValidQuery()) {
+	    return null;
+	}
+
+	Query tempQuery = new Query();
+	ElementGroup elementGroup = new ElementGroup();
+
+	for (CElement elt : elementList) {
+	    elementGroup.addElement(elt.getElement());
+	}
+
+	tempQuery.setQueryPattern(elementGroup);
+	tempQuery.setQuerySelectType();
+	if (selectedQueryVar.size() == 0) {
+	    tempQuery.setQueryResultStar(true);
+	} else {
+	    tempQuery.addProjectVars(selectedQueryVar);
+	}
+	return tempQuery;
+
+    }
 }

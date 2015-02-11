@@ -134,10 +134,9 @@ public class BulkLoader {
      * @param folder
      */
     public static void loadTDBDataset(File[] dataFiles, String lang,
-	    String folder) {
+	    String folderTDB) {
 
-	Dataset dataset = TDBFactory.createDataset(Properties.getTDB_PATH()
-		+ folder);
+	Dataset dataset = TDBFactory.createDataset(folderTDB);
 	Model dataModel = dataset.getDefaultModel();
 
 	OntModel ontoModel = ModelFactory.createOntologyModel(
@@ -266,7 +265,8 @@ public class BulkLoader {
 		dbname = dataFolder.getName();
 		if(!dataFolder.isDirectory()){
 		    dbname = dbname.substring(0, dbname.lastIndexOf('.'));
-		}		
+		}
+		dbname = System.getProperty("user.dir")+"\\target\\TDB\\"+dbname;
 	    }
 	    loadTDBDataset(dataFiles, args[1], dbname);
 	    break;

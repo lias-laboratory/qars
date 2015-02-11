@@ -35,13 +35,14 @@ public class StatementImpl implements Statement {
     /**
      * Session for this statement
      */
-    private Session session;
+    private Session session = null;
 
     /**
      * The current query of the statement
      */
-    private Query currentQuery;
+    private Query currentQuery = null;
 
+    
     public StatementImpl(Session s) {
 	session = s;
     }
@@ -58,7 +59,11 @@ public class StatementImpl implements Statement {
 
     @Override
     public String getQuery() {
-	return currentQuery.serialize();
+	
+	if(currentQuery!=null){
+	    return currentQuery.serialize();
+	}
+	return null;
     }
 
     @Override
@@ -67,16 +72,38 @@ public class StatementImpl implements Statement {
     }
 
     @Override
+    public void preparedRelaxation(int strategy) {
+	
+	if((currentQuery==null)||(session==null)){
+	    return;
+	}
+	
+	switch (strategy) {
+	case 0:
+	    
+	    break;
+	default:
+		throw new IllegalArgumentException("wrong strategy number");
+	}
+    }
+
+    @Override
     public ResultSet executeSPARQLQuery() {
 	return QueryExecutionFactory.create(getQuery(), session.getDataset())
 		.execSelect();
     }
-
+    
     @Override
     public void getFailingCause() {
     }
 
     @Override
     public void getMaxSuccessQuery() {
+    }
+
+    @Override
+    public void getSimilarityQuery() {
+	// TODO Auto-generated method stub
+	
     }
 }

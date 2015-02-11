@@ -50,14 +50,14 @@ public class SessionSDB implements Session {
     protected Dataset dataset;
 
     /**
-     * DataModel of semantic data
+     * model of semantic data
      */
-    protected Model dataModel;
+    protected Model model;
 
     /**
-     * Ontology model for data
+     * Ontology model of semantic data
      */
-    protected OntModel ontoModel;
+    protected OntModel ontologyModel;
 
     /**
      * Only for SDB Database
@@ -84,9 +84,9 @@ public class SessionSDB implements Session {
 	store = StoreFactory.create(storeDesc, connectSDB);
 
 	dataset = SDBFactory.connectDataset(store);
-	dataModel = SDBFactory.connectDefaultModel(store);
-	ontoModel = ModelFactory.createOntologyModel(
-		Properties.getModelMemSpec(), dataModel);
+	model = SDBFactory.connectDefaultModel(store);
+	ontologyModel = ModelFactory.createOntologyModel(
+		Properties.getModelMemSpec(), model);
     }
 
     @Override
@@ -95,13 +95,13 @@ public class SessionSDB implements Session {
     }
 
     @Override
-    public Model getDataModel() {
-	return dataModel;
+    public Model getModel() {
+	return model;
     }
 
     @Override
     public OntModel getOntologyModel() {
-	return ontoModel;
+	return ontologyModel;
     }
 
     /**

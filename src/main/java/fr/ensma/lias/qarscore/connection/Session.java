@@ -31,7 +31,7 @@ public interface Session {
 
     Dataset getDataset();
 
-    Model getDataModel();
+    Model getModel();
 
     OntModel getOntologyModel();
 

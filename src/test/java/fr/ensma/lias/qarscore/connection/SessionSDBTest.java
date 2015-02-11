@@ -81,7 +81,7 @@ public class SessionSDBTest {
 	Session session = SessionFactory.getSDBSession(POSTGRES_DB_URL, POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
 
 	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getDataModel());
+	Assert.assertNotNull(session.getModel());
 	Assert.assertNotNull(session.getOntologyModel());
 	Assert.assertNull(session.getDataStore());	
     }

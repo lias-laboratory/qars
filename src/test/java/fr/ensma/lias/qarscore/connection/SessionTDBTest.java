@@ -58,7 +58,7 @@ public class SessionTDBTest {
 
     @Before
     public void setUp() {
-	File folderTDB = new File(Properties.getTDB_PATH());
+	File folderTDB = new File(System.getProperty("user.dir")+"\\target\\TDB\\LUBM1");
 	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
 	}
@@ -79,7 +79,7 @@ public class SessionTDBTest {
 
     @After
     public void teardDown() {
-	File folderTDB = new File(Properties.getTDB_PATH());
+	File folderTDB = new File(System.getProperty("user.dir")+"\\target\\TDB\\LUBM1");
 	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
 	}
@@ -93,7 +93,7 @@ public class SessionTDBTest {
 	Session session = SessionFactory.getTDBSession("LUBM1");
 
 	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getDataModel());
+	Assert.assertNotNull(session.getModel());
 	Assert.assertNotNull(session.getOntologyModel());
 	Assert.assertNull(session.getDataStore());
     }
