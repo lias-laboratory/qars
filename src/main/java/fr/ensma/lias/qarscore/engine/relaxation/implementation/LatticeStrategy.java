@@ -75,6 +75,7 @@ public class LatticeStrategy implements RelaxationStrategies {
 
 	List<CElement> causes = new ArrayList<CElement>();
 	CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+	
 	for (CElement elt : query.getElementList()) {
 	    tempQuery.getElementList().remove(elt);
 	    CQuery temp = CQueryFactory.cloneCQuery(tempQuery);

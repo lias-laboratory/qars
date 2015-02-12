@@ -21,6 +21,7 @@ package fr.ensma.lias.qarscore.engine.relaxation;
 
 import static org.junit.Assert.fail;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,6 +45,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 
     private Session session;
     RelaxationStrategies relaxationStrategy;
+    Logger logger;
     
     /**
      * @throws java.lang.Exception
@@ -51,10 +53,11 @@ public class LatticeStrategyTest extends SessionTDBTest {
     @Before
     public void setUp() {
 	super.setUp();
+	logger = Logger.getRootLogger();
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
 
-	session = SessionFactory.getTDBSession("LUBM1");
+	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session);
     }
 
@@ -70,7 +73,20 @@ public class LatticeStrategyTest extends SessionTDBTest {
      */
     @Test
     public void testGetAFailingCause() {
-	fail("Not yet implemented"); // TODO
+	
+	try {
+	    CQuery conjunctiveQuery = CQueryFactory
+	    	    .createCQuery(SPARQLQueriesSample.QUERY_14);
+	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
+	    CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
+	    Assert.assertTrue(relaxationStrategy.isAFailingCause(oneCause));
+	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(oneCause));
+	    
+	    logger.info(oneCause.getSPARQLQuery());
+	} catch (NotYetImplementedException e) {
+	    e.printStackTrace();
+	    Assert.fail();
+	}
     }
 
     /**
@@ -94,6 +110,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
      */
     @Test
     public void testHasLeastKAnswers() {
+	
 	try {
 	    CQuery conjunctiveQuery = CQueryFactory
 	    	    .createCQuery(SPARQLQueriesSample.QUERY_17);
@@ -102,7 +119,5 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    e.printStackTrace();
 	    Assert.fail();
 	}
-	
     }
-
 }

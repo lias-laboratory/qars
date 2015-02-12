@@ -72,6 +72,16 @@ public class CQuery {
     protected static CQuery createCQuery(List<CElement> elt,
 	    List<ElementGroup> gr, List<Node> selectedVar) {
 
+	if (elt == null) {
+	    return null;
+	}
+	if (gr == null) {
+	    gr = new ArrayList<ElementGroup>();
+	}
+	if (selectedVar == null) {
+	    selectedVar = new ArrayList<Node>();
+	}
+
 	return new CQuery(elt, gr, selectedVar);
     }
 
@@ -226,7 +236,7 @@ public class CQuery {
 	return tempQuery;
 
     }
-    
+
     /**
      * Return the corresponding SPARQL Query
      * 

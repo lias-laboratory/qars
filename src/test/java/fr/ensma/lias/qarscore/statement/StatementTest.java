@@ -63,7 +63,7 @@ public class StatementTest extends SessionTDBTest {
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
 
-	session = SessionFactory.getTDBSession("LUBM1");
+	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
 	queryStatement = StatementFactory.getStatement(session);
     }
 
