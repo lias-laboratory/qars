@@ -81,4 +81,23 @@
 			</plugin>
 		</plugins>
 	</build>
+	   <ciManagement>
+        <system>Jenkins</system>
+        <url>http://s-localforge-lias/jenkins/job/QaRSCore/</url>
+    </ciManagement>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>Internal Releases</name>
+            <url>http://s-localforge-lias/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Internal Snapshots</name>
+            <url>http://s-localforge-lias/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <scm>
+        <url>scm:git:http://s-localforge-lias/gitblit/r/java/qarscore.git</url>
+    </scm>
 </project>
