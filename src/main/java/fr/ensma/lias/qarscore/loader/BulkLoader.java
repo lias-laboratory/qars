@@ -47,8 +47,9 @@ import fr.ensma.lias.qarscore.properties.Properties;
  */
 public class BulkLoader {
 
-    private static void dropDatabase(String url, String login, String password, String nameDB) throws SQLException, ClassNotFoundException{
-	
+    private static void dropDatabase(String url, String login, String password,
+	    String nameDB) throws SQLException, ClassNotFoundException {
+
 	Connection connect = null;
 
 	Class.forName(Properties.getSDBDriverJDBC());
@@ -64,7 +65,7 @@ public class BulkLoader {
 	}
 
     }
-    
+
     /**
      * Load a set of Graph data present in a list of data files into a jena sdb
      * dataset with Postgres Database.
@@ -90,8 +91,8 @@ public class BulkLoader {
 
 	try {
 	    Class.forName(Properties.getSDBDriverJDBC());
-	    connect = DriverManager
-		    .getConnection(url + nameDB.toLowerCase(), login, password);
+	    connect = DriverManager.getConnection(url + nameDB.toLowerCase(),
+		    login, password);
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	} catch (ClassNotFoundException e) {
@@ -108,9 +109,9 @@ public class BulkLoader {
 
 	OntModel ontoModel = ModelFactory.createOntologyModel(
 		Properties.getModelMemSpec(), dataModel);
-	
+
 	Properties.setOntoLang(lang);
-	
+
 	for (File dataFile : dataFiles) {
 
 	    URI currentUri = dataFile.toURI();
@@ -143,7 +144,7 @@ public class BulkLoader {
 		Properties.getModelMemSpec(), dataModel);
 
 	Properties.setOntoLang(lang);
-	
+
 	for (File dataFile : dataFiles) {
 
 	    URI currentUri = dataFile.toURI();
@@ -176,7 +177,7 @@ public class BulkLoader {
 	String nameFolder = args[0];
 	File dataFolder = new File(nameFolder);
 	File[] dataFiles;
-	
+
 	if (!dataFolder.exists()) {
 	    throw new IllegalArgumentException("File doesn't exist");
 	}
@@ -254,25 +255,26 @@ public class BulkLoader {
 			"Incompatible File and language");
 	    }
 	}
-	
+
 	String dbname;
 	switch (args[2].toUpperCase()) {
 	case "TDB":
-	   
+
 	    if (argsLenth == 4) {
 		dbname = args[3];
 	    } else {
 		dbname = dataFolder.getName();
-		if(!dataFolder.isDirectory()){
+		if (!dataFolder.isDirectory()) {
 		    dbname = dbname.substring(0, dbname.lastIndexOf('.'));
 		}
-		dbname = System.getProperty("user.dir")+"\\target\\TDB\\"+dbname;
+		dbname = System.getProperty("user.dir") + "\\target\\TDB\\"
+			+ dbname;
 	    }
 	    loadTDBDataset(dataFiles, args[1], dbname);
 	    break;
-	    
+
 	case "POSTGRES":
-	    
+
 	    if ((argsLenth < 6) || (argsLenth > 7)) {
 		throw new IllegalArgumentException(
 			"illegal number of parameter");
@@ -281,14 +283,14 @@ public class BulkLoader {
 		dbname = args[6];
 	    } else {
 		dbname = dataFolder.getName();
-		if(!dataFolder.isDirectory()){
+		if (!dataFolder.isDirectory()) {
 		    dbname = dbname.substring(0, dbname.lastIndexOf('.'));
-		}		
+		}
 	    }
 	    loadPostgresSBDDataset(dataFiles, args[1], args[3], args[4],
 		    args[5], dbname);
 	    break;
-	    
+
 	default:
 	    throw new NotYetImplementedException(
 		    "SDB Support not yet implemented");

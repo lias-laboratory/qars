@@ -24,5 +24,4 @@ package fr.ensma.lias.qarscore.engine.relaxation;
  */
 public class StrategiesFactory {
 
-
 }

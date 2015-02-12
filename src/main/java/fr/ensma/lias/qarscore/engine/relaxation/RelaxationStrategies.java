@@ -27,15 +27,17 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  * @author Geraud FOKOU
  */
 public interface RelaxationStrategies {
-    
+
     /**
      * return a query failure cause
+     * 
      * @return
      */
     CQuery getAFailingCause(CQuery query);
-    
+
     /**
      * Says if a CQuery is a MFS or not
+     * 
      * @param query
      * @return
      */
@@ -43,20 +45,23 @@ public interface RelaxationStrategies {
 
     /**
      * Return the list of all the MFS of the CQuery query
+     * 
      * @param query
      * @return
      */
     List<CQuery> getFailingCauses(CQuery query);
-    
+
     /**
      * Return all the maximal success subqueries of a CQuery query
+     * 
      * @param query
      * @return
      */
     List<CQuery> getSuccessSubQueries();
-    
+
     /**
      * Says if the CQuery query has at least K answers in the dataset
+     * 
      * @param query
      * @param k
      * @return

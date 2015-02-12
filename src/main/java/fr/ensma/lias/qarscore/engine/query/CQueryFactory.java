@@ -56,7 +56,8 @@ public class CQueryFactory {
      * @param element
      * @throws NotYetImplementedException
      */
-    private static void getClause(Element element) throws NotYetImplementedException {
+    private static void getClause(Element element)
+	    throws NotYetImplementedException {
 
 	if (element instanceof ElementPathBlock) {
 	    List<TriplePath> triplePathList = ((ElementPathBlock) element)
@@ -99,7 +100,8 @@ public class CQueryFactory {
      * @param expression
      * @throws NotYetImplementedException
      */
-    private static void getClause(Expr expression) throws NotYetImplementedException {
+    private static void getClause(Expr expression)
+	    throws NotYetImplementedException {
 
 	if (expression instanceof E_LogicalAnd) {
 	    ElementFilter currentFilterElt = new ElementFilter(
@@ -122,7 +124,8 @@ public class CQueryFactory {
      * @return
      * @throws NotYetImplementedException
      */
-    public static CQuery createCQuery(Query query) throws NotYetImplementedException {
+    public static CQuery createCQuery(Query query)
+	    throws NotYetImplementedException {
 
 	groupList = new ArrayList<ElementGroup>();
 	elementList = new ArrayList<CElement>();
@@ -140,49 +143,53 @@ public class CQueryFactory {
 
     /**
      * Create a copy a CQuery
+     * 
      * @param query
      * @return
      */
-    public static CQuery cloneCQuery(CQuery query){
-	
+    public static CQuery cloneCQuery(CQuery query) {
+
 	groupList = new ArrayList<ElementGroup>();
 	elementList = new ArrayList<CElement>();
 
-	for( CElement elt:query.getElementList()){
+	for (CElement elt : query.getElementList()) {
 	    elementList.add(elt);
 	}
-	
-	for( ElementGroup groupe:query.getGroupList()){
+
+	for (ElementGroup groupe : query.getGroupList()) {
 	    groupList.add(groupe);
 	}
 
 	List<Node> selectedQueryVar = new ArrayList<Node>();
-	
-	for( Node varNode:query.getSelectedQueryVar()){
+
+	for (Node varNode : query.getSelectedQueryVar()) {
 	    selectedQueryVar.add(varNode);
 	}
 
 	return CQuery.createCQuery(elementList, groupList, selectedQueryVar);
     }
-    
+
     /**
      * Create a conjunctive query with a SPARQL string query
-     * @param query
+     * 
+     * @param sparqlQuery
      * @return
      * @throws NotYetImplementedException
      */
-    public static CQuery createCQuery(String query) throws NotYetImplementedException {
-	
-	return createCQuery(QueryFactory.create(query));
+    public static CQuery createCQuery(String sparqlQuery)
+	    throws NotYetImplementedException {
+
+	return createCQuery(QueryFactory.create(sparqlQuery));
     }
-    
+
     /**
      * creates a start query with a list of elements
+     * 
      * @param elements
      * @return
      */
-    public static CQuery createCQuery(List<CElement> elements){
-	
+    public static CQuery createCQuery(List<CElement> elements) {
+
 	return CQuery.createCQuery(elementList, null, null);
     }
 

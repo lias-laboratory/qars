@@ -38,7 +38,7 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class StatementTest extends SessionTDBTest {
 
     private Session session;
-    
+
     private Statement queryStatement;
 
     private final String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "

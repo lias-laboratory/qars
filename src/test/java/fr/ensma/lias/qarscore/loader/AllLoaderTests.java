@@ -27,9 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Mickael BARON
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = {
-	BulkLoaderTest.class}
-	)
+@SuiteClasses(value = { BulkLoaderTest.class })
 public class AllLoaderTests {
 
 }

@@ -97,25 +97,37 @@ public class CQuery {
     }
 
     /**
+     * @return the selectedQueryVarNames
+     */
+    public List<String> getSelectedQueryVarNames() {
+
+	List<String> tempvarnames = new ArrayList<String>();
+
+	for (int i = 0; i < this.getSelectedQueryVar().size(); i++) {
+	    tempvarnames.add(getSelectedQueryVar().get(i).getName());
+	}
+	return tempvarnames;
+    }
+
+    /**
      * Return the list of the variables mentioned in the query
      * 
      * @return
      */
     public List<Node> getMentionedQueryVar() {
 
-	List<Node> varnames = new ArrayList<Node>();
-	List<Node> tempvarnames = new ArrayList<Node>();
+	List<Node> varnodes = new ArrayList<Node>();
+	List<Node> tempvar = new ArrayList<Node>();
 
 	for (int i = 0; i < this.getElementList().size(); i++) {
-	    tempvarnames
-		    .addAll(this.getElementList().get(i).getMentionnedVar());
-	    tempvarnames.retainAll(varnames);
-	    varnames.removeAll(tempvarnames);
-	    varnames.addAll(this.getElementList().get(i).getMentionnedVar());
-	    tempvarnames.clear();
+	    tempvar.addAll(this.getElementList().get(i).getMentionnedVar());
+	    tempvar.retainAll(varnodes);
+	    varnodes.removeAll(tempvar);
+	    varnodes.addAll(this.getElementList().get(i).getMentionnedVar());
+	    tempvar.clear();
 	}
 
-	return varnames;
+	return varnodes;
     }
 
     /**
@@ -149,17 +161,20 @@ public class CQuery {
     public boolean isValidQuery() {
 
 	boolean hasTriplePattern = false;
-	List<Node> triplePatternVarnames = new ArrayList<Node>();
+	List<Node> triplePattern = new ArrayList<Node>();
 	List<Node> tempVarnames = new ArrayList<Node>();
 
 	for (int i = 0; i < this.getElementList().size(); i++) {
+
 	    if (this.getElementList().get(i).getElement() instanceof ElementPathBlock) {
 		hasTriplePattern = true;
 		tempVarnames.addAll(this.getElementList().get(i)
 			.getMentionnedVar());
-		tempVarnames.retainAll(triplePatternVarnames);
-		triplePatternVarnames.removeAll(tempVarnames);
-		triplePatternVarnames.addAll(tempVarnames);
+
+		tempVarnames.retainAll(triplePattern);
+		triplePattern.removeAll(tempVarnames);
+		triplePattern.addAll(this.getElementList().get(i)
+			.getMentionnedVar());
 		tempVarnames.clear();
 	    }
 	}
@@ -169,12 +184,15 @@ public class CQuery {
 	}
 
 	boolean isValid = true;
-	for (int i = 0; i < this.getElementList().size(); i++) {
+	int i = 0;
+	while ((i < this.getElementList().size()) && (isValid)) {
+
 	    if (this.getElementList().get(i).getElement() instanceof ElementFilter) {
 		isValid = isValid
-			&& triplePatternVarnames.containsAll(this
-				.getElementList().get(i).getMentionnedVar());
+			&& triplePattern.containsAll(this.getElementList()
+				.get(i).getMentionnedVar());
 	    }
+	    i = i + 1;
 	}
 
 	return isValid;
@@ -185,7 +203,7 @@ public class CQuery {
      * 
      * @return
      */
-    public Query getSPARQLQury() {
+    public Query getSPARQLQuery() {
 
 	if (!isValidQuery()) {
 	    return null;
@@ -208,4 +226,32 @@ public class CQuery {
 	return tempQuery;
 
     }
+    
+    /**
+     * Return the corresponding SPARQL Query
+     * 
+     * @return
+     */
+    public Query getNativeSPARQLQuery() {
+
+	if (!isValidQuery()) {
+	    return null;
+	}
+
+	Query tempQuery = new Query();
+	ElementGroup elementGroup = new ElementGroup();
+
+	elementGroup.addElement(this.getGroupList().get(0));
+
+	tempQuery.setQueryPattern(elementGroup);
+	tempQuery.setQuerySelectType();
+	if (selectedQueryVar.size() == 0) {
+	    tempQuery.setQueryResultStar(true);
+	} else {
+	    tempQuery.addProjectVars(selectedQueryVar);
+	}
+	return tempQuery;
+
+    }
+
 }

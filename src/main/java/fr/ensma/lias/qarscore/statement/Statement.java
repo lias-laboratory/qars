@@ -51,10 +51,11 @@ public interface Statement {
 
     /**
      * Prepare a relaxation following a particular strategy
+     * 
      * @param strategy
      */
     void preparedRelaxation(int strategy);
-    
+
     /**
      * execute a SPARQL query
      * 
@@ -75,7 +76,7 @@ public interface Statement {
      * @param query
      */
     void getMaxSuccessQuery();
-    
+
     /**
      * return the most similar queries to the user query
      */

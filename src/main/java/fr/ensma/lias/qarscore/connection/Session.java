@@ -37,10 +37,12 @@ public interface Session {
     Model getModel();
 
     OntModel getOntologyModel();
-    
+
     Model getBaseModel();
-    
+
     List<Triple> getOntologyTriple();
 
     Store getDataStore();
+
+    String getOntoJSON();
 }

@@ -179,7 +179,7 @@ public class LatticeStrategy implements RelaxationStrategies {
 	int nbSolution = 0;
 	try {
 	    QueryExecution qexec = QueryExecutionFactory.create(
-		    query.getSPARQLQury(), session.getDataset());
+		    query.getSPARQLQuery(), session.getDataset());
 	    try {
 		ResultSet results = qexec.execSelect();
 		while (results.hasNext() && (nbSolution < K_ANSWERS)) {

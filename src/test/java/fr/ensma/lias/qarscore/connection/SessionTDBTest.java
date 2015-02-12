@@ -20,16 +20,12 @@
 package fr.ensma.lias.qarscore.connection;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
@@ -62,7 +58,7 @@ public class SessionTDBTest {
 
     @Before
     public void setUp() {
-	File folderTDB = new File("target\\TDB\\LUBM1");
+	File folderTDB = new File("target/TDB/LUBM1");
 	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
 	}
@@ -83,7 +79,7 @@ public class SessionTDBTest {
 
     @After
     public void teardDown() {
-	File folderTDB = new File("target\\TDB\\LUBM1");
+	File folderTDB = new File("target/TDB/LUBM1");
 	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
 	}
@@ -94,44 +90,20 @@ public class SessionTDBTest {
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
 
-	Session session = SessionFactory.getTDBSession("target\\TDB\\LUBM1");
+	Session session = SessionFactory.getTDBSession("target/TDB/LUBM1");
 
 	Assert.assertNotNull(session.getDataset());
 	Assert.assertNotNull(session.getModel());
 	Assert.assertNotNull(session.getOntologyModel());
 	Assert.assertNull(session.getDataStore());
 	Assert.assertNotNull(session.getBaseModel());
-	Assert.assertTrue(session.getOntologyTriple().size()!=0);
-	
-    }
+	Assert.assertTrue(session.getOntologyTriple().size() != 0);
 
-    @Test
-    public void testSessionJSONLD(){
-	
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
-	Properties.setOntoLang("OWL");
+	String ontoJson = session.getOntoJSON();
+	Assert.assertNotNull(ontoJson);
+	String entity = "Professor";
 
-	Session session = SessionFactory.getTDBSession("target\\TDB\\LUBM1");
+	Assert.assertTrue(ontoJson.contains(entity));
 
-	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getModel());
-	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());
-	Assert.assertTrue(session.getOntologyTriple().size()!=0);
-	JenaJSONLD.init();
-	StringWriter writer = new StringWriter();
-	session.getBaseModel().write(writer, "JSON-LD");
-	
-	File jsonfile = new File("target\\TDB\\univ1.json");
-	jsonfile.delete();
-	try {
-	    jsonfile.createNewFile();
-	    FileOutputStream jsonstream = new FileOutputStream(jsonfile);
-	    session.getBaseModel().write(jsonstream, "JSON-LD");
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    Assert.fail();
-	}
     }
 }

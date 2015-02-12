@@ -27,9 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Mickael BARON
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = {
-	StatementTest.class}
-	)
+@SuiteClasses(value = { StatementTest.class })
 public class AllStatementTests {
 
 }

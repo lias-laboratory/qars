@@ -47,8 +47,8 @@ public class SessionFactory {
 
 	try {
 	    Class.forName(Properties.getSDBDriverJDBC());
-	    connect = DriverManager
-		    .getConnection(url + nameDB.toLowerCase(), login, password);
+	    connect = DriverManager.getConnection(url + nameDB.toLowerCase(),
+		    login, password);
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	} catch (ClassNotFoundException e) {

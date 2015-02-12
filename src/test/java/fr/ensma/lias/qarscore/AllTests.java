@@ -31,11 +31,8 @@ import fr.ensma.lias.qarscore.statement.AllStatementTests;
  * @author Mickael BARON
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = {
-	AllConnectionTests.class,
-	AllLoaderTests.class,
-	AllStatementTests.class}
-	)
+@SuiteClasses(value = { AllConnectionTests.class, AllLoaderTests.class,
+	AllStatementTests.class })
 public class AllTests {
 
 }

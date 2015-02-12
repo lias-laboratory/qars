@@ -64,7 +64,8 @@ public class BulkLoaderTest {
      */
     @Before
     public void setUp() {
-	File folderTDB = new File(System.getProperty("user.dir")+"\\target\\TDB\\LUBM1");
+	File folderTDB = new File(System.getProperty("user.dir")
+		+ "/target/TDB/LUBM1");
 	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
 	}
@@ -77,7 +78,8 @@ public class BulkLoaderTest {
      */
     @After
     public void tearDown() {
-	File folderTDB = new File(System.getProperty("user.dir")+"\\target\\TDB\\LUBM1");
+	File folderTDB = new File(System.getProperty("user.dir")
+		+ "/target/TDB/LUBM1");
 	deleteDirectory(folderTDB);
     }
 
@@ -86,7 +88,7 @@ public class BulkLoaderTest {
      * {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadPostgresSBDDataset(java.io.File[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
      * .
      */
-    //@Test
+    // @Test
     public void testLoadPostgresSBDDataset() {
 	File[] datafiles = new File[1];
 	datafiles[0] = new File(System.getProperty("user.dir")
@@ -106,7 +108,8 @@ public class BulkLoaderTest {
 	datafiles[0] = new File(System.getProperty("user.dir")
 		+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
 
-	BulkLoader.loadTDBDataset(datafiles, "OWL", System.getProperty("user.dir")+"\\target\\TDB\\LUBM1");
+	BulkLoader.loadTDBDataset(datafiles, "OWL",
+		System.getProperty("user.dir") + "/target/TDB/LUBM1");
     }
 
     /**
@@ -120,7 +123,7 @@ public class BulkLoaderTest {
 		+ "/src/test/ressources/DataSources/LUBM1";
 	args[1] = "OWL";
 	args[2] = "TDB";
-	args[3] = System.getProperty("user.dir")+"\\target\\TDB\\LUBM1";
+	args[3] = System.getProperty("user.dir") + "/target/TDB/LUBM1";
 	try {
 	    BulkLoader.main(args);
 	} catch (NotYetImplementedException e) {

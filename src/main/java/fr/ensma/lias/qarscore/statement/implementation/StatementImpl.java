@@ -42,7 +42,6 @@ public class StatementImpl implements Statement {
      */
     private Query currentQuery = null;
 
-    
     public StatementImpl(Session s) {
 	session = s;
     }
@@ -59,8 +58,8 @@ public class StatementImpl implements Statement {
 
     @Override
     public String getQuery() {
-	
-	if(currentQuery!=null){
+
+	if (currentQuery != null) {
 	    return currentQuery.serialize();
 	}
 	return null;
@@ -73,17 +72,17 @@ public class StatementImpl implements Statement {
 
     @Override
     public void preparedRelaxation(int strategy) {
-	
-	if((currentQuery==null)||(session==null)){
+
+	if ((currentQuery == null) || (session == null)) {
 	    return;
 	}
-	
+
 	switch (strategy) {
 	case 0:
-	    
+
 	    break;
 	default:
-		throw new IllegalArgumentException("wrong strategy number");
+	    throw new IllegalArgumentException("wrong strategy number");
 	}
     }
 
@@ -92,7 +91,7 @@ public class StatementImpl implements Statement {
 	return QueryExecutionFactory.create(getQuery(), session.getDataset())
 		.execSelect();
     }
-    
+
     @Override
     public void getFailingCause() {
     }
@@ -104,6 +103,6 @@ public class StatementImpl implements Statement {
     @Override
     public void getSimilarityQuery() {
 	// TODO Auto-generated method stub
-	
+
     }
 }

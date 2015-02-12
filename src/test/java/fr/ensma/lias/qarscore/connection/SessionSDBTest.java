@@ -42,27 +42,29 @@ public class SessionSDBTest {
 
     /** URL of SDB database on postgres **/
     private final String POSTGRES_DB_URL = "jdbc:postgresql://localhost:5432/";
-    
+
     /** User credentials */
     private final String POSTGRES_DB_USER = "postgres";
     private final String POSTGRES_DB_PASSWORD = "psql";
-    
+
     @Before
-    public void setUp() {	
-	File[] datafiles = new  File[1];
-	datafiles[0]= new File(System.getProperty("user.dir")
-			+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
-	
-	BulkLoader.loadPostgresSBDDataset(datafiles, "OWL", POSTGRES_DB_URL, POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
-     }
-    
+    public void setUp() {
+	File[] datafiles = new File[1];
+	datafiles[0] = new File(System.getProperty("user.dir")
+		+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
+
+	BulkLoader.loadPostgresSBDDataset(datafiles, "OWL", POSTGRES_DB_URL,
+		POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
+    }
+
     @After
-    public void teardDown() {	
+    public void teardDown() {
 	Connection connect = null;
-	
+
 	try {
 	    Class.forName(Properties.getSDBDriverJDBC());
-	    connect = DriverManager.getConnection(POSTGRES_DB_URL, POSTGRES_DB_USER, POSTGRES_DB_PASSWORD);
+	    connect = DriverManager.getConnection(POSTGRES_DB_URL,
+		    POSTGRES_DB_USER, POSTGRES_DB_PASSWORD);
 	    Statement stmt = connect.createStatement();
 	    stmt.executeUpdate("DROP DATABASE IF EXISTS " + "LUBM1");
 	    stmt.close();
@@ -74,15 +76,16 @@ public class SessionSDBTest {
 
     @Test
     public void testSessionSDB() {
-	
+
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
-	
-	Session session = SessionFactory.getSDBSession(POSTGRES_DB_URL, POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
+
+	Session session = SessionFactory.getSDBSession(POSTGRES_DB_URL,
+		POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
 
 	Assert.assertNotNull(session.getDataset());
 	Assert.assertNotNull(session.getModel());
 	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());	
+	Assert.assertNull(session.getDataStore());
     }
 }

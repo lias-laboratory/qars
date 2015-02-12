@@ -19,15 +19,7 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection.implementation;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sdb.Store;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
@@ -37,27 +29,7 @@ import fr.ensma.lias.qarscore.properties.Properties;
 /**
  * @author Geraud FOKOU
  */
-public class SessionTDB implements Session {
-
-    /**
-     * Only one session is allowed for an instance of the program
-     */
-    private static Session session;
-
-    /**
-     * Dataset use for querying
-     */
-    protected Dataset dataset;
-
-    /**
-     * model of semantic data
-     */
-    protected Model model;
-
-    /**
-     * Ontology model of semantic data
-     */
-    protected OntModel ontologyModel;
+public class SessionTDB extends JenaSession {
 
     /**
      * Construct a TDB Session if there isn't existed
@@ -79,49 +51,7 @@ public class SessionTDB implements Session {
     }
 
     @Override
-    public Dataset getDataset() {
-	return dataset;
-    }
-
-    @Override
-    public Model getModel() {
-	return model;
-    }
-
-    @Override
-    public OntModel getOntologyModel() {
-	return ontologyModel;
-    }
-
-    /**
-     * For TDB session DataStore is null
-     */
-    @Override
     public Store getDataStore() {
 	return null;
-    }
-    
-    /**
-     * Return the base model of the data set in the TDB Triple store
-     */
-    @Override
-    public Model getBaseModel(){
-	return ontologyModel.getBaseModel();
-    }
-      
-    /**
-     * Return all the triple of the ontology for the data set in the TDB Triple store
-     */
-    @Override
-    public List<Triple> getOntologyTriple(){
-	
-	Model baseModel = ontologyModel.getBaseModel();
-	List<Triple> allTriple = new ArrayList<Triple>();
-	
-	StmtIterator tripleIterator = baseModel.listStatements();
-	while(tripleIterator.hasNext()){
-	    allTriple.add(tripleIterator.next().asTriple());
-	 }
-	return allTriple;
     }
 }
