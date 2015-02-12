@@ -83,7 +83,7 @@ public class BulkLoader {
 
 	nameDB = nameDB.toLowerCase();
 	try {
-	    dropDatabase(url, login, password, nameDB);
+	    dropDatabase(url, login, password, nameDB.toLowerCase());
 	} catch (ClassNotFoundException | SQLException e1) {
 	    e1.printStackTrace();
 	}
@@ -91,7 +91,7 @@ public class BulkLoader {
 	try {
 	    Class.forName(Properties.getSDBDriverJDBC());
 	    connect = DriverManager
-		    .getConnection(url + nameDB, login, password);
+		    .getConnection(url + nameDB.toLowerCase(), login, password);
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	} catch (ClassNotFoundException e) {

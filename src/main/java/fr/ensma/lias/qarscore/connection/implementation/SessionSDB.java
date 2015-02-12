@@ -20,11 +20,15 @@
 package fr.ensma.lias.qarscore.connection.implementation;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sdb.SDBFactory;
 import com.hp.hpl.jena.sdb.Store;
 import com.hp.hpl.jena.sdb.StoreDesc;
@@ -109,6 +113,30 @@ public class SessionSDB implements Session {
      */
     @Override
     public Store getDataStore() {
-	return null;
+	return store;
+    }
+
+    /**
+     * Return the base model of the data set in the SDB Triple store
+     */
+    @Override
+    public Model getBaseModel(){
+	return ontologyModel.getBaseModel();
+    }
+      
+    /**
+     * Return all the triple of the ontology for the data set in the SDB Triple store
+     */
+    @Override
+    public List<Triple> getOntologyTriple(){
+	
+	Model baseModel = ontologyModel.getBaseModel();
+	List<Triple> allTriple = new ArrayList<Triple>();
+	
+	StmtIterator tripleIterator = baseModel.listStatements();
+	while(tripleIterator.hasNext()){
+	    allTriple.add(tripleIterator.next().asTriple());
+	 }
+	return allTriple;
     }
 }

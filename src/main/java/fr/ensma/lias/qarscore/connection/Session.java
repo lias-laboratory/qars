@@ -19,6 +19,9 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection;
 
+import java.util.List;
+
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -34,6 +37,10 @@ public interface Session {
     Model getModel();
 
     OntModel getOntologyModel();
+    
+    Model getBaseModel();
+    
+    List<Triple> getOntologyTriple();
 
     Store getDataStore();
 }
