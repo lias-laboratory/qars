@@ -170,7 +170,7 @@ public class BulkLoader {
     public static void main(String[] args) throws NotYetImplementedException {
 
 	int argsLenth = args.length;
-	if (argsLenth < 3) {
+	if (argsLenth < 4) {
 	    throw new IllegalArgumentException("illegal number of parameter");
 	}
 
@@ -259,17 +259,7 @@ public class BulkLoader {
 	String dbname;
 	switch (args[2].toUpperCase()) {
 	case "TDB":
-
-	    if (argsLenth == 4) {
-		dbname = args[3];
-	    } else {
-		dbname = dataFolder.getName();
-		if (!dataFolder.isDirectory()) {
-		    dbname = dbname.substring(0, dbname.lastIndexOf('.'));
-		}
-		dbname = System.getProperty("user.dir") + "\\target\\TDB\\"
-			+ dbname;
-	    }
+	    dbname = args[3];
 	    loadTDBDataset(dataFiles, args[1], dbname);
 	    break;
 

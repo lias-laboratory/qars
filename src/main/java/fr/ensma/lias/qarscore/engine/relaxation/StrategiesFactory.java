@@ -19,9 +19,20 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
+import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy;
+
 /**
  * @author Geraud FOKOU
  */
 public class StrategiesFactory {
+
+    public static LatticeStrategy getLatticeStrategy(Session session, int limitAnswers){	
+	return LatticeStrategy.getLatticeStrategy(session, limitAnswers);
+    }
+    
+    public static LatticeStrategy getLatticeStrategy(Session session){	
+	return LatticeStrategy.getLatticeStrategy(session, 1);
+    }
 
 }

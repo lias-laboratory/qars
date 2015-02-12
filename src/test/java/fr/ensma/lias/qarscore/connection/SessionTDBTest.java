@@ -64,11 +64,12 @@ public class SessionTDBTest {
 	}
 	folderTDB.mkdirs();
 
-	String[] args = new String[3];
+	String[] args = new String[4];
 	args[0] = System.getProperty("user.dir")
-		+ "/src/test/ressources/DataSources/LUBM1";
+		+ "/src/test/resources/DataSources/LUBM1";
 	args[1] = "OWL";
 	args[2] = "TDB";
+	args[3] = "target/TDB/LUBM1";
 	try {
 	    BulkLoader.main(args);
 	} catch (NotYetImplementedException e) {

@@ -50,7 +50,7 @@ public class LatticeStrategy implements RelaxationStrategies {
      * @param answers
      * @return
      */
-    protected static LatticeStrategy getLatticeStrategy(Session s, int answers) {
+    public static LatticeStrategy getLatticeStrategy(Session s, int answers) {
 	return new LatticeStrategy(s, answers);
     }
 

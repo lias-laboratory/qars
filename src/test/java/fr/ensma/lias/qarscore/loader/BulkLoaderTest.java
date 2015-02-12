@@ -92,7 +92,7 @@ public class BulkLoaderTest {
     public void testLoadPostgresSBDDataset() {
 	File[] datafiles = new File[1];
 	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
+		+ "/src/test/resources/DataSources/LUBM1/Uni1.owl");
 
 	BulkLoader.loadPostgresSBDDataset(datafiles, "OWL", POSTGRES_DB_URL,
 		POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
@@ -106,7 +106,7 @@ public class BulkLoaderTest {
     public void testLoadTDBDataset() {
 	File[] datafiles = new File[1];
 	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
+		+ "/src/test/resources/DataSources/LUBM1/Uni1.owl");
 
 	BulkLoader.loadTDBDataset(datafiles, "OWL",
 		System.getProperty("user.dir") + "/target/TDB/LUBM1");
@@ -120,7 +120,7 @@ public class BulkLoaderTest {
     public void testMain() {
 	String[] args = new String[4];
 	args[0] = System.getProperty("user.dir")
-		+ "/src/test/ressources/DataSources/LUBM1";
+		+ "/src/test/resources/DataSources/LUBM1";
 	args[1] = "OWL";
 	args[2] = "TDB";
 	args[3] = System.getProperty("user.dir") + "/target/TDB/LUBM1";

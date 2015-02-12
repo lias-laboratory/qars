@@ -51,7 +51,7 @@ public class SessionSDBTest {
     public void setUp() {
 	File[] datafiles = new File[1];
 	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/ressources/DataSources/LUBM1/Uni1.owl");
+		+ "/src/test/resources/DataSources/LUBM1/Uni1.owl");
 
 	BulkLoader.loadPostgresSBDDataset(datafiles, "OWL", POSTGRES_DB_URL,
 		POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
