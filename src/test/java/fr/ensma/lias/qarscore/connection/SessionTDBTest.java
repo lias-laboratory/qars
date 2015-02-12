@@ -116,7 +116,7 @@ public class SessionTDBTest {
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
 
-	Session session = SessionFactory.getTDBSession("target\\TDB\\LUBM1");
+	Session session = SessionFactory.getTDBSession("target/TDB/LUBM1");
 
 	Assert.assertNotNull(session.getDataset());
 	Assert.assertNotNull(session.getModel());
