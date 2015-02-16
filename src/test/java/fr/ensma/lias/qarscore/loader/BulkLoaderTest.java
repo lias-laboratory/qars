@@ -33,13 +33,6 @@ import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
  */
 public class BulkLoaderTest {
 
-    /** URL of SDB database on postgres **/
-    private final String POSTGRES_DB_URL = "jdbc:postgresql://localhost:5432/";
-
-    /** User credentials */
-    private final String POSTGRES_DB_USER = "postgres";
-    private final String POSTGRES_DB_PASSWORD = "psql";
-
     /**
      * Method for deleting a directory after deleting all the files and folder
      * in this directory
@@ -81,21 +74,6 @@ public class BulkLoaderTest {
 	File folderTDB = new File(System.getProperty("user.dir")
 		+ "/target/TDB/LUBM1");
 	deleteDirectory(folderTDB);
-    }
-
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.loader.BulkLoader#loadPostgresSBDDataset(java.io.File[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
-     * .
-     */
-    // @Test
-    public void testLoadPostgresSBDDataset() {
-	File[] datafiles = new File[1];
-	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/resources/DataSources/LUBM1/Uni1.owl");
-
-	BulkLoader.loadPostgresSBDDataset(datafiles, "OWL", POSTGRES_DB_URL,
-		POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, "LUBM1");
     }
 
     /**

@@ -78,10 +78,7 @@ public class CQuery {
 	if (gr == null) {
 	    gr = new ArrayList<ElementGroup>();
 	}
-	if (selectedVar == null) {
-	    selectedVar = new ArrayList<Node>();
-	}
-
+	
 	return new CQuery(elt, gr, selectedVar);
     }
 
@@ -249,11 +246,11 @@ public class CQuery {
 	}
 
 	Query tempQuery = new Query();
-	ElementGroup elementGroup = new ElementGroup();
+	if(this.getGroupList().size()==0){
+	    return null;
+	}
 
-	elementGroup.addElement(this.getGroupList().get(0));
-
-	tempQuery.setQueryPattern(elementGroup);
+	tempQuery.setQueryPattern(this.getGroupList().get(0));
 	tempQuery.setQuerySelectType();
 	if (selectedQueryVar.size() == 0) {
 	    tempQuery.setQueryResultStar(true);
@@ -263,5 +260,39 @@ public class CQuery {
 	return tempQuery;
 
     }
+    
+    /**
+     * Says if the query is a star query or not
+     * @return
+     */
+    public boolean isStarQuery(){
+	return false;
+    }
 
+    /**
+     * Says if the query is a chain query or not
+     * @return
+     */
+    public boolean isChainQuery(){
+	return false;
+    }
+    
+    /**
+     * Says if the query has a cartesian set
+     * @return
+     */
+    public boolean hasCartesianSet(){
+	return false;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	
+	return getSPARQLQuery().toString();
+    }
+
+    
 }

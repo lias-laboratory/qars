@@ -19,7 +19,7 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
-import static org.junit.Assert.fail;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -66,6 +66,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
      */
     @After
     public void tearDown() {
+	super.teardDown();
     }
 
     /**
@@ -81,8 +82,18 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
 	    Assert.assertTrue(relaxationStrategy.isAFailingCause(oneCause));
 	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(oneCause));
-	    
-	    logger.info(oneCause.getSPARQLQuery());
+	} catch (NotYetImplementedException e) {
+	    e.printStackTrace();
+	    Assert.fail();
+	}
+	
+	try {
+	    CQuery conjunctiveQuery = CQueryFactory
+	        	    .createCQuery(SPARQLQueriesSample.QUERY_15);
+	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
+	    CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
+	    Assert.assertFalse(oneCause.isValidQuery());
+	    Assert.assertFalse(relaxationStrategy.isAFailingCause(oneCause));
 	} catch (NotYetImplementedException e) {
 	    e.printStackTrace();
 	    Assert.fail();
@@ -94,7 +105,35 @@ public class LatticeStrategyTest extends SessionTDBTest {
      */
     @Test
     public void testGetFailingCauses() {
-	fail("Not yet implemented"); // TODO
+	
+	try {
+	    CQuery conjunctiveQuery = CQueryFactory
+	    	    .createCQuery(SPARQLQueriesSample.QUERY_14);
+	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
+	    List<CQuery> allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
+	    Assert.assertTrue(allCauses.size()==1);
+	    Assert.assertTrue(relaxationStrategy.isAFailingCause(allCauses.get(0)));
+	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(allCauses.get(0)));
+	    for( CQuery cause: allCauses){
+		System.out.println(cause.getSPARQLQuery());
+	    }
+	} catch (NotYetImplementedException e) {
+	    e.printStackTrace();
+	    Assert.fail();
+	}
+	
+	try {
+	    CQuery conjunctiveQuery = CQueryFactory
+	        	    .createCQuery(SPARQLQueriesSample.QUERY_15);
+	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
+	    List<CQuery> allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
+	    Assert.assertNull(allCauses);
+	} catch (NotYetImplementedException e) {
+	    e.printStackTrace();
+	    Assert.fail();
+	}
+
+
     }
 
     /**
@@ -102,7 +141,30 @@ public class LatticeStrategyTest extends SessionTDBTest {
      */
     @Test
     public void testGetSuccessSubQueries() {
-	fail("Not yet implemented"); // TODO
+	
+	try {
+	    CQuery conjunctiveQuery = CQueryFactory
+	    	    .createCQuery(SPARQLQueriesSample.QUERY_6);
+	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
+	    List<CQuery> allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
+	    Assert.assertTrue(allCauses.size()==6);
+	    for( CQuery cause: allCauses){
+		Assert.assertTrue(relaxationStrategy.isAFailingCause(cause));
+		Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(cause));
+		System.out.println(cause.getSPARQLQuery());
+	    }
+	    List<CQuery> allSuccess = relaxationStrategy.getSuccessSubQueries();
+	    Assert.assertTrue(allSuccess.size()==5);
+	    for( CQuery success: allSuccess){
+		Assert.assertTrue(!relaxationStrategy.isAFailingCause(success));
+		Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
+		System.out.println(success.getSPARQLQuery());
+	    }
+	} catch (NotYetImplementedException e) {
+	    e.printStackTrace();
+	    Assert.fail();
+	}
+
     }
 
     /**

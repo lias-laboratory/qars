@@ -81,7 +81,7 @@ public class SPARQLQueriesSample {
 
     // 13 triple patterns Composite
     public static String QUERY_6 = LUBM_PREFIX
-	    + "SELECT ?X ?Y1 ?Y2 ?Y3 ?Y4 ?Y5 ?Y6 ?Y7 ?Y8 ?Y9"
+	    + "SELECT ?X ?Y1 ?Y2 ?Y3 ?Y4 ?Y5 ?Y6 ?Y7 ?Y8 ?Y9 "
 	    + "WHERE { ?X rdf:type ub:Lecturer . "
 	    + "?X ub:researchInterest 'Research28' . "
 	    + "?X ub:name ?Y1 . "
@@ -177,7 +177,7 @@ public class SPARQLQueriesSample {
 	    + "?X ub:researchInterest 'Research2' . " + "?X ub:headOf ?Y9 . "
 	    + "?X ub:teacherOf ?Y10. " + "?X ub:advisor ?Y11 ." + " }";
 
-    // Empty query T1/\T2, T1/\T3
+    // Empty query 
     public static String QUERY_14 = LUBM_PREFIX + "SELECT ?X ?Y1 ?Y2 "
 	    + "WHERE { ?X rdf:type ub:FullProfessor . "
 	    + "?X ub:doctoralDegreeFrom <http://www.University8.edu> . "

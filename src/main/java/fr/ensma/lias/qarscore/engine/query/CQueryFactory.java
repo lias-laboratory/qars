@@ -190,7 +190,7 @@ public class CQueryFactory {
      */
     public static CQuery createCQuery(List<CElement> elements) {
 
-	return CQuery.createCQuery(elementList, null, null);
+	return CQuery.createCQuery(elements, null, null);
     }
 
 }

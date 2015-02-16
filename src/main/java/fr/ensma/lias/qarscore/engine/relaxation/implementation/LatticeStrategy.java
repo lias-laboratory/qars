@@ -39,8 +39,8 @@ public class LatticeStrategy implements RelaxationStrategies {
 
     private final int K_ANSWERS;
     private final Session session;
-    private List<CQuery> failingCauses;
-    private List<CQuery> maximalSubqueries;
+    private List<CQuery> failingCauses = null;
+    private List<CQuery> maximalSubqueries = null;
 
     /**
      * Get a lattice strategy relaxation for a session s and a number answers of
@@ -69,19 +69,23 @@ public class LatticeStrategy implements RelaxationStrategies {
 	    return null;
 	}
 
+	if (hasLeastKAnswers(query)) {
+	    return CQueryFactory.createCQuery(new ArrayList<CElement>());
+	}
+
 	if (query.getElementList().size() == 1) {
 	    return CQueryFactory.cloneCQuery(query);
 	}
 
 	List<CElement> causes = new ArrayList<CElement>();
 	CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-	
+
 	for (CElement elt : query.getElementList()) {
 	    tempQuery.getElementList().remove(elt);
 	    CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
 	    temp.getElementList().addAll(causes);
 	    if (temp.isValidQuery()) {
-		if (!hasLeastKAnswers(temp)) {
+		if (hasLeastKAnswers(temp)) {
 		    causes.add(elt);
 		}
 	    }
@@ -93,6 +97,10 @@ public class LatticeStrategy implements RelaxationStrategies {
     public boolean isAFailingCause(CQuery query) {
 
 	if (!query.isValidQuery()) {
+	    return false;
+	}
+
+	if (hasLeastKAnswers(query)) {
 	    return false;
 	}
 
@@ -110,6 +118,9 @@ public class LatticeStrategy implements RelaxationStrategies {
 
     @Override
     public List<CQuery> getFailingCauses(CQuery query) {
+
+	failingCauses = null;
+	maximalSubqueries = null;
 
 	if (!query.isValidQuery()) {
 	    return failingCauses;
@@ -134,32 +145,58 @@ public class LatticeStrategy implements RelaxationStrategies {
 	}
 
 	while (potentialsMaximalSubqueries.size() != 0) {
+
 	    CQuery tempquery = potentialsMaximalSubqueries.get(0);
 
-	    if (hasLeastKAnswers(tempquery)) {
-		maximalSubqueries.add(CQueryFactory.cloneCQuery(tempquery));
+	    if (!tempquery.isValidQuery()) {
 		potentialsMaximalSubqueries.remove(0);
 		continue;
 	    }
 
-	    failingCauses.add(getAFailingCause(tempquery));
-	    ArrayList<CQuery> templist = potentialsMaximalSubqueries;
-	    potentialsMaximalSubqueries = new ArrayList<CQuery>();
+	    if (hasLeastKAnswers(tempquery)) {
+		ArrayList<CQuery> oldMaximalSubqueries = potentialsMaximalSubqueries;
+		potentialsMaximalSubqueries = new ArrayList<CQuery>();
+		potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
+		for (CQuery pxss : oldMaximalSubqueries) {
+		    if (tempquery.getElementList().containsAll(
+			    pxss.getElementList())) {
+			potentialsMaximalSubqueries.remove(pxss);
+		    }
+		}
+		boolean isContained = false;
+		for (CQuery xss : maximalSubqueries) {
+		    if (xss.getElementList().containsAll(
+			    tempquery.getElementList())) {
+			isContained = true;
+			break;
+		    }
+		}
+		if (!isContained) {
+		    maximalSubqueries.add(CQueryFactory.cloneCQuery(tempquery));
+		}
+		continue;
+	    }
 
-	    for (CQuery potentialElt : templist) {
-		if (potentialElt.getElementList().containsAll(
+	    failingCauses.add(getAFailingCause(tempquery));
+	    ArrayList<CQuery> newMaximalSubqueries = new ArrayList<CQuery>();
+	    ArrayList<CQuery> oldMaximalSubqueries = new ArrayList<CQuery>();
+
+	    for (CQuery pxss : potentialsMaximalSubqueries) {
+		if (pxss.getElementList().containsAll(
 			failingCauses.get(failingCauses.size() - 1)
 				.getElementList())) {
 		    for (CElement elt : failingCauses.get(
 			    failingCauses.size() - 1).getElementList()) {
-			CQuery temp = CQueryFactory.cloneCQuery(tempquery);
+			CQuery temp = CQueryFactory.cloneCQuery(pxss);
 			temp.getElementList().remove(elt);
-			potentialsMaximalSubqueries.add(temp);
+			newMaximalSubqueries.add(temp);
 		    }
 		} else {
-		    potentialsMaximalSubqueries.add(potentialElt);
+		    oldMaximalSubqueries.add(pxss);
 		}
 	    }
+	    potentialsMaximalSubqueries = oldMaximalSubqueries;
+	    potentialsMaximalSubqueries.addAll(newMaximalSubqueries);
 	}
 	return failingCauses;
     }
@@ -184,6 +221,7 @@ public class LatticeStrategy implements RelaxationStrategies {
 	    try {
 		ResultSet results = qexec.execSelect();
 		while (results.hasNext() && (nbSolution < K_ANSWERS)) {
+		    results.nextSolution();
 		    nbSolution++;
 		}
 	    } finally {
