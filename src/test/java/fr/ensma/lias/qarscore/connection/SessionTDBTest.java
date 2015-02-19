@@ -26,12 +26,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 import fr.ensma.lias.qarscore.loader.BulkLoader;
@@ -111,70 +106,5 @@ public class SessionTDBTest {
 
 	Assert.assertTrue(ontoJson.contains(entity));
 
-    }
-
-    @Test
-    public void testSessionTDB1() {
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
-	Properties.setOntoLang("OWL");
-
-	Session session = SessionFactory.getTDBSession("target/TDB/LUBM1");
-
-	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getModel());
-	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());
-	Assert.assertTrue(session.getOntologyTriple().size() != 0);
-
-	ExtendedIterator<OntClass> listRoot = session.getOntologyModel()
-		.listHierarchyRootClasses();
-	while (listRoot.hasNext()) {
-	    OntClass currentClass = listRoot.next();
-	    System.out.println(currentClass.getURI() + "-->"
-		    + currentClass.getRDFType(false).getLocalName()
-		    + "-----------------------------------------------");
-	}
-
-	ExtendedIterator<OntClass> allClass = session.getOntologyModel()
-		.listClasses();
-	while (allClass.hasNext()) {
-	    OntClass currentClass = allClass.next();
-	    System.out.println(currentClass.getURI() + "-->"
-		    + currentClass.getRDFType(false).getLocalName()
-		    + "-----------------------------------------------");
-	    StmtIterator properties = currentClass.listProperties();
-	    while (properties.hasNext()) {
-		Statement currentProperty = properties.next();
-		System.out.println(currentProperty.getSubject() + "-->"
-			+ currentProperty.getPredicate() + "-->"
-			+ currentProperty.getObject());
-		System.out
-			.println("----------------------------------------------------------------------------");
-	    }
-
-	    ExtendedIterator<OntProperty> allProperties = currentClass
-		    .listDeclaredProperties(true);
-	    while (allProperties.hasNext()) {
-		OntProperty currentProperty = allProperties.next();
-		System.out.println(currentProperty.getURI() + "-->"
-			+ currentProperty.getRDFType(false).getLocalName()
-			+ "-----------------------------------------------");
-		System.out.println(currentProperty.getDomain() + "-->"
-			+ currentProperty.getLocalName() + "-->"
-			+ currentProperty.getRange());
-		System.out
-			.println("----------------------------------------------------------------------------");
-	    }
-	}
-
-	// ExtendedIterator<OntProperty> allProperties =
-	// session.getOntologyModel().listAllOntProperties();
-	// while(allProperties.hasNext()){
-	// OntProperty currentProperty = allProperties.next();
-	// System.out.println(currentProperty.getURI()+"-->"+currentProperty.getRDFType(false).getLocalName()+"-----------------------------------------------");
-	// System.out.println(currentProperty.getDomain()+"-->"+currentProperty.getLocalName()+"-->"+currentProperty.getRange());
-	// System.out.println("----------------------------------------------------------------------------");
-	// }
     }
 }

@@ -44,8 +44,8 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class LatticeStrategyTest extends SessionTDBTest {
 
     private Session session;
-    RelaxationStrategies relaxationStrategy;
-    Logger logger;
+    private RelaxationStrategies relaxationStrategy;
+    private Logger logger;
     
     /**
      * @throws java.lang.Exception
@@ -58,6 +58,12 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	Properties.setOntoLang("OWL");
 
 	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
+	Assert.assertNotNull(session.getDataset());
+	Assert.assertNotNull(session.getModel());
+	Assert.assertNotNull(session.getOntologyModel());
+	Assert.assertNull(session.getDataStore());
+	Assert.assertNotNull(session.getBaseModel());
+
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session);
     }
 
@@ -115,7 +121,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    Assert.assertTrue(relaxationStrategy.isAFailingCause(allCauses.get(0)));
 	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(allCauses.get(0)));
 	    for( CQuery cause: allCauses){
-		System.out.println(cause.getSPARQLQuery());
+		logger.info(cause.getSPARQLQuery());
 	    }
 	} catch (NotYetImplementedException e) {
 	    e.printStackTrace();
@@ -151,14 +157,14 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    for( CQuery cause: allCauses){
 		Assert.assertTrue(relaxationStrategy.isAFailingCause(cause));
 		Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(cause));
-		System.out.println(cause.getSPARQLQuery());
+		logger.info(cause.getSPARQLQuery());
 	    }
 	    List<CQuery> allSuccess = relaxationStrategy.getSuccessSubQueries();
 	    Assert.assertTrue(allSuccess.size()==5);
 	    for( CQuery success: allSuccess){
 		Assert.assertTrue(!relaxationStrategy.isAFailingCause(success));
 		Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
-		System.out.println(success.getSPARQLQuery());
+		logger.info(success.getSPARQLQuery());
 	    }
 	} catch (NotYetImplementedException e) {
 	    e.printStackTrace();
