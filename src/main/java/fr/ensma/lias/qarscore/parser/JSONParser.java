@@ -22,10 +22,10 @@ package fr.ensma.lias.qarscore.parser;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /**
@@ -83,12 +83,11 @@ public class JSONParser {
 			currentClass.getNameSpace(), currentClass.getURI(),
 			currentClass.getLocalName());
 
-		ExtendedIterator<OntProperty> allProperties = currentClass
-			.listDeclaredProperties(true);
+		ExtendedIterator<DatatypeProperty> allProperties = MODEL_TO_PARSE.listDatatypeProperties();
 
 		while (allProperties.hasNext()) {
-		    OntProperty currentProperty = allProperties.next();
-		    if (currentProperty.isDatatypeProperty()) {
+		    DatatypeProperty currentProperty = allProperties.next();
+		    if (currentProperty.getDomain().getURI().equalsIgnoreCase(currentClass.getURI())) {
 			if (currentProperty.getRange() == null) {
 			    nodejs.add(currentProperty.getLocalName(),
 				    currentProperty.getRDFType().getLocalName());
