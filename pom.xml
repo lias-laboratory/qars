@@ -26,6 +26,11 @@
 			<version>4.12</version>
 		</dependency>
 		<dependency>
+			<groupId>com.googlecode.combinatoricslib</groupId>
+			<artifactId>combinatoricslib</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
 			<artifactId>jsonld-java-jena</artifactId>
 			<version>0.4.1</version>
@@ -38,7 +43,12 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.5</version>		
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.roaringbitmap</groupId>
+			<artifactId>RoaringBitmap</artifactId>
+			<version>0.4.8</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -81,23 +91,23 @@
 			</plugin>
 		</plugins>
 	</build>
-	   <ciManagement>
-        <system>Jenkins</system>
-        <url>http://s-localforge-lias/jenkins/job/QaRSCore/</url>
-    </ciManagement>
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>Internal Releases</name>
-            <url>http://s-localforge-lias/nexus/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>Internal Snapshots</name>
-            <url>http://s-localforge-lias/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-    <scm>
-        <url>scm:git:http://s-localforge-lias/gitblit/r/java/qarscore.git</url>
-    </scm>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://s-localforge-lias/jenkins/job/QaRSCore/</url>
+	</ciManagement>
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Internal Releases</name>
+			<url>http://s-localforge-lias/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Internal Snapshots</name>
+			<url>http://s-localforge-lias/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<url>scm:git:http://s-localforge-lias/gitblit/r/java/qarscore.git</url>
+	</scm>
 </project>

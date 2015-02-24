@@ -27,6 +27,8 @@ import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.sdb.Store;
 
+import fr.ensma.lias.qarscore.statement.Statement;
+
 /**
  * @author Geraud FOKOU
  */
@@ -45,4 +47,8 @@ public interface Session {
     Store getDataStore();
 
     String getOntoJSON();
+    
+    Statement createStatement();
+    
+    Statement createStatement(String query);
 }

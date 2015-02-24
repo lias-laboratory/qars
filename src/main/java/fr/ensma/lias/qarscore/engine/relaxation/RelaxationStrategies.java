@@ -52,9 +52,21 @@ public interface RelaxationStrategies {
     List<CQuery> getFailingCauses(CQuery query);
 
     /**
+     * Return the list of all the MFS of the CQuery previously compute
+     * @return
+     */
+    List<CQuery> getFailingCauses();
+
+    /**
      * Return all the maximal success subqueries of a CQuery query
      * 
      * @param query
+     * @return
+     */
+    List<CQuery> getSuccessSubQueries(CQuery query);
+    
+    /**
+     * Return all the maximal success subqueries of a CQuery previously compute 
      * @return
      */
     List<CQuery> getSuccessSubQueries();
@@ -67,4 +79,6 @@ public interface RelaxationStrategies {
      * @return
      */
     boolean hasLeastKAnswers(CQuery query);
+
+   
 }

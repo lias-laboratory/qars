@@ -47,9 +47,6 @@ public class LatticeStrategyTest extends SessionTDBTest {
     private RelaxationStrategies relaxationStrategy;
     private Logger logger;
     
-    /**
-     * @throws java.lang.Exception
-     */
     @Before
     public void setUp() {
 	super.setUp();
@@ -67,9 +64,6 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @After
     public void tearDown() {
 	super.teardDown();
@@ -89,7 +83,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    Assert.assertTrue(relaxationStrategy.isAFailingCause(oneCause));
 	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(oneCause));
 	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
+	    logger.error(e);
 	    Assert.fail();
 	}
 	
@@ -101,7 +95,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    Assert.assertFalse(oneCause.isValidQuery());
 	    Assert.assertFalse(relaxationStrategy.isAFailingCause(oneCause));
 	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
+	    logger.error(e);
 	    Assert.fail();
 	}
     }
@@ -124,7 +118,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		logger.info(cause.getSPARQLQuery());
 	    }
 	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
+	    logger.error(e);
 	    Assert.fail();
 	}
 	
@@ -135,7 +129,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    List<CQuery> allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
 	    Assert.assertNull(allCauses);
 	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
+	    logger.error(e);
 	    Assert.fail();
 	}
 
@@ -167,7 +161,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		logger.info(success.getSPARQLQuery());
 	    }
 	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
+	    logger.error(e);
 	    Assert.fail();
 	}
 
@@ -184,7 +178,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    	    .createCQuery(SPARQLQueriesSample.QUERY_17);
 	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
 	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
+	    logger.error(e);
 	    Assert.fail();
 	}
     }

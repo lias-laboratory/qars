@@ -29,7 +29,10 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+
 import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.statement.Statement;
+import fr.ensma.lias.qarscore.statement.StatementFactory;
 
 /**
  * @author Geraud FOKOU
@@ -107,5 +110,21 @@ public abstract class JenaSession implements Session {
 	getBaseModel().write(writer, "JSON-LD");
 
 	return writer.toString();
+    }
+    
+    /**
+     * Create a statement for execute query
+     */
+    @Override
+    public Statement createStatement(){	
+	return StatementFactory.getStatement(session);
+    }
+    
+    /**
+     * Create a statement for execute query
+     */
+    @Override   
+    public Statement createStatement(String query){
+	return StatementFactory.getStatement(session, query);
     }
 }

@@ -83,17 +83,22 @@ public class JSONParser {
 			currentClass.getNameSpace(), currentClass.getURI(),
 			currentClass.getLocalName());
 
-		ExtendedIterator<DatatypeProperty> allProperties = MODEL_TO_PARSE.listDatatypeProperties();
+		ExtendedIterator<DatatypeProperty> allProperties = MODEL_TO_PARSE
+			.listDatatypeProperties();
 
 		while (allProperties.hasNext()) {
 		    DatatypeProperty currentProperty = allProperties.next();
-		    if (currentProperty.getDomain().getURI().equalsIgnoreCase(currentClass.getURI())) {
-			if (currentProperty.getRange() == null) {
-			    nodejs.add(currentProperty.getLocalName(),
-				    currentProperty.getRDFType().getLocalName());
-			} else {
-			    nodejs.add(currentProperty.getLocalName(),
-				    currentProperty.getRange().getLocalName());
+		    if (currentProperty.getDomain() != null) {
+			if (currentProperty.getDomain().getURI()
+				.equalsIgnoreCase(currentClass.getURI())) {
+			    if (currentProperty.getRange() == null) {
+				nodejs.add(currentProperty.getLocalName(),
+					"string");
+			    } else {
+				nodejs.add(currentProperty.getLocalName(),
+					currentProperty.getRange()
+						.getLocalName());
+			    }
 			}
 		    }
 		}
@@ -117,7 +122,8 @@ public class JSONParser {
 
 	    if ((currentProperty.getDomain() != null)
 		    && (currentProperty.getRange() != null)) {
-		NodeJSON sourceEdge = getNodeJSON(currentProperty.getDomain().getURI());
+		NodeJSON sourceEdge = getNodeJSON(currentProperty.getDomain()
+			.getURI());
 		NodeJSON destinationEdge = getNodeJSON(currentProperty
 			.getRange().getURI());
 		if ((sourceEdge != null) && (destinationEdge != null)) {
@@ -146,7 +152,8 @@ public class JSONParser {
 		    .listSubClasses(true);
 	    while (childClasses.hasNext()) {
 		OntClass currentChildClass = childClasses.next();
-		NodeJSON currentChildNodeJson = getNodeJSON(currentChildClass.getURI());
+		NodeJSON currentChildNodeJson = getNodeJSON(currentChildClass
+			.getURI());
 		if (currentChildNodeJson != null) {
 		    EdgesJSON edge = new EdgesJSON("SubClassOf",
 			    "http://www.w3.org/2000/01/rdf-schema#",

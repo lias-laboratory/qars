@@ -285,6 +285,24 @@ public class CQuery {
 	return false;
     }
     
+    /**
+     * Says if the query is a subquery of the query
+     * @param query
+     * @return
+     */
+    public boolean isSubQueryOf(CQuery query){
+	return false;
+    }
+    
+    /**
+     * Says if query is a subquery of the current query
+     * @param query
+     * @return
+     */
+    public boolean isSuperQueryOf(CQuery query){
+	return false;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

@@ -53,5 +53,5 @@ public class SessionTDB extends JenaSession {
     @Override
     public Store getDataStore() {
 	return null;
-    }
+    }    
 }

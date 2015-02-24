@@ -21,6 +21,7 @@ package fr.ensma.lias.qarscore.connection;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,6 +38,8 @@ import fr.ensma.lias.qarscore.properties.Properties;
  */
 public class SessionTDBTest {
 
+    private Logger logger;
+    
     /**
      * Method for deleting a directory after deleting all the files and folder
      * in this directory
@@ -58,6 +61,8 @@ public class SessionTDBTest {
 
     @Before
     public void setUp() {
+	
+	logger = Logger.getRootLogger();
 	File folderTDB = new File("target/TDB/LUBM1");
 	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
@@ -73,7 +78,7 @@ public class SessionTDBTest {
 	try {
 	    BulkLoader.main(args);
 	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
+	    logger.error(e);
 	    Assert.fail();
 	}
     }

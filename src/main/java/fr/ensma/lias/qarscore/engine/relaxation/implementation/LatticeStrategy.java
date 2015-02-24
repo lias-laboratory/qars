@@ -37,8 +37,8 @@ import fr.ensma.lias.qarscore.engine.relaxation.RelaxationStrategies;
  */
 public class LatticeStrategy implements RelaxationStrategies {
 
-    private final int K_ANSWERS;
-    private final Session session;
+    private final int NUMBER_OF_EXPECTED_ANSWERS;
+    private final Session SESSION;
     private List<CQuery> failingCauses = null;
     private List<CQuery> maximalSubqueries = null;
 
@@ -58,8 +58,8 @@ public class LatticeStrategy implements RelaxationStrategies {
      * private constructor
      */
     private LatticeStrategy(Session s, int answers) {
-	K_ANSWERS = answers;
-	session = s;
+	NUMBER_OF_EXPECTED_ANSWERS = answers;
+	SESSION = s;
     }
 
     @Override
@@ -202,8 +202,19 @@ public class LatticeStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public List<CQuery> getSuccessSubQueries() {
+    public List<CQuery> getSuccessSubQueries(CQuery query) {
+	
+	this.getFailingCauses(query);
+	return maximalSubqueries;
+    }
 
+    @Override
+    public List<CQuery> getFailingCauses() {
+	return failingCauses;
+    }
+
+    @Override
+    public List<CQuery> getSuccessSubQueries() {
 	return maximalSubqueries;
     }
 
@@ -217,10 +228,10 @@ public class LatticeStrategy implements RelaxationStrategies {
 	int nbSolution = 0;
 	try {
 	    QueryExecution qexec = QueryExecutionFactory.create(
-		    query.getSPARQLQuery(), session.getDataset());
+		    query.getSPARQLQuery(), SESSION.getDataset());
 	    try {
 		ResultSet results = qexec.execSelect();
-		while (results.hasNext() && (nbSolution < K_ANSWERS)) {
+		while (results.hasNext() && (nbSolution < NUMBER_OF_EXPECTED_ANSWERS)) {
 		    results.nextSolution();
 		    nbSolution++;
 		}
@@ -229,6 +240,7 @@ public class LatticeStrategy implements RelaxationStrategies {
 	    }
 	} finally {
 	}
-	return nbSolution >= K_ANSWERS;
+	return nbSolution >= NUMBER_OF_EXPECTED_ANSWERS;
     }
+    
 }
