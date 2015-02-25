@@ -70,16 +70,19 @@ public class StatementTest extends SessionTDBTest {
     @Test
     public void testExecuteQuery() {
 	
-	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_20);
+	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_19);
 	Assert.assertNotNull(queryStatement.getQuery());
 
 	ResultSet result = queryStatement.executeSPARQLQuery();
 	Assert.assertNotNull(result);
+	int i =0;
 	while(result.hasNext()){
 	    QuerySolution solution = result.next();
 	    Logger.getRootLogger().info(solution.get(result.getResultVars().get(0)));
+	    i++;
 	}
 	
 	Assert.assertTrue(!result.hasNext());
+	Logger.getRootLogger().info(i);
     }
 }

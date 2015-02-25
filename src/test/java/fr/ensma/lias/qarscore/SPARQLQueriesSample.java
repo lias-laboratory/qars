@@ -217,8 +217,8 @@ public class SPARQLQueriesSample {
 
     // Not Empty query, six answers
     public static String QUERY_19 = LUBM_PREFIX
-	    + "SELECT ?X  "
-	    + "WHERE { ?X ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0> . "
+	    + "SELECT ?Y ?X  "
+	    + "WHERE { ?X ub:publicationAuthor ?Y . "
 	    + "}";
 
     // 
