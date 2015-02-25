@@ -75,7 +75,7 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 	
 	initializeMatrix();
     }
-
+    
     /**
      * Initialize the matrix for the computation of xss and mfs
      */
@@ -92,6 +92,7 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 
 	    ResultSet result_set = SESSION.createStatement(
 		    current_query.toString()).executeSPARQLQuery();
+	    
 	    while (result_set.hasNext()) {
 		
 		QuerySolution result = result_set.next();

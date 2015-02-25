@@ -140,4 +140,15 @@ public class MappingResult {
 	    return false;
 	return true;
     }
+    
+    @Override
+    public String toString(){
+	
+	String result="";
+	
+	for(int i=0; i<size; i++){
+	    result = result + variables[i]+" ";
+	}
+	return result;
+    }
 }

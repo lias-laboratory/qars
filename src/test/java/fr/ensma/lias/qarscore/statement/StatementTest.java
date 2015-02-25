@@ -19,12 +19,14 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.statement;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.Session;
@@ -80,12 +82,17 @@ public class StatementTest extends SessionTDBTest {
 
     @Test
     public void testExecuteQuery() {
+	
 	queryStatement.preparedQuery(LUBM_QUERY);
 	Assert.assertNotNull(queryStatement.getQuery());
 
 	ResultSet result = queryStatement.executeSPARQLQuery();
 	Assert.assertNotNull(result);
-
-	Assert.assertTrue(result.hasNext());
+	while(result.hasNext()){
+	    QuerySolution solution = result.next();
+	    Logger.getRootLogger().info(solution.get(result.getResultVars().get(0)));
+	}
+	
+	Assert.assertTrue(!result.hasNext());
     }
 }

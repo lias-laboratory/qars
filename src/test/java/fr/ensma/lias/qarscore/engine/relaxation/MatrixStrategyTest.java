@@ -21,6 +21,8 @@ package fr.ensma.lias.qarscore.engine.relaxation;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -28,6 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.connection.Session;
@@ -35,6 +40,7 @@ import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MappingResult;
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 import fr.ensma.lias.qarscore.properties.Properties;
 
@@ -68,6 +74,55 @@ public class MatrixStrategyTest extends SessionTDBTest {
 	super.teardDown();
     }
 
+    public void testMapping() {
+
+	HashMap<RDFNode, Integer> dictionary = new HashMap<RDFNode, Integer>();
+	Integer dictionary_size = 0;
+
+	try {
+	    CQuery conjunctiveQuery = CQueryFactory
+		    .createCQuery(SPARQLQueriesSample.QUERY_19);
+
+	    ResultSet result_set = session.createStatement(
+		    conjunctiveQuery.toString()).executeSPARQLQuery();
+
+	    MappingResult result_mapping = null ;
+	    
+	    while (result_set.hasNext()) {
+
+		QuerySolution result = result_set.next();
+
+		int[] listMapping = new int[conjunctiveQuery
+			.getMentionedQueryVarNames().size()];
+
+		for (int j = 1; j <= conjunctiveQuery
+			.getMentionedQueryVarNames().size(); j++) {
+		    RDFNode val = result.get(conjunctiveQuery
+			    .getMentionedQueryVarNames().get(j - 1));
+		    Integer intVal = null;
+		    if (val == null)
+			intVal = 0;
+		    else {
+			intVal = dictionary.get(val);
+			if (intVal == null) {
+			    dictionary_size++;
+			    dictionary.put(val, dictionary_size);
+			    intVal = dictionary_size;
+			}
+		    }
+		    listMapping[j - 1] = intVal;
+		}
+		result_mapping = new MappingResult(listMapping);
+	    }
+	    Assert.assertTrue(dictionary_size==6);
+	    Assert.assertTrue(result_mapping.getVariables().length==1);
+	    logger.info(result_mapping.toString());
+	} catch (NotYetImplementedException e) {
+	    logger.error(e);
+	    Assert.fail();
+	}
+    }
+    
     /**
      * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy#hasLeastKAnswers(fr.ensma.lias.qarscore.engine.query.CQuery)}.
      */
@@ -93,27 +148,10 @@ public class MatrixStrategyTest extends SessionTDBTest {
 	    CQuery conjunctiveQuery = CQueryFactory
 	    	    .createCQuery(SPARQLQueriesSample.QUERY_14);
 	    relaxationStrategy = StrategiesFactory.getMatrixStrategy(session, conjunctiveQuery);
-	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	    CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
-	    Assert.assertTrue(relaxationStrategy.isAFailingCause(oneCause));
-	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(oneCause));
 	} catch (NotYetImplementedException e) {
 	    logger.error(e);
 	    Assert.fail();
 	}
-	
-//	try {
-//	    CQuery conjunctiveQuery = CQueryFactory
-//	        	    .createCQuery(SPARQLQueriesSample.QUERY_15);
-//	    relaxationStrategy = StrategiesFactory.getMatrixStrategy(session, conjunctiveQuery);
-//	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-//	    CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
-//	    Assert.assertFalse(oneCause.isValidQuery());
-//	    Assert.assertFalse(relaxationStrategy.isAFailingCause(oneCause));
-//	} catch (NotYetImplementedException e) {
-//	    e.printStackTrace();
-//	    Assert.fail();
-//	}
     }
 
     /**

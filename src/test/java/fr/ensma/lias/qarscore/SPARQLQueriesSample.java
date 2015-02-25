@@ -205,7 +205,7 @@ public class SPARQLQueriesSample {
 	    + "WHERE { ?X rdf:type ub:Publication . "
 	    + "?X ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0> . "
 	    + "}";
-
+   
     // Empty query with Filter clause
     public static String QUERY_18 = LUBM_PREFIX + "SELECT ?X ?Z " + "WHERE { "
 	    + "{?X rdf:type ub:FullProfessor . "
@@ -214,5 +214,11 @@ public class SPARQLQueriesSample {
 	    + "{ ?Z rdf:type ub:AssociateProfessor . "
 	    + "?Z ub:publicationAuthor ?Y . " + "?Z ub:age ?age1 . "
 	    + "Filter (?age1<40)}" + "}";
+
+    // Not Empty query, six answers
+    public static String QUERY_19 = LUBM_PREFIX
+	    + "SELECT ?X  "
+	    + "WHERE { ?X ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0> . "
+	    + "}";
 
 }
