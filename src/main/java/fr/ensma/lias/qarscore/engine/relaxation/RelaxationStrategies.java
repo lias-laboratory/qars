@@ -33,6 +33,14 @@ public interface RelaxationStrategies {
      * 
      * @return
      */
+    CQuery getOneMFS();
+    
+    /**
+     * return a query failure cause for the query
+     * 
+     * @return
+     */
+
     CQuery getOneMFS(CQuery query);
 
     /**

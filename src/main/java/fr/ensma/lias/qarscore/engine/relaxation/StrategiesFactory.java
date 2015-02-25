@@ -31,15 +31,16 @@ import fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.
  */
 public class StrategiesFactory {
 
-    public static LatticeStrategy getLatticeStrategy(Session session, int limitAnswers){	
-	return LatticeStrategy.getLatticeStrategy(session, limitAnswers);
+    public static LatticeStrategy getLatticeStrategy(Session session, CQuery query, int limitAnswers){	
+	return LatticeStrategy.getLatticeStrategy(session, query, limitAnswers);
     }
     
-    public static LatticeStrategy getLatticeStrategy(Session session){	
-	return LatticeStrategy.getLatticeStrategy(session, 1);
+    public static LatticeStrategy getLatticeStrategy(Session session, CQuery query){	
+	return LatticeStrategy.getLatticeStrategy(session, query, 1);
     }
 
-    public static MatrixStrategy getMatrixStrategy(Session session, int limitAnswers, CQuery query){
+    public static MatrixStrategy getMatrixStrategy(Session session,  CQuery query, int limitAnswers){
+	
 	if(query.isStarQuery()){
 	    return new MatrixStrategyStarQuery(session, query, limitAnswers);
 	}

@@ -39,6 +39,9 @@ public class LatticeStrategy implements RelaxationStrategies {
 
     private final int NUMBER_OF_EXPECTED_ANSWERS;
     private final Session SESSION;
+    private final CQuery CURRENT_CONJUNCTIVE_QUERY;
+    private final List<CQuery> MFS_CURRENT_QUERY;
+    private final List<CQuery> XSS_CURRENT_QUERY;
     private List<CQuery> failingCauses = null;
     private List<CQuery> maximalSubqueries = null;
 
@@ -50,16 +53,25 @@ public class LatticeStrategy implements RelaxationStrategies {
      * @param answers
      * @return
      */
-    public static LatticeStrategy getLatticeStrategy(Session s, int answers) {
-	return new LatticeStrategy(s, answers);
+    public static LatticeStrategy getLatticeStrategy(Session s, CQuery query, int answers) {
+	return new LatticeStrategy(s, query, answers);
     }
 
     /**
      * private constructor
      */
-    private LatticeStrategy(Session s, int answers) {
+    private LatticeStrategy(Session s, CQuery query, int answers) {
 	NUMBER_OF_EXPECTED_ANSWERS = answers;
 	SESSION = s;
+	CURRENT_CONJUNCTIVE_QUERY = query;
+	MFS_CURRENT_QUERY = getAllMFS(CURRENT_CONJUNCTIVE_QUERY);
+	XSS_CURRENT_QUERY = maximalSubqueries;
+    }
+
+    @Override
+    public CQuery getOneMFS() {
+
+	return MFS_CURRENT_QUERY.get(0);
     }
 
     @Override
@@ -200,19 +212,21 @@ public class LatticeStrategy implements RelaxationStrategies {
 
     @Override
     public List<CQuery> getAllXSS(CQuery query) {
-	
+
 	this.getAllMFS(query);
 	return maximalSubqueries;
     }
 
     @Override
     public List<CQuery> getAllMFS() {
-	return failingCauses;
+
+	return MFS_CURRENT_QUERY;
     }
 
     @Override
     public List<CQuery> getAllXSS() {
-	return maximalSubqueries;
+
+	return XSS_CURRENT_QUERY;
     }
 
     @Override
@@ -228,7 +242,8 @@ public class LatticeStrategy implements RelaxationStrategies {
 		    query.getSPARQLQuery(), SESSION.getDataset());
 	    try {
 		ResultSet results = qexec.execSelect();
-		while (results.hasNext() && (nbSolution < NUMBER_OF_EXPECTED_ANSWERS)) {
+		while (results.hasNext()
+			&& (nbSolution < NUMBER_OF_EXPECTED_ANSWERS)) {
 		    results.nextSolution();
 		    nbSolution++;
 		}
@@ -239,5 +254,4 @@ public class LatticeStrategy implements RelaxationStrategies {
 	}
 	return nbSolution >= NUMBER_OF_EXPECTED_ANSWERS;
     }
-    
 }

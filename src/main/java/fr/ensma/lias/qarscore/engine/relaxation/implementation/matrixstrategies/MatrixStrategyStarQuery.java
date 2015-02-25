@@ -68,7 +68,7 @@ public class MatrixStrategyStarQuery extends MatrixStrategy {
 
 	for (int i = 0; i < number_Element; i++) {
 	    List<CElement> elements = new ArrayList<CElement>();
-	    elements.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i - 1));
+	    elements.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i));
 	    CQuery current_query = CQueryFactory.createCQuery(elements);
 
 	    ResultSet result_set = SESSION.createStatement(

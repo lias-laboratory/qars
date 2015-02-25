@@ -247,6 +247,16 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     }
 
     @Override
+    public CQuery getOneMFS() {
+
+	if (failingCauses != null) {
+	    return failingCauses.get(0);
+	}
+
+	return null;
+    }
+
+    @Override
     public CQuery getOneMFS(CQuery query) {
 
 	if (query != CURRENT_CONJUNCTIVE_QUERY) {
@@ -348,7 +358,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 		    RoaringBitmap bitRes = getBitVector(listeTi.get(0));
 		    for (int j = 1; j < listeTi.size(); j++) {
 			bitRes = RoaringBitmap.and(bitRes,
-				getBitVector(listeTi.get(i)));
+				getBitVector(listeTi.get(j)));
 		    }
 		    if (bitRes.isEmpty()) {
 			boolean isSuper = false;
@@ -370,7 +380,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 		for (int i = 0; i < listeTi.size(); i++) {
 		    int index = listeTi.get(i);
 		    causes.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(
-			    index));
+			    index-1));
 		}
 		failingCauses.add(CQueryFactory.createCQuery(causes));
 	    }
@@ -445,7 +455,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 
     @Override
     public List<CQuery> getAllMFS() {
-	
+
 	if (failingCauses != null) {
 	    return failingCauses;
 	}
@@ -455,7 +465,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 
     @Override
     public List<CQuery> getAllXSS() {
-	
+
 	if (failingCauses != null) {
 	    return maximalSubqueries;
 	}
