@@ -165,9 +165,8 @@ public class BulkLoader {
      * BulkLoader Folder/File name, Onto_Lang, "SDB", login, password, dbname
      * 
      * @param args
-     * @throws NotYetImplementedException
      */
-    public static void main(String[] args) throws NotYetImplementedException {
+    public static void main(String[] args) {
 
 	int argsLenth = args.length;
 	if (argsLenth < 4) {

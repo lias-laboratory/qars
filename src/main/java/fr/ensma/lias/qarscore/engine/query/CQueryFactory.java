@@ -95,9 +95,7 @@ public class CQueryFactory {
      * Extract clause in an expression of SPARQL query
      * @param expression
      */
-    private static void getClause(Expr expression)
-	    throws NotYetImplementedException {
-
+    private static void getClause(Expr expression) {
 	if (expression instanceof E_LogicalAnd) {
 	    ElementFilter currentFilterElt = new ElementFilter(
 		    ((E_LogicalAnd) expression).getArg1());
