@@ -53,7 +53,8 @@ public class LatticeStrategy implements RelaxationStrategies {
      * @param answers
      * @return
      */
-    public static LatticeStrategy getLatticeStrategy(Session s, CQuery query, int answers) {
+    public static LatticeStrategy getLatticeStrategy(Session s, CQuery query,
+	    int answers) {
 	return new LatticeStrategy(s, query, answers);
     }
 

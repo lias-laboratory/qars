@@ -34,7 +34,7 @@ public interface RelaxationStrategies {
      * @return
      */
     CQuery getOneMFS();
-    
+
     /**
      * return a query failure cause for the query
      * 
@@ -61,6 +61,7 @@ public interface RelaxationStrategies {
 
     /**
      * Return the list of all the MFS of the CQuery previously compute
+     * 
      * @return
      */
     List<CQuery> getAllMFS();
@@ -72,9 +73,10 @@ public interface RelaxationStrategies {
      * @return
      */
     List<CQuery> getAllXSS(CQuery query);
-    
+
     /**
-     * Return all the maximal success subqueries of a CQuery previously compute 
+     * Return all the maximal success subqueries of a CQuery previously compute
+     * 
      * @return
      */
     List<CQuery> getAllXSS();
@@ -87,6 +89,4 @@ public interface RelaxationStrategies {
      * @return
      */
     boolean hasLeastKAnswers(CQuery query);
-
-   
 }
