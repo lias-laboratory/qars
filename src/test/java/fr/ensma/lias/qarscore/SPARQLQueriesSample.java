@@ -143,8 +143,10 @@ public class SPARQLQueriesSample {
 	    + "?X ub:undergraduateDegreeFrom <http://www.Department0.University0.edu> . "
 	    + "?X ub:mastersDegreeFrom <http://www.Department0.University0.edu> . "
 	    + "?X ub:doctoralDegreeFrom <http://www.Department0.University0.edu> . "
-	    + "?X ub:worksFor ?Y7 . " + "?X ub:researchInterest ?Y8 . "
-	    + "?X ub:headOf ?Y9 . " + " }";
+	    + "?X ub:worksFor ?Y7 . " 
+	    + "?X ub:researchInterest ?Y8 . "
+	    + "?X ub:headOf ?Y9 . " 
+	    + " }";
 
     // 15 triple patterns Composite
     public static String QUERY_10 = LUBM_PREFIX
@@ -215,16 +217,23 @@ public class SPARQLQueriesSample {
 	    + "?Z ub:publicationAuthor ?Y . " + "?Z ub:age ?age1 . "
 	    + "Filter (?age1<40)}" + "}";
 
-    // Not Empty query, six answers
+    // Not Empty query, 10634 answers
     public static String QUERY_19 = LUBM_PREFIX
-	    + "SELECT ?Y ?X  "
-	    + "WHERE { ?X ub:publicationAuthor ?Y . "
+	    + "SELECT ?X ?Y "
+	    + "WHERE { ?X ub:publicationAuthor ?Y ."
 	    + "}";
 
-    // 
+    //Not Empty query, 41 answers
     public static String QUERY_20 = LUBM_PREFIX
 	    + "SELECT ?X "
 	    + "WHERE { ?X ub:worksFor <http://www.Department0.University0.edu> . "
+	    + "}";
+
+    //  Empty query
+    public static String QUERY_21 = LUBM_PREFIX
+	    + "SELECT ?X ?Y "
+	    + "WHERE {  ?X ub:publicationAuthor ?Y. "
+	    + " ?Y ub:worksFor <http://www.Department0.University0.edu> ."
 	    + "}";
 
 }

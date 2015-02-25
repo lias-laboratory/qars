@@ -70,7 +70,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getAFailingCause(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getOneMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
      * .
      */
     @Test
@@ -80,34 +80,34 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		.createCQuery(SPARQLQueriesSample.QUERY_14);
 	Assert.assertTrue(!relaxationStrategy
 		.hasLeastKAnswers(conjunctiveQuery));
-	CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
-	Assert.assertTrue(relaxationStrategy.isAFailingCause(oneCause));
+	CQuery oneCause = relaxationStrategy.getOneMFS(conjunctiveQuery);
+	Assert.assertTrue(relaxationStrategy.isMFS(oneCause));
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(oneCause));
 
 	conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_15);
 	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
+	oneCause = relaxationStrategy.getOneMFS(conjunctiveQuery);
 	Assert.assertFalse(oneCause.isValidQuery());
-	Assert.assertFalse(relaxationStrategy.isAFailingCause(oneCause));
+	Assert.assertFalse(relaxationStrategy.isMFS(oneCause));
     }
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getFailingCauses(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getAllMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
      * .
      */
     @Test
     public void testGetFailingCauses() {
 
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_14);
+		.createCQuery(SPARQLQueriesSample.QUERY_13);
 	Assert.assertTrue(!relaxationStrategy
 		.hasLeastKAnswers(conjunctiveQuery));
 	List<CQuery> allCauses = relaxationStrategy
-		.getFailingCauses(conjunctiveQuery);
-	Assert.assertTrue(allCauses.size() == 1);
-	Assert.assertTrue(relaxationStrategy.isAFailingCause(allCauses.get(0)));
+		.getAllMFS(conjunctiveQuery);
+	//Assert.assertTrue(allCauses.size() == 1);
+	Assert.assertTrue(relaxationStrategy.isMFS(allCauses.get(0)));
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(allCauses.get(0)));
 	for (CQuery cause : allCauses) {
 	    logger.info(cause.getSPARQLQuery());
@@ -115,14 +115,14 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		    .createCQuery(SPARQLQueriesSample.QUERY_15);
 	    Assert.assertTrue(relaxationStrategy
 		    .hasLeastKAnswers(conjunctiveQuery));
-	    allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
+	    allCauses = relaxationStrategy.getAllMFS(conjunctiveQuery);
 	    Assert.assertNull(allCauses);
 	}
     }
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getSuccessSubQueries()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getAllXSS()}
      * .
      */
     @Test
@@ -133,17 +133,17 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	Assert.assertTrue(!relaxationStrategy
 		.hasLeastKAnswers(conjunctiveQuery));
 	List<CQuery> allCauses = relaxationStrategy
-		.getFailingCauses(conjunctiveQuery);
+		.getAllMFS(conjunctiveQuery);
 	Assert.assertTrue(allCauses.size() == 6);
 	for (CQuery cause : allCauses) {
-	    Assert.assertTrue(relaxationStrategy.isAFailingCause(cause));
+	    Assert.assertTrue(relaxationStrategy.isMFS(cause));
 	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(cause));
 	    logger.info(cause.getSPARQLQuery());
 	}
-	List<CQuery> allSuccess = relaxationStrategy.getSuccessSubQueries();
+	List<CQuery> allSuccess = relaxationStrategy.getAllXSS();
 	Assert.assertTrue(allSuccess.size() == 5);
 	for (CQuery success : allSuccess) {
-	    Assert.assertTrue(!relaxationStrategy.isAFailingCause(success));
+	    Assert.assertTrue(!relaxationStrategy.isMFS(success));
 	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
 	    logger.info(success.getSPARQLQuery());
 	}

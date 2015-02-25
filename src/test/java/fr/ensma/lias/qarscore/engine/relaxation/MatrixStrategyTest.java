@@ -21,7 +21,9 @@ package fr.ensma.lias.qarscore.engine.relaxation;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -38,6 +40,7 @@ import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
+import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MappingResult;
@@ -74,7 +77,7 @@ public class MatrixStrategyTest extends SessionTDBTest {
     }
 
     @Test
-    public void testMapping() {
+    public void testMappingWithOnePattern() {
 
 	HashMap<RDFNode, Integer> dictionary = new HashMap<RDFNode, Integer>();
 	Integer dictionary_size = 0;
@@ -118,6 +121,65 @@ public class MatrixStrategyTest extends SessionTDBTest {
 	Assert.assertTrue(result_mapping.getVariables().length == 2);
     }
 
+    @Test
+    public void testMappingWithTwoPattern() {
+
+	HashMap<RDFNode, Integer> dictionary = new HashMap<RDFNode, Integer>();
+	Integer dictionary_size = 0;
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_21);
+
+	for (int i = 1; i <= conjunctiveQuery.getElementList().size(); i++) {
+
+	    List<CElement> elements = new ArrayList<CElement>();
+	    elements.add(conjunctiveQuery.getElementList().get(i - 1));
+	    CQuery current_query = CQueryFactory.createCQuery(elements);
+	    
+	    ResultSet result_set = session.createStatement(
+		    current_query.toString()).executeSPARQLQuery();
+
+	    MappingResult result_mapping = null;
+
+	    while (result_set.hasNext()) {
+
+		QuerySolution result = result_set.next();
+
+		int[] listMapping = new int[conjunctiveQuery
+			.getMentionedQueryVarNames().size()];
+
+		for (int j = 1; j <= conjunctiveQuery
+			.getMentionedQueryVarNames().size(); j++) {
+		    RDFNode val = result.get(conjunctiveQuery
+			    .getMentionedQueryVarNames().get(j - 1));
+		    Integer intVal = null;
+		    if (val == null)
+			intVal = 0;
+		    else {
+			intVal = dictionary.get(val);
+			if (intVal == null) {
+			    dictionary_size++;
+			    dictionary.put(val, dictionary_size);
+			    intVal = dictionary_size;
+			}
+		    }
+		    listMapping[j - 1] = intVal;
+		}
+		result_mapping = new MappingResult(listMapping);
+		logger.info(result_mapping.toString());
+	    }
+	    
+	    if(i==1){
+		Assert.assertTrue(dictionary_size == 8061);
+	    }
+	    else {
+		Assert.assertTrue(dictionary_size == 8065);
+	    }
+	    
+	    Assert.assertTrue(result_mapping.getVariables().length == 2);
+	}
+    }
+
     /**
      * Test method for
      * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy#hasLeastKAnswers(fr.ensma.lias.qarscore.engine.query.CQuery)}
@@ -135,7 +197,7 @@ public class MatrixStrategyTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy#getAFailingCause(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy#getOneMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
      * .
      */
     @Test
@@ -150,7 +212,7 @@ public class MatrixStrategyTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy#getFailingCauses(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy#getAllMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
      * .
      */
     @Test
@@ -160,7 +222,7 @@ public class MatrixStrategyTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy#getSuccessSubQueries(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy#getAllXSS(fr.ensma.lias.qarscore.engine.query.CQuery)}
      * .
      */
     @Test

@@ -24,6 +24,7 @@ import java.util.List;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.syntax.ElementFilter;
 import com.hp.hpl.jena.sparql.syntax.ElementGroup;
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
@@ -266,7 +267,31 @@ public class CQuery {
      * @return
      */
     public boolean isStarQuery(){
-	return false;
+	
+	boolean isFirst = true;
+	Node central_var = null;
+	
+	for(CElement element:this.elementList){
+	    
+	    if(element.getElement() instanceof ElementPathBlock){
+		 TriplePath currentClause = ((ElementPathBlock) element.getElement()).getPattern().getList().get(0);
+		if(isFirst){
+		    if (currentClause.getSubject().isVariable()) {
+			central_var = currentClause.getSubject();
+			isFirst = false;
+		    }
+		    else{
+			return false;
+		    }
+		}
+		else{
+		    if (!currentClause.getSubject().sameValueAs(central_var)) {
+			return false;
+		    }
+		}
+	    }
+	}
+	return true;
     }
 
     /**

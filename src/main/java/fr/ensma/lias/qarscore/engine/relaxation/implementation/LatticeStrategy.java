@@ -63,7 +63,7 @@ public class LatticeStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public CQuery getAFailingCause(CQuery query) {
+    public CQuery getOneMFS(CQuery query) {
 
 	if (!query.isValidQuery()) {
 	    return null;
@@ -94,7 +94,7 @@ public class LatticeStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public boolean isAFailingCause(CQuery query) {
+    public boolean isMFS(CQuery query) {
 
 	if (!query.isValidQuery()) {
 	    return false;
@@ -117,24 +117,21 @@ public class LatticeStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public List<CQuery> getFailingCauses(CQuery query) {
+    public List<CQuery> getAllMFS(CQuery query) {
 
-	failingCauses = null;
-	maximalSubqueries = null;
+	failingCauses = new ArrayList<CQuery>();
+	maximalSubqueries = new ArrayList<CQuery>();
 
 	if (!query.isValidQuery()) {
 	    return failingCauses;
 	}
-
-	maximalSubqueries = new ArrayList<CQuery>();
 
 	if (hasLeastKAnswers(query)) {
 	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
 	    return failingCauses;
 	}
 
-	failingCauses = new ArrayList<CQuery>();
-	failingCauses.add(getAFailingCause(query));
+	failingCauses.add(getOneMFS(query));
 
 	ArrayList<CQuery> potentialsMaximalSubqueries = new ArrayList<CQuery>();
 	for (CElement elt : failingCauses.get(failingCauses.size() - 1)
@@ -177,7 +174,7 @@ public class LatticeStrategy implements RelaxationStrategies {
 		continue;
 	    }
 
-	    failingCauses.add(getAFailingCause(tempquery));
+	    failingCauses.add(getOneMFS(tempquery));
 	    ArrayList<CQuery> newMaximalSubqueries = new ArrayList<CQuery>();
 	    ArrayList<CQuery> oldMaximalSubqueries = new ArrayList<CQuery>();
 
@@ -202,19 +199,19 @@ public class LatticeStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public List<CQuery> getSuccessSubQueries(CQuery query) {
+    public List<CQuery> getAllXSS(CQuery query) {
 	
-	this.getFailingCauses(query);
+	this.getAllMFS(query);
 	return maximalSubqueries;
     }
 
     @Override
-    public List<CQuery> getFailingCauses() {
+    public List<CQuery> getAllMFS() {
 	return failingCauses;
     }
 
     @Override
-    public List<CQuery> getSuccessSubQueries() {
+    public List<CQuery> getAllXSS() {
 	return maximalSubqueries;
     }
 

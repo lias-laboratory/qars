@@ -186,7 +186,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public boolean isAFailingCause(CQuery query) {
+    public boolean isMFS(CQuery query) {
 
 	if (query != CURRENT_CONJUNCTIVE_QUERY) {
 	    return false;
@@ -247,7 +247,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public CQuery getAFailingCause(CQuery query) {
+    public CQuery getOneMFS(CQuery query) {
 
 	if (query != CURRENT_CONJUNCTIVE_QUERY) {
 	    return null;
@@ -300,10 +300,10 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public List<CQuery> getFailingCauses(CQuery query) {
+    public List<CQuery> getAllMFS(CQuery query) {
 
 	if (query != CURRENT_CONJUNCTIVE_QUERY) {
-	    return null;
+	    return new ArrayList<CQuery>();
 	}
 
 	if (failingCauses != null) {
@@ -379,14 +379,14 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public List<CQuery> getSuccessSubQueries(CQuery query) {
+    public List<CQuery> getAllXSS(CQuery query) {
 
 	if (query != CURRENT_CONJUNCTIVE_QUERY) {
-	    return null;
+	    return new ArrayList<CQuery>();
 	}
 
 	if (failingCauses != null) {
-	    return failingCauses;
+	    return maximalSubqueries;
 	}
 
 	maximalSubqueries = new ArrayList<CQuery>();
@@ -444,13 +444,23 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public List<CQuery> getFailingCauses() {
-	return failingCauses;
+    public List<CQuery> getAllMFS() {
+	
+	if (failingCauses != null) {
+	    return failingCauses;
+	}
+
+	return new ArrayList<CQuery>();
     }
 
     @Override
-    public List<CQuery> getSuccessSubQueries() {
-	return maximalSubqueries;
+    public List<CQuery> getAllXSS() {
+	
+	if (failingCauses != null) {
+	    return maximalSubqueries;
+	}
+
+	return new ArrayList<CQuery>();
     }
 
 }

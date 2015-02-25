@@ -33,7 +33,7 @@ public interface RelaxationStrategies {
      * 
      * @return
      */
-    CQuery getAFailingCause(CQuery query);
+    CQuery getOneMFS(CQuery query);
 
     /**
      * Says if a CQuery is a MFS or not
@@ -41,7 +41,7 @@ public interface RelaxationStrategies {
      * @param query
      * @return
      */
-    boolean isAFailingCause(CQuery query);
+    boolean isMFS(CQuery query);
 
     /**
      * Return the list of all the MFS of the CQuery query
@@ -49,13 +49,13 @@ public interface RelaxationStrategies {
      * @param query
      * @return
      */
-    List<CQuery> getFailingCauses(CQuery query);
+    List<CQuery> getAllMFS(CQuery query);
 
     /**
      * Return the list of all the MFS of the CQuery previously compute
      * @return
      */
-    List<CQuery> getFailingCauses();
+    List<CQuery> getAllMFS();
 
     /**
      * Return all the maximal success subqueries of a CQuery query
@@ -63,13 +63,13 @@ public interface RelaxationStrategies {
      * @param query
      * @return
      */
-    List<CQuery> getSuccessSubQueries(CQuery query);
+    List<CQuery> getAllXSS(CQuery query);
     
     /**
      * Return all the maximal success subqueries of a CQuery previously compute 
      * @return
      */
-    List<CQuery> getSuccessSubQueries();
+    List<CQuery> getAllXSS();
 
     /**
      * Says if the CQuery query has at least K answers in the dataset

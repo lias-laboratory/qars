@@ -70,7 +70,7 @@ public class StatementTest extends SessionTDBTest {
     @Test
     public void testExecuteQuery() {
 	
-	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_19);
+	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_21);
 	Assert.assertNotNull(queryStatement.getQuery());
 
 	ResultSet result = queryStatement.executeSPARQLQuery();

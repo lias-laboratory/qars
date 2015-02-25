@@ -144,6 +144,41 @@ public class CQueryTest {
 
     /**
      * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#isValidQuery()}.
+     */
+    @Test
+    public void testIsStarQuery() {
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_13);
+	Assert.assertTrue(conjunctiveQuery.isValidQuery());
+	Assert.assertTrue(conjunctiveQuery.isStarQuery());
+	for (CElement elt : conjunctiveQuery.getElementList()) {
+	    if (elt.getElement() instanceof ElementPathBlock) {
+		logger.info(((ElementPathBlock) elt.getElement()).getPattern()
+			.toString());
+	    } else {
+		logger.info(((ElementFilter) elt.getElement()).toString());
+	    }
+	}
+	
+	conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_10);
+	Assert.assertTrue(conjunctiveQuery.isValidQuery());
+	Assert.assertTrue(!conjunctiveQuery.isStarQuery());
+	for (CElement elt : conjunctiveQuery.getElementList()) {
+	    if (elt.getElement() instanceof ElementPathBlock) {
+		logger.info(((ElementPathBlock) elt.getElement()).getPattern()
+			.toString());
+	    } else {
+		logger.info(((ElementFilter) elt.getElement()).toString());
+	    }
+	}
+    }
+
+    
+    /**
+     * Test method for
      * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getSPARQLQuery()}.
      */
     @Test
