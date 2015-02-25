@@ -19,8 +19,6 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
-import static org.junit.Assert.fail;
-
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -120,7 +118,6 @@ public class MatrixStrategyTest extends SessionTDBTest {
 	List<CQuery> allCauses = relaxationStrategy
 		.getAllMFS(conjunctiveQuery);
 	Assert.assertTrue(allCauses.size() == 14);
-	logger.info(allCauses.size());
 	for (CQuery cause : allCauses) {
 	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(cause));
 	    logger.info(cause.getSPARQLQuery());
@@ -134,7 +131,25 @@ public class MatrixStrategyTest extends SessionTDBTest {
      */
     @Test
     public void testGetSuccessSubQueriesCQuery() {
-	fail("Not yet implemented"); // TODO
+	
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_13);
+	relaxationStrategy = StrategiesFactory.getMatrixStrategy(session,
+		conjunctiveQuery);
+	Assert.assertTrue(!relaxationStrategy
+		.hasLeastKAnswers(conjunctiveQuery));
+	List<CQuery> allCauses = relaxationStrategy
+		.getAllMFS(conjunctiveQuery);
+	Assert.assertTrue(allCauses.size() == 14);
+	for (CQuery cause : allCauses) {
+	    logger.info(cause.getSPARQLQuery());
+	}
+	List<CQuery> allSuccess = relaxationStrategy.getAllXSS();
+	Assert.assertTrue(allSuccess.size() == 4);
+	for (CQuery success : allSuccess) {
+	    logger.info(success.getSPARQLQuery());
+	}
+
     }
 
 }

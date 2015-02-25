@@ -73,12 +73,22 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     protected final CQuery CURRENT_CONJUNCTIVE_QUERY;
 
     /**
+     * Final MFS
+     */
+    protected List<CQuery> MFS_CURRENT_QUERY;
+    
+    /**
+     * Final XSS
+     */
+    protected  List<CQuery> XSS_CURRENT_QUERY;
+
+    /**
      * List of CQuery Causes of query failure
      */
     protected List<CQuery> failingCauses = null;
 
     /**
-     * List if CQuery maximal succeeding subqueries
+     * List of CQuery maximal succeeding subqueries
      */
     protected List<CQuery> maximalSubqueries = null;
 
@@ -395,7 +405,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 	    return new ArrayList<CQuery>();
 	}
 
-	if (failingCauses != null) {
+	if (maximalSubqueries != null) {
 	    return maximalSubqueries;
 	}
 
@@ -422,7 +432,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 		RoaringBitmap bitRes = getBitVector(listeTi.get(0));
 		for (int j = 1; j < listeTi.size(); j++) {
 		    bitRes = RoaringBitmap.and(bitRes,
-			    getBitVector(listeTi.get(i)));
+			    getBitVector(listeTi.get(j)));
 		}
 		if (!bitRes.isEmpty()) {
 		    boolean isSubSet = false;
@@ -445,7 +455,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 	    for (int i = 0; i < listeTi.size(); i++) {
 		int index = listeTi.get(i);
 		causes.add(CURRENT_CONJUNCTIVE_QUERY.getElementList()
-			.get(index));
+			.get(index-1));
 	    }
 	    maximalSubqueries.add(CQueryFactory.createCQuery(causes));
 	}
@@ -456,21 +466,21 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     @Override
     public List<CQuery> getAllMFS() {
 
-	if (failingCauses != null) {
-	    return failingCauses;
+	if (MFS_CURRENT_QUERY == null) {
+	    MFS_CURRENT_QUERY = this.getAllMFS(CURRENT_CONJUNCTIVE_QUERY);
 	}
 
-	return new ArrayList<CQuery>();
+	return MFS_CURRENT_QUERY;
     }
 
     @Override
     public List<CQuery> getAllXSS() {
 
-	if (failingCauses != null) {
-	    return maximalSubqueries;
+	if (XSS_CURRENT_QUERY == null) {
+	    XSS_CURRENT_QUERY = this.getAllXSS(CURRENT_CONJUNCTIVE_QUERY);
 	}
 
-	return new ArrayList<CQuery>();
+	return XSS_CURRENT_QUERY;
     }
 
 }
