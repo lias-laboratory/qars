@@ -96,7 +96,6 @@ public class CQueryFactory {
      * @param expression
      */
     private static void getClause(Expr expression) {
-
 	if (expression instanceof E_LogicalAnd) {
 	    ElementFilter currentFilterElt = new ElementFilter(
 		    ((E_LogicalAnd) expression).getArg1());
