@@ -29,7 +29,6 @@ import com.hp.hpl.jena.sparql.syntax.ElementFilter;
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 
 import fr.ensma.lias.qarscore.SPARQLQueriesSample;
-import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 
 /**
  * @author Geraud FOKOU
@@ -37,7 +36,7 @@ import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 public class CQueryTest {
 
     private Logger logger;
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -60,38 +59,26 @@ public class CQueryTest {
     @Test
     public void testGetElementList() {
 
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-		    .createCQuery(SPARQLQueriesSample.QUERY_13);
-	    Assert.assertEquals(15, conjunctiveQuery.getElementList().size());
-	    for (CElement elt : conjunctiveQuery.getElementList()) {
-		Assert.assertTrue(elt.getElement() instanceof ElementPathBlock);
-		logger.info(((ElementPathBlock) elt.getElement())
-			.getPattern().toString());
-	    }
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_13);
+	Assert.assertEquals(15, conjunctiveQuery.getElementList().size());
+	for (CElement elt : conjunctiveQuery.getElementList()) {
+	    Assert.assertTrue(elt.getElement() instanceof ElementPathBlock);
+	    logger.info(((ElementPathBlock) elt.getElement()).getPattern()
+		    .toString());
 	}
 
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-		    .createCQuery(SPARQLQueriesSample.QUERY_18);
-	    Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
-	    for (CElement elt : conjunctiveQuery.getElementList()) {
-		if (elt.getElement() instanceof ElementPathBlock) {
-		    logger.info(((ElementPathBlock) elt.getElement())
-			    .getPattern().toString());
-		} else {
-		    logger.info(((ElementFilter) elt.getElement())
-			    .toString());
-		}
-
+	conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_18);
+	Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
+	for (CElement elt : conjunctiveQuery.getElementList()) {
+	    if (elt.getElement() instanceof ElementPathBlock) {
+		logger.info(((ElementPathBlock) elt.getElement()).getPattern()
+			.toString());
+	    } else {
+		logger.info(((ElementFilter) elt.getElement()).toString());
 	    }
 
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
 	}
 
     }
@@ -103,24 +90,13 @@ public class CQueryTest {
     @Test
     public void testGetGroupList() {
 
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-		    .createCQuery(SPARQLQueriesSample.QUERY_13);
-	    Assert.assertEquals(1, conjunctiveQuery.getGroupList().size());
-	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
-	    Assert.fail();
-	}
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_13);
+	Assert.assertEquals(1, conjunctiveQuery.getGroupList().size());
 
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-		    .createCQuery(SPARQLQueriesSample.QUERY_18);
-	    Assert.assertEquals(3, conjunctiveQuery.getGroupList().size());
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
-
+	conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_18);
+	Assert.assertEquals(3, conjunctiveQuery.getGroupList().size());
     }
 
     /**
@@ -133,21 +109,12 @@ public class CQueryTest {
     @Test
     public void testGetSelectedQueryVarNames() {
 
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-		    .createCQuery(SPARQLQueriesSample.QUERY_18);
-	    Assert.assertEquals(2, conjunctiveQuery.getSelectedQueryVar()
-		    .size());
-	    Assert.assertEquals(5, conjunctiveQuery.getMentionedQueryVar()
-		    .size());
-	    logger.info(conjunctiveQuery.getSelectedQueryVarNames()
-		    .toString());
-	    logger.info(conjunctiveQuery.getMentionedQueryVarNames()
-		    .toString());
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_18);
+	Assert.assertEquals(2, conjunctiveQuery.getSelectedQueryVar().size());
+	Assert.assertEquals(5, conjunctiveQuery.getMentionedQueryVar().size());
+	logger.info(conjunctiveQuery.getSelectedQueryVarNames().toString());
+	logger.info(conjunctiveQuery.getMentionedQueryVarNames().toString());
 
     }
 
@@ -158,27 +125,20 @@ public class CQueryTest {
     @Test
     public void testIsValidQuery() {
 
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-		    .createCQuery(SPARQLQueriesSample.QUERY_18);
-	    Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
-	    Assert.assertTrue(conjunctiveQuery.isValidQuery());
-	    conjunctiveQuery.getElementList().remove(2);
-	    Assert.assertFalse(conjunctiveQuery.isValidQuery());
-	    for (CElement elt : conjunctiveQuery.getElementList()) {
-		if (elt.getElement() instanceof ElementPathBlock) {
-		    logger.info(((ElementPathBlock) elt.getElement())
-			    .getPattern().toString());
-		} else {
-		    logger.info(((ElementFilter) elt.getElement())
-			    .toString());
-		}
-
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_18);
+	Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
+	Assert.assertTrue(conjunctiveQuery.isValidQuery());
+	conjunctiveQuery.getElementList().remove(2);
+	Assert.assertFalse(conjunctiveQuery.isValidQuery());
+	for (CElement elt : conjunctiveQuery.getElementList()) {
+	    if (elt.getElement() instanceof ElementPathBlock) {
+		logger.info(((ElementPathBlock) elt.getElement()).getPattern()
+			.toString());
+	    } else {
+		logger.info(((ElementFilter) elt.getElement()).toString());
 	    }
 
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
 	}
     }
 
@@ -189,15 +149,10 @@ public class CQueryTest {
     @Test
     public void testGetSPARQLQuery() {
 
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-		    .createCQuery(SPARQLQueriesSample.QUERY_18);
-	    Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
-	    Assert.assertTrue(conjunctiveQuery.isValidQuery());
-	    logger.info(conjunctiveQuery.getSPARQLQuery());
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_18);
+	Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
+	Assert.assertTrue(conjunctiveQuery.isValidQuery());
+	logger.info(conjunctiveQuery.getSPARQLQuery());
     }
 }

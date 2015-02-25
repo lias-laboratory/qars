@@ -35,7 +35,6 @@ import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -46,7 +45,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
     private Session session;
     private RelaxationStrategies relaxationStrategy;
     private Logger logger;
-    
+
     @Before
     public void setUp() {
 	super.setUp();
@@ -70,116 +69,96 @@ public class LatticeStrategyTest extends SessionTDBTest {
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getAFailingCause(fr.ensma.lias.qarscore.engine.query.CQuery)}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getAFailingCause(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * .
      */
     @Test
     public void testGetAFailingCause() {
-	
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-	    	    .createCQuery(SPARQLQueriesSample.QUERY_14);
-	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	    CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
-	    Assert.assertTrue(relaxationStrategy.isAFailingCause(oneCause));
-	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(oneCause));
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
-	
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-	        	    .createCQuery(SPARQLQueriesSample.QUERY_15);
-	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	    CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
-	    Assert.assertFalse(oneCause.isValidQuery());
-	    Assert.assertFalse(relaxationStrategy.isAFailingCause(oneCause));
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_14);
+	Assert.assertTrue(!relaxationStrategy
+		.hasLeastKAnswers(conjunctiveQuery));
+	CQuery oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
+	Assert.assertTrue(relaxationStrategy.isAFailingCause(oneCause));
+	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(oneCause));
+
+	conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_15);
+	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
+	oneCause = relaxationStrategy.getAFailingCause(conjunctiveQuery);
+	Assert.assertFalse(oneCause.isValidQuery());
+	Assert.assertFalse(relaxationStrategy.isAFailingCause(oneCause));
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getFailingCauses(fr.ensma.lias.qarscore.engine.query.CQuery)}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getFailingCauses(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * .
      */
     @Test
     public void testGetFailingCauses() {
-	
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-	    	    .createCQuery(SPARQLQueriesSample.QUERY_14);
-	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	    List<CQuery> allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
-	    Assert.assertTrue(allCauses.size()==1);
-	    Assert.assertTrue(relaxationStrategy.isAFailingCause(allCauses.get(0)));
-	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(allCauses.get(0)));
-	    for( CQuery cause: allCauses){
-		logger.info(cause.getSPARQLQuery());
-	    }
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
-	
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-	        	    .createCQuery(SPARQLQueriesSample.QUERY_15);
-	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	    List<CQuery> allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_14);
+	Assert.assertTrue(!relaxationStrategy
+		.hasLeastKAnswers(conjunctiveQuery));
+	List<CQuery> allCauses = relaxationStrategy
+		.getFailingCauses(conjunctiveQuery);
+	Assert.assertTrue(allCauses.size() == 1);
+	Assert.assertTrue(relaxationStrategy.isAFailingCause(allCauses.get(0)));
+	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(allCauses.get(0)));
+	for (CQuery cause : allCauses) {
+	    logger.info(cause.getSPARQLQuery());
+	    conjunctiveQuery = CQueryFactory
+		    .createCQuery(SPARQLQueriesSample.QUERY_15);
+	    Assert.assertTrue(relaxationStrategy
+		    .hasLeastKAnswers(conjunctiveQuery));
+	    allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
 	    Assert.assertNull(allCauses);
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
 	}
-
-
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getSuccessSubQueries()}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getSuccessSubQueries()}
+     * .
      */
     @Test
     public void testGetSuccessSubQueries() {
-	
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-	    	    .createCQuery(SPARQLQueriesSample.QUERY_6);
-	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	    List<CQuery> allCauses = relaxationStrategy.getFailingCauses(conjunctiveQuery);
-	    Assert.assertTrue(allCauses.size()==6);
-	    for( CQuery cause: allCauses){
-		Assert.assertTrue(relaxationStrategy.isAFailingCause(cause));
-		Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(cause));
-		logger.info(cause.getSPARQLQuery());
-	    }
-	    List<CQuery> allSuccess = relaxationStrategy.getSuccessSubQueries();
-	    Assert.assertTrue(allSuccess.size()==5);
-	    for( CQuery success: allSuccess){
-		Assert.assertTrue(!relaxationStrategy.isAFailingCause(success));
-		Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
-		logger.info(success.getSPARQLQuery());
-	    }
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
 
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_6);
+	Assert.assertTrue(!relaxationStrategy
+		.hasLeastKAnswers(conjunctiveQuery));
+	List<CQuery> allCauses = relaxationStrategy
+		.getFailingCauses(conjunctiveQuery);
+	Assert.assertTrue(allCauses.size() == 6);
+	for (CQuery cause : allCauses) {
+	    Assert.assertTrue(relaxationStrategy.isAFailingCause(cause));
+	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(cause));
+	    logger.info(cause.getSPARQLQuery());
+	}
+	List<CQuery> allSuccess = relaxationStrategy.getSuccessSubQueries();
+	Assert.assertTrue(allSuccess.size() == 5);
+	for (CQuery success : allSuccess) {
+	    Assert.assertTrue(!relaxationStrategy.isAFailingCause(success));
+	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
+	    logger.info(success.getSPARQLQuery());
+	}
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#hasLeastKAnswers(fr.ensma.lias.qarscore.engine.query.CQuery)}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#hasLeastKAnswers(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * .
      */
     @Test
     public void testHasLeastKAnswers() {
-	
-	try {
-	    CQuery conjunctiveQuery = CQueryFactory
-	    	    .createCQuery(SPARQLQueriesSample.QUERY_17);
-	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_17);
+	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
     }
 }

@@ -58,10 +58,8 @@ public class CElement {
 
     /**
      * Private constructor
-     * 
-     * @throws NotYetImplementedException
      */
-    private CElement(Element currentElement) throws NotYetImplementedException {
+    private CElement(Element currentElement) {
 
 	super();
 	TriplePath currentClause;
@@ -104,10 +102,8 @@ public class CElement {
      * 
      * @param triplet
      * @return
-     * @throws NotYetImplementedException
      */
-    protected static CElement createCTriple(Element currentElement)
-	    throws NotYetImplementedException {
+    protected static CElement createCTriple(Element currentElement) {
 	return new CElement(currentElement);
     }
 

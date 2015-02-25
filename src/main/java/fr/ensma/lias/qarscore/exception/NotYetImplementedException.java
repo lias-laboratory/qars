@@ -22,7 +22,7 @@ package fr.ensma.lias.qarscore.exception;
 /**
  * @author Geraud FOKOU
  */
-public class NotYetImplementedException extends Exception {
+public class NotYetImplementedException extends RuntimeException {
 
     private static final long serialVersionUID = 1346560659118448325L;
 

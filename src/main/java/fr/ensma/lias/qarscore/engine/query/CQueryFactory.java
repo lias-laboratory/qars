@@ -52,12 +52,9 @@ public class CQueryFactory {
 
     /**
      * extract clause in an element of SPARQL query
-     * 
      * @param element
-     * @throws NotYetImplementedException
      */
-    private static void getClause(Element element)
-	    throws NotYetImplementedException {
+    private static void getClause(Element element) {
 
 	if (element instanceof ElementPathBlock) {
 	    List<TriplePath> triplePathList = ((ElementPathBlock) element)
@@ -96,9 +93,7 @@ public class CQueryFactory {
 
     /**
      * Extract clause in an expression of SPARQL query
-     * 
      * @param expression
-     * @throws NotYetImplementedException
      */
     private static void getClause(Expr expression)
 	    throws NotYetImplementedException {
@@ -119,14 +114,10 @@ public class CQueryFactory {
 
     /**
      * For a SPARQL Query query creates the corresponding CQuery
-     * 
      * @param query
      * @return
-     * @throws NotYetImplementedException
      */
-    public static CQuery createCQuery(Query query)
-	    throws NotYetImplementedException {
-
+    public static CQuery createCQuery(Query query) {
 	groupList = new ArrayList<ElementGroup>();
 	elementList = new ArrayList<CElement>();
 	groupList.add((ElementGroup) query.getQueryPattern());
@@ -143,7 +134,6 @@ public class CQueryFactory {
 
     /**
      * Create a copy a CQuery
-     * 
      * @param query
      * @return
      */
@@ -171,14 +161,10 @@ public class CQueryFactory {
 
     /**
      * Create a conjunctive query with a SPARQL string query
-     * 
      * @param sparqlQuery
      * @return
-     * @throws NotYetImplementedException
      */
-    public static CQuery createCQuery(String sparqlQuery)
-	    throws NotYetImplementedException {
-
+    public static CQuery createCQuery(String sparqlQuery) {
 	return createCQuery(QueryFactory.create(sparqlQuery));
     }
 

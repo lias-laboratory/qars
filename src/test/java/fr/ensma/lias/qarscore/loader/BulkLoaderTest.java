@@ -22,11 +22,8 @@ package fr.ensma.lias.qarscore.loader;
 import java.io.File;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 
 /**
  * @author Geraud FOKOU
@@ -57,6 +54,7 @@ public class BulkLoaderTest {
      */
     @Before
     public void setUp() {
+	
 	File folderTDB = new File(System.getProperty("user.dir")
 		+ "/target/TDB/LUBM1");
 	if (folderTDB.exists()) {
@@ -102,12 +100,6 @@ public class BulkLoaderTest {
 	args[1] = "OWL";
 	args[2] = "TDB";
 	args[3] = System.getProperty("user.dir") + "/target/TDB/LUBM1";
-	try {
 	    BulkLoader.main(args);
-	} catch (NotYetImplementedException e) {
-	    e.printStackTrace();
-	    Assert.fail();
-	}
     }
-
 }

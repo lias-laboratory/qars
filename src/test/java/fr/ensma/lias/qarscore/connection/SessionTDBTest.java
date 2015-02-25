@@ -21,7 +21,6 @@ package fr.ensma.lias.qarscore.connection;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,7 +28,6 @@ import org.junit.Test;
 
 import com.hp.hpl.jena.ontology.OntModelSpec;
 
-import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 import fr.ensma.lias.qarscore.loader.BulkLoader;
 import fr.ensma.lias.qarscore.properties.Properties;
 
@@ -38,8 +36,6 @@ import fr.ensma.lias.qarscore.properties.Properties;
  */
 public class SessionTDBTest {
 
-    private Logger logger;
-    
     /**
      * Method for deleting a directory after deleting all the files and folder
      * in this directory
@@ -61,8 +57,7 @@ public class SessionTDBTest {
 
     @Before
     public void setUp() {
-	
-	logger = Logger.getRootLogger();
+
 	File folderTDB = new File("target/TDB/LUBM1");
 	if (folderTDB.exists()) {
 	    deleteDirectory(folderTDB);
@@ -70,17 +65,11 @@ public class SessionTDBTest {
 	folderTDB.mkdirs();
 
 	String[] args = new String[4];
-	args[0] = System.getProperty("user.dir")
-		+ "/src/test/resources/";
+	args[0] = System.getProperty("user.dir") + "/src/test/resources/";
 	args[1] = "OWL";
 	args[2] = "TDB";
 	args[3] = "target/TDB/LUBM1";
-	try {
-	    BulkLoader.main(args);
-	} catch (NotYetImplementedException e) {
-	    logger.error(e);
-	    Assert.fail();
-	}
+	BulkLoader.main(args);
     }
 
     @After
@@ -93,6 +82,7 @@ public class SessionTDBTest {
 
     @Test
     public void testSessionTDB() {
+
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
 
