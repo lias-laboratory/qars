@@ -74,6 +74,7 @@ public class MatrixStrategyTest extends SessionTDBTest {
 	super.teardDown();
     }
 
+    @Test
     public void testMapping() {
 
 	HashMap<RDFNode, Integer> dictionary = new HashMap<RDFNode, Integer>();
@@ -113,10 +114,10 @@ public class MatrixStrategyTest extends SessionTDBTest {
 		    listMapping[j - 1] = intVal;
 		}
 		result_mapping = new MappingResult(listMapping);
+		logger.info(result_mapping.toString());
 	    }
 	    Assert.assertTrue(dictionary_size==6);
 	    Assert.assertTrue(result_mapping.getVariables().length==1);
-	    logger.info(result_mapping.toString());
 	} catch (NotYetImplementedException e) {
 	    logger.error(e);
 	    Assert.fail();

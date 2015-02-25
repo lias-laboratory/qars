@@ -221,4 +221,10 @@ public class SPARQLQueriesSample {
 	    + "WHERE { ?X ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0> . "
 	    + "}";
 
+    // 
+    public static String QUERY_20 = LUBM_PREFIX
+	    + "SELECT ?X "
+	    + "WHERE { ?X ub:worksFor <http://www.Department0.University0.edu> . "
+	    + "}";
+
 }

@@ -29,6 +29,7 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
+import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
@@ -42,20 +43,6 @@ public class StatementTest extends SessionTDBTest {
     private Session session;
 
     private Statement queryStatement;
-
-    private final String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
-	    + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
-	    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-	    + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-	    + "PREFIX owl:  <http://www.w3.org/2002/07/owl#> "
-	    + "PREFIX xdt:  <http://www.w3.org/2001/XMLSchema#> ";
-
-    // Not Empty query, six answers
-    private final String LUBM_QUERY = LUBM_PREFIX
-	    + "SELECT ?X  "
-	    + "WHERE { ?X rdf:type ub:Publication . "
-	    + "?X ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0> . "
-	    + "}";
 
     /**
      */
@@ -76,14 +63,14 @@ public class StatementTest extends SessionTDBTest {
 
     @Test
     public void testPrepareQuery() {
-	queryStatement.preparedQuery(LUBM_QUERY);
+	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_17);
 	Assert.assertNotNull(queryStatement.getQuery());
     }
 
     @Test
     public void testExecuteQuery() {
 	
-	queryStatement.preparedQuery(LUBM_QUERY);
+	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_20);
 	Assert.assertNotNull(queryStatement.getQuery());
 
 	ResultSet result = queryStatement.executeSPARQLQuery();
