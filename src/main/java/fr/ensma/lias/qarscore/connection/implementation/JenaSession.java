@@ -111,20 +111,20 @@ public abstract class JenaSession implements Session {
 
 	return writer.toString();
     }
-    
+
     /**
      * Create a statement for execute query
      */
     @Override
-    public Statement createStatement(){	
+    public Statement createStatement() {
 	return StatementFactory.getStatement(session);
     }
-    
+
     /**
      * Create a statement for execute query
      */
-    @Override   
-    public Statement createStatement(String query){
+    @Override
+    public Statement createStatement(String query) {
 	return StatementFactory.getStatement(session, query);
     }
 }

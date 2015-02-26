@@ -161,7 +161,7 @@ public class CQueryTest {
 		logger.info(((ElementFilter) elt.getElement()).toString());
 	    }
 	}
-	
+
 	conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_10);
 	Assert.assertTrue(conjunctiveQuery.isValidQuery());
@@ -176,7 +176,6 @@ public class CQueryTest {
 	}
     }
 
-    
     /**
      * Test method for
      * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getSPARQLQuery()}.
