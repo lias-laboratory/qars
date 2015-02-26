@@ -42,6 +42,7 @@ public class LatticeStrategy implements RelaxationStrategies {
     private final CQuery CURRENT_CONJUNCTIVE_QUERY;
     private final List<CQuery> MFS_CURRENT_QUERY;
     private final List<CQuery> XSS_CURRENT_QUERY;
+    private CQuery actualQuery = null;
     private List<CQuery> failingCauses = null;
     private List<CQuery> maximalSubqueries = null;
 
@@ -53,7 +54,8 @@ public class LatticeStrategy implements RelaxationStrategies {
      * @param answers
      * @return
      */
-    public static LatticeStrategy getLatticeStrategy(Session s, CQuery query, int answers) {
+    public static LatticeStrategy getLatticeStrategy(Session s, CQuery query,
+	    int answers) {
 	return new LatticeStrategy(s, query, answers);
     }
 
@@ -64,83 +66,29 @@ public class LatticeStrategy implements RelaxationStrategies {
 	NUMBER_OF_EXPECTED_ANSWERS = answers;
 	SESSION = s;
 	CURRENT_CONJUNCTIVE_QUERY = query;
-	MFS_CURRENT_QUERY = getAllMFS(CURRENT_CONJUNCTIVE_QUERY);
+	this.computeMFS(CURRENT_CONJUNCTIVE_QUERY);
+	actualQuery = CURRENT_CONJUNCTIVE_QUERY;
+	MFS_CURRENT_QUERY = failingCauses;
 	XSS_CURRENT_QUERY = maximalSubqueries;
     }
 
-    @Override
-    public CQuery getOneMFS() {
-
-	return MFS_CURRENT_QUERY.get(0);
-    }
-
-    @Override
-    public CQuery getOneMFS(CQuery query) {
-
-	if (!query.isValidQuery()) {
-	    return null;
-	}
-
-	if (hasLeastKAnswers(query)) {
-	    return CQueryFactory.createCQuery(new ArrayList<CElement>());
-	}
-
-	if (query.getElementList().size() == 1) {
-	    return CQueryFactory.cloneCQuery(query);
-	}
-
-	List<CElement> causes = new ArrayList<CElement>();
-	CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-
-	for (CElement elt : query.getElementList()) {
-	    tempQuery.getElementList().remove(elt);
-	    CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
-	    temp.getElementList().addAll(causes);
-	    if (temp.isValidQuery()) {
-		if (hasLeastKAnswers(temp)) {
-		    causes.add(elt);
-		}
-	    }
-	}
-	return CQueryFactory.createCQuery(causes);
-    }
-
-    @Override
-    public boolean isMFS(CQuery query) {
-
-	if (!query.isValidQuery()) {
-	    return false;
-	}
-
-	if (hasLeastKAnswers(query)) {
-	    return false;
-	}
-
-	for (CElement elt : query.getElementList()) {
-	    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-	    tempQuery.getElementList().remove(elt);
-	    if (tempQuery.isValidQuery()) {
-		if (!hasLeastKAnswers(tempQuery)) {
-		    return false;
-		}
-	    }
-	}
-	return true;
-    }
-
-    @Override
-    public List<CQuery> getAllMFS(CQuery query) {
+    /**
+     * Computes all the MFS and XSS of a CQuery query
+     * 
+     * @param query
+     */
+    private void computeMFS(CQuery query) {
 
 	failingCauses = new ArrayList<CQuery>();
 	maximalSubqueries = new ArrayList<CQuery>();
 
 	if (!query.isValidQuery()) {
-	    return failingCauses;
+	    return;
 	}
 
 	if (hasLeastKAnswers(query)) {
 	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
-	    return failingCauses;
+	    return;
 	}
 
 	failingCauses.add(getOneMFS(query));
@@ -207,14 +155,24 @@ public class LatticeStrategy implements RelaxationStrategies {
 	    potentialsMaximalSubqueries = oldMaximalSubqueries;
 	    potentialsMaximalSubqueries.addAll(newMaximalSubqueries);
 	}
-	return failingCauses;
     }
 
     @Override
-    public List<CQuery> getAllXSS(CQuery query) {
+    public boolean hasLeastKAnswers() {
 
-	this.getAllMFS(query);
-	return maximalSubqueries;
+	return this.hasLeastKAnswers(CURRENT_CONJUNCTIVE_QUERY);
+    }
+
+    @Override
+    public boolean isMFS() {
+
+	return this.isMFS(CURRENT_CONJUNCTIVE_QUERY);
+    }
+
+    @Override
+    public CQuery getOneMFS() {
+
+	return MFS_CURRENT_QUERY.get(0);
     }
 
     @Override
@@ -253,5 +211,82 @@ public class LatticeStrategy implements RelaxationStrategies {
 	} finally {
 	}
 	return nbSolution >= NUMBER_OF_EXPECTED_ANSWERS;
+    }
+
+    @Override
+    public boolean isMFS(CQuery query) {
+
+	if (!query.isValidQuery()) {
+	    return false;
+	}
+
+	if (hasLeastKAnswers(query)) {
+	    return false;
+	}
+
+	for (CElement elt : query.getElementList()) {
+	    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+	    tempQuery.getElementList().remove(elt);
+	    if (tempQuery.isValidQuery()) {
+		if (!hasLeastKAnswers(tempQuery)) {
+		    return false;
+		}
+	    }
+	}
+	return true;
+    }
+
+    @Override
+    public CQuery getOneMFS(CQuery query) {
+
+	if (!query.isValidQuery()) {
+	    return null;
+	}
+
+	if (hasLeastKAnswers(query)) {
+	    return CQueryFactory.createCQuery(new ArrayList<CElement>());
+	}
+
+	if (query.getElementList().size() == 1) {
+	    return CQueryFactory.cloneCQuery(query);
+	}
+
+	List<CElement> causes = new ArrayList<CElement>();
+	CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+
+	for (CElement elt : query.getElementList()) {
+	    tempQuery.getElementList().remove(elt);
+	    CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
+	    temp.getElementList().addAll(causes);
+	    if (temp.isValidQuery()) {
+		if (hasLeastKAnswers(temp)) {
+		    causes.add(elt);
+		}
+	    }
+	}
+	return CQueryFactory.createCQuery(causes);
+    }
+
+    @Override
+    public List<CQuery> getAllMFS(CQuery query) {
+
+	if (this.actualQuery == query) {
+	    return failingCauses;
+	}
+	this.actualQuery = query;
+	this.computeMFS(query);
+	return failingCauses;
+    }
+
+    @Override
+    public List<CQuery> getAllXSS(CQuery query) {
+
+	if (this.actualQuery == query) {
+	    return maximalSubqueries;
+	} else {
+	    this.actualQuery = query;
+	    this.computeMFS(query);
+	    return maximalSubqueries;
+	}
     }
 }

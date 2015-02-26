@@ -52,6 +52,7 @@ public class CQueryFactory {
 
     /**
      * extract clause in an element of SPARQL query
+     * 
      * @param element
      */
     private static void getClause(Element element) {
@@ -93,6 +94,7 @@ public class CQueryFactory {
 
     /**
      * Extract clause in an expression of SPARQL query
+     * 
      * @param expression
      */
     private static void getClause(Expr expression) {
@@ -112,6 +114,7 @@ public class CQueryFactory {
 
     /**
      * For a SPARQL Query query creates the corresponding CQuery
+     * 
      * @param query
      * @return
      */
@@ -132,6 +135,7 @@ public class CQueryFactory {
 
     /**
      * Create a copy a CQuery
+     * 
      * @param query
      * @return
      */
@@ -159,6 +163,7 @@ public class CQueryFactory {
 
     /**
      * Create a conjunctive query with a SPARQL string query
+     * 
      * @param sparqlQuery
      * @return
      */

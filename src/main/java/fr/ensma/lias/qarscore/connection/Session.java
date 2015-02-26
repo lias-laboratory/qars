@@ -47,8 +47,8 @@ public interface Session {
     Store getDataStore();
 
     String getOntoJSON();
-    
+
     Statement createStatement();
-    
+
     Statement createStatement(String query);
 }

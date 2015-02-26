@@ -101,7 +101,6 @@ public class EdgesJSONTest extends SessionTDBTest {
 				currentProperty.getLocalName(),
 				"ObjectProperty");
 			logger.info(edge.getEdgeName());
-			// OntClass dom = currentProperty.getDomain().asClass();
 			if (currentProperty.getRange() != null) {
 			    OntClass range = currentProperty.getRange()
 				    .asClass();

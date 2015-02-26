@@ -17,41 +17,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.connection.implementation;
+package fr.ensma.lias.qarscore.engine.query;
 
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.sdb.Store;
-import com.hp.hpl.jena.tdb.TDBFactory;
-
-import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.properties.Properties;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author Geraud FOKOU
  */
-public class SessionTDB extends JenaSession {
+@RunWith(Suite.class)
+@SuiteClasses(value = { CQueryTest.class })
+public class AllQueryTests {
 
-    /**
-     * Construct a TDB Session if there isn't existed
-     */
-    public static Session getSessionTDB(String folder) {
-
-	if (session != null) {
-	    return session;
-	}
-	session = new SessionTDB(folder);
-	return session;
-    }
-
-    private SessionTDB(String folderTDB) {
-	dataset = TDBFactory.createDataset(folderTDB);
-	model = dataset.getDefaultModel();
-	ontologyModel = ModelFactory.createOntologyModel(
-		Properties.getModelMemSpec(), model);
-    }
-
-    @Override
-    public Store getDataStore() {
-	return null;
-    }
 }

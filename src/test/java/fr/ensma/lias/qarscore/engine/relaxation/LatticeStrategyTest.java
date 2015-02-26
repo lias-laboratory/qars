@@ -104,16 +104,21 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		.createCQuery(SPARQLQueriesSample.QUERY_13);
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
 		conjunctiveQuery);
-	Assert.assertTrue(!relaxationStrategy
-		.hasLeastKAnswers(conjunctiveQuery));
-	List<CQuery> allCauses = relaxationStrategy
-		.getAllMFS(conjunctiveQuery);
+	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers());
+	List<CQuery> allCauses = relaxationStrategy.getAllMFS();
 	Assert.assertTrue(allCauses.size() == 14);
 	Assert.assertTrue(relaxationStrategy.isMFS(allCauses.get(0)));
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(allCauses.get(0)));
 	for (CQuery cause : allCauses) {
 	    Assert.assertTrue(relaxationStrategy.isMFS(cause));
 	    logger.info(cause.getSPARQLQuery());
+	}
+	List<CQuery> allSuccess = relaxationStrategy.getAllXSS();
+	Assert.assertTrue(allSuccess.size() == 4);
+	for (CQuery success : allSuccess) {
+	    Assert.assertTrue(!relaxationStrategy.isMFS(success));
+	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
+	    logger.info(success.getSPARQLQuery());
 	}
     }
 
@@ -129,10 +134,8 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		.createCQuery(SPARQLQueriesSample.QUERY_6);
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
 		conjunctiveQuery);
-	Assert.assertTrue(!relaxationStrategy
-		.hasLeastKAnswers(conjunctiveQuery));
-	List<CQuery> allCauses = relaxationStrategy
-		.getAllMFS(conjunctiveQuery);
+	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers());
+	List<CQuery> allCauses = relaxationStrategy.getAllMFS();
 	Assert.assertTrue(allCauses.size() == 6);
 	for (CQuery cause : allCauses) {
 	    Assert.assertTrue(relaxationStrategy.isMFS(cause));

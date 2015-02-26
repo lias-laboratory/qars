@@ -43,6 +43,11 @@ import fr.ensma.lias.qarscore.engine.relaxation.RelaxationStrategies;
 public abstract class MatrixStrategy implements RelaxationStrategies {
 
     /**
+     * minimal expected answers
+     */
+    protected final int NUMBER_OF_EXPECTED_ANSWERS;
+
+    /**
      * Boolean value for a MappingResult of each triple pattern Column storage
      * of boolean
      */
@@ -57,30 +62,11 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
      * Size of the dictionary
      */
     protected Integer dictionary_size;
-    /**
-     * minimal expected answers
-     */
-    protected final int NUMBER_OF_EXPECTED_ANSWERS;
 
     /**
-     * Current data session
+     * The last query on which we found MFS
      */
-    protected final Session SESSION;
-
-    /**
-     * Current final query
-     */
-    protected final CQuery CURRENT_CONJUNCTIVE_QUERY;
-
-    /**
-     * Final MFS
-     */
-    protected List<CQuery> MFS_CURRENT_QUERY;
-    
-    /**
-     * Final XSS
-     */
-    protected  List<CQuery> XSS_CURRENT_QUERY;
+    protected CQuery actualQuery = null;
 
     /**
      * List of CQuery Causes of query failure
@@ -101,17 +87,16 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     protected MatrixStrategy(Session s, CQuery conjunctiveQuery,
 	    int expected_answers_number) {
 
-	SESSION = s;
 	NUMBER_OF_EXPECTED_ANSWERS = expected_answers_number;
-	CURRENT_CONJUNCTIVE_QUERY = conjunctiveQuery;
-
 	dictionary = new HashMap<RDFNode, Integer>();
 	dictionary_size = 0;
+	actualQuery = conjunctiveQuery;
+
     }
 
-    public abstract RoaringBitmap getBitVector(int ti);
+    protected abstract RoaringBitmap getBitVector(int ti);
 
-    public abstract int getCardinality();
+    protected abstract int getCardinality();
 
     /**
      * Says if the line l1 dominates or equals the line l2
@@ -120,11 +105,11 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
      * @param l2
      * @return
      */
-    public boolean domintatesOrEquals(int l1, int l2) {
+    protected boolean domintatesOrEquals(int l1, int l2) {
 
 	boolean res = true;
 	RoaringBitmap bitmap;
-	for (int i = 1; i <= CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++) {
+	for (int i = 1; i <= actualQuery.getElementList().size(); i++) {
 	    bitmap = getBitVector(i);
 	    if (bitmap.contains(l2) && !bitmap.contains(l1))
 		return false;
@@ -139,11 +124,11 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
      * @param l2
      * @return
      */
-    public boolean domintates(int l1, int l2) {
+    protected boolean domintates(int l1, int l2) {
 
 	boolean res = false;
 	RoaringBitmap bitmap;
-	for (int i = 1; i <= CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++) {
+	for (int i = 1; i <= actualQuery.getElementList().size(); i++) {
 	    bitmap = getBitVector(i);
 	    if (bitmap.contains(l2) && !bitmap.contains(l1)) {
 		return false;
@@ -158,7 +143,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
      * 
      * @return
      */
-    public List<Integer> getSkyline() {
+    protected List<Integer> getSkyline() {
 
 	List<Integer> liste = new ArrayList<Integer>();
 	int sizeMatrix = getCardinality();
@@ -196,53 +181,15 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public boolean isMFS(CQuery query) {
-
-	if (query != CURRENT_CONJUNCTIVE_QUERY) {
-	    return false;
-	}
-
-	if (hasLeastKAnswers(CURRENT_CONJUNCTIVE_QUERY)) {
-	    return false;
-	}
-
-	for (CElement element : CURRENT_CONJUNCTIVE_QUERY.getElementList()) {
-
-	    RoaringBitmap conjunction;
-
-	    int i;
-	    if (CURRENT_CONJUNCTIVE_QUERY.getElementList().get(0) == element) {
-		conjunction = getBitVector(1);
-		i = 1;
-	    } else {
-		conjunction = getBitVector(0);
-		i = 0;
-	    }
-	    for (i = i + 1; i < CURRENT_CONJUNCTIVE_QUERY.getElementList()
-		    .size(); i++) {
-		if (CURRENT_CONJUNCTIVE_QUERY.getElementList().get(0) != element) {
-		    conjunction.and(getBitVector(i));
-		}
-	    }
-
-	    if (conjunction.getCardinality() < NUMBER_OF_EXPECTED_ANSWERS) {
-		return false;
-	    }
-	}
-	return true;
-    }
-
-    @Override
     public boolean hasLeastKAnswers(CQuery query) {
 
-	if (query != CURRENT_CONJUNCTIVE_QUERY) {
+	if (query != actualQuery) {
 	    return false;
 	}
 
 	List<Integer> listIndexElement = new ArrayList<Integer>();
-	for (CElement element : CURRENT_CONJUNCTIVE_QUERY.getElementList()) {
-	    int index = CURRENT_CONJUNCTIVE_QUERY.getElementList().indexOf(
-		    element);
+	for (CElement element : actualQuery.getElementList()) {
+	    int index = actualQuery.getElementList().indexOf(element);
 	    if (index != -1) {
 		listIndexElement.add(index + 1);
 	    }
@@ -257,28 +204,54 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     }
 
     @Override
-    public CQuery getOneMFS() {
+    public boolean isMFS(CQuery query) {
 
-	if (failingCauses != null) {
-	    return failingCauses.get(0);
+	if (query != actualQuery) {
+	    return false;
 	}
 
-	return null;
+	if (hasLeastKAnswers(actualQuery)) {
+	    return false;
+	}
+
+	for (CElement element : actualQuery.getElementList()) {
+
+	    RoaringBitmap conjunction;
+
+	    int i;
+	    if (actualQuery.getElementList().get(0) == element) {
+		conjunction = getBitVector(1);
+		i = 1;
+	    } else {
+		conjunction = getBitVector(0);
+		i = 0;
+	    }
+	    for (i = i + 1; i < actualQuery.getElementList().size(); i++) {
+		if (actualQuery.getElementList().get(0) != element) {
+		    conjunction.and(getBitVector(i));
+		}
+	    }
+
+	    if (conjunction.getCardinality() < NUMBER_OF_EXPECTED_ANSWERS) {
+		return false;
+	    }
+	}
+	return true;
     }
 
     @Override
     public CQuery getOneMFS(CQuery query) {
 
-	if (query != CURRENT_CONJUNCTIVE_QUERY) {
+	if (query != actualQuery) {
 	    return null;
 	}
 
 	List<Integer> notEmptyCElement = new ArrayList<Integer>();
 
-	for (int i = 0; i < CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++) {
+	for (int i = 0; i < actualQuery.getElementList().size(); i++) {
 	    List<CElement> causes = new ArrayList<CElement>();
 	    if (getBitVector(i + 1).isEmpty()) {
-		causes.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i));
+		causes.add(actualQuery.getElementList().get(i));
 		return CQueryFactory.createCQuery(causes);
 	    } else {
 		notEmptyCElement.add(i + 1);
@@ -291,7 +264,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 	ICombinatoricsVector<Integer> initialVector = Factory
 		.createVector(notEmptyCElement.toArray(notEmptyCElmentArray));
 
-	for (int i = 2; i <= CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++) {
+	for (int i = 2; i <= actualQuery.getElementList().size(); i++) {
 
 	    Generator<Integer> gen = Factory.createSimpleCombinationGenerator(
 		    initialVector, i);
@@ -309,8 +282,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 		    List<CElement> causes = new ArrayList<CElement>();
 		    for (int j = 0; j < listeTi.size(); j++) {
 			int index = listeTi.get(i);
-			causes.add(CURRENT_CONJUNCTIVE_QUERY.getElementList()
-				.get(index));
+			causes.add(actualQuery.getElementList().get(index));
 		    }
 		    return (CQueryFactory.createCQuery(causes));
 		}
@@ -322,7 +294,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     @Override
     public List<CQuery> getAllMFS(CQuery query) {
 
-	if (query != CURRENT_CONJUNCTIVE_QUERY) {
+	if (query != actualQuery) {
 	    return new ArrayList<CQuery>();
 	}
 
@@ -333,10 +305,10 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 	failingCauses = new ArrayList<CQuery>();
 	List<Integer> notEmptyCElement = new ArrayList<Integer>();
 
-	for (int i = 0; i < CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++) {
+	for (int i = 0; i < actualQuery.getElementList().size(); i++) {
 	    List<CElement> causes = new ArrayList<CElement>();
 	    if (getBitVector(i + 1).isEmpty()) {
-		causes.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i));
+		causes.add(actualQuery.getElementList().get(i));
 		failingCauses.add(CQueryFactory.createCQuery(causes));
 	    } else {
 		notEmptyCElement.add(i + 1);
@@ -355,8 +327,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 		    .createVector(notEmptyCElement
 			    .toArray(notEmptyCElmentArray));
 
-	    for (int i = 2; i <= CURRENT_CONJUNCTIVE_QUERY.getElementList()
-		    .size(); i++) {
+	    for (int i = 2; i <= actualQuery.getElementList().size(); i++) {
 
 		Generator<Integer> gen = Factory
 			.createSimpleCombinationGenerator(initialVector, i);
@@ -389,8 +360,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 		List<CElement> causes = new ArrayList<CElement>();
 		for (int i = 0; i < listeTi.size(); i++) {
 		    int index = listeTi.get(i);
-		    causes.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(
-			    index-1));
+		    causes.add(actualQuery.getElementList().get(index - 1));
 		}
 		failingCauses.add(CQueryFactory.createCQuery(causes));
 	    }
@@ -401,7 +371,7 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
     @Override
     public List<CQuery> getAllXSS(CQuery query) {
 
-	if (query != CURRENT_CONJUNCTIVE_QUERY) {
+	if (query != actualQuery) {
 	    return new ArrayList<CQuery>();
 	}
 
@@ -412,16 +382,16 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 	maximalSubqueries = new ArrayList<CQuery>();
 	List<ICombinatoricsVector<Integer>> xssCombination = new ArrayList<ICombinatoricsVector<Integer>>();
 
-	Integer[] CElementArray = new Integer[CURRENT_CONJUNCTIVE_QUERY
-		.getElementList().size()];
-	for (int i = 0; i < CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++) {
+	Integer[] CElementArray = new Integer[actualQuery.getElementList()
+		.size()];
+	for (int i = 0; i < actualQuery.getElementList().size(); i++) {
 	    CElementArray[i] = i + 1;
 	}
 
 	ICombinatoricsVector<Integer> initialVector = Factory
 		.createVector(CElementArray);
 
-	for (int i = CURRENT_CONJUNCTIVE_QUERY.getElementList().size() - 1; i >= 1; i--) {
+	for (int i = actualQuery.getElementList().size() - 1; i >= 1; i--) {
 	    Generator<Integer> gen = Factory.createSimpleCombinationGenerator(
 		    initialVector, i);
 
@@ -454,33 +424,10 @@ public abstract class MatrixStrategy implements RelaxationStrategies {
 	    List<CElement> causes = new ArrayList<CElement>();
 	    for (int i = 0; i < listeTi.size(); i++) {
 		int index = listeTi.get(i);
-		causes.add(CURRENT_CONJUNCTIVE_QUERY.getElementList()
-			.get(index-1));
+		causes.add(actualQuery.getElementList().get(index - 1));
 	    }
 	    maximalSubqueries.add(CQueryFactory.createCQuery(causes));
 	}
-
 	return maximalSubqueries;
     }
-
-    @Override
-    public List<CQuery> getAllMFS() {
-
-	if (MFS_CURRENT_QUERY == null) {
-	    MFS_CURRENT_QUERY = this.getAllMFS(CURRENT_CONJUNCTIVE_QUERY);
-	}
-
-	return MFS_CURRENT_QUERY;
-    }
-
-    @Override
-    public List<CQuery> getAllXSS() {
-
-	if (XSS_CURRENT_QUERY == null) {
-	    XSS_CURRENT_QUERY = this.getAllXSS(CURRENT_CONJUNCTIVE_QUERY);
-	}
-
-	return XSS_CURRENT_QUERY;
-    }
-
 }

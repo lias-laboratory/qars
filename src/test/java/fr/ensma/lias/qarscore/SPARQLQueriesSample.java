@@ -143,10 +143,8 @@ public class SPARQLQueriesSample {
 	    + "?X ub:undergraduateDegreeFrom <http://www.Department0.University0.edu> . "
 	    + "?X ub:mastersDegreeFrom <http://www.Department0.University0.edu> . "
 	    + "?X ub:doctoralDegreeFrom <http://www.Department0.University0.edu> . "
-	    + "?X ub:worksFor ?Y7 . " 
-	    + "?X ub:researchInterest ?Y8 . "
-	    + "?X ub:headOf ?Y9 . " 
-	    + " }";
+	    + "?X ub:worksFor ?Y7 . " + "?X ub:researchInterest ?Y8 . "
+	    + "?X ub:headOf ?Y9 . " + " }";
 
     // 15 triple patterns Composite
     public static String QUERY_10 = LUBM_PREFIX
@@ -179,7 +177,7 @@ public class SPARQLQueriesSample {
 	    + "?X ub:researchInterest 'Research2' . " + "?X ub:headOf ?Y9 . "
 	    + "?X ub:teacherOf ?Y10. " + "?X ub:advisor ?Y11 ." + " }";
 
-    // Empty query 
+    // Empty query
     public static String QUERY_14 = LUBM_PREFIX + "SELECT ?X ?Y1 ?Y2 "
 	    + "WHERE { ?X rdf:type ub:FullProfessor . "
 	    + "?X ub:doctoralDegreeFrom <http://www.University8.edu> . "
@@ -207,7 +205,7 @@ public class SPARQLQueriesSample {
 	    + "WHERE { ?X rdf:type ub:Publication . "
 	    + "?X ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0> . "
 	    + "}";
-   
+
     // Empty query with Filter clause
     public static String QUERY_18 = LUBM_PREFIX + "SELECT ?X ?Z " + "WHERE { "
 	    + "{?X rdf:type ub:FullProfessor . "
@@ -218,20 +216,17 @@ public class SPARQLQueriesSample {
 	    + "Filter (?age1<40)}" + "}";
 
     // Not Empty query, 10634 answers
-    public static String QUERY_19 = LUBM_PREFIX
-	    + "SELECT ?X ?Y "
-	    + "WHERE { ?X ub:publicationAuthor ?Y ."
-	    + "}";
+    public static String QUERY_19 = LUBM_PREFIX + "SELECT ?X ?Y "
+	    + "WHERE { ?X ub:publicationAuthor ?Y ." + "}";
 
-    //Not Empty query, 41 answers
+    // Not Empty query, 41 answers
     public static String QUERY_20 = LUBM_PREFIX
 	    + "SELECT ?X "
 	    + "WHERE { ?X ub:worksFor <http://www.Department0.University0.edu> . "
 	    + "}";
 
-    //  Empty query
-    public static String QUERY_21 = LUBM_PREFIX
-	    + "SELECT ?X ?Y "
+    // Empty query
+    public static String QUERY_21 = LUBM_PREFIX + "SELECT ?X ?Y "
 	    + "WHERE {  ?X ub:publicationAuthor ?Y. "
 	    + " ?Y ub:worksFor <http://www.Department0.University0.edu> ."
 	    + "}";

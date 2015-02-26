@@ -42,6 +42,26 @@ import fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy;
 public class MatrixStrategyAllQuery extends MatrixStrategy {
 
     /**
+     * Current data session
+     */
+    protected final Session SESSION;
+
+    /**
+     * Current final query
+     */
+    protected final CQuery CURRENT_CONJUNCTIVE_QUERY;
+
+    /**
+     * Final MFS
+     */
+    private final List<CQuery> MFS_CURRENT_QUERY;
+
+    /**
+     * Final XSS
+     */
+    private final List<CQuery> XSS_CURRENT_QUERY;
+
+    /**
      * Maximal number of mappings for one matrix
      */
     private static final int NB_MAPPING = 1000000;
@@ -58,6 +78,7 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 
     /**
      * Constructor
+     * 
      * @param s
      * @param conjunctiveQuery
      * @param expected_answers_number
@@ -66,16 +87,23 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 	    int expected_answers_number) {
 
 	super(s, conjunctiveQuery, expected_answers_number);
+	SESSION = s;
+	CURRENT_CONJUNCTIVE_QUERY = conjunctiveQuery;
+
 	mappings = new HashMap<MappingResult, Integer>(NB_MAPPING);
 	values = new RoaringBitmap[CURRENT_CONJUNCTIVE_QUERY.getElementList()
 		.size()];
 	for (int i = 0; i < CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++) {
 	    values[i] = new RoaringBitmap();
 	}
-	
+
 	initializeMatrix();
+
+	this.MFS_CURRENT_QUERY = this.getAllMFS(CURRENT_CONJUNCTIVE_QUERY);
+	this.XSS_CURRENT_QUERY = this.getAllXSS(CURRENT_CONJUNCTIVE_QUERY);
+
     }
-    
+
     /**
      * Initialize the matrix for the computation of xss and mfs
      */
@@ -92,9 +120,9 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 
 	    ResultSet result_set = SESSION.createStatement(
 		    current_query.toString()).executeSPARQLQuery();
-	    
+
 	    while (result_set.hasNext()) {
-		
+
 		QuerySolution result = result_set.next();
 
 		int[] listMapping = new int[CURRENT_CONJUNCTIVE_QUERY
@@ -119,12 +147,13 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 		}
 		MappingResult result_mapping = new MappingResult(listMapping);
 		isInserted = false;
-		
-		Map<MappingResult, Integer> actualMappings = new HashMap<MappingResult, Integer>(mappings.size());
+
+		Map<MappingResult, Integer> actualMappings = new HashMap<MappingResult, Integer>(
+			mappings.size());
 		actualMappings.putAll(mappings);
-		
-		for (MappingResult store_mapping :actualMappings.keySet()) {
-		    
+
+		for (MappingResult store_mapping : actualMappings.keySet()) {
+
 		    if (result_mapping.isCompatible(store_mapping)) {
 			MappingResult unionMapping = result_mapping
 				.union(store_mapping);
@@ -216,11 +245,80 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 
     @Override
     public RoaringBitmap getBitVector(int ti) {
-	return values[ti-1];
+	return values[ti - 1];
     }
 
     @Override
     public int getCardinality() {
 	return mappings.size();
     }
+
+    @Override
+    public boolean hasLeastKAnswers() {
+
+	List<Integer> listIndexElement = new ArrayList<Integer>();
+	for (CElement element : CURRENT_CONJUNCTIVE_QUERY.getElementList()) {
+	    int index = CURRENT_CONJUNCTIVE_QUERY.getElementList().indexOf(
+		    element);
+	    if (index != -1) {
+		listIndexElement.add(index + 1);
+	    }
+	}
+
+	RoaringBitmap conjunction = getBitVector(listIndexElement.get(0));
+	for (int i = 0; i < listIndexElement.size(); i++) {
+	    conjunction.and(getBitVector(listIndexElement.get(i)));
+	}
+
+	return conjunction.getCardinality() >= NUMBER_OF_EXPECTED_ANSWERS;
+    }
+
+    @Override
+    public boolean isMFS() {
+
+	if (hasLeastKAnswers(CURRENT_CONJUNCTIVE_QUERY)) {
+	    return false;
+	}
+
+	for (CElement element : CURRENT_CONJUNCTIVE_QUERY.getElementList()) {
+
+	    RoaringBitmap conjunction;
+
+	    int i;
+	    if (CURRENT_CONJUNCTIVE_QUERY.getElementList().get(0) == element) {
+		conjunction = getBitVector(1);
+		i = 1;
+	    } else {
+		conjunction = getBitVector(0);
+		i = 0;
+	    }
+	    for (i = i + 1; i < CURRENT_CONJUNCTIVE_QUERY.getElementList()
+		    .size(); i++) {
+		if (CURRENT_CONJUNCTIVE_QUERY.getElementList().get(0) != element) {
+		    conjunction.and(getBitVector(i));
+		}
+	    }
+
+	    if (conjunction.getCardinality() < NUMBER_OF_EXPECTED_ANSWERS) {
+		return false;
+	    }
+	}
+	return true;
+    }
+
+    @Override
+    public CQuery getOneMFS() {
+	return this.MFS_CURRENT_QUERY.get(0);
+    }
+
+    @Override
+    public List<CQuery> getAllMFS() {
+	return this.MFS_CURRENT_QUERY;
+    }
+
+    @Override
+    public List<CQuery> getAllXSS() {
+	return this.XSS_CURRENT_QUERY;
+    }
+
 }

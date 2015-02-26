@@ -79,7 +79,7 @@ public class CQuery {
 	if (gr == null) {
 	    gr = new ArrayList<ElementGroup>();
 	}
-	
+
 	return new CQuery(elt, gr, selectedVar);
     }
 
@@ -247,7 +247,7 @@ public class CQuery {
 	}
 
 	Query tempQuery = new Query();
-	if(this.getGroupList().size()==0){
+	if (this.getGroupList().size() == 0) {
 	    return null;
 	}
 
@@ -261,30 +261,30 @@ public class CQuery {
 	return tempQuery;
 
     }
-    
+
     /**
      * Says if the query is a star query or not
+     * 
      * @return
      */
-    public boolean isStarQuery(){
-	
+    public boolean isStarQuery() {
+
 	boolean isFirst = true;
 	Node central_var = null;
-	
-	for(CElement element:this.elementList){
-	    
-	    if(element.getElement() instanceof ElementPathBlock){
-		 TriplePath currentClause = ((ElementPathBlock) element.getElement()).getPattern().getList().get(0);
-		if(isFirst){
+
+	for (CElement element : this.elementList) {
+
+	    if (element.getElement() instanceof ElementPathBlock) {
+		TriplePath currentClause = ((ElementPathBlock) element
+			.getElement()).getPattern().getList().get(0);
+		if (isFirst) {
 		    if (currentClause.getSubject().isVariable()) {
 			central_var = currentClause.getSubject();
 			isFirst = false;
-		    }
-		    else{
+		    } else {
 			return false;
 		    }
-		}
-		else{
+		} else {
 		    if (!currentClause.getSubject().sameValueAs(central_var)) {
 			return false;
 		    }
@@ -296,46 +296,51 @@ public class CQuery {
 
     /**
      * Says if the query is a chain query or not
+     * 
      * @return
      */
-    public boolean isChainQuery(){
+    public boolean isChainQuery() {
 	return false;
     }
-    
+
     /**
      * Says if the query has a cartesian set
+     * 
      * @return
      */
-    public boolean hasCartesianSet(){
+    public boolean hasCartesianSet() {
 	return false;
     }
-    
+
     /**
      * Says if the query is a subquery of the query
+     * 
      * @param query
      * @return
      */
-    public boolean isSubQueryOf(CQuery query){
+    public boolean isSubQueryOf(CQuery query) {
 	return false;
     }
-    
+
     /**
      * Says if query is a subquery of the current query
+     * 
      * @param query
      * @return
      */
-    public boolean isSuperQueryOf(CQuery query){
+    public boolean isSuperQueryOf(CQuery query) {
 	return false;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-	
+
 	return getSPARQLQuery().toString();
     }
 
-    
 }

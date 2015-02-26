@@ -40,6 +40,26 @@ import fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy;
 public class MatrixStrategyStarQuery extends MatrixStrategy {
 
     /**
+     * Current data session
+     */
+    protected final Session SESSION;
+
+    /**
+     * Current final query
+     */
+    protected final CQuery CURRENT_CONJUNCTIVE_QUERY;
+
+    /**
+     * Final MFS
+     */
+    private final List<CQuery> MFS_CURRENT_QUERY;
+
+    /**
+     * Final XSS
+     */
+    private final List<CQuery> XSS_CURRENT_QUERY;
+
+    /**
      * 
      * @param s
      * @param conjunctiveQuery
@@ -48,8 +68,10 @@ public class MatrixStrategyStarQuery extends MatrixStrategy {
     public MatrixStrategyStarQuery(Session s, CQuery conjunctiveQuery,
 	    int expected_answers_number) {
 
-	super(s,conjunctiveQuery, expected_answers_number);
-	
+	super(s, conjunctiveQuery, expected_answers_number);
+
+	SESSION = s;
+	CURRENT_CONJUNCTIVE_QUERY = conjunctiveQuery;
 	values = new RoaringBitmap[CURRENT_CONJUNCTIVE_QUERY.getElementList()
 		.size() + 1];
 	for (int i = 0; i < values.length; i++) {
@@ -57,6 +79,9 @@ public class MatrixStrategyStarQuery extends MatrixStrategy {
 	}
 
 	this.initializeMatrix();
+
+	this.MFS_CURRENT_QUERY = this.getAllMFS(CURRENT_CONJUNCTIVE_QUERY);
+	this.XSS_CURRENT_QUERY = this.getAllXSS(CURRENT_CONJUNCTIVE_QUERY);
     }
 
     /**
@@ -141,4 +166,71 @@ public class MatrixStrategyStarQuery extends MatrixStrategy {
 	return values[0].getCardinality();
     }
 
+    @Override
+    public boolean hasLeastKAnswers() {
+
+	List<Integer> listIndexElement = new ArrayList<Integer>();
+	for (CElement element : CURRENT_CONJUNCTIVE_QUERY.getElementList()) {
+	    int index = CURRENT_CONJUNCTIVE_QUERY.getElementList().indexOf(
+		    element);
+	    if (index != -1) {
+		listIndexElement.add(index + 1);
+	    }
+	}
+
+	RoaringBitmap conjunction = getBitVector(listIndexElement.get(0));
+	for (int i = 0; i < listIndexElement.size(); i++) {
+	    conjunction.and(getBitVector(listIndexElement.get(i)));
+	}
+
+	return conjunction.getCardinality() >= NUMBER_OF_EXPECTED_ANSWERS;
+    }
+
+    @Override
+    public boolean isMFS() {
+
+	if (hasLeastKAnswers(CURRENT_CONJUNCTIVE_QUERY)) {
+	    return false;
+	}
+
+	for (CElement element : CURRENT_CONJUNCTIVE_QUERY.getElementList()) {
+
+	    RoaringBitmap conjunction;
+
+	    int i;
+	    if (CURRENT_CONJUNCTIVE_QUERY.getElementList().get(0) == element) {
+		conjunction = getBitVector(1);
+		i = 1;
+	    } else {
+		conjunction = getBitVector(0);
+		i = 0;
+	    }
+	    for (i = i + 1; i < CURRENT_CONJUNCTIVE_QUERY.getElementList()
+		    .size(); i++) {
+		if (CURRENT_CONJUNCTIVE_QUERY.getElementList().get(0) != element) {
+		    conjunction.and(getBitVector(i));
+		}
+	    }
+
+	    if (conjunction.getCardinality() < NUMBER_OF_EXPECTED_ANSWERS) {
+		return false;
+	    }
+	}
+	return true;
+    }
+
+    @Override
+    public CQuery getOneMFS() {
+	return this.MFS_CURRENT_QUERY.get(0);
+    }
+
+    @Override
+    public List<CQuery> getAllMFS() {
+	return this.MFS_CURRENT_QUERY;
+    }
+
+    @Override
+    public List<CQuery> getAllXSS() {
+	return this.XSS_CURRENT_QUERY;
+    }
 }
