@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*********************************************************************************
  * This file is part of QARS Project.
  * Copyright (C) 2015  LIAS - ENSMA
@@ -118,4 +117,3 @@ public class StrategiesFactory {
 	return new MatrixStrategyAllQuery(session, query, 1);
     }
 }
->>>>>>> refs/remotes/origin/master

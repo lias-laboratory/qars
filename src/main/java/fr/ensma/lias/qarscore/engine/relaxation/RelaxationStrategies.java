@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*********************************************************************************
  * This file is part of QARS Project.
  * Copyright (C) 2015  LIAS - ENSMA
@@ -201,4 +200,3 @@ public interface RelaxationStrategies {
      */
     boolean hasLeastKAnswers(CQuery query);
 }
->>>>>>> refs/remotes/origin/master

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*********************************************************************************
  * This file is part of QARS Project.
  * Copyright (C) 2015  LIAS - ENSMA
@@ -550,4 +549,3 @@ public class LatticeStrategy implements RelaxationStrategies {
 	return nbSolution >= NUMBER_OF_EXPECTED_ANSWERS;
     }
 }
->>>>>>> refs/remotes/origin/master
