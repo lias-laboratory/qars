@@ -93,7 +93,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>qarscore</finalName>
+							<finalName>qars</finalName>
 							<descriptors>
 								<descriptor>src/main/assembly/AssemblyDIST.xml</descriptor>
 							</descriptors>

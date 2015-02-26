@@ -45,7 +45,6 @@ public class SessionSDB extends JenaSession {
      * Construct a SDB Session if there isn't existed
      */
     public static Session getSessionSDB(Connection connect) {
-
 	if (session != null) {
 	    return session;
 	}
