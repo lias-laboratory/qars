@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*********************************************************************************
  * This file is part of QARS Project.
  * Copyright (C) 2015  LIAS - ENSMA
@@ -384,4 +383,3 @@ public class CQueryTest {
 	logger.info(conjunctiveQuery.getSPARQLQuery());
     }
 }
->>>>>>> refs/remotes/origin/master
