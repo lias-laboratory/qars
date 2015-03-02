@@ -67,6 +67,24 @@ public class JSONParser {
 	this.parseSubClassRelation();
     }
 
+    public JSONParser(OntModel model, List<String> excludedClasses) {
+	super();
+	MODEL_TO_PARSE = model;
+	listNodeJs = new ArrayList<NodeJSON>();
+	listEdgesProperties = new ArrayList<EdgesJSON>();
+	listEdgesSubclass = new ArrayList<EdgesJSON>();
+	this.parseOntClass();
+	List<NodeJSON> tempNodes = new ArrayList<NodeJSON>();
+	tempNodes.addAll(listNodeJs);
+	for (NodeJSON node : tempNodes) {
+	    if (excludedClasses.contains(node.getNodeLabel())) {
+		listNodeJs.remove(node);
+	    }
+	}
+	this.parseOntProperty();
+	this.parseSubClassRelation();
+    }
+
     /**
      * Parse all the class of the current ontology to node of JSON
      */
@@ -78,34 +96,41 @@ public class JSONParser {
 	while (listClass.hasNext()) {
 	    OntClass currentClass = listClass.next();
 
-	    if (currentClass.getURI() != null) {
-		NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-			currentClass.getNameSpace(),
-			MODEL_TO_PARSE.getNsURIPrefix(currentClass
-				.getNameSpace()), currentClass.getURI(),
-			currentClass.getLocalName());
+	    if (currentClass.getURI() == null) {
+		continue;
+	    }
+	    if (currentClass.isIntersectionClass()) {
+		continue;
+	    }
+	    if (currentClass.isRestriction()) {
+		continue;
+	    }
+	    NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
+		    currentClass.getNameSpace(),
+		    MODEL_TO_PARSE.getNsURIPrefix(currentClass.getNameSpace()),
+		    currentClass.getURI(), currentClass.getLocalName());
 
-		ExtendedIterator<DatatypeProperty> allProperties = MODEL_TO_PARSE
-			.listDatatypeProperties();
+	    ExtendedIterator<DatatypeProperty> allProperties = MODEL_TO_PARSE
+		    .listDatatypeProperties();
 
-		while (allProperties.hasNext()) {
-		    DatatypeProperty currentProperty = allProperties.next();
-		    if (currentProperty.getDomain() != null) {
-			if (currentProperty.getDomain().getURI()
-				.equalsIgnoreCase(currentClass.getURI())) {
-			    if (currentProperty.getRange() == null) {
-				nodejs.add(currentProperty.getLocalName(),
-					"string", currentProperty.getURI());
-			    } else {
-				nodejs.add(currentProperty.getLocalName(),
-					currentProperty.getRange()
-						.getLocalName(), currentProperty.getURI());
-			    }
+	    while (allProperties.hasNext()) {
+		DatatypeProperty currentProperty = allProperties.next();
+		if (currentProperty.getDomain() != null) {
+		    if (currentProperty.getDomain().getURI()
+			    .equalsIgnoreCase(currentClass.getURI())) {
+			if (currentProperty.getRange() == null) {
+			    nodejs.add(currentProperty.getLocalName(),
+				    "string", currentProperty.getURI());
+			} else {
+			    nodejs.add(currentProperty.getLocalName(),
+				    currentProperty.getRange().getLocalName(),
+				    currentProperty.getURI());
 			}
 		    }
 		}
-		listNodeJs.add(nodejs);
 	    }
+	    listNodeJs.add(nodejs);
+
 	}
 	return;
     }

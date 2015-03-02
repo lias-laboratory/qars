@@ -20,12 +20,16 @@
 package fr.ensma.lias.qarscore.engine.relaxation.implementation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.ontology.OntClass;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
+import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.RelaxationOperators;
 
 /**
@@ -34,26 +38,183 @@ import fr.ensma.lias.qarscore.engine.relaxation.RelaxationOperators;
 public class RelaxationOperatorsImpl implements RelaxationOperators {
 
     private Session session;
-    
 
-    @Override
-    public List<CQuery> generalize(CQuery query, Node classe, int level) {
-	
-	List<CQuery> relaxedQueries = new ArrayList<CQuery>();
-	
+    public Map<CQuery, Integer> specialization(CQuery query, Node classe,
+	    int level) {
+
+	int depht = 0;
+	Map<CQuery, Integer> relaxedQueries = new HashMap<CQuery, Integer>();
+	OntClass currentClass = session.getOntologyModel().getOntClass(
+		classe.getURI());
+	if (currentClass == null) {
+	    return relaxedQueries;
+	}
+	List<OntClass> directSubClass = currentClass.listSubClasses(true)
+		.toList();
+	depht = depht - 1;
+
+	while ((level < depht) && (directSubClass.size() != 0)) {
+
+	    List<OntClass> tempSubClass = directSubClass;
+	    directSubClass = new ArrayList<OntClass>();
+
+	    for (OntClass subClass : tempSubClass) {
+		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		if (tempQuery.replace(classe, (Node) subClass)) {
+		    relaxedQueries.put(tempQuery, depht);
+		}
+		directSubClass.addAll(subClass.listSuperClasses(true).toList());
+	    }
+	    depht = depht - 1;
+	}
+
+	return relaxedQueries;
+    }
+
+    public Map<CQuery, Integer> specialization(CQuery query, Node classe) {
+
+	int depht = 0;
+	Map<CQuery, Integer> relaxedQueries = new HashMap<CQuery, Integer>();
+	OntClass currentClass = session.getOntologyModel().getOntClass(
+		classe.getURI());
+
+	if (currentClass == null) {
+	    return relaxedQueries;
+	}
+
+	List<OntClass> directSubClass = currentClass.listSubClasses(true)
+		.toList();
+	depht = depht - 1;
+
+	while (directSubClass.size() != 0) {
+
+	    List<OntClass> tempSubClass = directSubClass;
+	    directSubClass = new ArrayList<OntClass>();
+
+	    for (OntClass subClass : tempSubClass) {
+		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		if (tempQuery.replace(classe, (Node) subClass)) {
+		    relaxedQueries.put(tempQuery, depht);
+		}
+		directSubClass.addAll(subClass.listSuperClasses(true).toList());
+	    }
+	    depht = depht - 1;
+	}
+
+	return relaxedQueries;
+    }
+
+    public Map<CQuery, Integer> generalization(CQuery query, Node classe,
+	    int level) {
+
+	int depht = 0;
+	Map<CQuery, Integer> relaxedQueries = new HashMap<CQuery, Integer>();
+	OntClass currentClass = session.getOntologyModel().getOntClass(
+		classe.getURI());
+
+	if (currentClass == null) {
+	    return relaxedQueries;
+	}
+
+	List<OntClass> directSuperClass = currentClass.listSuperClasses(true)
+		.toList();
+	depht = depht + 1;
+
+	while ((depht < level) && (directSuperClass.size() != 0)) {
+
+	    List<OntClass> tempSuperClass = directSuperClass;
+	    directSuperClass = new ArrayList<OntClass>();
+
+	    for (OntClass superClass : tempSuperClass) {
+		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		if (tempQuery.replace(classe, (Node) superClass)) {
+		    relaxedQueries.put(tempQuery, depht);
+		}
+		directSuperClass.addAll(superClass.listSuperClasses(true)
+			.toList());
+	    }
+	    depht = depht + 1;
+	}
+
+	return relaxedQueries;
+    }
+
+    public Map<CQuery, Integer> generalization(CQuery query, Node classe) {
+
+	int depht = 0;
+	Map<CQuery, Integer> relaxedQueries = new HashMap<CQuery, Integer>();
+	OntClass currentClass = session.getOntologyModel().getOntClass(
+		classe.getURI());
+	if (currentClass == null) {
+	    return relaxedQueries;
+	}
+
+	List<OntClass> directSuperClass = currentClass.listSuperClasses(true)
+		.toList();
+	depht = depht + 1;
+
+	while (directSuperClass.size() != 0) {
+
+	    List<OntClass> tempSuperClass = directSuperClass;
+	    directSuperClass = new ArrayList<OntClass>();
+
+	    for (OntClass superClass : tempSuperClass) {
+		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		if (tempQuery.replace(classe, (Node) superClass)) {
+		    relaxedQueries.put(tempQuery, depht);
+		}
+		directSuperClass.addAll(superClass.listSuperClasses(true)
+			.toList());
+	    }
+	    depht = depht + 1;
+	}
 	return relaxedQueries;
     }
 
     @Override
-    public List<CQuery> generalize(CQuery query, Node classe) {
-	// TODO Auto-generated method stub
-	return null;
+    public Map<CQuery, Integer> generalize(CQuery query, Node classe, int level) {
+
+	if (level < 0) {
+	    return this.specialization(query, classe, level);
+	} else {
+	    return this.generalization(query, classe, level);
+	}
+    }
+
+    @Override
+    public Map<CQuery, Integer> generalize(CQuery query, Node classe) {
+
+	return this.generalization(query, classe);
     }
 
     @Override
     public List<CQuery> sibling(CQuery query, Node classe) {
-	// TODO Auto-generated method stub
-	return null;
+
+	List<CQuery> relaxedQueries = new ArrayList<CQuery>();
+	OntClass currentClass = session.getOntologyModel().getOntClass(
+		classe.getURI());
+	if (currentClass == null) {
+	    return relaxedQueries;
+	}
+
+	List<OntClass> listSuperClass = currentClass.listSuperClasses(true)
+		.toList();
+	List<OntClass> subClassesFound = new ArrayList<>();
+	for (OntClass superClasse : listSuperClass) {
+	    List<OntClass> listSubClass = superClasse.listSubClasses(true)
+		    .toList();
+	    for (OntClass subclass : listSubClass) {
+		if ((!subclass.equals(currentClass))
+			&& (!subClassesFound.contains(subclass))) {
+		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		    if (tempQuery.replace(classe, (Node) subclass)) {
+			relaxedQueries.add(tempQuery);
+		    }
+		    subClassesFound.add(subclass);
+		}
+	    }
+	}
+	return relaxedQueries;
     }
 
     @Override
@@ -73,5 +234,4 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 	// TODO Auto-generated method stub
 	return null;
     }
-
 }

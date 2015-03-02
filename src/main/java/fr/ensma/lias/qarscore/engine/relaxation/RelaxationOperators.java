@@ -20,6 +20,7 @@
 package fr.ensma.lias.qarscore.engine.relaxation;
 
 import java.util.List;
+import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
 
@@ -30,10 +31,10 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public interface RelaxationOperators {
 
-    List<CQuery> generalize(CQuery query, Node classe, int level);
+    Map<CQuery, Integer> generalize(CQuery query, Node classe, int level);
     
-    List<CQuery> generalize(CQuery query, Node classe);
-    
+    Map<CQuery, Integer> generalize(CQuery query, Node classe);
+
     List<CQuery> sibling(CQuery query, Node classe);
     
     List<CQuery> relaxValue(CQuery query, Node value);

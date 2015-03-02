@@ -332,6 +332,17 @@ public class CQuery {
 	return false;
     }
 
+    /**
+     * replace all the Node with value node by othernode
+     * @param classe
+     * @param otherNode
+     * @return
+     */
+    public boolean replace(Node node, Node otherNode) {
+	// TODO Auto-generated method stub
+	return false;
+    }
+
     /*
      * (non-Javadoc)
      * 
