@@ -84,8 +84,9 @@ public class NodeJSONTest extends SessionTDBTest {
 	    OntClass currentClass = listRoot.next();
 	    if (currentClass.getURI() != null) {
 		NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-			currentClass.getNameSpace(), currentClass.getURI(),
-			currentClass.getLocalName());
+			currentClass.getNameSpace(), session.getOntologyModel()
+				.getNsURIPrefix(currentClass.getNameSpace()),
+			currentClass.getURI(), currentClass.getLocalName());
 		Assert.assertNotNull(nodejs);
 		Assert.assertTrue(nodejs.getNodeIRI().contains(
 			nodejs.getNodeName()));
@@ -107,8 +108,9 @@ public class NodeJSONTest extends SessionTDBTest {
 	OntClass currentClass = listRoot.next();
 	if (currentClass.getURI() != null) {
 	    NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-		    currentClass.getNameSpace(), currentClass.getURI(),
-		    currentClass.getLocalName());
+		    currentClass.getNameSpace(), session.getOntologyModel()
+			    .getNsURIPrefix(currentClass.getNameSpace()),
+		    currentClass.getURI(), currentClass.getLocalName());
 	    Assert.assertNotNull(nodejs);
 	    Assert.assertTrue(nodejs.getNodeIRI()
 		    .contains(nodejs.getNodeName()));
@@ -121,7 +123,7 @@ public class NodeJSONTest extends SessionTDBTest {
 		OntProperty currentProperty = allProperties.next();
 		if (currentProperty.isDatatypeProperty()) {
 		    nodejs.add(currentProperty.getLocalName(), currentProperty
-			    .getRDFType().getLocalName());
+			    .getRDFType().getLocalName(), currentProperty.getURI());
 		}
 	    }
 	    logger.info(nodejs.toString());

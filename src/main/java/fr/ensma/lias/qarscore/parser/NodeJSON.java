@@ -38,6 +38,11 @@ public class NodeJSON {
     private String nodeNameSpace;
 
     /**
+     * The prefix label of the current Node
+     */
+    private String nodeNameSpaceLabel;
+
+    /**
      * the ID of the current Node
      */
     private String nodeIRI;
@@ -57,13 +62,21 @@ public class NodeJSON {
      */
     private List<String> attributesType;
 
-    public NodeJSON(String name, String namespace, String iri, String label) {
+    /**
+     * List attributes's uri in the same order of attribute's name
+     */
+    private List<String> attributesURI;
+
+    public NodeJSON(String name, String namespace, String prefixLabel,
+	    String iri, String label) {
 	nodeName = name;
 	nodeNameSpace = namespace;
+	nodeNameSpaceLabel = prefixLabel;
 	nodeIRI = iri;
 	nodeLabel = label;
 	attributesNames = new ArrayList<String>();
 	attributesType = new ArrayList<String>();
+	attributesURI = new ArrayList<String>();
     }
 
     /**
@@ -81,11 +94,10 @@ public class NodeJSON {
     }
 
     /**
-     * @param nodeNameSpace
-     *            the nodeNameSpace to set
+     * @return the nodeNameSpaceLabel
      */
-    public void setNodeNameSpace(String nodeNameSpace) {
-	this.nodeNameSpace = nodeNameSpace;
+    public String getNodeNameSpaceLabel() {
+	return nodeNameSpaceLabel;
     }
 
     /**
@@ -93,14 +105,6 @@ public class NodeJSON {
      */
     public String getNodeIRI() {
 	return nodeIRI;
-    }
-
-    /**
-     * @param nodeIRI
-     *            the nodeIRI to set
-     */
-    public void setNodeIRI(String nodeIRI) {
-	this.nodeIRI = nodeIRI;
     }
 
     /**
@@ -130,9 +134,10 @@ public class NodeJSON {
      * @param name
      * @param type
      */
-    public void add(String name, String type) {
+    public void add(String name, String type, String uri) {
 	attributesNames.add(name);
 	attributesType.add(type);
+	attributesURI.add(uri);
     }
 
     /*
@@ -143,7 +148,10 @@ public class NodeJSON {
     @Override
     public String toString() {
 
-	String node = "{\"label\" : \"" + this.nodeLabel + "\","+" \"uri\":\""+this.getNodeIRI()+"\", \"prefix\":\""+this.getNodeNameSpace()+"\", ";
+	String node = "{\"label\" : \"" + this.nodeLabel + "\","
+		+ " \"uri\":\"" + this.getNodeIRI() + "\", \"prefix\":\""
+		+ this.getNodeNameSpaceLabel() + "\", \"prefixValue\":\""
+		+ this.getNodeNameSpace() + "\", ";
 	node = node + "\"attributes\" : " + attributeToString();
 	node = node + "}";
 
@@ -157,17 +165,28 @@ public class NodeJSON {
 	}
 
 	String attrib = "[{\"name\" : \"" + attributesNames.get(0)
-		+ "\", \"type\" : \"" + attributesType.get(0) + "\"}";
+		+ "\", \"type\" : \"" + attributesType.get(0)
+		+ "\", \"uri\":\"" + attributesURI.get(0) + "\", \"prefix\":\""
+		+ this.getNodeNameSpaceLabel() + "\", \"prefixValue\":\""
+		+ this.getNodeNameSpace() + "\"}";
 
 	for (int i = 1; i < attributesNames.size() - 1; i++) {
 	    attrib = attrib + ", {\"name\" : \"" + attributesNames.get(i)
-		    + "\", \"type\" : \"" + attributesType.get(i) + "\"}";
+		    + "\", \"type\" : \"" + attributesType.get(i)
+		    + "\", \"uri\":\"" + attributesURI.get(i)
+		    + "\", \"prefix\":\"" + this.getNodeNameSpaceLabel()
+		    + "\", \"prefixValue\":\"" + this.getNodeNameSpace()
+		    + "\"}";
 	}
 
 	attrib = attrib + ", {\"name\" : \""
 		+ attributesNames.get(attributesNames.size() - 1)
 		+ "\", \"type\" : \""
-		+ attributesType.get(attributesNames.size() - 1) + "\"}]";
+		+ attributesType.get(attributesNames.size() - 1)
+		+ "\", \"uri\":\""
+		+ attributesURI.get(attributesNames.size() - 1)
+		+ "\", \"prefix\":\"" + this.getNodeNameSpaceLabel()
+		+ "\", \"prefixValue\":\"" + this.getNodeNameSpace() + "\"}]";
 
 	return attrib;
     }

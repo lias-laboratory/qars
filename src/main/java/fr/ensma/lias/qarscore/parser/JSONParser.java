@@ -77,10 +77,12 @@ public class JSONParser {
 
 	while (listClass.hasNext()) {
 	    OntClass currentClass = listClass.next();
-	    
+
 	    if (currentClass.getURI() != null) {
 		NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-			currentClass.getNameSpace(), currentClass.getURI(),
+			currentClass.getNameSpace(),
+			MODEL_TO_PARSE.getNsURIPrefix(currentClass
+				.getNameSpace()), currentClass.getURI(),
 			currentClass.getLocalName());
 
 		ExtendedIterator<DatatypeProperty> allProperties = MODEL_TO_PARSE
@@ -93,11 +95,11 @@ public class JSONParser {
 				.equalsIgnoreCase(currentClass.getURI())) {
 			    if (currentProperty.getRange() == null) {
 				nodejs.add(currentProperty.getLocalName(),
-					"string");
+					"string", currentProperty.getURI());
 			    } else {
 				nodejs.add(currentProperty.getLocalName(),
 					currentProperty.getRange()
-						.getLocalName());
+						.getLocalName(), currentProperty.getURI());
 			    }
 			}
 		    }
@@ -130,7 +132,8 @@ public class JSONParser {
 		    EdgesJSON edge = new EdgesJSON(
 			    currentProperty.getLocalName(),
 			    currentProperty.getNameSpace(),
-			    currentProperty.getURI(),
+			    MODEL_TO_PARSE.getNsURIPrefix(currentProperty
+				    .getNameSpace()), currentProperty.getURI(),
 			    currentProperty.getLocalName(), "ObjectProperty",
 			    sourceEdge, destinationEdge);
 		    listEdgesProperties.add(edge);
@@ -156,7 +159,7 @@ public class JSONParser {
 			.getURI());
 		if (currentChildNodeJson != null) {
 		    EdgesJSON edge = new EdgesJSON("SubClassOf",
-			    "http://www.w3.org/2000/01/rdf-schema#",
+			    "http://www.w3.org/2000/01/rdf-schema#", "rdfs",
 			    "http://www.w3.org/2000/01/rdf-schema#subClassOf",
 			    "SubClassOf", "SubClassOf", currentChildNodeJson,
 			    currentNode);

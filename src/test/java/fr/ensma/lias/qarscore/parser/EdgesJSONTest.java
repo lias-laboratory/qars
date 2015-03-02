@@ -79,7 +79,7 @@ public class EdgesJSONTest extends SessionTDBTest {
 	    OntClass currentRoot = listRoot.next();
 	    if (currentRoot.getURI() != null) {
 		NodeJSON nodejs = new NodeJSON(currentRoot.getLocalName(),
-			currentRoot.getNameSpace(), currentRoot.getURI(),
+			currentRoot.getNameSpace(), session.getOntologyModel().getNsURIPrefix(currentRoot.getNameSpace()), currentRoot.getURI(),
 			currentRoot.getLocalName());
 		Assert.assertNotNull(nodejs);
 		Assert.assertTrue(nodejs.getNodeIRI().contains(
@@ -96,7 +96,7 @@ public class EdgesJSONTest extends SessionTDBTest {
 		    if (currentProperty.isObjectProperty()) {
 			EdgesJSON edge = new EdgesJSON(
 				currentProperty.getLocalName(),
-				currentProperty.getNameSpace(),
+				currentProperty.getNameSpace(), session.getOntologyModel().getNsURIPrefix(currentProperty.getNameSpace()),
 				currentProperty.getURI(),
 				currentProperty.getLocalName(),
 				"ObjectProperty");
@@ -107,7 +107,7 @@ public class EdgesJSONTest extends SessionTDBTest {
 			    Assert.assertTrue(range.isClass());
 			    Assert.assertNotNull(edge);
 			    NodeJSON nodejs1 = new NodeJSON(
-				    range.getLocalName(), range.getNameSpace(),
+				    range.getLocalName(), range.getNameSpace(), session.getOntologyModel().getNsURIPrefix(range.getNameSpace()),
 				    range.getURI(), range.getLocalName());
 			    edge.setEdgeSource(nodejs);
 			    edge.setEdgeDestination(nodejs1);

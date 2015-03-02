@@ -35,6 +35,11 @@ public class EdgesJSON {
     private String edgeNameSpace;
 
     /**
+     * The prefix label of the current Node
+     */
+    private String edgeNameSpaceLabel;
+
+    /**
      * the ID of the current Node
      */
     private String edgeIRI;
@@ -66,11 +71,12 @@ public class EdgesJSON {
      * @param edgeLabel
      * @param edgeType
      */
-    public EdgesJSON(String edgeName, String edgeNameSpace, String edgeIRI,
-	    String edgeLabel, String edgeType) {
+    public EdgesJSON(String edgeName, String edgeNameSpace, String prefixLabel,
+	    String edgeIRI, String edgeLabel, String edgeType) {
 	super();
 	this.edgeName = edgeName;
 	this.edgeNameSpace = edgeNameSpace;
+	this.edgeNameSpaceLabel = prefixLabel;
 	this.edgeIRI = edgeIRI;
 	this.edgeLabel = edgeLabel;
 	this.edgeType = edgeType;
@@ -85,12 +91,13 @@ public class EdgesJSON {
      * @param edgeSource
      * @param edgeDestination
      */
-    public EdgesJSON(String edgeName, String edgeNameSpace, String edgeIRI,
-	    String edgeLabel, String edgeType, NodeJSON edgeSource,
-	    NodeJSON edgeDestination) {
+    public EdgesJSON(String edgeName, String edgeNameSpace, String prefixLabel,
+	    String edgeIRI, String edgeLabel, String edgeType,
+	    NodeJSON edgeSource, NodeJSON edgeDestination) {
 	super();
 	this.edgeName = edgeName;
 	this.edgeNameSpace = edgeNameSpace;
+	this.edgeNameSpaceLabel = prefixLabel;
 	this.edgeIRI = edgeIRI;
 	this.edgeLabel = edgeLabel;
 	this.edgeType = edgeType;
@@ -103,14 +110,6 @@ public class EdgesJSON {
      */
     public String getEdgeName() {
 	return edgeName;
-    }
-
-    /**
-     * @param edgeName
-     *            the edgeName to set
-     */
-    public void setEdgeName(String edgeName) {
-	this.edgeName = edgeName;
     }
 
     /**
@@ -129,18 +128,17 @@ public class EdgesJSON {
     }
 
     /**
+     * @return the edgeNameSpaceLabel
+     */
+    public String getEdgeNameSpaceLabel() {
+	return edgeNameSpaceLabel;
+    }
+
+    /**
      * @return the edgeIRI
      */
     public String getEdgeIRI() {
 	return edgeIRI;
-    }
-
-    /**
-     * @param edgeIRI
-     *            the edgeIRI to set
-     */
-    public void setEdgeIRI(String edgeIRI) {
-	this.edgeIRI = edgeIRI;
     }
 
     /**
@@ -151,26 +149,10 @@ public class EdgesJSON {
     }
 
     /**
-     * @param edgeLabel
-     *            the edgeLabel to set
-     */
-    public void setEdgeLabel(String edgeLabel) {
-	this.edgeLabel = edgeLabel;
-    }
-
-    /**
      * @return the edgeType
      */
     public String getEdgeType() {
 	return edgeType;
-    }
-
-    /**
-     * @param edgeType
-     *            the edgeType to set
-     */
-    public void setEdgeType(String edgeType) {
-	this.edgeType = edgeType;
     }
 
     /**
