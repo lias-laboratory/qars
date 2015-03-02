@@ -143,7 +143,7 @@ public class NodeJSON {
     @Override
     public String toString() {
 
-	String node = "{\"label\" : \"" + this.nodeLabel + "\",";
+	String node = "{\"label\" : \"" + this.nodeLabel + "\","+" \"uri\":\""+this.getNodeIRI()+"\", \"prefix\":\""+this.getNodeNameSpace()+"\", ";
 	node = node + "\"attributes\" : " + attributeToString();
 	node = node + "}";
 

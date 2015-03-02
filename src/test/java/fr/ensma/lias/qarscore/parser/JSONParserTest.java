@@ -19,6 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.parser;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -67,6 +69,18 @@ public class JSONParserTest extends SessionTDBTest{
 	super.teardDown();
     }
 
+    @Test
+    public void TestGetListNodeJs(){
+	JSONParser parser = new JSONParser(session.getOntologyModel());
+	Assert.assertNotNull(parser);
+	List<NodeJSON> nodes = parser.getListNodeJs();
+	Assert.assertNotNull(nodes);
+	Assert.assertTrue(!nodes.isEmpty());
+	for(NodeJSON node:nodes){
+	    logger.info(node);
+	}
+    }
+    
     @Test
     public void testGetParser() {
 	

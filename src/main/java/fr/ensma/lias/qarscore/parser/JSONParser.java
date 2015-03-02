@@ -77,7 +77,7 @@ public class JSONParser {
 
 	while (listClass.hasNext()) {
 	    OntClass currentClass = listClass.next();
-
+	    
 	    if (currentClass.getURI() != null) {
 		NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
 			currentClass.getNameSpace(), currentClass.getURI(),
@@ -216,7 +216,7 @@ public class JSONParser {
      */
     public String getParser() {
 
-	String resulJson = "{\"node\" : [";
+	String resulJson = "{\"nodes\" : [";
 
 	if (listNodeJs.size() == 1) {
 	    resulJson = resulJson + ", " + listNodeJs.get(0).toString() + "]";

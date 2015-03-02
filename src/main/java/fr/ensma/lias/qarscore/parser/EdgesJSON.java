@@ -224,7 +224,7 @@ public class EdgesJSON {
 	    edge = edge + "\"type\" : \"relation\"}";
 	} else {
 	    if (edgeType.equalsIgnoreCase("SubClassOf")) {
-		edge = edge + "\"type\" : \"entailment\"}";
+		edge = edge + "\"type\" : \"inheritance\"}";
 	    } else {
 		edge = edge + "\"type\" : " + edgeType + "}";
 	    }
