@@ -19,7 +19,7 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,67 +190,4 @@ public class MappingResultTest extends SessionTDBTest {
     public void testGetVariables() {
 	fail("Not yet implemented"); // TODO
     }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MappingResult#union(fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MappingResult)}.
-     */
-    @Test
-    public void testUnion() {
-	
-	HashMap<RDFNode, Integer> dictionary = new HashMap<RDFNode, Integer>();
-	Integer dictionary_size = 0;
-
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_21);
-
-	for (int i = 1; i <= conjunctiveQuery.getElementList().size(); i++) {
-
-	    List<CElement> elements = new ArrayList<CElement>();
-	    elements.add(conjunctiveQuery.getElementList().get(i - 1));
-	    CQuery current_query = CQueryFactory.createCQuery(elements);
-	    
-	    ResultSet result_set = session.createStatement(
-		    current_query.toString()).executeSPARQLQuery();
-
-	    MappingResult result_mapping = null;
-
-	    while (result_set.hasNext()) {
-
-		QuerySolution result = result_set.next();
-
-		int[] listMapping = new int[conjunctiveQuery
-			.getMentionedQueryVarNames().size()];
-
-		for (int j = 1; j <= conjunctiveQuery
-			.getMentionedQueryVarNames().size(); j++) {
-		    RDFNode val = result.get(conjunctiveQuery
-			    .getMentionedQueryVarNames().get(j - 1));
-		    Integer intVal = null;
-		    if (val == null)
-			intVal = 0;
-		    else {
-			intVal = dictionary.get(val);
-			if (intVal == null) {
-			    dictionary_size++;
-			    dictionary.put(val, dictionary_size);
-			    intVal = dictionary_size;
-			}
-		    }
-		    listMapping[j - 1] = intVal;
-		}
-		result_mapping = new MappingResult(listMapping);
-		logger.info(result_mapping.toString());
-	    }
-	    
-	    if(i==1){
-		Assert.assertTrue(dictionary_size == 8061);
-	    }
-	    else {
-		Assert.assertTrue(dictionary_size == 8065);
-	    }
-	    
-	    Assert.assertTrue(result_mapping.getVariables().length == 2);
-	}
-    }
-
 }

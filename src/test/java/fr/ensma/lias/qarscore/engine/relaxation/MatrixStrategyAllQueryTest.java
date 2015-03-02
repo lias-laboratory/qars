@@ -40,7 +40,7 @@ import fr.ensma.lias.qarscore.properties.Properties;
 /**
  * @author Geraud FOKOU
  */
-public class LatticeStrategyTest extends SessionTDBTest {
+public class MatrixStrategyAllQueryTest extends SessionTDBTest {
 
     private Session session;
     private RelaxationStrategies relaxationStrategy;
@@ -48,6 +48,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 
     @Before
     public void setUp() {
+
 	super.setUp();
 	logger = Logger.getRootLogger();
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
@@ -68,100 +69,76 @@ public class LatticeStrategyTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getOneMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery#hasLeastKAnswers()}
      * .
      */
     @Test
-    public void testGetOneMFS() {
-
+    public void testHasLeastKAnswers() {
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_14);
-	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
+		.createCQuery(SPARQLQueriesSample.QUERY_21);
+	relaxationStrategy = StrategiesFactory.getMatrixStrategy(session,
 		conjunctiveQuery);
-	Assert.assertTrue(!relaxationStrategy
-		.hasLeastKAnswers(conjunctiveQuery));
-	CQuery oneCause = relaxationStrategy.getOneMFS();
-	Assert.assertTrue(relaxationStrategy.isMFS(oneCause));
-	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(oneCause));
-
-	conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_15);
 	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
-	oneCause = relaxationStrategy.getOneMFS(conjunctiveQuery);
-	Assert.assertFalse(oneCause.isValidQuery());
-	Assert.assertFalse(relaxationStrategy.isMFS(oneCause));
+
+	Assert.assertTrue(!relaxationStrategy.isMFS());
+
     }
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getAllMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery#getOneMFS()}
+     * .
+     */
+    @Test
+    public void testGetOneMFS() {
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_14);
+	relaxationStrategy = StrategiesFactory.getMatrixStrategy(session,
+		conjunctiveQuery);
+	Assert.assertTrue(!relaxationStrategy
+		.hasLeastKAnswers(conjunctiveQuery));
+	Assert.assertTrue(!relaxationStrategy.isMFS());
+	CQuery cause = relaxationStrategy.getOneMFS();
+	Assert.assertNotNull(cause);
+	logger.info(cause.getSPARQLQuery().toString());
+	
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery#getAllMFS()}
      * .
      */
     @Test
     public void testGetAllMFS() {
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_13);
-	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
+		.createCQuery(SPARQLQueriesSample.QUERY_14);
+	relaxationStrategy = StrategiesFactory.getMatrixStrategy(session,
 		conjunctiveQuery);
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers());
 	List<CQuery> allCauses = relaxationStrategy.getAllMFS();
-	Assert.assertTrue(allCauses.size() == 14);
-	Assert.assertTrue(relaxationStrategy.isMFS(allCauses.get(0)));
-	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(allCauses.get(0)));
+	Assert.assertTrue(allCauses.size() == 1);
 	for (CQuery cause : allCauses) {
-	    Assert.assertTrue(relaxationStrategy.isMFS(cause));
 	    logger.info(cause.getSPARQLQuery());
-	}
-	List<CQuery> allSuccess = relaxationStrategy.getAllXSS();
-	Assert.assertTrue(allSuccess.size() == 4);
-	for (CQuery success : allSuccess) {
-	    Assert.assertTrue(!relaxationStrategy.isMFS(success));
-	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
-	    logger.info(success.getSPARQLQuery());
 	}
     }
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#getAllXSS()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery#getAllXSS()}
      * .
      */
     @Test
     public void testGetAllXSS() {
-
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_6);
-	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
+		.createCQuery(SPARQLQueriesSample.QUERY_14);
+	relaxationStrategy = StrategiesFactory.getMatrixStrategy(session,
 		conjunctiveQuery);
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers());
-	List<CQuery> allCauses = relaxationStrategy.getAllMFS();
-	Assert.assertTrue(allCauses.size() == 6);
-	for (CQuery cause : allCauses) {
-	    Assert.assertTrue(relaxationStrategy.isMFS(cause));
-	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(cause));
-	    logger.info(cause.getSPARQLQuery());
-	}
 	List<CQuery> allSuccess = relaxationStrategy.getAllXSS();
-	Assert.assertTrue(allSuccess.size() == 5);
+	Assert.assertTrue(allSuccess.size() == 1);
 	for (CQuery success : allSuccess) {
-	    Assert.assertTrue(!relaxationStrategy.isMFS(success));
-	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
 	    logger.info(success.getSPARQLQuery());
 	}
-    }
-
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy#hasLeastKAnswers(fr.ensma.lias.qarscore.engine.query.CQuery)}
-     * .
-     */
-    @Test
-    public void testHasLeastKAnswers() {
-
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_17);
-	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
-		conjunctiveQuery);
-	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
     }
 }

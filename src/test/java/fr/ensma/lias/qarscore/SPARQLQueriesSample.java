@@ -225,10 +225,9 @@ public class SPARQLQueriesSample {
 	    + "WHERE { ?X ub:worksFor <http://www.Department0.University0.edu> . "
 	    + "}";
 
-    // Empty query
+    // Not Empty query, 460 answers
     public static String QUERY_21 = LUBM_PREFIX + "SELECT ?X ?Y "
 	    + "WHERE {  ?X ub:publicationAuthor ?Y. "
 	    + " ?Y ub:worksFor <http://www.Department0.University0.edu> ."
 	    + "}";
-
 }

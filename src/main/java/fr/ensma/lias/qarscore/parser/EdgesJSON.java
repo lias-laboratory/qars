@@ -216,17 +216,17 @@ public class EdgesJSON {
 	    edge = edge + "}";
 	    return edge;
 	}
-	edge = edge + "'name' : '" + edgeLabel + "',";
-	edge = edge + "'from' : '" + edgeSource.getNodeLabel() + "',";
-	edge = edge + "'to' : '" + edgeDestination.getNodeLabel() + "',";
+	edge = edge + "\"name\" : \"" + edgeLabel + "\",";
+	edge = edge + "\"from\" : \"" + edgeSource.getNodeLabel() + "\",";
+	edge = edge + "\"to\" : \"" + edgeDestination.getNodeLabel() + "\",";
 
 	if (edgeType.equalsIgnoreCase("ObjectProperty")) {
-	    edge = edge + "'type' : 'relation'}";
+	    edge = edge + "\"type\" : \"relation\"}";
 	} else {
 	    if (edgeType.equalsIgnoreCase("SubClassOf")) {
-		edge = edge + "'type' : 'entailment'}";
+		edge = edge + "\"type\" : \"entailment\"}";
 	    } else {
-		edge = edge + "'type' : " + edgeType + "}";
+		edge = edge + "\"type\" : " + edgeType + "}";
 	    }
 	}
 	return edge;

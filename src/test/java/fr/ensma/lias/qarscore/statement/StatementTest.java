@@ -19,6 +19,9 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -33,6 +36,9 @@ import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
+import fr.ensma.lias.qarscore.engine.query.CElement;
+import fr.ensma.lias.qarscore.engine.query.CQuery;
+import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -69,20 +75,48 @@ public class StatementTest extends SessionTDBTest {
 
     @Test
     public void testExecuteQuery() {
-	
+
 	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_21);
 	Assert.assertNotNull(queryStatement.getQuery());
 
 	ResultSet result = queryStatement.executeSPARQLQuery();
 	Assert.assertNotNull(result);
-	int i =0;
-	while(result.hasNext()){
+	int i = 0;
+	while (result.hasNext()) {
 	    QuerySolution solution = result.next();
-	    Logger.getRootLogger().info(solution.get(result.getResultVars().get(0)));
+	    Logger.getRootLogger().info(
+		    solution.get(result.getResultVars().get(0)));
 	    i++;
 	}
-	
+
 	Assert.assertTrue(!result.hasNext());
 	Logger.getRootLogger().info(i);
     }
+
+    @Test
+    public void testExecuteQueryBis() {
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_14);
+
+	for (CElement element : conjunctiveQuery.getElementList()) {
+
+	    List<CElement> elements = new ArrayList<CElement>();
+	    elements.add(element);
+	    CQuery current_query = CQueryFactory.createCQuery(elements);
+	    queryStatement.preparedQuery(current_query.toString());
+	    Assert.assertNotNull(queryStatement.getQuery());
+	    ResultSet result = queryStatement.executeSPARQLQuery();
+	    Assert.assertNotNull(result);
+	    int i = 0;
+	    while (result.hasNext()) {
+		result.next();
+		i++;
+	    }
+
+	    Assert.assertTrue(!result.hasNext());
+	    Logger.getRootLogger().info(current_query.toString() + "---" + i);
+	}
+    }
+
 }

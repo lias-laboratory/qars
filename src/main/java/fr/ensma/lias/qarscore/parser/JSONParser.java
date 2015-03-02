@@ -216,7 +216,7 @@ public class JSONParser {
      */
     public String getParser() {
 
-	String resulJson = "{'node' : [";
+	String resulJson = "{\"node\" : [";
 
 	if (listNodeJs.size() == 1) {
 	    resulJson = resulJson + ", " + listNodeJs.get(0).toString() + "]";
@@ -234,7 +234,7 @@ public class JSONParser {
 	    }
 	}
 
-	resulJson = resulJson + ", 'edges' : [";
+	resulJson = resulJson + ", \"edges\" : [";
 
 	if (listEdgesProperties.size() == 1) {
 	    resulJson = resulJson + listEdgesProperties.get(0).toString();

@@ -143,8 +143,8 @@ public class NodeJSON {
     @Override
     public String toString() {
 
-	String node = "{'label' : '" + this.nodeLabel + "',";
-	node = node + "'attributes' : " + attributeToString();
+	String node = "{\"label\" : \"" + this.nodeLabel + "\",";
+	node = node + "\"attributes\" : " + attributeToString();
 	node = node + "}";
 
 	return node;
@@ -156,18 +156,18 @@ public class NodeJSON {
 	    return "[]";
 	}
 
-	String attrib = "[{'name' : '" + attributesNames.get(0)
-		+ "', 'type' : '" + attributesType.get(0) + "'}";
+	String attrib = "[{\"name\" : \"" + attributesNames.get(0)
+		+ "\", \"type\" : \"" + attributesType.get(0) + "\"}";
 
 	for (int i = 1; i < attributesNames.size() - 1; i++) {
-	    attrib = attrib + ", {'name' : '" + attributesNames.get(i)
-		    + "', 'type' : '" + attributesType.get(i) + "'}";
+	    attrib = attrib + ", {\"name\" : \"" + attributesNames.get(i)
+		    + "\", \"type\" : \"" + attributesType.get(i) + "\"}";
 	}
 
-	attrib = attrib + ", {'name' : '"
+	attrib = attrib + ", {\"name\" : \""
 		+ attributesNames.get(attributesNames.size() - 1)
-		+ "', 'type' : '"
-		+ attributesType.get(attributesNames.size() - 1) + "'}]";
+		+ "\", \"type\" : \""
+		+ attributesType.get(attributesNames.size() - 1) + "\"}]";
 
 	return attrib;
     }

@@ -21,6 +21,7 @@ package fr.ensma.lias.qarscore.connection;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -98,7 +99,7 @@ public class SessionTDBTest {
 	String ontoJson = session.getOntoJSON();
 	Assert.assertNotNull(ontoJson);
 	String entity = "Professor";
-
+	Logger.getRootLogger().info(ontoJson);
 	Assert.assertTrue(ontoJson.contains(entity));
 
     }

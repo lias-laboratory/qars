@@ -19,26 +19,9 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
-import java.util.List;
-
-import com.hp.hpl.jena.graph.Node;
-
-import fr.ensma.lias.qarscore.engine.query.CQuery;
-
 /**
  * @author Geraud FOKOU
  */
-public interface RelaxationOperators {
+public interface RelaxationSimilarity {
 
-    List<CQuery> generalize(CQuery query, Node classe, int level);
-    
-    List<CQuery> generalize(CQuery query, Node classe);
-    
-    List<CQuery> sibling(CQuery query, Node classe);
-    
-    List<CQuery> relaxValue(CQuery query, Node value);
-    
-    List<CQuery> releaseValue(CQuery query, Node value);
-    
-    List<CQuery> releaseJoin(CQuery query, Node variable);
 }
