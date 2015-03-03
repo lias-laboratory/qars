@@ -221,8 +221,8 @@ public class SPARQLQueriesSample {
 
     // Not Empty query, 41 answers
     public static String QUERY_20 = LUBM_PREFIX
-	    + "SELECT ?X "
-	    + "WHERE { ?X ub:worksFor <http://www.Department0.University0.edu> . "
+	    + "SELECT ?X ?Y"
+	    + "WHERE { ?Y ub:worksFor <http://www.Department0.University0.edu> . "
 	    + "}";
 
     // Not Empty query, 460 answers

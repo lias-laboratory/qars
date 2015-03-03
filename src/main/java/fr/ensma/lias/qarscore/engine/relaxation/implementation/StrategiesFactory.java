@@ -17,14 +17,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation;
+package fr.ensma.lias.qarscore.engine.relaxation.implementation;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyStarQuery;
 
 /**
  * @author Geraud FOKOU

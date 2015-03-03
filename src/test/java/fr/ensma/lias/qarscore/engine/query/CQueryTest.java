@@ -19,6 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.query;
 
+import static org.junit.Assert.*;
+
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -78,9 +80,7 @@ public class CQueryTest {
 	    } else {
 		logger.info(((ElementFilter) elt.getElement()).toString());
 	    }
-
 	}
-
     }
 
     /**
@@ -101,9 +101,16 @@ public class CQueryTest {
 
     /**
      * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getSelectedQueryVar()}.
+     */
+    @Test
+    public void testGetSelectedQueryVar() {
+	fail("Not yet implemented"); // TODO
+    }
+
+    /**
+     * Test method for
      * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getSelectedQueryVarNames()}
-     * . Test method for
-     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getMentionedQueryVarNames()}
      * .
      */
     @Test
@@ -115,7 +122,26 @@ public class CQueryTest {
 	Assert.assertEquals(5, conjunctiveQuery.getMentionedQueryVar().size());
 	logger.info(conjunctiveQuery.getSelectedQueryVarNames().toString());
 	logger.info(conjunctiveQuery.getMentionedQueryVarNames().toString());
+    }
 
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getMentionedQueryVar()}
+     * .
+     */
+    @Test
+    public void testGetMentionedQueryVar() {
+	fail("Not yet implemented"); // TODO
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getMentionedQueryVarNames()}
+     * .
+     */
+    @Test
+    public void testGetMentionedQueryVarNames() {
+	fail("Not yet implemented"); // TODO
     }
 
     /**
@@ -124,7 +150,6 @@ public class CQueryTest {
      */
     @Test
     public void testIsValidQuery() {
-
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_18);
 	Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
@@ -138,13 +163,36 @@ public class CQueryTest {
 	    } else {
 		logger.info(((ElementFilter) elt.getElement()).toString());
 	    }
-
 	}
     }
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#isValidQuery()}.
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getSPARQLQuery()}.
+     */
+    @Test
+    public void testGetSPARQLQuery() {
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_18);
+	Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
+	Assert.assertTrue(conjunctiveQuery.isValidQuery());
+	logger.info(conjunctiveQuery.getSPARQLQuery());
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getNativeSPARQLQuery()}
+     * .
+     */
+    @Test
+    public void testGetNativeSPARQLQuery() {
+	fail("Not yet implemented"); // TODO
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#isStarQuery()}.
      */
     @Test
     public void testIsStarQuery() {
@@ -178,15 +226,93 @@ public class CQueryTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getSPARQLQuery()}.
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#isChainQuery()}.
      */
     @Test
-    public void testGetSPARQLQuery() {
-
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_18);
-	Assert.assertEquals(9, conjunctiveQuery.getElementList().size());
-	Assert.assertTrue(conjunctiveQuery.isValidQuery());
-	logger.info(conjunctiveQuery.getSPARQLQuery());
+    public void testIsChainQuery() {
+	fail("Not yet implemented"); // TODO
     }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#isCartesianProduct()}.
+     */
+    @Test
+    public void testIsCartesianProduct() {
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_2);
+	Assert.assertTrue(conjunctiveQuery.isValidQuery());
+	Assert.assertTrue(!conjunctiveQuery.isCartesianProduct());
+	conjunctiveQuery.getElementList().remove(2);
+	Assert.assertTrue(conjunctiveQuery.getElementList().size()==4);
+	logger.info(conjunctiveQuery.getSPARQLQuery());
+	logger.info(conjunctiveQuery.getNativeSPARQLQuery());
+	Assert.assertTrue(conjunctiveQuery.isCartesianProduct());
+	
+	conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_4);
+	Assert.assertTrue(conjunctiveQuery.isValidQuery());
+	Assert.assertTrue(!conjunctiveQuery.isCartesianProduct());
+	conjunctiveQuery.getElementList().remove(7);
+	Assert.assertTrue(conjunctiveQuery.getElementList().size()==8);
+	logger.info(conjunctiveQuery.getSPARQLQuery());
+	logger.info(conjunctiveQuery.getNativeSPARQLQuery());
+	Assert.assertTrue(conjunctiveQuery.isCartesianProduct());
+	conjunctiveQuery.getElementList().remove(7);
+	Assert.assertTrue(!conjunctiveQuery.isCartesianProduct());
+	logger.info(conjunctiveQuery.getSPARQLQuery());
+	logger.info(conjunctiveQuery.getNativeSPARQLQuery());
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#isSubQueryOf(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * .
+     */
+    @Test
+    public void testIsSubQueryOf() {
+	CQuery conjunctiveQuery21 = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_21);
+	Assert.assertTrue(conjunctiveQuery21.isValidQuery());
+	CQuery conjunctiveQuery19 = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_19);
+	Assert.assertTrue(conjunctiveQuery19.isValidQuery());
+	Assert.assertTrue(conjunctiveQuery21.isSuperQueryOf(conjunctiveQuery19));
+	Assert.assertTrue(conjunctiveQuery19.isSubQueryOf(conjunctiveQuery21));
+	CQuery conjunctiveQuery20 = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_20);
+	Assert.assertTrue(conjunctiveQuery20.isValidQuery());
+	Assert.assertTrue(conjunctiveQuery21.isSuperQueryOf(conjunctiveQuery20));
+	Assert.assertTrue(conjunctiveQuery20.isSubQueryOf(conjunctiveQuery21));
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#replace(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)}
+     * .
+     */
+    @Test
+    public void testReplace() {
+	
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#toString()}.
+     */
+    @Test
+    public void testToString() {
+	fail("Not yet implemented"); // TODO
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#equals(java.lang.Object)}
+     * .
+     */
+    @Test
+    public void testEqualsObject() {
+	fail("Not yet implemented"); // TODO
+    }
+
 }

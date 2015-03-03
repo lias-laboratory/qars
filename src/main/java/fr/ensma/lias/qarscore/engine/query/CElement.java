@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.syntax.Element;
@@ -98,6 +99,59 @@ public class CElement {
     }
 
     /**
+     * Replace a node by an otherNode in a path block element
+     * 
+     * @param node
+     * @param otherNode
+     * @return
+     */
+    private TriplePath replaceInPathBlock(Node node, Node otherNode) {
+
+	Node subjectNode;
+	Node predicatNode;
+	Node objectNode;
+	boolean replacement = false;
+
+	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
+		.getList().get(0);
+
+	if (currentClause.getSubject().sameValueAs(node)) {
+	    subjectNode = otherNode;
+	    replacement = true;
+	} else {
+	    subjectNode = currentClause.getSubject();
+	}
+	if (currentClause.getPredicate() != null) {
+	    if (currentClause.getPredicate().sameValueAs(node)) {
+		predicatNode = otherNode;
+		replacement = true;
+	    } else {
+		predicatNode = currentClause.getPredicate();
+	    }
+	} else {
+	    predicatNode = null;
+	}
+	if (currentClause.getObject().sameValueAs(node)) {
+	    objectNode = otherNode;
+	    replacement = true;
+	} else {
+	    objectNode = currentClause.getSubject();
+	}
+	if (replacement) {
+	    if (predicatNode == null) {
+		return new TriplePath(subjectNode, currentClause.getPath(),
+			objectNode);
+	    } else {
+		return new TriplePath(new Triple(subjectNode, predicatNode,
+			objectNode));
+	    }
+
+	} else {
+	    return currentClause;
+	}
+    }
+
+    /**
      * Create a CTriple clause
      * 
      * @param triplet
@@ -145,5 +199,76 @@ public class CElement {
 	    tempList.add(mentionnedVar.get(i).getName());
 	}
 	return tempList;
+    }
+
+    /**
+     * replace node by othernode in this element
+     * 
+     * @param node
+     * @param otherNode
+     * @return
+     */
+    public CElement replace(Node node, Node otherNode) {
+
+	if (element instanceof ElementPathBlock) {
+
+	    TriplePath newtriplePath = replaceInPathBlock(node, otherNode);
+	    if (newtriplePath == ((ElementPathBlock) element).getPattern()
+		    .getList().get(0)) {
+		return this;
+	    }
+	    ElementPathBlock newPathBlock = new ElementPathBlock();
+	    newPathBlock.addTriple(newtriplePath);
+
+	    return new CElement(newPathBlock);
+	}
+	return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+
+	CElement otherCElement = (CElement) obj;
+	
+	if (otherCElement.element == this.element)
+	    return true;
+	if (this.element instanceof ElementPathBlock) {
+	    List<TriplePath> currentTriple = ((ElementPathBlock) element)
+		    .getPattern().getList();
+	    if (otherCElement.element instanceof ElementPathBlock) {
+		List<TriplePath> otherTriple = ((ElementPathBlock) otherCElement.element)
+			.getPattern().getList();
+		if (currentTriple.size() == otherTriple.size()) {
+		    for (int i = 0; i < currentTriple.size(); i++) {
+			int j = 0;
+			boolean found = false;
+			while ((!found) && (j < currentTriple.size())) {
+			    found = currentTriple.get(i).equals(
+				    otherTriple.get(j));
+			    j++;
+			}
+			if (!found) {
+			    return false;
+			}
+		    }
+		    return true;
+		}
+		return false;
+	    }
+	    return false;
+	}
+	return false;
     }
 }

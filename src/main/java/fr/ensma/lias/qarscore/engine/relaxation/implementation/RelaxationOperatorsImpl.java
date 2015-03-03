@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.ontology.OntClass;
 
 import fr.ensma.lias.qarscore.connection.Session;
@@ -38,6 +39,10 @@ import fr.ensma.lias.qarscore.engine.relaxation.RelaxationOperators;
 public class RelaxationOperatorsImpl implements RelaxationOperators {
 
     private Session session;
+    
+    protected RelaxationOperatorsImpl(Session s){
+	session = s;
+    }
 
     public Map<CQuery, Integer> specialization(CQuery query, Node classe,
 	    int level) {
@@ -60,7 +65,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 
 	    for (OntClass subClass : tempSubClass) {
 		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		if (tempQuery.replace(classe, (Node) subClass)) {
+		if (tempQuery.replace(classe, NodeFactory.createURI(subClass.getURI()))) {
 		    relaxedQueries.put(tempQuery, depht);
 		}
 		directSubClass.addAll(subClass.listSuperClasses(true).toList());
@@ -93,14 +98,13 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 
 	    for (OntClass subClass : tempSubClass) {
 		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		if (tempQuery.replace(classe, (Node) subClass)) {
+		if (tempQuery.replace(classe, NodeFactory.createURI(subClass.getURI()))) {
 		    relaxedQueries.put(tempQuery, depht);
 		}
 		directSubClass.addAll(subClass.listSuperClasses(true).toList());
 	    }
 	    depht = depht - 1;
 	}
-
 	return relaxedQueries;
     }
 
@@ -127,7 +131,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 
 	    for (OntClass superClass : tempSuperClass) {
 		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		if (tempQuery.replace(classe, (Node) superClass)) {
+		if (tempQuery.replace(classe, NodeFactory.createURI(superClass.getURI()))) {
 		    relaxedQueries.put(tempQuery, depht);
 		}
 		directSuperClass.addAll(superClass.listSuperClasses(true)
@@ -160,7 +164,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 
 	    for (OntClass superClass : tempSuperClass) {
 		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		if (tempQuery.replace(classe, (Node) superClass)) {
+		if (tempQuery.replace(classe, NodeFactory.createURI(superClass.getURI()))) {
 		    relaxedQueries.put(tempQuery, depht);
 		}
 		directSuperClass.addAll(superClass.listSuperClasses(true)
@@ -207,7 +211,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 		if ((!subclass.equals(currentClass))
 			&& (!subClassesFound.contains(subclass))) {
 		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		    if (tempQuery.replace(classe, (Node) subclass)) {
+		    if (tempQuery.replace(classe, NodeFactory.createURI(subclass.getURI()))) {
 			relaxedQueries.add(tempQuery);
 		    }
 		    subClassesFound.add(subclass);

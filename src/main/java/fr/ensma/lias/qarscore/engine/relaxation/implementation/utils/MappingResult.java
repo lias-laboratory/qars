@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies;
+package fr.ensma.lias.qarscore.engine.relaxation.implementation.utils;
 
 import java.util.Arrays;
 

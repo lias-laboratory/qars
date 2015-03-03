@@ -308,8 +308,48 @@ public class CQuery {
      * 
      * @return
      */
-    public boolean hasCartesianSet() {
-	return false;
+    public boolean isCartesianProduct() {
+
+	List<CElement> tempElementSet = new ArrayList<CElement>();
+	tempElementSet.addAll(elementList);
+	List<CElement> cartesianSet = new ArrayList<CElement>();
+	List<Node> cartesianSetNode = new ArrayList<Node>();
+	cartesianSet.add(tempElementSet.get(0));
+	tempElementSet.remove(0);
+	cartesianSetNode.addAll(cartesianSet.get(0).getMentionnedVar());
+
+	boolean foundNext = true;
+	while (foundNext) {
+	    foundNext = false;
+	    int i = 0;
+	    while ((i < tempElementSet.size()) && (!foundNext)) {
+		List<Node> tempCartesianNode = cartesianSetNode;
+		cartesianSetNode = new ArrayList<Node>();
+		cartesianSetNode.addAll(tempCartesianNode);
+
+		for (Node node : tempElementSet.get(i).getMentionnedVar()) {
+
+		    for (Node otherNode : tempCartesianNode) {
+			if (otherNode.sameValueAs(node)) {
+			    foundNext = true;
+			    cartesianSetNode.remove(otherNode);
+			}
+		    }
+		}
+		if (foundNext) {
+		    cartesianSet.add(tempElementSet.get(i));
+		    cartesianSetNode.addAll(tempElementSet.get(i)
+			    .getMentionnedVar());
+		    tempElementSet.remove(i);
+		} else {
+		    i = i + 1;
+		}
+	    }
+	    if (tempElementSet.isEmpty()) {
+		return false;
+	    }
+	}
+	return true;
     }
 
     /**
@@ -319,7 +359,22 @@ public class CQuery {
      * @return
      */
     public boolean isSubQueryOf(CQuery query) {
-	return false;
+
+	for (CElement element : this.getElementList()) {
+	    boolean hasEquiv = false;
+
+	    for (CElement equivElement : query.getElementList()) {
+		if (equivElement.equals(element)) {
+		    hasEquiv = true;
+		    break;
+		}
+	    }
+
+	    if (!hasEquiv) {
+		return false;
+	    }
+	}
+	return true;
     }
 
     /**
@@ -329,18 +384,62 @@ public class CQuery {
      * @return
      */
     public boolean isSuperQueryOf(CQuery query) {
-	return false;
+
+	return query.isSubQueryOf(this);
     }
 
     /**
      * replace all the Node with value node by othernode
+     * 
      * @param classe
      * @param otherNode
      * @return
      */
     public boolean replace(Node node, Node otherNode) {
-	// TODO Auto-generated method stub
-	return false;
+
+	if (node.sameValueAs(otherNode)) {
+	    return false;
+	}
+
+	boolean hasReplacement = false;
+	List<CElement> tempListCElement = new ArrayList<CElement>();
+	tempListCElement.addAll(elementList);
+	elementList = new ArrayList<CElement>();
+
+	for (CElement element : tempListCElement) {
+	    CElement newElement = element.replace(node, otherNode);
+	    if (newElement == element) {
+		elementList.add(element);
+	    } else {
+		elementList.add(newElement);
+		hasReplacement = true;
+	    }
+	}
+
+	if (node.isVariable()) {
+	    List<Node> tempListVarNode = new ArrayList<Node>();
+	    tempListVarNode.addAll(this.selectedQueryVar);
+	    selectedQueryVar = new ArrayList<Node>();
+
+	    boolean found = false;
+	    for (Node currentNode : tempListVarNode) {
+		if (!currentNode.sameValueAs(node)) {
+		    selectedQueryVar.add(currentNode);
+		} else {
+		    if (!found) {
+			found = true;
+			if (otherNode.isVariable()) {
+			    selectedQueryVar.add(otherNode);
+			}
+		    }
+		}
+	    }
+	} else {
+	    if (otherNode.isVariable()) {
+		selectedQueryVar.add(otherNode);
+	    }
+	}
+	return hasReplacement;
     }
 
     /*
@@ -352,6 +451,38 @@ public class CQuery {
     public String toString() {
 
 	return getSPARQLQuery().toString();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+
+	CQuery otherQuery = (CQuery) obj;
+	if (elementList.size() != otherQuery.getElementList().size()) {
+	    return false;
+	}
+	for (CElement element : this.elementList) {
+	    int j = 0;
+	    boolean found = false;
+	    while ((!found) && (j < otherQuery.elementList.size())) {
+		found = element.equals(otherQuery.elementList.get(j));
+		j++;
+	    }
+	    if (!found) {
+		return false;
+	    }
+	}
+	return true;
     }
 
 }

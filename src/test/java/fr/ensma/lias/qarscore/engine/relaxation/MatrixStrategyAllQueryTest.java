@@ -35,6 +35,7 @@ import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.StrategiesFactory;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -69,7 +70,7 @@ public class MatrixStrategyAllQueryTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery#hasLeastKAnswers()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategyAllQuery#hasLeastKAnswers()}
      * .
      */
     @Test
@@ -86,7 +87,7 @@ public class MatrixStrategyAllQueryTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery#getOneMFS()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategyAllQuery#getOneMFS()}
      * .
      */
     @Test
@@ -106,7 +107,7 @@ public class MatrixStrategyAllQueryTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery#getAllMFS()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategyAllQuery#getAllMFS()}
      * .
      */
     @Test
@@ -125,7 +126,7 @@ public class MatrixStrategyAllQueryTest extends SessionTDBTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MatrixStrategyAllQuery#getAllXSS()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.MatrixStrategyAllQuery#getAllXSS()}
      * .
      */
     @Test

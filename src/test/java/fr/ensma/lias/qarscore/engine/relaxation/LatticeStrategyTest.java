@@ -35,6 +35,7 @@ import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.StrategiesFactory;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**

@@ -43,7 +43,7 @@ import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MappingResult;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.MappingResult;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -76,7 +76,7 @@ public class MappingResultTest extends SessionTDBTest {
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MappingResult#MappingResult(int[])}.
+     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.MappingResult#MappingResult(int[])}.
      */
     @Test
     public void testMappingResult() {
@@ -184,7 +184,7 @@ public class MappingResultTest extends SessionTDBTest {
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.matrixstrategies.MappingResult#getVariables()}.
+     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.MappingResult#getVariables()}.
      */
     @Test
     public void testGetVariables() {

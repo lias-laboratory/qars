@@ -54,7 +54,7 @@ public class LatticeStrategy implements RelaxationStrategies {
      * @param answers
      * @return
      */
-    public static LatticeStrategy getLatticeStrategy(Session s, CQuery query,
+    protected static LatticeStrategy getLatticeStrategy(Session s, CQuery query,
 	    int answers) {
 	return new LatticeStrategy(s, query, answers);
     }
@@ -115,15 +115,13 @@ public class LatticeStrategy implements RelaxationStrategies {
 		potentialsMaximalSubqueries = new ArrayList<CQuery>();
 		potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
 		for (CQuery pxss : oldMaximalSubqueries) {
-		    if (tempquery.getElementList().containsAll(
-			    pxss.getElementList())) {
+		    if (pxss.isSubQueryOf(tempquery)) {
 			potentialsMaximalSubqueries.remove(pxss);
 		    }
 		}
 		boolean isContained = false;
 		for (CQuery xss : maximalSubqueries) {
-		    if (xss.getElementList().containsAll(
-			    tempquery.getElementList())) {
+		    if (tempquery.isSubQueryOf(xss)){
 			isContained = true;
 			break;
 		    }
