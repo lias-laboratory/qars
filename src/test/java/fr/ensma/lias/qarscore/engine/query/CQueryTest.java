@@ -293,7 +293,22 @@ public class CQueryTest {
      */
     @Test
     public void testReplace() {
+	CQuery conjunctiveQuery10 = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_10);
+	Assert.assertTrue(conjunctiveQuery10.isValidQuery());
+	CQuery conjunctiveQuery9 = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_9);
+	Assert.assertTrue(conjunctiveQuery9.isValidQuery());
+
+	ElementPathBlock element = (ElementPathBlock) conjunctiveQuery10.getElementList().get(0).getElement();
+	ElementPathBlock element1 = (ElementPathBlock) conjunctiveQuery9.getElementList().get(0).getElement();
 	
+	conjunctiveQuery9.replace(element1.getPattern().getList().get(0).getObject(), element.getPattern().getList().get(0).getObject());
+	
+	Assert.assertTrue(conjunctiveQuery9.isValidQuery());
+	
+	logger.info(conjunctiveQuery9.getSPARQLQuery());
+	logger.info(conjunctiveQuery9.getNativeSPARQLQuery());
     }
 
     /**
@@ -312,7 +327,30 @@ public class CQueryTest {
      */
     @Test
     public void testEqualsObject() {
-	fail("Not yet implemented"); // TODO
+	CQuery conjunctiveQuery14 = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_14);
+	Assert.assertTrue(conjunctiveQuery14.isValidQuery());
+	
+	CQuery conjunctiveQuery14bis = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_14);
+	Assert.assertTrue(conjunctiveQuery14bis.isValidQuery());
+
+	Assert.assertTrue(conjunctiveQuery14bis.equals(conjunctiveQuery14));
+	
+	CQuery conjunctiveQuery9 = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_9);
+	Assert.assertTrue(conjunctiveQuery9.isValidQuery());
+
+	ElementPathBlock element = (ElementPathBlock) conjunctiveQuery14bis.getElementList().get(0).getElement();
+	ElementPathBlock element1 = (ElementPathBlock) conjunctiveQuery9.getElementList().get(0).getElement();
+	
+	conjunctiveQuery14bis.replace(element.getPattern().getList().get(0).getObject(), element1.getPattern().getList().get(0).getObject());
+	
+	Assert.assertTrue(!conjunctiveQuery14bis.equals(conjunctiveQuery14));
+	
+	logger.info(conjunctiveQuery14.getSPARQLQuery());
+	logger.info(conjunctiveQuery14bis.getSPARQLQuery());
+
     }
 
 }
