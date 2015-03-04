@@ -38,7 +38,7 @@ import fr.ensma.lias.qarscore.properties.Properties;
 /**
  * @author Geraud FOKOU
  */
-public class JSONParserTest extends SessionTDBTest{
+public class JSONParserModelTest extends SessionTDBTest{
 
     private Logger logger;
     private Session session;
@@ -72,7 +72,7 @@ public class JSONParserTest extends SessionTDBTest{
 
     @Test
     public void TestGetListNodeJs(){
-	JSONParser parser = new JSONParser(session.getOntologyModel());
+	JSONParserModel parser = new JSONParserModel(session.getOntologyModel());
 	Assert.assertNotNull(parser);
 	List<NodeJSON> nodes = parser.getListNodeJs();
 	Assert.assertNotNull(nodes);
@@ -85,7 +85,7 @@ public class JSONParserTest extends SessionTDBTest{
     @Test
     public void testGetParser() {
 	
-	JSONParser parser = new JSONParser(session.getOntologyModel());
+	JSONParserModel parser = new JSONParserModel(session.getOntologyModel());
 	Assert.assertNotNull(parser.getListNodeJs());
 	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
 	Assert.assertTrue(!parser.getListEdgesSubclass().isEmpty());
@@ -98,7 +98,7 @@ public class JSONParserTest extends SessionTDBTest{
 	List<String> exclude = new ArrayList<String>();
 	exclude.add("Director");
 	exclude.add("TeachingAssistant");
-	JSONParser parser = new JSONParser(session.getOntologyModel(), exclude);
+	JSONParserModel parser = new JSONParserModel(session.getOntologyModel(), exclude);
 	Assert.assertNotNull(parser.getListNodeJs());
 	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
 	Assert.assertTrue(!parser.getListEdgesSubclass().isEmpty());

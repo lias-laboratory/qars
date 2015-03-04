@@ -241,7 +241,7 @@ public class CElement {
 	    return false;
 
 	CElement otherCElement = (CElement) obj;
-	
+
 	if (otherCElement.element == this.element)
 	    return true;
 	if (this.element instanceof ElementPathBlock) {

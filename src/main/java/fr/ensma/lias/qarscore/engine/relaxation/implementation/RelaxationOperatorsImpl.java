@@ -39,8 +39,8 @@ import fr.ensma.lias.qarscore.engine.relaxation.RelaxationOperators;
 public class RelaxationOperatorsImpl implements RelaxationOperators {
 
     private Session session;
-    
-    protected RelaxationOperatorsImpl(Session s){
+
+    protected RelaxationOperatorsImpl(Session s) {
 	session = s;
     }
 
@@ -58,17 +58,21 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 		.toList();
 	depht = depht - 1;
 
-	while ((level < depht) && (directSubClass.size() != 0)) {
+	while ((level <= depht) && (directSubClass.size() != 0)) {
 
 	    List<OntClass> tempSubClass = directSubClass;
 	    directSubClass = new ArrayList<OntClass>();
 
 	    for (OntClass subClass : tempSubClass) {
-		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		if (tempQuery.replace(classe, NodeFactory.createURI(subClass.getURI()))) {
-		    relaxedQueries.put(tempQuery, depht);
+		if (subClass.isURIResource()) {
+		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		    if (tempQuery.replace(classe,
+			    NodeFactory.createURI(subClass.getURI()))) {
+			relaxedQueries.put(tempQuery, depht);
+		    }
+		    directSubClass.addAll(subClass.listSubClasses(true)
+			    .toList());
 		}
-		directSubClass.addAll(subClass.listSuperClasses(true).toList());
 	    }
 	    depht = depht - 1;
 	}
@@ -97,11 +101,15 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 	    directSubClass = new ArrayList<OntClass>();
 
 	    for (OntClass subClass : tempSubClass) {
-		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		if (tempQuery.replace(classe, NodeFactory.createURI(subClass.getURI()))) {
-		    relaxedQueries.put(tempQuery, depht);
+		if (subClass.isURIResource()) {
+		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		    if (tempQuery.replace(classe,
+			    NodeFactory.createURI(subClass.getURI()))) {
+			relaxedQueries.put(tempQuery, depht);
+		    }
+		    directSubClass.addAll(subClass.listSubClasses(true)
+			    .toList());
 		}
-		directSubClass.addAll(subClass.listSuperClasses(true).toList());
 	    }
 	    depht = depht - 1;
 	}
@@ -124,22 +132,24 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 		.toList();
 	depht = depht + 1;
 
-	while ((depht < level) && (directSuperClass.size() != 0)) {
+	while ((depht <= level) && (directSuperClass.size() != 0)) {
 
 	    List<OntClass> tempSuperClass = directSuperClass;
 	    directSuperClass = new ArrayList<OntClass>();
 
 	    for (OntClass superClass : tempSuperClass) {
-		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		if (tempQuery.replace(classe, NodeFactory.createURI(superClass.getURI()))) {
-		    relaxedQueries.put(tempQuery, depht);
+		if (superClass.isURIResource()) {
+		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		    if (tempQuery.replace(classe,
+			    NodeFactory.createURI(superClass.getURI()))) {
+			relaxedQueries.put(tempQuery, depht);
+		    }
+		    directSuperClass.addAll(superClass.listSuperClasses(true)
+			    .toList());
 		}
-		directSuperClass.addAll(superClass.listSuperClasses(true)
-			.toList());
 	    }
 	    depht = depht + 1;
 	}
-
 	return relaxedQueries;
     }
 
@@ -163,12 +173,15 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 	    directSuperClass = new ArrayList<OntClass>();
 
 	    for (OntClass superClass : tempSuperClass) {
-		CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		if (tempQuery.replace(classe, NodeFactory.createURI(superClass.getURI()))) {
-		    relaxedQueries.put(tempQuery, depht);
+		if (superClass.isURIResource()) {
+		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+		    if (tempQuery.replace(classe,
+			    NodeFactory.createURI(superClass.getURI()))) {
+			relaxedQueries.put(tempQuery, depht);
+		    }
+		    directSuperClass.addAll(superClass.listSuperClasses(true)
+			    .toList());
 		}
-		directSuperClass.addAll(superClass.listSuperClasses(true)
-			.toList());
 	    }
 	    depht = depht + 1;
 	}
@@ -208,13 +221,16 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 	    List<OntClass> listSubClass = superClasse.listSubClasses(true)
 		    .toList();
 	    for (OntClass subclass : listSubClass) {
-		if ((!subclass.equals(currentClass))
-			&& (!subClassesFound.contains(subclass))) {
-		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
-		    if (tempQuery.replace(classe, NodeFactory.createURI(subclass.getURI()))) {
-			relaxedQueries.add(tempQuery);
+		if (subclass.isURIResource()) {
+		    if ((!subclass.equals(currentClass))
+			    && (!subClassesFound.contains(subclass))) {
+			CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+			if (tempQuery.replace(classe,
+				NodeFactory.createURI(subclass.getURI()))) {
+			    relaxedQueries.add(tempQuery);
+			}
+			subClassesFound.add(subclass);
 		    }
-		    subClassesFound.add(subclass);
 		}
 	    }
 	}

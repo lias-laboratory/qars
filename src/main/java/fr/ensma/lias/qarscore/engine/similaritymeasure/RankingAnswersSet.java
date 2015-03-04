@@ -17,17 +17,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation.implementation;
-
-import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.engine.relaxation.RelaxationOperators;
+package fr.ensma.lias.qarscore.engine.similaritymeasure;
 
 /**
  * @author Geraud FOKOU
  */
-public class OperatorsFactory {
+public class RankingAnswersSet {
 
-   public static RelaxationOperators createOperator(Session s){
-       return new RelaxationOperatorsImpl(s);
-   }
+    /**
+     * 
+     */
+    public RankingAnswersSet() {
+	// TODO Auto-generated constructor stub
+    }
+
 }

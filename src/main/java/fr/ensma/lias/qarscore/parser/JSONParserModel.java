@@ -31,7 +31,7 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 /**
  * @author Geraud FOKOU
  */
-public class JSONParser {
+public class JSONParserModel {
 
     /**
      * List of JSon nodes of the model parsed
@@ -56,7 +56,7 @@ public class JSONParser {
     /**
      * @param model
      */
-    public JSONParser(OntModel model) {
+    public JSONParserModel(OntModel model) {
 	super();
 	MODEL_TO_PARSE = model;
 	listNodeJs = new ArrayList<NodeJSON>();
@@ -67,7 +67,7 @@ public class JSONParser {
 	this.parseSubClassRelation();
     }
 
-    public JSONParser(OntModel model, List<String> excludedClasses) {
+    public JSONParserModel(OntModel model, List<String> excludedClasses) {
 	super();
 	MODEL_TO_PARSE = model;
 	listNodeJs = new ArrayList<NodeJSON>();

@@ -19,9 +19,50 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
+import java.util.List;
+
+import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
+
+import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.engine.query.CElement;
+import fr.ensma.lias.qarscore.engine.query.CQuery;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree;
+
 /**
  * @author Geraud FOKOU
  */
-public interface RelaxationSimilarity {
+public class SimialrityStrategy {
+
+    private CQuery root_query;
+    private Session session;
+    private RelaxationTree relaxed_queries;
+
+    /**
+     * 
+     */
+    public SimialrityStrategy(CQuery query, Session s) {
+	root_query = query;
+	session = s;
+	relaxed_queries = new RelaxationTree(root_query, null, 1);
+    }
+
+    private List<CQuery> relaxation_Element(CElement element) {
+	
+	if(element.getElement() instanceof ElementPathBlock){
+	    
+	}
+	return null;
+    }
+
+    private void initializeTree() {
+
+	List<CQuery> relaxed_queries;
+	for (CElement element : root_query.getElementList()) {
+	    if(element.getElement() instanceof ElementPathBlock){
+		    
+		}
+	    relaxed_queries = relaxation_Element(element);
+	}
+    }
 
 }

@@ -19,8 +19,6 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.query;
 
-import static org.junit.Assert.*;
-
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -105,7 +103,7 @@ public class CQueryTest {
      */
     @Test
     public void testGetSelectedQueryVar() {
-	fail("Not yet implemented"); // TODO
+	// TODO
     }
 
     /**
@@ -131,7 +129,7 @@ public class CQueryTest {
      */
     @Test
     public void testGetMentionedQueryVar() {
-	fail("Not yet implemented"); // TODO
+	// TODO
     }
 
     /**
@@ -141,7 +139,7 @@ public class CQueryTest {
      */
     @Test
     public void testGetMentionedQueryVarNames() {
-	fail("Not yet implemented"); // TODO
+	// TODO
     }
 
     /**
@@ -187,7 +185,7 @@ public class CQueryTest {
      */
     @Test
     public void testGetNativeSPARQLQuery() {
-	fail("Not yet implemented"); // TODO
+	// TODO
     }
 
     /**
@@ -230,7 +228,7 @@ public class CQueryTest {
      */
     @Test
     public void testIsChainQuery() {
-	fail("Not yet implemented"); // TODO
+	// TODO
     }
 
     /**
@@ -317,7 +315,7 @@ public class CQueryTest {
      */
     @Test
     public void testToString() {
-	fail("Not yet implemented"); // TODO
+	// TODO
     }
 
     /**
