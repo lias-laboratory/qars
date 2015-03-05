@@ -36,7 +36,7 @@ import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationT
 /**
  * @author Geraud FOKOU
  */
-public class SimialrityStrategy {
+public class SimilarityStrategy {
 
     private CQuery root_query;
     private Session session;
@@ -46,11 +46,11 @@ public class SimialrityStrategy {
     /**
      * 
      */
-    public SimialrityStrategy(CQuery query, Session s) {
+    public SimilarityStrategy(CQuery query, Session s) {
 	root_query = query;
 	session = s;
 	relaxed_queries = new RelaxationTree(root_query, null, 1);
-	List<RelaxationTree> leaf_queries = new ArrayList<RelaxationTree>();
+	leaf_queries = new ArrayList<RelaxationTree>();
 	leaf_queries.add(relaxed_queries);
     }
 
@@ -87,7 +87,7 @@ public class SimialrityStrategy {
 			.generalize(current_root.getQuery(), node, 1);
 		for (CQuery q : genqueries.keySet()) {
 		    RelaxationTree rtree = new RelaxationTree(q, current_root,
-			    genqueries.get(q).get(1)
+			    genqueries.get(q).get(1).doubleValue()
 				    * current_root.getSimilarity());
 		    current_root.getRelaxedQuery().add(
 			    this.get_position(current_root.getRelaxedQuery(),
@@ -98,7 +98,8 @@ public class SimialrityStrategy {
 			current_root.getQuery(), node);
 		for (CQuery q : sibqueries.keySet()) {
 		    RelaxationTree rtree = new RelaxationTree(q, current_root,
-			    sibqueries.get(q) * current_root.getSimilarity());
+			    sibqueries.get(q).doubleValue()
+				    * current_root.getSimilarity());
 		    current_root.getRelaxedQuery().add(
 			    this.get_position(current_root.getRelaxedQuery(),
 				    rtree), rtree);
@@ -177,7 +178,7 @@ public class SimialrityStrategy {
 
 	List<RelaxationTree> current_roots = new ArrayList<RelaxationTree>();
 	List<RelaxationTree> temp_leaf_tree = new ArrayList<RelaxationTree>();
-	
+
 	current_roots.addAll(leaf_queries);
 	leaf_queries.clear();
 	for (RelaxationTree current_root : current_roots) {
@@ -190,5 +191,37 @@ public class SimialrityStrategy {
 	    leaf_queries.add(this.get_position(leaf_queries, one_tree),
 		    one_tree);
 	}
+    }
+
+    public CQuery get_level_relaxed_query(int level) {
+
+	CQuery current_query = null;
+
+	return current_query;
+    }
+
+    /**
+     * @return the root_query
+     */
+    public CQuery getRoot_query() {
+	return root_query;
+    }
+
+    /**
+     * @param root_query
+     *            the root_query to set
+     */
+    public void setRoot_query(CQuery root_query) {
+	this.root_query = root_query;
+	relaxed_queries = new RelaxationTree(root_query, null, 1);
+	List<RelaxationTree> leaf_queries = new ArrayList<RelaxationTree>();
+	leaf_queries.add(relaxed_queries);
+    }
+
+    /**
+     * @return the relaxed_queries
+     */
+    public RelaxationTree getRelaxed_queries() {
+	return relaxed_queries;
     }
 }

@@ -31,7 +31,7 @@ public class RelaxationTree {
 
     private CQuery query;
     private double similarity;
-    private RelaxationTree originalQuery;
+    private RelaxationTree rootQuery;
     private List<RelaxationTree> relaxedQuery;
 
     /**
@@ -39,15 +39,15 @@ public class RelaxationTree {
      */
     public RelaxationTree(CQuery q, RelaxationTree parent, double sim) {
 	query = q;
-	originalQuery = parent;
+	rootQuery = parent;
 	similarity = sim;
 	relaxedQuery = new ArrayList<RelaxationTree>();
     }
 
     public RelaxationTree(CQuery q) {
 	query = q;
-	originalQuery = null;
-	similarity = 0;
+	rootQuery = null;
+	similarity = 1;
 	relaxedQuery = new ArrayList<RelaxationTree>();
     }
 
@@ -82,15 +82,8 @@ public class RelaxationTree {
     /**
      * @return the originalQuery
      */
-    public RelaxationTree getOriginalQuery() {
-        return originalQuery;
-    }
-
-    /**
-     * @param originalQuery the originalQuery to set
-     */
-    public void setOriginalQuery(RelaxationTree originalQuery) {
-        this.originalQuery = originalQuery;
+    public RelaxationTree getRootQuery() {
+        return rootQuery;
     }
 
     /**
@@ -98,12 +91,5 @@ public class RelaxationTree {
      */
     public List<RelaxationTree> getRelaxedQuery() {
         return relaxedQuery;
-    }
-
-    /**
-     * @param relaxedQuery the relaxedQuery to set
-     */
-    public void setRelaxedQuery(List<RelaxationTree> relaxedQuery) {
-        this.relaxedQuery = relaxedQuery;
     }
 }
