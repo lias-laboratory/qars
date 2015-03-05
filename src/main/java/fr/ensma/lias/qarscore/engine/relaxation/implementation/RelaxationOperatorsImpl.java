@@ -32,6 +32,7 @@ import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.RelaxationOperators;
+import fr.ensma.lias.qarscore.engine.similaritymeasure.SimilarityMeasureConcept;
 
 /**
  * @author Geraud FOKOU
@@ -44,11 +45,11 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 	session = s;
     }
 
-    public Map<CQuery, Integer> specialization(CQuery query, Node classe,
+    public Map<CQuery, List<Double>> specialization(CQuery query, Node classe,
 	    int level) {
 
 	int depht = 0;
-	Map<CQuery, Integer> relaxedQueries = new HashMap<CQuery, Integer>();
+	Map<CQuery, List<Double>> relaxedQueries = new HashMap<CQuery, List<Double>>();
 	OntClass currentClass = session.getOntologyModel().getOntClass(
 		classe.getURI());
 	if (currentClass == null) {
@@ -68,7 +69,11 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
 		    if (tempQuery.replace(classe,
 			    NodeFactory.createURI(subClass.getURI()))) {
-			relaxedQueries.put(tempQuery, depht);
+			List<Double> value = new ArrayList<Double>();
+			value.add((double) depht);
+			value.add(SimilarityMeasureConcept.similarity(session,
+				currentClass, subClass));
+			relaxedQueries.put(tempQuery, value);
 		    }
 		    directSubClass.addAll(subClass.listSubClasses(true)
 			    .toList());
@@ -80,10 +85,10 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 	return relaxedQueries;
     }
 
-    public Map<CQuery, Integer> specialization(CQuery query, Node classe) {
+    public Map<CQuery, List<Double>> specialization(CQuery query, Node classe) {
 
 	int depht = 0;
-	Map<CQuery, Integer> relaxedQueries = new HashMap<CQuery, Integer>();
+	Map<CQuery, List<Double>> relaxedQueries = new HashMap<CQuery, List<Double>>();
 	OntClass currentClass = session.getOntologyModel().getOntClass(
 		classe.getURI());
 
@@ -105,7 +110,11 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
 		    if (tempQuery.replace(classe,
 			    NodeFactory.createURI(subClass.getURI()))) {
-			relaxedQueries.put(tempQuery, depht);
+			List<Double> value = new ArrayList<Double>();
+			value.add((double) depht);
+			value.add(SimilarityMeasureConcept.similarity(session,
+				currentClass, subClass));
+			relaxedQueries.put(tempQuery, value);
 		    }
 		    directSubClass.addAll(subClass.listSubClasses(true)
 			    .toList());
@@ -116,11 +125,11 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 	return relaxedQueries;
     }
 
-    public Map<CQuery, Integer> generalization(CQuery query, Node classe,
+    public Map<CQuery, List<Double>> generalization(CQuery query, Node classe,
 	    int level) {
 
 	int depht = 0;
-	Map<CQuery, Integer> relaxedQueries = new HashMap<CQuery, Integer>();
+	Map<CQuery, List<Double>> relaxedQueries = new HashMap<CQuery, List<Double>>();
 	OntClass currentClass = session.getOntologyModel().getOntClass(
 		classe.getURI());
 
@@ -142,7 +151,11 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
 		    if (tempQuery.replace(classe,
 			    NodeFactory.createURI(superClass.getURI()))) {
-			relaxedQueries.put(tempQuery, depht);
+			List<Double> value = new ArrayList<Double>();
+			value.add((double) depht);
+			value.add(SimilarityMeasureConcept.similarity(session,
+				currentClass, superClass));
+			relaxedQueries.put(tempQuery, value);
 		    }
 		    directSuperClass.addAll(superClass.listSuperClasses(true)
 			    .toList());
@@ -153,10 +166,10 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 	return relaxedQueries;
     }
 
-    public Map<CQuery, Integer> generalization(CQuery query, Node classe) {
+    public Map<CQuery, List<Double>> generalization(CQuery query, Node classe) {
 
 	int depht = 0;
-	Map<CQuery, Integer> relaxedQueries = new HashMap<CQuery, Integer>();
+	Map<CQuery, List<Double>> relaxedQueries = new HashMap<CQuery, List<Double>>();
 	OntClass currentClass = session.getOntologyModel().getOntClass(
 		classe.getURI());
 	if (currentClass == null) {
@@ -177,7 +190,11 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 		    CQuery tempQuery = CQueryFactory.cloneCQuery(query);
 		    if (tempQuery.replace(classe,
 			    NodeFactory.createURI(superClass.getURI()))) {
-			relaxedQueries.put(tempQuery, depht);
+			List<Double> value = new ArrayList<Double>();
+			value.add((double) depht);
+			value.add(SimilarityMeasureConcept.similarity(session,
+				currentClass, superClass));
+			relaxedQueries.put(tempQuery, value);
 		    }
 		    directSuperClass.addAll(superClass.listSuperClasses(true)
 			    .toList());
@@ -189,7 +206,8 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
     }
 
     @Override
-    public Map<CQuery, Integer> generalize(CQuery query, Node classe, int level) {
+    public Map<CQuery, List<Double>> generalize(CQuery query, Node classe,
+	    int level) {
 
 	if (level < 0) {
 	    return this.specialization(query, classe, level);
@@ -199,15 +217,15 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
     }
 
     @Override
-    public Map<CQuery, Integer> generalize(CQuery query, Node classe) {
+    public Map<CQuery, List<Double>> generalize(CQuery query, Node classe) {
 
 	return this.generalization(query, classe);
     }
 
     @Override
-    public List<CQuery> sibling(CQuery query, Node classe) {
+    public Map<CQuery, Double> sibling(CQuery query, Node classe) {
 
-	List<CQuery> relaxedQueries = new ArrayList<CQuery>();
+	Map<CQuery, Double> relaxedQueries = new HashMap<CQuery, Double>();
 	OntClass currentClass = session.getOntologyModel().getOntClass(
 		classe.getURI());
 	if (currentClass == null) {
@@ -227,7 +245,8 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 			CQuery tempQuery = CQueryFactory.cloneCQuery(query);
 			if (tempQuery.replace(classe,
 				NodeFactory.createURI(subclass.getURI()))) {
-			    relaxedQueries.add(tempQuery);
+			    double sim = SimilarityMeasureConcept.similarity(session, currentClass, subclass);
+			    relaxedQueries.put(tempQuery, sim);
 			}
 			subClassesFound.add(subclass);
 		    }
@@ -238,19 +257,19 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
     }
 
     @Override
-    public List<CQuery> relaxValue(CQuery query, Node value) {
+    public Map<CQuery, Double> relaxValue(CQuery query, Node value) {
 	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
-    public List<CQuery> releaseValue(CQuery query, Node value) {
+    public Map<CQuery, Double> releaseValue(CQuery query, Node value) {
 	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
-    public List<CQuery> releaseJoin(CQuery query, Node variable) {
+    public Map<CQuery, Double> releaseJoin(CQuery query, Node variable) {
 	// TODO Auto-generated method stub
 	return null;
     }

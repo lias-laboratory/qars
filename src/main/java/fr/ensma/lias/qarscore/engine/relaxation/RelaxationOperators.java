@@ -31,15 +31,15 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public interface RelaxationOperators {
 
-    Map<CQuery, Integer> generalize(CQuery query, Node classe, int level);
+    Map<CQuery, List<Double>> generalize(CQuery query, Node classe, int level);
     
-    Map<CQuery, Integer> generalize(CQuery query, Node classe);
+    Map<CQuery, List<Double>> generalize(CQuery query, Node classe);
 
-    List<CQuery> sibling(CQuery query, Node classe);
+    Map<CQuery, Double> sibling(CQuery query, Node classe);
     
-    List<CQuery> relaxValue(CQuery query, Node value);
+    Map<CQuery, Double> relaxValue(CQuery query, Node value);
     
-    List<CQuery> releaseValue(CQuery query, Node value);
+    Map<CQuery, Double> releaseValue(CQuery query, Node value);
     
-    List<CQuery> releaseJoin(CQuery query, Node variable);
+    Map<CQuery, Double> releaseJoin(CQuery query, Node variable);
 }

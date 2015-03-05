@@ -31,6 +31,15 @@ import fr.ensma.lias.qarscore.connection.Session;
  */
 public class SimilarityMeasureConcept {
 
+    private static double getInstanceNumber(OntClass classe) {
+
+	int number = classe.listInstances(true).toList().size();
+	for (OntClass sub_class : classe.listSubClasses().toList()) {
+	    number = number + sub_class.listInstances(true).toList().size();
+	}
+	return number;
+    }
+
     private static int getLevel(OntClass child, OntClass parent) {
 
 	int level = 0;
@@ -93,20 +102,18 @@ public class SimilarityMeasureConcept {
 
 	OntClass least_common_class = getLeastCommonAncestor(classe1, classe2);
 	double ic_lcc = -1
-		* Math.log10(least_common_class.listInstances(true).toList()
-			.size()
+		* Math.log10(getInstanceNumber(least_common_class)
 			/ session.getOntologyModel().listIndividuals().toList()
 				.size());
 	double ic_class1 = -1
-		* Math.log10(classe1.listInstances(true).toList().size()
+		* Math.log10(getInstanceNumber(classe1)
 			/ session.getOntologyModel().listIndividuals().toList()
 				.size());
 	double ic_class2 = -1
-		* Math.log10(classe2.listInstances(true).toList().size()
+		* Math.log10(getInstanceNumber(classe2)
 			/ session.getOntologyModel().listIndividuals().toList()
 				.size());
 
 	return ic_lcc / (ic_class1 + ic_class2 - ic_lcc);
     }
-
 }

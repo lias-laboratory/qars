@@ -19,13 +19,18 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.OperatorsFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree;
 
 /**
@@ -36,6 +41,7 @@ public class SimialrityStrategy {
     private CQuery root_query;
     private Session session;
     private RelaxationTree relaxed_queries;
+    private List<RelaxationTree> leaf_queries;
 
     /**
      * 
@@ -44,25 +50,145 @@ public class SimialrityStrategy {
 	root_query = query;
 	session = s;
 	relaxed_queries = new RelaxationTree(root_query, null, 1);
+	List<RelaxationTree> leaf_queries = new ArrayList<RelaxationTree>();
+	leaf_queries.add(relaxed_queries);
     }
 
-    private List<CQuery> relaxation_Element(CElement element) {
-	
-	if(element.getElement() instanceof ElementPathBlock){
-	    
+    private int get_position(List<RelaxationTree> tree_list,
+	    RelaxationTree current_tree) {
+
+	int position = 0;
+	boolean found = false;
+	while (!found) {
+	    if (position == tree_list.size()) {
+		found = true;
+		break;
+	    }
+	    if (tree_list.get(position).getSimilarity() > current_tree
+		    .getSimilarity()) {
+		position++;
+		break;
+	    }
+	    found = true;
 	}
-	return null;
+
+	return position;
     }
 
-    private void initializeTree() {
+    private List<RelaxationTree> relaxation_node(RelaxationTree current_root,
+	    Node node, Session s) {
 
-	List<CQuery> relaxed_queries;
-	for (CElement element : root_query.getElementList()) {
-	    if(element.getElement() instanceof ElementPathBlock){
-		    
+	RelaxationOperators operator_relax = OperatorsFactory.createOperator(s);
+	List<RelaxationTree> child = new ArrayList<RelaxationTree>();
+
+	if (node.isURI()) {
+	    if (session.getOntologyModel().getOntClass(node.getURI()) != null) {
+		Map<CQuery, List<Double>> genqueries = operator_relax
+			.generalize(current_root.getQuery(), node, 1);
+		for (CQuery q : genqueries.keySet()) {
+		    RelaxationTree rtree = new RelaxationTree(q, current_root,
+			    genqueries.get(q).get(1)
+				    * current_root.getSimilarity());
+		    current_root.getRelaxedQuery().add(
+			    this.get_position(current_root.getRelaxedQuery(),
+				    rtree), rtree);
+		    child.add(this.get_position(child, rtree), rtree);
 		}
-	    relaxed_queries = relaxation_Element(element);
+		Map<CQuery, Double> sibqueries = operator_relax.sibling(
+			current_root.getQuery(), node);
+		for (CQuery q : sibqueries.keySet()) {
+		    RelaxationTree rtree = new RelaxationTree(q, current_root,
+			    sibqueries.get(q) * current_root.getSimilarity());
+		    current_root.getRelaxedQuery().add(
+			    this.get_position(current_root.getRelaxedQuery(),
+				    rtree), rtree);
+		    child.add(this.get_position(child, rtree), rtree);
+		}
+		// suppress value ( change into variable)
+		return child;
+	    } else {
+		// Todo (uri instance)
+		// suppress value ( change into variable)
+		return child;
+	    }
+	}
+
+	if (node.isLiteral()) {
+	    // Todo relax value (string, int, double)
+	    return child;
+	}
+
+	if (node.isVariable()) {
+	    // Todo join release
+	    return child;
+	}
+	return child;
+    }
+
+    private List<RelaxationTree> relaxation_element(
+	    RelaxationTree current_root, CElement element, Session s) {
+
+	List<RelaxationTree> child = new ArrayList<RelaxationTree>();
+
+	if (element.getElement() instanceof ElementPathBlock) {
+	    TriplePath currentClause = ((ElementPathBlock) element.getElement())
+		    .getPattern().getList().get(0);
+	    List<RelaxationTree> temp_leaf_tree = relaxation_node(current_root,
+		    currentClause.getSubject(), s);
+	    temp_leaf_tree.addAll(relaxation_node(current_root,
+		    currentClause.getObject(), s));
+	    for (RelaxationTree one_tree : temp_leaf_tree) {
+		child.add(this.get_position(child, one_tree), one_tree);
+	    }
+	    return child;
+	} else {
+	    // Todo Filter element
+	    return child;
 	}
     }
 
+    public List<RelaxationTree> relaxation_tree(RelaxationTree current_root,
+	    Session s) {
+
+	List<RelaxationTree> child = new ArrayList<RelaxationTree>();
+	for (CElement element : current_root.getQuery().getElementList()) {
+	    child.addAll(relaxation_element(current_root, element, s));
+	}
+
+	List<RelaxationTree> old_child = new ArrayList<RelaxationTree>();
+	old_child.addAll(child);
+	while (!old_child.isEmpty()) {
+	    child = new ArrayList<RelaxationTree>();
+	    for (RelaxationTree relative_root : old_child) {
+		for (CElement element : relative_root.getQuery()
+			.getElementList()) {
+		    child.addAll(relaxation_element(relative_root, element, s));
+		}
+	    }
+	    old_child.clear();
+	    for (RelaxationTree one_tree : child) {
+		old_child.add(this.get_position(old_child, one_tree), one_tree);
+	    }
+	}
+	return child;
+    }
+
+    public void next_step() {
+
+	List<RelaxationTree> current_roots = new ArrayList<RelaxationTree>();
+	List<RelaxationTree> temp_leaf_tree = new ArrayList<RelaxationTree>();
+	
+	current_roots.addAll(leaf_queries);
+	leaf_queries.clear();
+	for (RelaxationTree current_root : current_roots) {
+	    for (CElement element : current_root.getQuery().getElementList()) {
+		temp_leaf_tree.addAll(relaxation_element(current_root, element,
+			session));
+	    }
+	}
+	for (RelaxationTree one_tree : temp_leaf_tree) {
+	    leaf_queries.add(this.get_position(leaf_queries, one_tree),
+		    one_tree);
+	}
+    }
 }

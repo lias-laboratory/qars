@@ -37,7 +37,7 @@ public class RelaxationTree {
     /**
      * 
      */
-    public RelaxationTree(CQuery q, RelaxationTree parent, int sim) {
+    public RelaxationTree(CQuery q, RelaxationTree parent, double sim) {
 	query = q;
 	originalQuery = parent;
 	similarity = sim;

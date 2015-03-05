@@ -115,8 +115,10 @@ public class JSONParserCQuery {
 			    .getPredicate().getNameSpace(), "", current_element
 			    .getPredicate().getURI(), current_element
 			    .getPredicate().getLocalName(), "ObjectProperty");
-		    NodeJSON source = this.getNodeJSON(current_element.getSubject());
-		    NodeJSON destination = this.getNodeJSON(current_element.getObject());
+		    NodeJSON source = this.getNodeJSON(current_element
+			    .getSubject());
+		    NodeJSON destination = this.getNodeJSON(current_element
+			    .getObject());
 		    edge.setEdgeSource(source);
 		    edge.setEdgeDestination(destination);
 		    listEdgesProperties.add(edge);
@@ -125,8 +127,10 @@ public class JSONParserCQuery {
 			    .toString(), "", "", current_element.getPath()
 			    .toString(), current_element.getPath().toString(),
 			    "ObjectProperty");
-		    NodeJSON source = this.getNodeJSON(current_element.getSubject());
-		    NodeJSON destination = this.getNodeJSON(current_element.getObject());
+		    NodeJSON source = this.getNodeJSON(current_element
+			    .getSubject());
+		    NodeJSON destination = this.getNodeJSON(current_element
+			    .getObject());
 		    edge.setEdgeSource(source);
 		    edge.setEdgeDestination(destination);
 		    listEdgesProperties.add(edge);
@@ -166,9 +170,7 @@ public class JSONParserCQuery {
 	    name = node.getName();
 	} else {
 	    if (node.isURI()) {
-		if (getNodeJSON(node.getLocalName()) == null) {
-		    name = node.getLocalName();
-		}
+		name = node.getURI();
 	    } else {
 		if (node.isLiteral()) {
 		    name = node.getLiteral().toString();

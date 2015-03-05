@@ -84,7 +84,7 @@ public class RelaxationOperatorsTest extends SessionTDBTest {
 
 	ElementPathBlock element = (ElementPathBlock) conjunctiveQuery
 		.getElementList().get(0).getElement();
-	Map<CQuery, Integer> relaxQueries = relaxOperator.generalize(
+	Map<CQuery, List<Double>> relaxQueries = relaxOperator.generalize(
 		conjunctiveQuery, element.getPattern().getList().get(0)
 			.getObject(), -2);
 	Assert.assertNotNull(relaxQueries);
@@ -92,7 +92,7 @@ public class RelaxationOperatorsTest extends SessionTDBTest {
 	for (CQuery query : relaxQueries.keySet()) {
 	    logger.info(query.getSPARQLQuery());
 	    logger.info(relaxQueries.get(query));
-	    Assert.assertEquals(-1, relaxQueries.get(query).intValue());
+	    Assert.assertEquals(-1, relaxQueries.get(query).get(0).intValue());
 	}
     }
 
@@ -109,7 +109,7 @@ public class RelaxationOperatorsTest extends SessionTDBTest {
 
 	ElementPathBlock element = (ElementPathBlock) conjunctiveQuery
 		.getElementList().get(0).getElement();
-	Map<CQuery, Integer> relaxQueries = ((RelaxationOperatorsImpl) relaxOperator)
+	Map<CQuery, List<Double>> relaxQueries = ((RelaxationOperatorsImpl) relaxOperator)
 		.specialization(conjunctiveQuery, element.getPattern()
 			.getList().get(0).getObject());
 	Assert.assertNotNull(relaxQueries);
@@ -133,7 +133,7 @@ public class RelaxationOperatorsTest extends SessionTDBTest {
 
 	ElementPathBlock element = (ElementPathBlock) conjunctiveQuery
 		.getElementList().get(0).getElement();
-	Map<CQuery, Integer> relaxQueries = relaxOperator.generalize(
+	Map<CQuery, List<Double>> relaxQueries = relaxOperator.generalize(
 		conjunctiveQuery, element.getPattern().getList().get(0)
 			.getObject(), 2);
 	Assert.assertNotNull(relaxQueries);
@@ -156,7 +156,7 @@ public class RelaxationOperatorsTest extends SessionTDBTest {
 
 	ElementPathBlock element = (ElementPathBlock) conjunctiveQuery
 		.getElementList().get(0).getElement();
-	Map<CQuery, Integer> relaxQueries = relaxOperator.generalize(
+	Map<CQuery, List<Double>> relaxQueries = relaxOperator.generalize(
 		conjunctiveQuery, element.getPattern().getList().get(0)
 			.getObject());
 	Assert.assertNotNull(relaxQueries);
@@ -181,7 +181,7 @@ public class RelaxationOperatorsTest extends SessionTDBTest {
 
 	ElementPathBlock element = (ElementPathBlock) conjunctiveQuery
 		.getElementList().get(0).getElement();
-	Map<CQuery, Integer> relaxQueries = relaxOperator.generalize(
+	Map<CQuery, List<Double>> relaxQueries = relaxOperator.generalize(
 		conjunctiveQuery, element.getPattern().getList().get(0)
 			.getObject(), 2);
 	Assert.assertNotNull(relaxQueries);
@@ -206,11 +206,12 @@ public class RelaxationOperatorsTest extends SessionTDBTest {
 
 	ElementPathBlock element = (ElementPathBlock) conjunctiveQuery
 		.getElementList().get(0).getElement();
-	List<CQuery> relaxQueries = relaxOperator.sibling(conjunctiveQuery, element.getPattern().getList().get(0).getObject());
+	Map<CQuery, Double> relaxQueries = relaxOperator.sibling(conjunctiveQuery, element.getPattern().getList().get(0).getObject());
 	Assert.assertNotNull(relaxQueries);
 	Assert.assertEquals(6, relaxQueries.size());
-	for (CQuery query : relaxQueries) {
+	for (  CQuery query : relaxQueries.keySet()) {
 	    logger.info(query.getSPARQLQuery());
+	    logger.info(relaxQueries.get(query));
 	}
 
     }
