@@ -21,23 +21,24 @@ package fr.ensma.lias.qarscore.engine.relaxation.implementation;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
+import fr.ensma.lias.qarscore.engine.relaxation.RelaxationStrategies;
 
 /**
  * @author Geraud FOKOU
  */
 public class StrategiesFactory {
 
-    public static LatticeStrategy getLatticeStrategy(Session session,
+    public static RelaxationStrategies getLatticeStrategy(Session session,
 	    CQuery query, int limitAnswers) {
 	return LatticeStrategy.getLatticeStrategy(session, query, limitAnswers);
     }
 
-    public static LatticeStrategy getLatticeStrategy(Session session,
+    public static RelaxationStrategies getLatticeStrategy(Session session,
 	    CQuery query) {
 	return LatticeStrategy.getLatticeStrategy(session, query, 1);
     }
 
-    public static MatrixStrategy getMatrixStrategy(Session session,
+    public static RelaxationStrategies getMatrixStrategy(Session session,
 	    CQuery query, int limitAnswers) {
 	if (query.isStarQuery()) {
 	    return new MatrixStrategyStarQuery(session, query, limitAnswers);
@@ -45,7 +46,7 @@ public class StrategiesFactory {
 	return new MatrixStrategyAllQuery(session, query, limitAnswers);
     }
 
-    public static MatrixStrategy getMatrixStrategy(Session session, CQuery query) {
+    public static RelaxationStrategies getMatrixStrategy(Session session, CQuery query) {
 	if (query.isStarQuery()) {
 	    return new MatrixStrategyStarQuery(session, query, 1);
 	}

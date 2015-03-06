@@ -30,8 +30,4 @@ public class StatementFactory {
     public static Statement getStatement(Session session) {
 	return new StatementImpl(session);
     }
-
-    public static Statement getStatement(Session session, String query) {
-	return new StatementImpl(session, query);
-    }
 }

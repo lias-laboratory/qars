@@ -19,9 +19,13 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.statement;
 
+import java.util.List;
+import java.util.Map;
+
 import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree;
 
 /**
  * @author Geraud FOKOU
@@ -43,42 +47,51 @@ public interface Statement {
     String getQuery();
 
     /**
-     * Prepare the query for the using, it is an execution of the query
+     * execute a SPARQL query
      * 
      * @param query
      */
-    void preparedQuery(String query);
+    ResultSet executeSPARQLQuery(String query);
 
     /**
      * Prepare a relaxation following a particular strategy
      * 
      * @param strategy
      */
-    void preparedRelaxation(int strategy);
-
-    /**
-     * execute a SPARQL query
-     * 
-     * @param query
-     */
-    ResultSet executeSPARQLQuery();
+    void explainFailure(String query, boolean strategy);
 
     /**
      * Return the failing cause of a SPARQL query if there exist
      * 
      * @param query
      */
-    void getFailingCause();
+    List<String> getFailingCause();
 
     /**
      * Return the maximal subqueries of the query
      * 
      * @param query
      */
-    void getMaxSuccessQuery();
+    List<String> getMaxSuccessQuery();
+
+    /**
+     * Execute a query with relaxation operator
+     * 
+     * @param query
+     * @return
+     */
+    Map<ResultSet, Double> executeRelaxedQuery(String query);
 
     /**
      * return the most similar queries to the user query
      */
-    void getSimilarityQuery();
+    Map<ResultSet, Double> automaticRelaxation(String query, int size_answers);
+
+    /**
+     * Get the relaxatiion plan of a relaxation
+     * 
+     * @return
+     */
+    RelaxationTree getRelaxationPlan();
+
 }

@@ -97,6 +97,11 @@ public class SimilarityStrategy {
 		Map<CQuery, Double> sibqueries = operator_relax.sibling(
 			current_root.getQuery(), node);
 		for (CQuery q : sibqueries.keySet()) {
+		    if (current_root.getRootQuery() != null) {
+			if (current_root.getRootQuery().getQuery().equals(q)) {
+			    continue;
+			}
+		    }
 		    RelaxationTree rtree = new RelaxationTree(q, current_root,
 			    sibqueries.get(q).doubleValue()
 				    * current_root.getSimilarity());
@@ -174,37 +179,42 @@ public class SimilarityStrategy {
 	return child;
     }
 
-    public void next_step() {
+    public boolean next_step() {
 
 	List<RelaxationTree> current_roots = new ArrayList<RelaxationTree>();
 	List<RelaxationTree> temp_leaf_tree = new ArrayList<RelaxationTree>();
 
 	current_roots.addAll(leaf_queries);
-	leaf_queries.clear();
 	for (RelaxationTree current_root : current_roots) {
 	    for (CElement element : current_root.getQuery().getElementList()) {
 		temp_leaf_tree.addAll(relaxation_element(current_root, element,
 			session));
 	    }
 	}
+	if (temp_leaf_tree.isEmpty()) {
+	    return false;
+	}
+	leaf_queries.clear();
 	for (RelaxationTree one_tree : temp_leaf_tree) {
 	    leaf_queries.add(this.get_position(leaf_queries, one_tree),
 		    one_tree);
 	}
-    }
-
-    public CQuery get_level_relaxed_query(int level) {
-
-	CQuery current_query = null;
-
-	return current_query;
+	return true;
     }
 
     /**
      * @return the root_query
      */
-    public CQuery getRoot_query() {
+    public CQuery get_root_query() {
 	return root_query;
+    }
+
+    /**
+     * 
+     * @return leaf_queries
+     */
+    public List<RelaxationTree> get_leaf_queries() {
+	return leaf_queries;
     }
 
     /**
@@ -224,4 +234,5 @@ public class SimilarityStrategy {
     public RelaxationTree getRelaxed_queries() {
 	return relaxed_queries;
     }
+
 }

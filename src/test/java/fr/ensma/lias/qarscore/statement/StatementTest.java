@@ -19,8 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.statement;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -36,9 +36,9 @@ import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
-import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -47,10 +47,12 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class StatementTest extends SessionTDBTest {
 
     private Session session;
-
     private Statement queryStatement;
 
-    /**
+    /*
+     * (non-Javadoc)
+     * 
+     * @see fr.ensma.lias.qarscore.connection.SessionTDBTest#setUp()
      */
     @Before
     public void setUp() {
@@ -60,26 +62,65 @@ public class StatementTest extends SessionTDBTest {
 
 	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
 	queryStatement = StatementFactory.getStatement(session);
+
     }
 
+    /**
+     * @throws java.lang.Exception
+     */
     @After
-    public void teardDown() {
+    public void tearDown() throws Exception {
 	super.teardDown();
     }
 
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#StatementImpl(fr.ensma.lias.qarscore.connection.Session)}
+     * .
+     */
     @Test
-    public void testPrepareQuery() {
-	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_17);
-	Assert.assertNotNull(queryStatement.getQuery());
+    public void testStatementImpl() {
+	Assert.assertNotNull(queryStatement);
     }
 
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#getSession()}
+     * .
+     */
     @Test
-    public void testExecuteQuery() {
+    public void testGetSession() {
+	Statement queryStatement1 = StatementFactory.getStatement(session);
+	Assert.assertNotNull(queryStatement1);
+	Assert.assertEquals(session, queryStatement1.getSession());
+	Assert.assertEquals(session, queryStatement.getSession());
+    }
 
-	queryStatement.preparedQuery(SPARQLQueriesSample.QUERY_21);
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#getQuery()}
+     * .
+     */
+    @Test
+    public void testGetQuery() {
 	Assert.assertNotNull(queryStatement.getQuery());
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_13);
+	queryStatement.executeSPARQLQuery(conjunctiveQuery.toString());
+	Assert.assertTrue(conjunctiveQuery.toString().equalsIgnoreCase(
+		queryStatement.getQuery()));
+    }
 
-	ResultSet result = queryStatement.executeSPARQLQuery();
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#executeSPARQLQuery(java.lang.String)}
+     * .
+     */
+    @Test
+    public void testExecuteSPARQLQuery() {
+
+	ResultSet result = queryStatement
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_21);
 	Assert.assertNotNull(result);
 	int i = 0;
 	while (result.hasNext()) {
@@ -90,33 +131,114 @@ public class StatementTest extends SessionTDBTest {
 	}
 
 	Assert.assertTrue(!result.hasNext());
-	Logger.getRootLogger().info(i);
+	Assert.assertTrue(i == result.getRowNumber());
+	Logger.getRootLogger().info(result.getRowNumber());
+
     }
 
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#explainFailure(java.lang.String, boolean)}
+     * .
+     */
     @Test
-    public void testExecuteQueryBis() {
+    public void testExplainFailure() {
 
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_14);
-
-	for (CElement element : conjunctiveQuery.getElementList()) {
-
-	    List<CElement> elements = new ArrayList<CElement>();
-	    elements.add(element);
-	    CQuery current_query = CQueryFactory.createCQuery(elements);
-	    queryStatement.preparedQuery(current_query.toString());
-	    Assert.assertNotNull(queryStatement.getQuery());
-	    ResultSet result = queryStatement.executeSPARQLQuery();
-	    Assert.assertNotNull(result);
-	    int i = 0;
-	    while (result.hasNext()) {
-		result.next();
-		i++;
-	    }
-
-	    Assert.assertTrue(!result.hasNext());
-	    Logger.getRootLogger().info(current_query.toString() + "---" + i);
+	queryStatement.explainFailure(SPARQLQueriesSample.QUERY_4, true);
+	List<String> all_mfs = queryStatement.getFailingCause();
+	Assert.assertEquals(2, all_mfs.size());
+	for (String mfs : all_mfs) {
+	    Logger.getRootLogger().info(mfs);
 	}
     }
 
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#getFailingCause()}
+     * .
+     */
+    @Test
+    public void testGetFailingCause() {
+
+	ResultSet result = queryStatement
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_3);
+	Assert.assertTrue(result.getRowNumber() == 0);
+	queryStatement.explainFailure(SPARQLQueriesSample.QUERY_3, false);
+	List<String> all_mfs = queryStatement.getFailingCause();
+	Assert.assertEquals(1, all_mfs.size());
+	for (String mfs : all_mfs) {
+	    Logger.getRootLogger().info(mfs);
+	}
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#getMaxSuccessQuery()}
+     * .
+     */
+    @Test
+    public void testGetMaxSuccessQuery() {
+
+	ResultSet result = queryStatement
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_5);
+	Assert.assertTrue(result.getRowNumber() == 0);
+	queryStatement.explainFailure(SPARQLQueriesSample.QUERY_5, true);
+	List<String> all_xss = queryStatement.getMaxSuccessQuery();
+	Assert.assertEquals(1, all_xss.size());
+	for (String xss : all_xss) {
+	    Logger.getRootLogger().info(xss);
+	}
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#executeRelaxedQuery(java.lang.String)}
+     * .
+     */
+    @Test
+    public void testExecuteRelaxedQuery() {
+	// TODO
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#automaticRelaxation(java.lang.String, int)}
+     * .
+     */
+    @Test
+    public void testAutomaticRelaxation() {
+	ResultSet result = queryStatement
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_2);
+	Assert.assertTrue(result.getRowNumber() == 0);
+	Map<ResultSet, Double> all_result = queryStatement.automaticRelaxation(
+		SPARQLQueriesSample.QUERY_2, 10);
+	Assert.assertEquals(1, all_result.keySet().size());
+	for (ResultSet res : all_result.keySet()) {
+	    Assert.assertEquals(1, all_result.get(res).doubleValue(), 0.001);
+	    Logger.getRootLogger().info(all_result.get(res).doubleValue());
+	}
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.statement.implementation.StatementImpl#getRelaxationPlan()}
+     * .
+     */
+    @Test
+    public void testGetRelaxationPlan() {
+	ResultSet result = queryStatement
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_3);
+	Assert.assertTrue(result.getRowNumber() == 0);
+	Map<ResultSet, Double> all_result = queryStatement.automaticRelaxation(
+		SPARQLQueriesSample.QUERY_3, 20);
+
+	for(ResultSet res:all_result.keySet()){
+	    Logger.getRootLogger().info(all_result.get(res));
+	}
+	
+	RelaxationTree execution_plan = queryStatement.getRelaxationPlan();
+	Logger.getRootLogger().info(execution_plan.getQuery().toString());
+	Logger.getRootLogger().info(execution_plan.getSimilarity());
+	
+    }
 }

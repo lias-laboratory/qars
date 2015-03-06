@@ -88,8 +88,7 @@ public class MappingResultTest extends SessionTDBTest {
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_19);
 
-	ResultSet result_set = session.createStatement(
-		conjunctiveQuery.toString()).executeSPARQLQuery();
+	ResultSet result_set = session.createStatement().executeSPARQLQuery(conjunctiveQuery.toString());
 
 	MappingResult result_mapping = null;
 
@@ -139,8 +138,7 @@ public class MappingResultTest extends SessionTDBTest {
 	    elements.add(conjunctiveQuery.getElementList().get(i - 1));
 	    CQuery current_query = CQueryFactory.createCQuery(elements);
 	    
-	    ResultSet result_set = session.createStatement(
-		    current_query.toString()).executeSPARQLQuery();
+	    ResultSet result_set = session.createStatement().executeSPARQLQuery(current_query.toString());
 
 	    MappingResult result_mapping = null;
 

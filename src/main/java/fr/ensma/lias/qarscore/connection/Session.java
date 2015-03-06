@@ -49,6 +49,4 @@ public interface Session {
     String getOntoJSON();
 
     Statement createStatement();
-
-    Statement createStatement(String query);
 }

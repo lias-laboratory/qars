@@ -106,7 +106,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		conjunctiveQuery);
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers());
 	List<CQuery> allCauses = relaxationStrategy.getAllMFS();
-	Assert.assertTrue(allCauses.size() == 14);
+	Assert.assertEquals(14, allCauses.size());
 	Assert.assertTrue(relaxationStrategy.isMFS(allCauses.get(0)));
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(allCauses.get(0)));
 	for (CQuery cause : allCauses) {
@@ -114,7 +114,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    logger.info(cause.getSPARQLQuery());
 	}
 	List<CQuery> allSuccess = relaxationStrategy.getAllXSS();
-	Assert.assertTrue(allSuccess.size() == 4);
+	Assert.assertEquals(4, allSuccess.size());
 	for (CQuery success : allSuccess) {
 	    Assert.assertTrue(!relaxationStrategy.isMFS(success));
 	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));
@@ -136,14 +136,14 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		conjunctiveQuery);
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers());
 	List<CQuery> allCauses = relaxationStrategy.getAllMFS();
-	Assert.assertTrue(allCauses.size() == 6);
+	Assert.assertEquals(6, allCauses.size());
 	for (CQuery cause : allCauses) {
 	    Assert.assertTrue(relaxationStrategy.isMFS(cause));
 	    Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers(cause));
 	    logger.info(cause.getSPARQLQuery());
 	}
 	List<CQuery> allSuccess = relaxationStrategy.getAllXSS();
-	Assert.assertTrue(allSuccess.size() == 5);
+	Assert.assertEquals(5, allSuccess.size());
 	for (CQuery success : allSuccess) {
 	    Assert.assertTrue(!relaxationStrategy.isMFS(success));
 	    Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(success));

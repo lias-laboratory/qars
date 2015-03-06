@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.roaringbitmap.RoaringBitmap;
 
+import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -118,8 +119,8 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 	    elements.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i - 1));
 	    CQuery current_query = CQueryFactory.createCQuery(elements);
 
-	    ResultSet result_set = SESSION.createStatement(
-		    current_query.toString()).executeSPARQLQuery();
+	    ResultSet result_set = QueryExecutionFactory.create(current_query.toString(), SESSION.getDataset())
+			.execSelect();
 
 	    while (result_set.hasNext()) {
 
