@@ -33,7 +33,7 @@ public class SimilarityMeasureConcept {
 
     private static double getInstanceNumber(OntClass classe) {
 
-	int number = classe.listInstances(true).toList().size();
+	int number = 1 + classe.listInstances(true).toList().size();
 	for (OntClass sub_class : classe.listSubClasses().toList()) {
 	    number = number + sub_class.listInstances(true).toList().size();
 	}
@@ -66,14 +66,28 @@ public class SimilarityMeasureConcept {
 	    OntClass classe2) {
 
 	List<OntClass> superClass1 = classe1.listSuperClasses().toList();
-	superClass1.add(classe1);
 	List<OntClass> superClass2 = classe2.listSuperClasses().toList();
-	superClass2.add(classe2);
 	List<OntClass> intersection = new ArrayList<OntClass>();
 	for (OntClass classe1_super_class : superClass1) {
 	    for (OntClass classe2_super_class : superClass2) {
+		if ((classe1_super_class.equals(classe2))
+			|| (classe2_super_class.equals(classe1))) {
+		    continue;
+		}
 		if (classe1_super_class.equals(classe2_super_class)) {
 		    intersection.add(classe1_super_class);
+		}
+	    }
+	}
+
+	if (intersection.size() == 0) {
+	    if (classe1.listSuperClasses().toList().contains(classe2)) {
+		return classe2;
+	    } else {
+		if (classe2.listSuperClasses().toList().contains(classe1)) {
+		    return classe1;
+		} else {
+		    return null;
 		}
 	    }
 	}
@@ -101,19 +115,26 @@ public class SimilarityMeasureConcept {
 	}
 
 	OntClass least_common_class = getLeastCommonAncestor(classe1, classe2);
-	double ic_lcc = -1
+
+	if (least_common_class == null) {
+	    return 0;
+	}
+	double ic_lcc = 0;
+	ic_lcc = -1
 		* Math.log10(getInstanceNumber(least_common_class)
 			/ session.getOntologyModel().listIndividuals().toList()
 				.size());
-	double ic_class1 = -1
-		* Math.log10(getInstanceNumber(classe1)
-			/ session.getOntologyModel().listIndividuals().toList()
-				.size());
-	double ic_class2 = -1
-		* Math.log10(getInstanceNumber(classe2)
-			/ session.getOntologyModel().listIndividuals().toList()
-				.size());
 
+	double ic_class1 = 0;
+	double ic_class2 = 0;
+	ic_class1 = -1
+		* Math.log(getInstanceNumber(classe1)
+			/ session.getOntologyModel().listIndividuals().toList()
+				.size());
+	ic_class2 = -1
+		* Math.log(getInstanceNumber(classe2)
+			/ session.getOntologyModel().listIndividuals().toList()
+				.size());
 	return ic_lcc / (ic_class1 + ic_class2 - ic_lcc);
     }
 }
