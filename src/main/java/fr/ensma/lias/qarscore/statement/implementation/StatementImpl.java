@@ -141,9 +141,37 @@ public class StatementImpl implements Statement {
     }
 
     @Override
-    public Map<ResultSet, Double> executeRelaxedQuery(String query) {
-	// TODO Auto-generated method stub
-	return null;
+    public Map<ResultSet, Double> executeRelaxedQuery(String query,
+	    Map<String, String> operator_param) {
+
+	currentQuery = CQueryFactory.createCQuery(query);
+	Map<ResultSet, Double> all_result = new HashMap<ResultSet, Double>();
+	relax_engine = new SimilarityStrategy(currentQuery, session);
+	for (String classe : operator_param.keySet()) {
+	    String operator = operator_param.get(classe);
+	    boolean has_operate = false;
+	    switch (operator.toLowerCase()) {
+	    case "gen":
+		has_operate = relax_engine.next_gen_relax(classe);
+		break;
+	    case "sib":
+		has_operate = relax_engine.next_sib_relax(classe);
+		break;
+	    default:
+		break;
+	    }
+	    if (has_operate) {
+		for (RelaxationTree relaxed_tree : relax_engine
+			.get_leaf_queries()) {
+		    ResultSet current_result = QueryExecutionFactory.create(
+			    relaxed_tree.getQuery().toString(),
+			    session.getDataset()).execSelect();
+		    all_result
+			    .put(current_result, relaxed_tree.getSimilarity());
+		}
+	    }
+	}
+	return all_result;
     }
 
     @Override
@@ -154,7 +182,7 @@ public class StatementImpl implements Statement {
 	Map<ResultSet, Double> all_result = new HashMap<ResultSet, Double>();
 	int size_all_result = 0;
 	relax_engine = new SimilarityStrategy(currentQuery, session);
-	
+
 	for (RelaxationTree relaxed_tree : relax_engine.get_leaf_queries()) {
 	    ResultSet current_result = QueryExecutionFactory.create(
 		    relaxed_tree.getQuery().toString(), session.getDataset())

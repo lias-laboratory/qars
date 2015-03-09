@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 
@@ -198,6 +199,88 @@ public class SimilarityStrategy {
 	for (RelaxationTree one_tree : temp_leaf_tree) {
 	    leaf_queries.add(this.get_position(leaf_queries, one_tree),
 		    one_tree);
+	}
+	return true;
+    }
+
+    /**
+     * Gen relaxation on all the leaf of the current relaxation tree
+     * 
+     * @param uri
+     * @return
+     */
+    public boolean next_gen_relax(String uri) {
+
+	RelaxationOperators operator_relax = OperatorsFactory
+		.createOperator(session);
+	List<RelaxationTree> current_roots = new ArrayList<RelaxationTree>();
+	List<RelaxationTree> temp_leaf_tree = new ArrayList<RelaxationTree>();
+
+	if (session.getOntologyModel().getOntClass(uri) != null) {
+	    current_roots.addAll(leaf_queries);
+	    for (RelaxationTree current_root : current_roots) {
+		Map<CQuery, List<Double>> genqueries = operator_relax
+			.generalize(current_root.getQuery(),
+				NodeFactory.createURI(uri), 1);
+		for (CQuery q : genqueries.keySet()) {
+		    RelaxationTree rtree = new RelaxationTree(q, current_root,
+			    genqueries.get(q).get(1).doubleValue()
+				    * current_root.getSimilarity());
+		    current_root.getRelaxedQuery().add(
+			    this.get_position(current_root.getRelaxedQuery(),
+				    rtree), rtree);
+		    temp_leaf_tree.add(
+			    this.get_position(temp_leaf_tree, rtree), rtree);
+		}
+		leaf_queries.clear();
+		for (RelaxationTree one_tree : temp_leaf_tree) {
+		    leaf_queries.add(this.get_position(leaf_queries, one_tree),
+			    one_tree);
+		}
+	    }
+
+	} else {
+	    return false;
+	}
+	return true;
+    }
+
+    /**
+     * Sibling relaxation on all the leaf of the current relaxation tree
+     * 
+     * @param uri
+     * @return
+     */
+    public boolean next_sib_relax(String uri) {
+
+	RelaxationOperators operator_relax = OperatorsFactory
+		.createOperator(session);
+	List<RelaxationTree> current_roots = new ArrayList<RelaxationTree>();
+	List<RelaxationTree> temp_leaf_tree = new ArrayList<RelaxationTree>();
+
+	if (session.getOntologyModel().getOntClass(uri) != null) {
+	    current_roots.addAll(leaf_queries);
+	    for (RelaxationTree current_root : current_roots) {
+		Map<CQuery, Double> sibqueries = operator_relax.sibling(
+			current_root.getQuery(), NodeFactory.createURI(uri));
+		for (CQuery q : sibqueries.keySet()) {
+		    RelaxationTree rtree = new RelaxationTree(q, current_root,
+			    sibqueries.get(q).doubleValue()
+				    * current_root.getSimilarity());
+		    current_root.getRelaxedQuery().add(
+			    this.get_position(current_root.getRelaxedQuery(),
+				    rtree), rtree);
+		    temp_leaf_tree.add(
+			    this.get_position(temp_leaf_tree, rtree), rtree);
+		}
+		leaf_queries.clear();
+		for (RelaxationTree one_tree : temp_leaf_tree) {
+		    leaf_queries.add(this.get_position(leaf_queries, one_tree),
+			    one_tree);
+		}
+	    }
+	} else {
+	    return false;
 	}
 	return true;
     }

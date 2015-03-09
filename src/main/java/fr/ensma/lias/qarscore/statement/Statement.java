@@ -80,7 +80,7 @@ public interface Statement {
      * @param query
      * @return
      */
-    Map<ResultSet, Double> executeRelaxedQuery(String query);
+    Map<ResultSet, Double> executeRelaxedQuery(String query,  Map<String, String> operator_param);
 
     /**
      * return the most similar queries to the user query
