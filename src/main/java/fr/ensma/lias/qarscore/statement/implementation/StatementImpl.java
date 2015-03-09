@@ -152,7 +152,7 @@ public class StatementImpl implements Statement {
 	    boolean has_operate = false;
 	    switch (operator.toLowerCase()) {
 	    case "gen":
-		has_operate = relax_engine.next_gen_relax(classe);
+		has_operate = relax_engine.next_gen_relax(classe, 1);
 		break;
 	    case "sib":
 		has_operate = relax_engine.next_sib_relax(classe);

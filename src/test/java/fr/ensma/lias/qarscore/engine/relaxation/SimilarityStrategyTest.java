@@ -19,7 +19,7 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -41,16 +41,19 @@ import fr.ensma.lias.qarscore.properties.Properties;
 /**
  * @author Geraud FOKOU
  */
-public class SimilarityStrategyTest extends SessionTDBTest{
+public class SimilarityStrategyTest extends SessionTDBTest {
 
     private Session session;
     private Logger logger;
 
-    /**
-     * @throws java.lang.Exception
+    /*
+     * (non-Javadoc)
+     * 
+     * @see fr.ensma.lias.qarscore.connection.SessionTDBTest#setUp()
      */
     @Before
-    public void setUp(){
+    public void setUp() {
+
 	super.setUp();
 	logger = Logger.getRootLogger();
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
@@ -62,64 +65,222 @@ public class SimilarityStrategyTest extends SessionTDBTest{
 	Assert.assertNotNull(session.getOntologyModel());
 	Assert.assertNull(session.getDataStore());
 	Assert.assertNotNull(session.getBaseModel());
+
     }
 
     /**
      * @throws java.lang.Exception
      */
     @After
-    public void tearDown(){
+    public void tearDown() throws Exception {
+
 	super.teardDown();
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#SimilarityStrategy(fr.ensma.lias.qarscore.engine.query.CQuery, fr.ensma.lias.qarscore.connection.Session)}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#SimilarityStrategy(fr.ensma.lias.qarscore.engine.query.CQuery, fr.ensma.lias.qarscore.connection.Session)}
+     * .
      */
     @Test
     public void testSimilarityStrategy() {
+
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_13);
-	SimilarityStrategy relax_strategy = new SimilarityStrategy(conjunctiveQuery, session);
+	SimilarityStrategy relax_strategy = new SimilarityStrategy(
+		conjunctiveQuery, session);
 	Assert.assertNotNull(relax_strategy);
-	Assert.assertTrue(1==relax_strategy.getRelaxed_queries().getSimilarity());
-	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery().isEmpty());
+	Assert.assertTrue(1 == relax_strategy.getRelaxed_queries()
+		.getSimilarity());
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.isEmpty());
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#relaxation_tree(fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree, fr.ensma.lias.qarscore.connection.Session)}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#relaxation_tree(fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree, fr.ensma.lias.qarscore.connection.Session)}
+     * .
      */
     @Test
     public void testRelaxation_tree() {
+
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_13);
-	SimilarityStrategy relax_strategy = new SimilarityStrategy(conjunctiveQuery, session);
+	SimilarityStrategy relax_strategy = new SimilarityStrategy(
+		conjunctiveQuery, session);
 	Assert.assertNotNull(relax_strategy);
-	Assert.assertTrue(1==relax_strategy.getRelaxed_queries().getSimilarity());
-	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery().isEmpty());
+	Assert.assertTrue(1 == relax_strategy.getRelaxed_queries()
+		.getSimilarity());
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.isEmpty());
 	relax_strategy.next_step();
-	Assert.assertTrue(!relax_strategy.getRelaxed_queries().getRelaxedQuery().isEmpty());
-	for(RelaxationTree child:relax_strategy.getRelaxed_queries().getRelaxedQuery()){
+	Assert.assertTrue(!relax_strategy.getRelaxed_queries()
+		.getRelaxedQuery().isEmpty());
+	for (RelaxationTree child : relax_strategy.getRelaxed_queries()
+		.getRelaxedQuery()) {
 	    Assert.assertTrue(child.getRelaxedQuery().isEmpty());
-	    Assert.assertTrue(1>=relax_strategy.getRelaxed_queries().getSimilarity());
+	    Assert.assertTrue(1 >= relax_strategy.getRelaxed_queries()
+		    .getSimilarity());
 	    logger.info(child.getQuery());
 	    logger.info(child.getSimilarity());
 	}
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#next_step()}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#next_step()}
+     * .
      */
     @Test
     public void testNext_step() {
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_16);
+	SimilarityStrategy relax_strategy = new SimilarityStrategy(
+		conjunctiveQuery, session);
+	Assert.assertNotNull(relax_strategy);
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.isEmpty());
+	Assert.assertTrue(relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.size() == 2);
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 2);
+	Assert.assertTrue(relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 3);
+	Assert.assertTrue(relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 3);
+	Assert.assertTrue(relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 1);
+	Assert.assertTrue(!relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 1);
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#next_gen_relax(java.lang.String)}
+     * .
+     */
+    @Test
+    public void testNext_gen_relax() {
+
+	String uri = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#VisitingProfessor";
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_5);
+	SimilarityStrategy relax_strategy = new SimilarityStrategy(
+		conjunctiveQuery, session);
+	Assert.assertNotNull(relax_strategy);
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.isEmpty());
+
+	Assert.assertTrue(relax_strategy.next_gen_relax(uri, 1));
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.size() == 1);
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 1);
+
+	relax_strategy = new SimilarityStrategy(conjunctiveQuery, session);
+	Assert.assertNotNull(relax_strategy);
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.isEmpty());
+
+	Assert.assertTrue(relax_strategy.next_gen_relax(uri, 3));
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 3);
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 3);
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#next_sib_relax(java.lang.String)}
+     * .
+     */
+    @Test
+    public void testNext_sib_relax() {
+
+	String uri = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#VisitingProfessor";
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_5);
+	SimilarityStrategy relax_strategy = new SimilarityStrategy(
+		conjunctiveQuery, session);
+	Assert.assertNotNull(relax_strategy);
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.isEmpty());
+
+	Assert.assertTrue(relax_strategy.next_sib_relax(uri));
+	logger.info(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.size());
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.size() == 5);
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size() == 5);
+
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#get_root_query()}
+     * .
+     */
+    @Test
+    public void testGet_root_query() {
 	fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#get_current_relaxed_query()}.
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#get_leaf_queries()}
+     * .
      */
     @Test
-    public void testGet_level_relaxed_query() {
+    public void testGet_leaf_queries() {
 	fail("Not yet implemented"); // TODO
     }
 
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#setRoot_query(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * .
+     */
+    @Test
+    public void testSetRoot_query() {
+	fail("Not yet implemented"); // TODO
+    }
+
+    private void show_tree(RelaxationTree temp_tree) {
+
+	if (temp_tree == null) {
+	    return;
+	}
+	logger.info(temp_tree.getQuery());
+	logger.info(temp_tree.getSimilarity());
+	for(int i=0; i<temp_tree.getRelaxedQuery().size(); i++){
+	    show_tree(temp_tree.getRelaxedQuery().get(i));
+	}
+    }
+
+    /**
+     * Test method for
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy#getRelaxed_queries()}
+     * .
+     */
+    @Test
+    public void testGetRelaxed_queries() {
+	
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_16);
+	SimilarityStrategy relax_strategy = new SimilarityStrategy(
+		conjunctiveQuery, session);
+	Assert.assertNotNull(relax_strategy);
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery()
+		.isEmpty());
+	Assert.assertTrue(relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.getRelaxed_queries().getRelaxedQuery().size()==2);
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size()==2);
+	Assert.assertTrue(relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size()==3);
+	Assert.assertTrue(relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size()==3);
+	Assert.assertTrue(relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size()==1);
+	Assert.assertTrue(!relax_strategy.next_step());
+	Assert.assertTrue(relax_strategy.get_leaf_queries().size()==1);
+
+	show_tree(relax_strategy.getRelaxed_queries());
+    }
 }

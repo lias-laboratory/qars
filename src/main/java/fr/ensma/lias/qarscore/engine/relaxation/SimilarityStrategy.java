@@ -209,7 +209,7 @@ public class SimilarityStrategy {
      * @param uri
      * @return
      */
-    public boolean next_gen_relax(String uri) {
+    public boolean next_gen_relax(String uri, int level) {
 
 	RelaxationOperators operator_relax = OperatorsFactory
 		.createOperator(session);
@@ -221,7 +221,7 @@ public class SimilarityStrategy {
 	    for (RelaxationTree current_root : current_roots) {
 		Map<CQuery, List<Double>> genqueries = operator_relax
 			.generalize(current_root.getQuery(),
-				NodeFactory.createURI(uri), 1);
+				NodeFactory.createURI(uri), level);
 		for (CQuery q : genqueries.keySet()) {
 		    RelaxationTree rtree = new RelaxationTree(q, current_root,
 			    genqueries.get(q).get(1).doubleValue()
