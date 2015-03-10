@@ -31,65 +31,157 @@ public class RelaxationTree {
 
     private CQuery query;
     private double similarity;
-    private RelaxationTree rootQuery;
-    private List<RelaxationTree> relaxedQuery;
+    private RelaxationTree source_query;
+    private List<RelaxationTree> relaxed_query;
 
     /**
      * 
      */
     public RelaxationTree(CQuery q, RelaxationTree parent, double sim) {
 	query = q;
-	rootQuery = parent;
+	source_query = parent;
 	similarity = sim;
-	relaxedQuery = new ArrayList<RelaxationTree>();
+	relaxed_query = new ArrayList<RelaxationTree>();
     }
 
     public RelaxationTree(CQuery q) {
 	query = q;
-	rootQuery = null;
+	source_query = null;
 	similarity = 1;
-	relaxedQuery = new ArrayList<RelaxationTree>();
+	relaxed_query = new ArrayList<RelaxationTree>();
     }
 
     /**
      * @return the query
      */
     public CQuery getQuery() {
-        return query;
+	return query;
     }
 
     /**
-     * @param query the query to set
+     * @param query
+     *            the query to set
      */
     public void setQuery(CQuery query) {
-        this.query = query;
+	this.query = query;
     }
 
     /**
      * @return the similarity
      */
     public double getSimilarity() {
-        return similarity;
+	return similarity;
     }
 
     /**
-     * @param similarity the similarity to set
+     * @param similarity
+     *            the similarity to set
      */
     public void setSimilarity(double similarity) {
-        this.similarity = similarity;
+	this.similarity = similarity;
     }
 
     /**
-     * @return the originalQuery
+     * @return the source_query
      */
-    public RelaxationTree getRootQuery() {
-        return rootQuery;
+    public RelaxationTree getSource_query() {
+	return source_query;
     }
 
     /**
-     * @return the relaxedQuery
+     * @return the relaxed_query
      */
-    public List<RelaxationTree> getRelaxedQuery() {
-        return relaxedQuery;
+    public List<RelaxationTree> getRelaxed_query() {
+	return relaxed_query;
+    }
+
+    /**
+     * return all the relax queries without child
+     * 
+     * @return
+     */
+    public List<RelaxationTree> getLeaf() {
+
+	List<RelaxationTree> leaf = new ArrayList<RelaxationTree>();
+	if (relaxed_query.size() == 0) {
+	    leaf.add(this);
+	    return leaf;
+	}
+
+	List<RelaxationTree> temp_leaf;
+	for (int i = 0; i < relaxed_query.size(); i++) {
+	    temp_leaf = relaxed_query.get(i).getLeaf();
+
+	    for (int j = 0; j < temp_leaf.size(); j++) {
+
+		int position = 0;
+		boolean found = false;
+		while (!found) {
+		    if (position == leaf.size()) {
+			found = true;
+		    } else {
+			if (leaf.get(position).getSimilarity() <= temp_leaf
+				.get(j).getSimilarity()) {
+			    found = true;
+			} else {
+			    position++;
+			}
+		    }
+		}
+
+		leaf.add(position, temp_leaf.get(j));
+	    }
+	}
+	return leaf;
+    }
+
+    /**
+     * Add a new relaxed query in the list of relax queries of the current query
+     * 
+     * @param child
+     * @return
+     */
+    public boolean add_child(RelaxationTree child) {
+
+	if (this != child.getSource_query()) {
+	    return false;
+	}
+
+	int position = 0;
+	boolean found = false;
+	while (!found) {
+	    if (position == relaxed_query.size()) {
+		found = true;
+	    } else {
+		if (relaxed_query.get(position).getSimilarity() <= child
+			.getSimilarity()) {
+		    found = true;
+		} else {
+		    position++;
+		}
+	    }
+	}
+	relaxed_query.add(position, child);
+	return true;
+    }
+
+    /**
+     * Return the node of the relaxation Tree which has q as value
+     * 
+     * @param query
+     * @return
+     */
+    public RelaxationTree isInGraph(CQuery q) {
+
+	if (query.equals(q)) {
+	    return this;
+	}
+	for (int i = 0; i < relaxed_query.size(); i++) {
+	    RelaxationTree temp = relaxed_query.get(i).isInGraph(q);
+	    if (temp != null) {
+		return temp;
+	    }
+	}
+	return null;
     }
 }

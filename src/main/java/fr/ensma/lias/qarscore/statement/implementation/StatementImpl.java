@@ -162,7 +162,7 @@ public class StatementImpl implements Statement {
 	    }
 	    if (has_operate) {
 		for (RelaxationTree relaxed_tree : relax_engine
-			.get_leaf_queries()) {
+			.get_last_relaxed_queries()) {
 		    ResultSet current_result = QueryExecutionFactory.create(
 			    relaxed_tree.getQuery().toString(),
 			    session.getDataset()).execSelect();
@@ -183,7 +183,7 @@ public class StatementImpl implements Statement {
 	int size_all_result = 0;
 	relax_engine = new SimilarityStrategy(currentQuery, session);
 
-	for (RelaxationTree relaxed_tree : relax_engine.get_leaf_queries()) {
+	for (RelaxationTree relaxed_tree : relax_engine.get_last_relaxed_queries()) {
 	    ResultSet current_result = QueryExecutionFactory.create(
 		    relaxed_tree.getQuery().toString(), session.getDataset())
 		    .execSelect();
@@ -192,7 +192,7 @@ public class StatementImpl implements Statement {
 	}
 
 	while ((relax_engine.next_step()) && (size_all_result < size_answers)) {
-	    for (RelaxationTree relaxed_tree : relax_engine.get_leaf_queries()) {
+	    for (RelaxationTree relaxed_tree : relax_engine.get_last_relaxed_queries()) {
 		ResultSet current_result = QueryExecutionFactory.create(
 			relaxed_tree.getQuery().toString(),
 			session.getDataset()).execSelect();
@@ -206,6 +206,6 @@ public class StatementImpl implements Statement {
 
     @Override
     public RelaxationTree getRelaxationPlan() {
-	return relax_engine.getRelaxed_queries();
+	return relax_engine.getRelaxed_queries_graph();
     }
 }
