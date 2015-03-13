@@ -54,8 +54,8 @@ public class LatticeStrategy implements RelaxationStrategies {
      * @param answers
      * @return
      */
-    protected static LatticeStrategy getLatticeStrategy(Session s, CQuery query,
-	    int answers) {
+    protected static LatticeStrategy getLatticeStrategy(Session s,
+	    CQuery query, int answers) {
 	return new LatticeStrategy(s, query, answers);
     }
 
@@ -121,7 +121,7 @@ public class LatticeStrategy implements RelaxationStrategies {
 		}
 		boolean isContained = false;
 		for (CQuery xss : maximalSubqueries) {
-		    if (tempquery.isSubQueryOf(xss)){
+		    if (tempquery.isSubQueryOf(xss)) {
 			isContained = true;
 			break;
 		    }
@@ -252,7 +252,8 @@ public class LatticeStrategy implements RelaxationStrategies {
 	List<CElement> causes = new ArrayList<CElement>();
 	CQuery tempQuery = CQueryFactory.cloneCQuery(query);
 
-	for (CElement elt : query.getElementList()) {
+	for (int i = 0; i < query.getElementList().size() - 1; i++) {
+	    CElement elt = query.getElementList().get(i);
 	    tempQuery.getElementList().remove(elt);
 	    CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
 	    temp.getElementList().addAll(causes);
@@ -260,6 +261,23 @@ public class LatticeStrategy implements RelaxationStrategies {
 		if (hasLeastKAnswers(temp)) {
 		    causes.add(elt);
 		}
+	    }
+	}
+
+	CElement elt = query.getElementList().get(
+		query.getElementList().size() - 1);
+
+	if (causes.size() == 0) {
+	    causes.add(elt);
+	    return CQueryFactory.createCQuery(causes);
+	}
+
+	tempQuery.getElementList().remove(elt);
+	CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
+	temp.getElementList().addAll(causes);
+	if (temp.isValidQuery()) {
+	    if (hasLeastKAnswers(temp)) {
+		causes.add(elt);
 	    }
 	}
 	return CQueryFactory.createCQuery(causes);

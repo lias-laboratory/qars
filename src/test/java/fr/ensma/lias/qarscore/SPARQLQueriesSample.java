@@ -230,4 +230,11 @@ public class SPARQLQueriesSample {
 	    + "WHERE {  ?X ub:publicationAuthor ?Y. "
 	    + " ?Y ub:worksFor <http://www.Department0.University0.edu> ."
 	    + "}";
+
+    public static String QUERY_22 = LUBM_PREFIX + ""
+    	+ " SELECT ?Course1 ?Person1 "
+    	+ "WHERE {?Course1 rdf:type ub:Course . "
+    	+ "?Person1 ub:takesCourse ?Course1 . "
+    	+ "?Person1 rdf:type ub:Person"
+    	+ "}";
 }

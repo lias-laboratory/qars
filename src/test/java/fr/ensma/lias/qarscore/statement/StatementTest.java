@@ -120,7 +120,7 @@ public class StatementTest extends SessionTDBTest {
     public void testExecuteSPARQLQuery() {
 
 	ResultSet result = queryStatement
-		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_21);
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_22);
 	Assert.assertNotNull(result);
 	int i = 0;
 	while (result.hasNext()) {
@@ -161,9 +161,9 @@ public class StatementTest extends SessionTDBTest {
     public void testGetFailingCause() {
 
 	ResultSet result = queryStatement
-		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_3);
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_22);
 	Assert.assertTrue(result.getRowNumber() == 0);
-	queryStatement.explainFailure(SPARQLQueriesSample.QUERY_3, false);
+	queryStatement.explainFailure(SPARQLQueriesSample.QUERY_22, false);
 	List<String> all_mfs = queryStatement.getFailingCause();
 	Assert.assertEquals(1, all_mfs.size());
 	for (String mfs : all_mfs) {
@@ -180,7 +180,7 @@ public class StatementTest extends SessionTDBTest {
     public void testGetMaxSuccessQuery() {
 
 	ResultSet result = queryStatement
-		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_5);
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_22);
 	Assert.assertTrue(result.getRowNumber() == 0);
 	queryStatement.explainFailure(SPARQLQueriesSample.QUERY_5, true);
 	List<String> all_xss = queryStatement.getMaxSuccessQuery();
