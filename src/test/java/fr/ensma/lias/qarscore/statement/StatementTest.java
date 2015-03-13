@@ -120,13 +120,15 @@ public class StatementTest extends SessionTDBTest {
     public void testExecuteSPARQLQuery() {
 
 	ResultSet result = queryStatement
-		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_22);
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_1);
 	Assert.assertNotNull(result);
 	int i = 0;
 	while (result.hasNext()) {
 	    QuerySolution solution = result.next();
 	    Logger.getRootLogger().info(
 		    solution.get(result.getResultVars().get(0)));
+	    Logger.getRootLogger().info(
+		    solution.get(result.getResultVars().get(1)));
 	    i++;
 	}
 
