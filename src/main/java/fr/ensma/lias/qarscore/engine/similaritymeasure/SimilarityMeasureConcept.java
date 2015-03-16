@@ -20,9 +20,12 @@
 package fr.ensma.lias.qarscore.engine.similaritymeasure;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import fr.ensma.lias.qarscore.connection.Session;
 
@@ -31,16 +34,71 @@ import fr.ensma.lias.qarscore.connection.Session;
  */
 public class SimilarityMeasureConcept {
 
-    private static double getInstanceNumber(OntClass classe) {
+    private static SimilarityMeasureConcept measure_concept;
+
+    private Map<OntClass, Double> information_content;
+    private Session session;
+
+    public static SimilarityMeasureConcept get_concept_measure(Session s) {
+	if (measure_concept == null) {
+	    measure_concept = new SimilarityMeasureConcept(s);
+	}
+	return measure_concept;
+    }
+
+    public SimilarityMeasureConcept(Session s) {
+
+	session = s;
+	int size_data = session.getOntologyModel().listIndividuals().toList()
+		.size();
+	information_content = new HashMap<OntClass, Double>();
+	ExtendedIterator<OntClass> listClass = session.getOntologyModel()
+		.listNamedClasses();
+
+	while (listClass.hasNext()) {
+	    OntClass currentClass = listClass.next();
+
+	    if (currentClass.getURI() == null) {
+		continue;
+	    }
+	    if (currentClass.isIntersectionClass()) {
+		continue;
+	    }
+	    if (currentClass.isRestriction()) {
+		continue;
+	    }
+
+	    double classe_size = getInstanceNumber(currentClass);
+	    // double classe_size = Double.valueOf((1+currentClass.listInstances(true).toList().size()));
+	    double icc_class = -1 * Math.log10(classe_size / size_data);
+
+	    information_content.put(currentClass, icc_class);
+	}
+    }
+
+    public static double getInstanceNumber(OntClass classe) {
 
 	int number = 1 + classe.listInstances(true).toList().size();
-	for (OntClass sub_class : classe.listSubClasses().toList()) {
-	    number = number + sub_class.listInstances(true).toList().size();
+	List<OntClass> subclasses = classe.listSubClasses(true).toList();
+	
+	while(!subclasses.isEmpty()){
+	    
+	    OntClass currentClass = subclasses.get(0);
+	    subclasses.remove(currentClass);
+	    if (currentClass.isIntersectionClass()) {
+		continue;
+	    }
+	    if (currentClass.isRestriction()) {
+		continue;
+	    }
+	    
+	    number = number + currentClass.listInstances(true).toList().size();
+	    subclasses.addAll(currentClass.listSubClasses(true).toList());
 	}
 	return number;
     }
 
-    private static int getLevel(OntClass child, OntClass parent) {
+    private int getLevel(OntClass child, OntClass parent) {
 
 	int level = 0;
 	if (child.equals(parent)) {
@@ -62,8 +120,7 @@ public class SimilarityMeasureConcept {
 	return level;
     }
 
-    private static OntClass getLeastCommonAncestor(OntClass classe1,
-	    OntClass classe2) {
+    private OntClass getLeastCommonAncestor(OntClass classe1, OntClass classe2) {
 
 	List<OntClass> superClass1 = classe1.listSuperClasses().toList();
 	List<OntClass> superClass2 = classe2.listSuperClasses().toList();
@@ -104,8 +161,7 @@ public class SimilarityMeasureConcept {
 	return super_class;
     }
 
-    public static double similarity(Session session, OntClass classe1,
-	    OntClass classe2) {
+    public double similarity(OntClass classe1, OntClass classe2) {
 
 	if ((!classe1.isClass()) || (!classe1.isURIResource())) {
 	    return -1;
@@ -119,22 +175,15 @@ public class SimilarityMeasureConcept {
 	if (least_common_class == null) {
 	    return 0;
 	}
+
 	double ic_lcc = 0;
-	ic_lcc = -1
-		* Math.log10(getInstanceNumber(least_common_class)
-			/ session.getOntologyModel().listIndividuals().toList()
-				.size());
+	ic_lcc = information_content.get(least_common_class);
 
 	double ic_class1 = 0;
 	double ic_class2 = 0;
-	ic_class1 = -1
-		* Math.log(getInstanceNumber(classe1)
-			/ session.getOntologyModel().listIndividuals().toList()
-				.size());
-	ic_class2 = -1
-		* Math.log(getInstanceNumber(classe2)
-			/ session.getOntologyModel().listIndividuals().toList()
-				.size());
+	ic_class1 = information_content.get(classe1);
+	ic_class2 = information_content.get(classe2);
+
 	return ic_lcc / (ic_class1 + ic_class2 - ic_lcc);
     }
 }

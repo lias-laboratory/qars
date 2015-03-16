@@ -29,6 +29,7 @@ import com.hp.hpl.jena.sdb.sql.SDBConnection;
 import com.hp.hpl.jena.sdb.store.StoreFactory;
 
 import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.engine.similaritymeasure.SimilarityMeasureConcept;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -63,6 +64,7 @@ public class SessionSDB extends JenaSession {
 	model = SDBFactory.connectDefaultModel(store);
 	ontologyModel = ModelFactory.createOntologyModel(
 		Properties.getModelMemSpec(), model);
+	SimilarityMeasureConcept.get_concept_measure(this);
     }
 
     /**

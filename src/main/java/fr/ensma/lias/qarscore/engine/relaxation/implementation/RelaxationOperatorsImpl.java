@@ -71,7 +71,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 			    NodeFactory.createURI(subClass.getURI()))) {
 			List<Double> value = new ArrayList<Double>();
 			value.add((double) depht);
-			value.add(SimilarityMeasureConcept.similarity(session,
+			value.add(SimilarityMeasureConcept.get_concept_measure(session).similarity(
 				currentClass, subClass));
 			relaxedQueries.put(tempQuery, value);
 		    }
@@ -112,7 +112,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 			    NodeFactory.createURI(subClass.getURI()))) {
 			List<Double> value = new ArrayList<Double>();
 			value.add((double) depht);
-			value.add(SimilarityMeasureConcept.similarity(session,
+			value.add(SimilarityMeasureConcept.get_concept_measure(session).similarity(
 				currentClass, subClass));
 			relaxedQueries.put(tempQuery, value);
 		    }
@@ -153,7 +153,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 			    NodeFactory.createURI(superClass.getURI()))) {
 			List<Double> value = new ArrayList<Double>();
 			value.add((double) depht);
-			value.add(SimilarityMeasureConcept.similarity(session,
+			value.add(SimilarityMeasureConcept.get_concept_measure(session).similarity(
 				currentClass, superClass));
 			relaxedQueries.put(tempQuery, value);
 		    }
@@ -192,7 +192,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 			    NodeFactory.createURI(superClass.getURI()))) {
 			List<Double> value = new ArrayList<Double>();
 			value.add((double) depht);
-			value.add(SimilarityMeasureConcept.similarity(session,
+			value.add(SimilarityMeasureConcept.get_concept_measure(session).similarity(
 				currentClass, superClass));
 			relaxedQueries.put(tempQuery, value);
 		    }
@@ -245,7 +245,7 @@ public class RelaxationOperatorsImpl implements RelaxationOperators {
 			CQuery tempQuery = CQueryFactory.cloneCQuery(query);
 			if (tempQuery.replace(classe,
 				NodeFactory.createURI(subclass.getURI()))) {
-			    double sim = SimilarityMeasureConcept.similarity(session, currentClass, subclass);
+			    double sim = SimilarityMeasureConcept.get_concept_measure(session).similarity(currentClass, subclass);
 			    relaxedQueries.put(tempQuery, sim);
 			}
 			subClassesFound.add(subclass);

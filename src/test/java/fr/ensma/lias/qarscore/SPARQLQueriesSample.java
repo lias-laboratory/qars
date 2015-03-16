@@ -232,9 +232,48 @@ public class SPARQLQueriesSample {
 	    + "}";
 
     public static String QUERY_22 = LUBM_PREFIX + ""
-    	+ " SELECT ?Course1 ?Person1 "
-    	+ "WHERE {?Course1 rdf:type ub:Course . "
-    	+ "?Person1 ub:takesCourse ?Course1 . "
-    	+ "?Person1 rdf:type ub:Person"
-    	+ "}";
+	    + " SELECT ?Course1 ?Person1 "
+	    + "WHERE {?Course1 rdf:type ub:Course . "
+	    + "?Person1 ub:takesCourse ?Course1 . "
+	    + "?Person1 rdf:type ub:Person" + "}";
+
+    // Not empty query: four answers
+    public static String QUERY_23 = LUBM_PREFIX
+	    + "SELECT ?X "
+	    + "WHERE {  ?X rdf:type ub:GraduateStudent . "
+	    + "?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>. "
+	    + "}";
+
+    // Requête pour avoir tout les graduates students qui suivent le cour
+    // GraduateCourse0
+    // 6 triples
+    public static String EDBT_QUERY_1 = LUBM_PREFIX
+	    + "SELECT ?X ?Y1 ?Y3 ?Y4 ?Y5 "
+	    + "WHERE { ?X rdf:type ub:GraduateStudent . "
+	    + "?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>. "
+	    + "?X ub:undergraduateDegreeFrom ?Y1 . " + "?X ub:telephone ?Y3. "
+	    + "?X ub:advisor ?Y4 ." + "?Y5 ub:publicationAuthor ?X . " + " }";
+    
+    // Rechercher tout les etudiants qui suivent un cours particulier
+    public static String EDBT_QUERY_2 = LUBM_PREFIX
+	    + "SELECT ?X "
+	    + "WHERE {  ?X rdf:type ub:UndergraduateStudent . "
+	    + "?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>. "
+	    + "}";
+
+    // Requête pour avoir toute les FullProfessor, chef de département ayant
+    // obtenu leurs diplômes supérieures à l'université Universty0
+    // 12 triples
+    public static String EDBT_QUERY_3 = LUBM_PREFIX
+	    + "SELECT ?X ?Y1 ?Y2 ?Y3 ?Y4 ?Y5 ?Y6 ?Y7 ?Y8 ?Y9 "
+	    + "WHERE { ?X rdf:type ub:FullProfessor . " + "?X ub:headOf ?Y1 . "
+	    + "?X ub:doctoralDegreeFrom <http://www.University0.edu> . "
+	    + "?X ub:undergraduateDegreeFrom <http://www.University0.edu>  . "
+	    + "?X ub:mastersDegreeFrom <http://www.University0.edu>  . "
+	    + "?X ub:researchInterest 'Research23' . "
+	    + "?X ub:emailAddress ?Y2 . " + "?X ub:telephone ?Y3 . "
+	    + "?X ub:teacherOf ?Y4 . " + "?Y5 ub:advisor ?X . "
+	    + "?Y5 ub:telephone ?Y7 . " + "?Y5 ub:memberOf ?Y8 . " + "}";
+    
+
 }
