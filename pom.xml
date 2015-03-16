@@ -4,6 +4,40 @@
 	<groupId>fr.ensma.lias</groupId>
 	<artifactId>qarscore</artifactId>
 	<version>0.1-SNAPSHOT</version>
+	<developers>
+		<developer>
+			<id>baronm</id>
+			<name>BARON Mickaël</name>
+			<email>baron@ensma.fr</email>
+			<organization>LIAS / ENSMA</organization>
+			<url>http://www.lias-lab.fr/members/mickaelbaron</url>
+			<roles>
+				<role>Integrator</role>
+			</roles>
+		</developer>
+		<developer>
+            <id>fokoug</id>
+            <name>FOKOU Géraud</name>
+            <email>geraud.fokou@ensma.fr</email>
+            <organization>LIAS / ENSMA</organization>
+            <url>http://www.lias-lab.fr/members/geraudfokou</url>
+            <roles>
+                <role>Leader</role>
+                <role>Developer</role>
+            </roles>		
+		</developer>
+        <developer>
+            <id>jeans</id>
+            <name>JEAN Stéphane</name>
+            <email>jean@ensma.fr</email>
+            <organization>LIAS / ENSMA</organization>
+            <url>http://www.lias-lab.fr/members/stephanejean</url>
+            <roles>
+                <role>Leader</role>
+                <role>Developer</role>
+            </roles>        
+        </developer>		
+	</developers>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
