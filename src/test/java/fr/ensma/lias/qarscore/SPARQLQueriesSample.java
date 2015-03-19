@@ -262,21 +262,20 @@ public class SPARQLQueriesSample {
 	    + "}";
 
     // Requête pour avoir tout les étudiants ayant obtenu leurs diplômes
-    // supérieurs au département 0 de l'université 0,
-    // étant membre du departement 1 de l'université qui suivent GraduateCourse
-    // 65 au département 1 de l'université 1
-    // et qui sont assistant pour le cour 1 du département 1 de l'université 1
+    // supérieurs à l'université 8, qui suivent GraduateCourse 65
+    // au département 0 de l'université 0
+    // et qui sont supervisé par un professeur ayant eu son doctorat à l'université 0
     public static String EDBT_QUERY_3 = LUBM_PREFIX
 	    + "SELECT ?X ?Y1 ?Y2 ?Y3 ?Y4 ?Y7 ?Y8 ?Y9 "
-	    + "WHERE { ?X rdf:type ub:Student . "
-	    + "?X ub:undergraduateDegreeFrom <http://www.Department0.University0.edu> . "
-	    + "?X ub:mastersDegreeFrom <http://www.Department0.University0.edu> . "
-	    + "?X ub:memberOf <http://www.Department1.University1.edu> . "
-	    + "?X ub:takesCourse <http://www.Department1.University1.edu/GraduateCourse65> . "
-	    + "?X ub:teachingAssistantOf <http://www.Department1.University1.edu/Course1> . "
-	    + "?X ub:emailAddress ?Y2 . " + "?X ub:telephone ?Y3 . "
-	    + "?X ub:advisor ?Y6 ." + "?X ub:researchInterest ?Y8 . " + " }";
-    
+	    + "WHERE { ?X rdf:type ub:GraduateStudent . "
+	    + "?X ub:undergraduateDegreeFrom <http://www.University8.edu> . "
+	    + "?X ub:mastersDegreeFrom <http://www.University8.edu> . "
+	    + "?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse65> . "
+	    + "?X ub:emailAddress ?Y1 . " + "?X ub:telephone ?Y2 . "
+	    + "?X ub:teachingAssistantOf ?Y3 . " + "?X ub:advisor ?Y4 ."
+	    + "?Y4 ub:doctoralDegreeFrom <http://www.University0.edu> . "
+	    + "?Y5 ub:publicationAuthor ?X . " + " }";
+
     // Requête pour avoir toute les FullProfessor, chef de département ayant
     // obtenu leurs diplômes supérieurs à l'université Universty0
     // 12 triples
@@ -290,6 +289,5 @@ public class SPARQLQueriesSample {
 	    + "?X ub:emailAddress ?Y2 . " + "?X ub:telephone ?Y3 . "
 	    + "?X ub:teacherOf ?Y4 . " + "?Y5 ub:advisor ?X . "
 	    + "?Y5 ub:telephone ?Y7 . " + "?Y5 ub:memberOf ?Y8 . " + "}";
-
 
 }

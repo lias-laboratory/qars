@@ -125,7 +125,7 @@ public class EDBT_Scenario_Test extends SessionTDBTest {
 		.executeRelaxedQuery(SPARQLQueriesSample.EDBT_QUERY_2,
 			relax_operator);
 	Assert.assertNotNull(relaxed_result);
-	Assert.assertTrue(relaxed_result.entrySet().size()==1);
+	Assert.assertTrue(relaxed_result.entrySet().size() == 1);
 	for (ResultSet one_result : relaxed_result.keySet()) {
 	    number_answers = 0;
 	    while (one_result.hasNext()) {
@@ -140,7 +140,7 @@ public class EDBT_Scenario_Test extends SessionTDBTest {
 
     @Test
     public void testAutomaticRelaxationQueryWithResult() {
-	
+
 	ResultSet result = queryStatement
 		.executeSPARQLQuery(SPARQLQueriesSample.EDBT_QUERY_2);
 	Assert.assertNotNull(result);
@@ -152,10 +152,11 @@ public class EDBT_Scenario_Test extends SessionTDBTest {
 	    number_answers++;
 	}
 	Assert.assertTrue(number_answers == 0);
-	
-	Map<ResultSet, Double> relaxed_result = queryStatement.automaticRelaxation(SPARQLQueriesSample.EDBT_QUERY_2, 1);
+
+	Map<ResultSet, Double> relaxed_result = queryStatement
+		.automaticRelaxation(SPARQLQueriesSample.EDBT_QUERY_2, 10);
 	Assert.assertNotNull(relaxed_result);
-	Assert.assertTrue(relaxed_result.entrySet().size()==14);
+	Assert.assertTrue(relaxed_result.entrySet().size() == 14);
 	for (ResultSet one_result : relaxed_result.keySet()) {
 	    number_answers = 0;
 	    while (one_result.hasNext()) {
@@ -182,10 +183,11 @@ public class EDBT_Scenario_Test extends SessionTDBTest {
 	    number_answers++;
 	}
 	Assert.assertTrue(number_answers == 0);
-	
-	Map<ResultSet, Double> relaxed_result = queryStatement.automaticRelaxation(SPARQLQueriesSample.EDBT_QUERY_3, 1);
+
+	Map<ResultSet, Double> relaxed_result = queryStatement
+		.automaticRelaxation(SPARQLQueriesSample.EDBT_QUERY_3, 10);
 	Assert.assertNotNull(relaxed_result);
-	Assert.assertTrue(relaxed_result.entrySet().size()==5);
+	Assert.assertTrue(relaxed_result.entrySet().size() == 14);
 	for (ResultSet one_result : relaxed_result.keySet()) {
 	    number_answers = 0;
 	    while (one_result.hasNext()) {
@@ -200,7 +202,7 @@ public class EDBT_Scenario_Test extends SessionTDBTest {
 
     @Test
     public void testDesignAndExecuteFailQuery() {
-
+	Logger.getRootLogger().info(SPARQLQueriesSample.EDBT_QUERY_3);
 	ResultSet result = queryStatement
 		.executeSPARQLQuery(SPARQLQueriesSample.EDBT_QUERY_3);
 	Assert.assertNotNull(result);
