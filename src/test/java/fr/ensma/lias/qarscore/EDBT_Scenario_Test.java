@@ -139,6 +139,66 @@ public class EDBT_Scenario_Test extends SessionTDBTest {
     }
 
     @Test
+    public void testAutomaticRelaxationQueryWithResult() {
+	
+	ResultSet result = queryStatement
+		.executeSPARQLQuery(SPARQLQueriesSample.EDBT_QUERY_2);
+	Assert.assertNotNull(result);
+	int number_answers = 0;
+	while (result.hasNext()) {
+	    QuerySolution solution = result.next();
+	    Logger.getRootLogger().info(
+		    solution.get(result.getResultVars().get(0)));
+	    number_answers++;
+	}
+	Assert.assertTrue(number_answers == 0);
+	
+	Map<ResultSet, Double> relaxed_result = queryStatement.automaticRelaxation(SPARQLQueriesSample.EDBT_QUERY_2, 1);
+	Assert.assertNotNull(relaxed_result);
+	Assert.assertTrue(relaxed_result.entrySet().size()==14);
+	for (ResultSet one_result : relaxed_result.keySet()) {
+	    number_answers = 0;
+	    while (one_result.hasNext()) {
+		QuerySolution solution = one_result.next();
+		Logger.getRootLogger().info(
+			solution.get(one_result.getResultVars().get(0)));
+		number_answers++;
+	    }
+	    Logger.getRootLogger().info(relaxed_result.get(one_result));
+	}
+    }
+
+    @Test
+    public void testAutomaticRelaxationQueryWithoutResult() {
+	
+	ResultSet result = queryStatement
+		.executeSPARQLQuery(SPARQLQueriesSample.EDBT_QUERY_3);
+	Assert.assertNotNull(result);
+	int number_answers = 0;
+	while (result.hasNext()) {
+	    QuerySolution solution = result.next();
+	    Logger.getRootLogger().info(
+		    solution.get(result.getResultVars().get(0)));
+	    number_answers++;
+	}
+	Assert.assertTrue(number_answers == 0);
+	
+	Map<ResultSet, Double> relaxed_result = queryStatement.automaticRelaxation(SPARQLQueriesSample.EDBT_QUERY_3, 1);
+	Assert.assertNotNull(relaxed_result);
+	Assert.assertTrue(relaxed_result.entrySet().size()==5);
+	for (ResultSet one_result : relaxed_result.keySet()) {
+	    number_answers = 0;
+	    while (one_result.hasNext()) {
+		QuerySolution solution = one_result.next();
+		Logger.getRootLogger().info(
+			solution.get(one_result.getResultVars().get(0)));
+		number_answers++;
+	    }
+	    Logger.getRootLogger().info(relaxed_result.get(one_result));
+	}
+    }
+
+    @Test
     public void testDesignAndExecuteFailQuery() {
 
 	ResultSet result = queryStatement
@@ -172,12 +232,11 @@ public class EDBT_Scenario_Test extends SessionTDBTest {
 	}
 	Assert.assertTrue(number_answers == 0);
 	Logger.getRootLogger().info(number_answers);
-	queryStatement.explainFailure(SPARQLQueriesSample.EDBT_QUERY_2, true);
+	queryStatement.explainFailure(SPARQLQueriesSample.EDBT_QUERY_3, true);
 	List<String> all_mfs = queryStatement.getFailingCause();
 	for (String mfs : all_mfs) {
 	    Logger.getRootLogger().info(mfs);
 	}
 	Logger.getRootLogger().info(all_mfs.size());
     }
-
 }
