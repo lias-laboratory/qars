@@ -66,7 +66,7 @@ public class SessionTDBTest {
 	folderTDB.mkdirs();
 
 	String[] args = new String[4];
-	args[0] = System.getProperty("user.dir") + "/src/test/resources/";
+	args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
 	args[1] = "OWL";
 	args[2] = "TDB";
 	args[3] = "target/TDB/LUBM1";

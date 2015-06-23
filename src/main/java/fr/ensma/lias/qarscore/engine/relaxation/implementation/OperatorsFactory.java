@@ -27,7 +27,7 @@ import fr.ensma.lias.qarscore.engine.relaxation.RelaxationOperators;
  */
 public class OperatorsFactory {
 
-   public static RelaxationOperators createOperator(Session s){
+   public static RelaxationOperators createOperator(Session s){       
        return new RelaxationOperatorsImpl(s);
    }
 }

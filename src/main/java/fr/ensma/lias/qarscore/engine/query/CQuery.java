@@ -32,7 +32,7 @@ import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 /**
  * @author Geraud FOKOU
  */
-public class CQuery {
+public class CQuery implements Comparable<CQuery> {
 
     /**
      * List of Simple literal create
@@ -483,6 +483,28 @@ public class CQuery {
 	    }
 	}
 	return true;
+    }
+
+    @Override
+    public int compareTo(CQuery otherQuery) {
+	
+	if (otherQuery == null)
+	    return -2;
+
+	if (this == otherQuery)
+	    return 0;
+	
+	if(this.equals(otherQuery))
+	    return 0;
+		
+	if(this.isSubQueryOf(otherQuery))
+	    return -1;
+	
+	if(this.isSuperQueryOf(otherQuery))
+	    return 1;
+
+	return 2;
+
     }
 
 }

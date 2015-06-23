@@ -30,12 +30,29 @@ public class StrategiesFactory {
 
     public static RelaxationStrategies getLatticeStrategy(Session session,
 	    CQuery query, int limitAnswers) {
-	return LatticeStrategy.getLatticeStrategy(session, query, limitAnswers);
+	return getLatticeStrategy(session, query, limitAnswers, false);
     }
 
     public static RelaxationStrategies getLatticeStrategy(Session session,
 	    CQuery query) {
-	return LatticeStrategy.getLatticeStrategy(session, query, 1);
+	return getLatticeStrategy(session, query, 1, false);
+    }
+
+    public static RelaxationStrategies getLatticeStrategy(Session session,
+	    CQuery query, boolean index) {
+
+	return getLatticeStrategy(session, query, 1, index );
+    }
+    
+    public static RelaxationStrategies getLatticeStrategy(Session session,
+	    CQuery query, int limitAnswers, boolean index) {
+	
+	if(!index){
+	    return LatticeStrategy.getLatticeStrategy(session, query, limitAnswers);
+	}
+	else {
+	    return LatticeStrategyWithIndex.getLatticeStrategyWithIndex(session, query, limitAnswers);
+	}
     }
 
     public static RelaxationStrategies getMatrixStrategy(Session session,
