@@ -33,4 +33,8 @@ public interface CQueryIndexMap {
     
     void put (CQuery query, Integer numberAnswers);
     
+    Integer indexEvaluationQuery(CQuery query);
+    
+    int size();
+    
 }

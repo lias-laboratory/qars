@@ -159,12 +159,7 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	    logger.info(success.getSPARQLQuery());
 	}
     }
-
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.implementation.AbstractLatticeStrategy#hasLeastKAnswers(fr.ensma.lias.qarscore.engine.query.CQuery)}
-     * .
-     */
+    
     @Test
     public void testHasLeastKAnswers() {
 
@@ -174,4 +169,5 @@ public class LatticeStrategyTest extends SessionTDBTest {
 		conjunctiveQuery);
 	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
     }
+
 }

@@ -34,7 +34,7 @@ import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 public class CQueryIndexTest {
 
     private CQuery conjunctiveQuery;
-    private CQueryTreeMap<CQuery, Integer> indexOfQuery;
+    private CQueryTreeMap indexOfQuery;
     
     /**
      * @throws java.lang.Exception
@@ -53,7 +53,7 @@ public class CQueryIndexTest {
 	conjunctiveQuery.getElementList().remove(3);
 	
 	Assert.assertEquals(conjunctiveQuery.getElementList().size(), 10);
-	indexOfQuery = new CQueryTreeMap<CQuery, Integer>(conjunctiveQuery, 1);
+	indexOfQuery = new CQueryTreeMap(conjunctiveQuery, 1);
 	
 	
 	CQuery firstSub = CQueryFactory
@@ -98,25 +98,6 @@ public class CQueryIndexTest {
     public void tearDown() throws Exception {
     }
 
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#size()}.
-     */
-    @Test
-    public void testSize() {
-	Assert.assertEquals(4, indexOfQuery.size());
-	CQueryTreeMap<CQuery, Integer> indexOfQuery_1 = new CQueryTreeMap<CQuery, Integer>(conjunctiveQuery, 1);
-	Assert.assertEquals(1, indexOfQuery_1.size());
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#isEmpty()}.
-     */
-    @Test
-    public void testIsEmpty() {
-	Assert.assertFalse(indexOfQuery.isEmpty());
-	CQueryTreeMap<CQuery, Integer> indexOfQuery_1 = new CQueryTreeMap<CQuery, Integer>();
-	Assert.assertTrue(indexOfQuery_1.isEmpty());
-    }
 
     /**
      * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#contains(java.lang.Comparable)}.
@@ -162,53 +143,4 @@ public class CQueryIndexTest {
 	Assert.assertEquals(null, indexOfQuery.get(firstSup));
 	
     }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#put(java.lang.Comparable, java.lang.Object)}.
-     */
-    @Test
-    public void testPut() {
-	Assert.fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#min()}.
-     */
-    @Test
-    public void testMin() {
-	Assert.fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#max()}.
-     */
-    @Test
-    public void testMax() {
-	Assert.fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#floor(java.lang.Comparable)}.
-     */
-    @Test
-    public void testFloor() {
-	Assert.fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#ceiling(java.lang.Comparable)}.
-     */
-    @Test
-    public void testCeiling() {
-	Assert.fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap#check()}.
-     */
-    @Test
-    public void testCheck() {
-	Assert.fail("Not yet implemented"); // TODO
-    }
-
 }

@@ -25,7 +25,8 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
-import fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap;
+import fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryHashMap;
+import fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryIndexMap;
 
 /**
  * @author Geraud FOKOU
@@ -35,7 +36,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
     private final int NUMBER_OF_EXPECTED_ANSWERS ;
     private final Session SESSION;
 
-    private CQueryTreeMap<CQuery, Integer> optIndex;
+    private CQueryIndexMap indexCQuery ;
 
     /**
      * Get a lattice strategy relaxation for a session s and a number answers of
@@ -57,7 +58,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 	NUMBER_OF_EXPECTED_ANSWERS = answers;
 	SESSION = s;
 	CURRENT_CONJUNCTIVE_QUERY = query;
-	optIndex = new CQueryTreeMap<CQuery, Integer>();
+	indexCQuery = new CQueryHashMap();
 	this.computeMFS(CURRENT_CONJUNCTIVE_QUERY);
 	actualQuery = CURRENT_CONJUNCTIVE_QUERY;
 	MFS_CURRENT_QUERY = failingCauses;
@@ -71,10 +72,9 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 	    return false;
 	}
 
-	if(optIndex!=null){
-	    if(optIndex.contains(query)){
-		return optIndex.get(query).intValue()>=NUMBER_OF_EXPECTED_ANSWERS;
-	    }
+	Integer numberAnswer = indexCQuery.indexEvaluationQuery(query);
+	if(numberAnswer!=null){
+	    return numberAnswer >= NUMBER_OF_EXPECTED_ANSWERS;
 	}
 	
 	int nbSolution = 0;
@@ -93,9 +93,15 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 	    }
 	} finally {
 	}
-	if(optIndex!=null) {
-	    optIndex.put(query, nbSolution);
-	}
+
+	indexCQuery.put(query, nbSolution);
 	return nbSolution >= NUMBER_OF_EXPECTED_ANSWERS;
+    }
+   
+    /**
+     * @return the indexCQuery
+     */
+    public CQueryIndexMap getIndexCQuery() {
+        return indexCQuery;
     }
 }

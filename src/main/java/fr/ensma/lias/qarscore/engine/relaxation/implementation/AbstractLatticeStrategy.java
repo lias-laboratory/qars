@@ -38,7 +38,7 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
     protected CQuery actualQuery ;
     protected List<CQuery> failingCauses ;
     protected List<CQuery> maximalSubqueries ;
-    
+   
    /**
      * Computes all the MFS and XSS of a CQuery query
      * 
@@ -248,5 +248,5 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
 	    this.computeMFS(query);
 	    return maximalSubqueries;
 	}
-    }
+    }    
 }
