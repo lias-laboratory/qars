@@ -506,5 +506,19 @@ public class CQuery implements Comparable<CQuery> {
 	return 2;
 
     }
+    
+    /*
+     * 
+     */
+    public String getQueryLabel(){
+	
+	String label="";
+	for(CElement elt:this.elementList){
+	    label = label + elt.getLabel()+" ^ ";
+	}
+	label = label.substring(0, label.length()-3);
+	
+	return label;
+    }
 
 }

@@ -30,9 +30,6 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public class CQueryHashMap implements CQueryIndexMap{
 
-    public static int number_of_included_query = 0;
-    public static int number_of_unincluded_query = 0;
-
     private Map<CQuery, Integer> hashMapIndex;
     
     /**
@@ -56,7 +53,6 @@ public class CQueryHashMap implements CQueryIndexMap{
 
     @Override
     public void put(CQuery query, Integer numberAnswers) {
-	number_of_included_query ++;
 	this.hashMapIndex.put(query, numberAnswers);
     }
     
@@ -69,9 +65,6 @@ public class CQueryHashMap implements CQueryIndexMap{
     public Integer indexEvaluationQuery(CQuery query) {
 	
 	Integer numberAnswer = this.hashMapIndex.get(query);
-	if(numberAnswer!=null){
-	    number_of_unincluded_query ++;
-	}
 	return numberAnswer;
     }
 

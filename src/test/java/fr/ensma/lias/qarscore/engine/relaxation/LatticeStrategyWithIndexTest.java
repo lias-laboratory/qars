@@ -37,7 +37,6 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategyWithIndex;
 import fr.ensma.lias.qarscore.engine.relaxation.implementation.StrategiesFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryHashMap;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -182,14 +181,12 @@ public class LatticeStrategyWithIndexTest extends SessionTDBTest {
     public void testRedundancyControl() {
 
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_7);
+		.createCQuery(SPARQLQueriesSample.QUERY_5);
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
-	
-	Assert.assertEquals(CQueryHashMap.number_of_included_query, ((LatticeStrategyWithIndex)relaxationStrategy).getIndexCQuery().size());
-	
-	logger.info("*******Requêtes exécutées*****="+CQueryHashMap.number_of_included_query);
-	logger.info("*******Requêtes non exécutées*****="+CQueryHashMap.number_of_unincluded_query);
+
+	System.out.println("Number of executed queries :"+ LatticeStrategyWithIndex.number_of_executed_query);
+	System.out.println("Number of executed queries :"+ LatticeStrategyWithIndex.number_of_reexecuted_query);
     }
 
 }

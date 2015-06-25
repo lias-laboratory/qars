@@ -27,9 +27,6 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  * It is used like an optimization structure.
  */
 public class CQueryTreeMap implements CQueryIndexMap {
-    
-    	public static int number_of_included_query = 0;
-    	public static int number_of_unincluded_query = 0;
     	
         private Node root;             		// root of the Tertiary Search Tree Index (TSTI)
       
@@ -200,8 +197,6 @@ public class CQueryTreeMap implements CQueryIndexMap {
 	@Override
 	public void put(CQuery query, Integer numberAnswers) {
 	    
-	    CQueryTreeMap.number_of_included_query ++;
-	    
 	    if(root==null){
 		root = new Node(query, numberAnswers);
 		return ;
@@ -307,22 +302,19 @@ public class CQueryTreeMap implements CQueryIndexMap {
 	    switch (query.compareTo(node.getKey())){
 	    
 	    	case 0:  {
-	    	    CQueryTreeMap.number_of_unincluded_query ++;
-	    	    System.out.println("equal liaison "+query);
+	    	    System.out.println("Execution of : "+query.getQueryLabel()+"                use equality relation");
 	    	    return node.getVal();
 	    	}
 	    	case -1: {
 	    	    if(node.getVal().intValue()!=0){
-	    		 CQueryTreeMap.number_of_unincluded_query ++;
-	    		 System.out.println("Sub liaison "+query);
+	    		System.out.println("Execution of : "+query.getQueryLabel()+"                use subquery relation");
 	    		return node.getVal();
 	    	    }
 	    	    return indexEvaluationQuery(node.getSub(), query);
 	    	}
 	    	case 1: {
 	    	    if(node.getVal().intValue()==0){
-	    		CQueryTreeMap.number_of_unincluded_query ++;
-	    		System.out.println("Sup liaison "+query);
+	    		System.out.println("Execution of : "+query.getQueryLabel()+"                use superquery relation");
 	    		return node.getVal();
 	    	    }
 	    	    return  indexEvaluationQuery(node.getSup(), query);

@@ -53,10 +53,10 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
 	    return;
 	}
 
-	if (hasLeastKAnswers(query)) {
-	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
-	    return;
-	}
+//	if (hasLeastKAnswers(query)) {
+//	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
+//	    return;
+//	}
 
 	failingCauses.add(getOneMFS(query));
 

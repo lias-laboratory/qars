@@ -71,7 +71,7 @@ public class CElement {
 
 	    currentClause = ((ElementPathBlock) element).getPattern().getList()
 		    .get(0);
-	    label = "T" + Integer.toString(CElement.numberClause++);
+	    label = "t" + Integer.toString(CElement.numberClause++);
 
 	    if (currentClause.getSubject().isVariable()) {
 		mentionnedVar.add(currentClause.getSubject());

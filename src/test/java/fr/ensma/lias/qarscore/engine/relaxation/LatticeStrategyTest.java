@@ -35,6 +35,7 @@ import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.implementation.LatticeStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.implementation.StrategiesFactory;
 import fr.ensma.lias.qarscore.properties.Properties;
 
@@ -168,6 +169,17 @@ public class LatticeStrategyTest extends SessionTDBTest {
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
 		conjunctiveQuery);
 	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
+    }
+
+    @Test
+    public void testOptimizationParameter() {
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_5);
+	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
+		conjunctiveQuery);
+	
+	System.out.println("Number of executed queries :"+ LatticeStrategy.number_of_query_executed);
     }
 
 }

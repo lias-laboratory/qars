@@ -31,6 +31,7 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public class LatticeStrategy extends AbstractLatticeStrategy {
 
+    public static int number_of_query_executed = 0;
     private final int NUMBER_OF_EXPECTED_ANSWERS ;
     private final Session SESSION;
 
@@ -63,6 +64,7 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
     @Override
     public boolean hasLeastKAnswers(CQuery query) {
 
+	number_of_query_executed ++;
 	if (!query.isValidQuery()) {
 	    return false;
 	}
@@ -82,6 +84,12 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
 		qexec.close();
 	    }
 	} finally {
+	}
+	if(nbSolution >= NUMBER_OF_EXPECTED_ANSWERS){
+	    System.out.println("Execution of : "+query.getQueryLabel()+"                           Succes");
+	}
+	else {
+	    System.out.println("Execution of : "+query.getQueryLabel()+"                           Echec");
 	}
 	return nbSolution >= NUMBER_OF_EXPECTED_ANSWERS;
     }
