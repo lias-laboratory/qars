@@ -178,15 +178,40 @@ public class LatticeStrategyWithIndexTest extends SessionTDBTest {
     
     
     @Test
-    public void testRedundancyControl() {
+    public void testTraceParameter() {
 
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_5);
+		.createCQuery(SPARQLQueriesSample.QUERY_7);
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
 
 	System.out.println("Number of executed queries :"+ LatticeStrategyWithIndex.number_of_executed_query);
-	System.out.println("Number of executed queries :"+ LatticeStrategyWithIndex.number_of_reexecuted_query);
+	System.out.println("Number of re-executed queries :"+ LatticeStrategyWithIndex.number_of_reexecuted_query);
+    }
+
+    @Test
+    public void testTimePerformance() {
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_4);
+	long start = System.currentTimeMillis();
+	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
+		conjunctiveQuery, true);
+	long duration = System.currentTimeMillis() - start;
+	System.out.println(duration);
+	long entire_duration = 0;
+	for (int i = 0; i < 5; i++) {
+	    conjunctiveQuery = CQueryFactory
+		    .createCQuery(SPARQLQueriesSample.QUERY_4);
+	    start = System.currentTimeMillis();
+	    relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
+		    conjunctiveQuery, true);
+	    duration = System.currentTimeMillis() - start;
+	    System.out.println(duration);
+	    entire_duration = entire_duration + duration;
+	}
+	
+	System.out.println(entire_duration);
     }
 
 }

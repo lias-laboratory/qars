@@ -129,7 +129,7 @@ public class CQuery implements Comparable<CQuery> {
 
 	for (int i = 0; i < this.getElementList().size(); i++) {
 	    tempvar.addAll(this.getElementList().get(i).getMentionnedVar());
-	    tempvar.retainAll(varnodes);
+	    //tempvar.retainAll(varnodes);
 	    varnodes.removeAll(tempvar);
 	    varnodes.addAll(this.getElementList().get(i).getMentionnedVar());
 	    tempvar.clear();
@@ -151,7 +151,7 @@ public class CQuery implements Comparable<CQuery> {
 	for (int i = 0; i < this.getElementList().size(); i++) {
 	    tempvarnames.addAll(this.getElementList().get(i)
 		    .getMentionnedVarsNames());
-	    tempvarnames.retainAll(varnames);
+	    //tempvarnames.retainAll(varnames);
 	    varnames.removeAll(tempvarnames);
 	    varnames.addAll(this.getElementList().get(i)
 		    .getMentionnedVarsNames());
@@ -308,48 +308,91 @@ public class CQuery implements Comparable<CQuery> {
      * 
      * @return
      */
-    public boolean isCartesianProduct() {
+    public List<CQuery> getCartesianProduct() {
 
+	List<CQuery> connexesCQueries = new ArrayList<CQuery>();
+	
+	List<List<CElement>> connexesComposantSet = new ArrayList<List<CElement>>();
+	List<List<Node>> connexesComposantNodeSet = new ArrayList<List<Node>>();
+	
 	List<CElement> tempElementSet = new ArrayList<CElement>();
 	tempElementSet.addAll(elementList);
-	List<CElement> cartesianSet = new ArrayList<CElement>();
-	List<Node> cartesianSetNode = new ArrayList<Node>();
-	cartesianSet.add(tempElementSet.get(0));
-	tempElementSet.remove(0);
-	cartesianSetNode.addAll(cartesianSet.get(0).getMentionnedVar());
+	
+//	List<CElement> cartesianSet = new ArrayList<CElement>();
+//	List<Node> cartesianSetNode = new ArrayList<Node>();
+	
+//	connexesComposantSet.add(new ArrayList<CElement>());
+//	connexesComposantNodeSet.add(new ArrayList<Node>());
+	
+//	connexesComposantSet.get(0).add(tempElementSet.get(0));
+//	connexesComposantNodeSet.get(0).addAll(tempElementSet.get(0).getMentionnedVar());
+//	
+//	tempElementSet.remove(0);
 
-	boolean foundNext = true;
-	while (foundNext) {
-	    foundNext = false;
-	    int i = 0;
-	    while ((i < tempElementSet.size()) && (!foundNext)) {
-		List<Node> tempCartesianNode = cartesianSetNode;
-		cartesianSetNode = new ArrayList<Node>();
-		cartesianSetNode.addAll(tempCartesianNode);
-
-		for (Node node : tempElementSet.get(i).getMentionnedVar()) {
-
-		    for (Node otherNode : tempCartesianNode) {
-			if (otherNode.sameValueAs(node)) {
-			    foundNext = true;
-			    cartesianSetNode.remove(otherNode);
+	List<List<CElement>> linkedComposantSet = new ArrayList<List<CElement>>();
+	List<List<Node>> linkedComposantNodeSet = new ArrayList<List<Node>>();
+	List<Node> linkedNodeCandidates = new ArrayList<Node>();
+	
+	for(CElement currentElt:tempElementSet){
+	    
+	    linkedComposantSet.removeAll(linkedComposantSet);
+	    linkedComposantNodeSet.removeAll(linkedComposantNodeSet);
+	   
+	    List<Node> currentNodeSet = currentElt.getMentionnedVar();
+	    int k = 0;
+	    
+	    while(k<connexesComposantSet.size()){
+		
+		boolean isLinked = false;
+		linkedNodeCandidates.removeAll(linkedNodeCandidates);
+		linkedNodeCandidates.addAll(connexesComposantNodeSet.get(k));
+		
+		for(Node linkedNode:linkedNodeCandidates){
+		    for(Node node:currentNodeSet){
+			if(linkedNode.sameValueAs(node)){
+			    linkedComposantSet.add(connexesComposantSet.get(k));
+			    linkedComposantNodeSet.add(connexesComposantNodeSet.get(k));
+			    connexesComposantNodeSet.remove(k);
+			    connexesComposantSet.remove(k);
+			    isLinked = true;
+			    break;
 			}
 		    }
+		    if(isLinked){
+			break;
+		    }
 		}
-		if (foundNext) {
-		    cartesianSet.add(tempElementSet.get(i));
-		    cartesianSetNode.addAll(tempElementSet.get(i)
-			    .getMentionnedVar());
-		    tempElementSet.remove(i);
-		} else {
-		    i = i + 1;
+		if(!isLinked){
+		    k++;   
 		}
 	    }
-	    if (tempElementSet.isEmpty()) {
-		return false;
+	    
+	    if(linkedComposantSet.size()==0){
+		connexesComposantSet.add(new ArrayList<CElement>());
+		connexesComposantNodeSet.add(new ArrayList<Node>());
+		
+		connexesComposantSet.get(connexesComposantSet.size()-1).add(currentElt);
+		connexesComposantNodeSet.get(connexesComposantSet.size()-1).addAll(currentElt.getMentionnedVar());
+	    }
+	    else {		
+		for (int index=1; index<linkedComposantSet.size(); index++){
+		    linkedComposantNodeSet.get(0).removeAll(linkedComposantNodeSet.get(index));
+		    linkedComposantNodeSet.get(0).addAll(linkedComposantNodeSet.get(index));
+		    linkedComposantSet.get(0).addAll(linkedComposantSet.get(index));
+		}
+		linkedComposantNodeSet.get(0).removeAll(currentNodeSet);
+		linkedComposantNodeSet.get(0).addAll(currentNodeSet);
+		linkedComposantSet.get(0).add(currentElt);
+		connexesComposantSet.add(linkedComposantSet.get(0));
+		connexesComposantNodeSet.add(linkedComposantNodeSet.get(0));
 	    }
 	}
-	return true;
+	
+	for(List<CElement> connexeComposant:connexesComposantSet){
+	    connexesCQueries.add(new CQuery(connexeComposant, null, null));
+	}
+	
+	return connexesCQueries;
     }
 
     /**

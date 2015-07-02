@@ -19,6 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.query;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -233,35 +235,93 @@ public class CQueryTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#isCartesianProduct()}.
+     * {@link fr.ensma.lias.qarscore.engine.query.CQuery#getCartesianProduct()}.
      */
     @Test
-    public void testIsCartesianProduct() {
+    public void testGetCartesianProduct() {
+	
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_2);
 	Assert.assertTrue(conjunctiveQuery.isValidQuery());
-	Assert.assertTrue(!conjunctiveQuery.isCartesianProduct());
+	List<CQuery> queries = conjunctiveQuery.getCartesianProduct();
+	Assert.assertTrue(queries.size()==1);
+	logger.info(conjunctiveQuery.getQueryLabel());
+	logger.info(queries.get(0).getQueryLabel());
+
 	conjunctiveQuery.getElementList().remove(2);
 	Assert.assertTrue(conjunctiveQuery.getElementList().size()==4);
-	logger.info(conjunctiveQuery.getSPARQLQuery());
-	logger.info(conjunctiveQuery.getNativeSPARQLQuery());
-	Assert.assertTrue(conjunctiveQuery.isCartesianProduct());
-	
+	queries = conjunctiveQuery.getCartesianProduct();
+	Assert.assertTrue(queries.size()!=1);
+	logger.info(conjunctiveQuery.getQueryLabel());
+	logger.info(queries.get(0).getQueryLabel());
+	logger.info(queries.get(1).getQueryLabel());
+
 	conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_4);
 	Assert.assertTrue(conjunctiveQuery.isValidQuery());
-	Assert.assertTrue(!conjunctiveQuery.isCartesianProduct());
+	queries = conjunctiveQuery.getCartesianProduct();
+	Assert.assertTrue(queries.size()==1);
+	logger.info(conjunctiveQuery.getQueryLabel());
+	logger.info(queries.get(0).getQueryLabel());
+
 	conjunctiveQuery.getElementList().remove(7);
 	Assert.assertTrue(conjunctiveQuery.getElementList().size()==8);
-	logger.info(conjunctiveQuery.getSPARQLQuery());
-	logger.info(conjunctiveQuery.getNativeSPARQLQuery());
-	Assert.assertTrue(conjunctiveQuery.isCartesianProduct());
+	queries = conjunctiveQuery.getCartesianProduct();
+	Assert.assertTrue(queries.size()!=1);
+	logger.info(conjunctiveQuery.getQueryLabel());
+	logger.info(queries.get(0).getQueryLabel());
+	logger.info(queries.get(1).getQueryLabel());
+
 	conjunctiveQuery.getElementList().remove(7);
-	Assert.assertTrue(!conjunctiveQuery.isCartesianProduct());
-	logger.info(conjunctiveQuery.getSPARQLQuery());
-	logger.info(conjunctiveQuery.getNativeSPARQLQuery());
+	queries = conjunctiveQuery.getCartesianProduct();
+	Assert.assertTrue(queries.size()==1);
+	logger.info(conjunctiveQuery.getQueryLabel());
+	logger.info(queries.get(0).getQueryLabel());
     }
 
+    @Test
+    public void testGetCartesianProductOrder() {
+	
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_4);
+	Assert.assertTrue(conjunctiveQuery.isValidQuery());
+	List<CQuery> queries = conjunctiveQuery.getCartesianProduct();
+	Assert.assertTrue(queries.size()==1);
+	logger.info(conjunctiveQuery.getQueryLabel());
+	logger.info(queries.get(0).getQueryLabel());
+
+	conjunctiveQuery.getElementList().remove(0);
+	conjunctiveQuery.getElementList().remove(0);
+	conjunctiveQuery.getElementList().remove(1);
+	conjunctiveQuery.getElementList().remove(3);
+	Assert.assertTrue(conjunctiveQuery.getElementList().size()==5);
+	queries = conjunctiveQuery.getCartesianProduct();
+	Assert.assertTrue(queries.size()==1);
+	logger.info(conjunctiveQuery.getQueryLabel());
+	logger.info(queries.get(0).getQueryLabel());
+	
+	CElement t3 = conjunctiveQuery.getElementList().remove(0);
+	CElement t5 = conjunctiveQuery.getElementList().remove(0);
+	CElement t6 = conjunctiveQuery.getElementList().remove(0);
+	CElement t8 = conjunctiveQuery.getElementList().remove(0);
+	CElement t9 = conjunctiveQuery.getElementList().remove(0);
+	
+	Assert.assertTrue(!conjunctiveQuery.isValidQuery());
+	
+	conjunctiveQuery.getElementList().add(t8);
+	conjunctiveQuery.getElementList().add(t9);
+	conjunctiveQuery.getElementList().add(t3);
+	conjunctiveQuery.getElementList().add(t5);
+	conjunctiveQuery.getElementList().add(t6);
+	
+	Assert.assertTrue(conjunctiveQuery.getElementList().size()==5);
+	queries = conjunctiveQuery.getCartesianProduct();
+	Assert.assertTrue(queries.size()==1);
+	logger.info(conjunctiveQuery.getQueryLabel());
+	logger.info(queries.get(0).getQueryLabel());
+
+    }
+    
     /**
      * Test method for
      * {@link fr.ensma.lias.qarscore.engine.query.CQuery#isSubQueryOf(fr.ensma.lias.qarscore.engine.query.CQuery)}

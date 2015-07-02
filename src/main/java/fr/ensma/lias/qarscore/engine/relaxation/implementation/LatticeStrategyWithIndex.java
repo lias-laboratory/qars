@@ -19,6 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.implementation;
 
+import java.util.List;
+
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
@@ -70,43 +72,68 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
     @Override
     public boolean hasLeastKAnswers(CQuery query) {
 
-	if (!query.isValidQuery()) {
-	    return false;
-	}
-
-	Integer numberAnswer = indexCQuery.indexEvaluationQuery(query);
-	if(numberAnswer!=null){
-	    number_of_reexecuted_query ++;
-	    return numberAnswer >= NUMBER_OF_EXPECTED_ANSWERS;
+//	if (!query.isValidQuery()) {
+//	    return false;
+//	}
+//	List<CQuery> queries = new ArrayList<CQuery>();
+//	queries.add(query);
+	List<CQuery> queries = query.getCartesianProduct();
+	if(queries.size()!=1){
+	    System.out.println("*******************Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
 	}
 	
-	int nbSolution = 0;
-	try {
-	    QueryExecution qexec = QueryExecutionFactory.create(
-		    query.getSPARQLQuery(), SESSION.getDataset());
-	    try {
-		ResultSet results = qexec.execSelect();
-		while (results.hasNext()
-			&& (nbSolution < NUMBER_OF_EXPECTED_ANSWERS)) {
-		    results.nextSolution();
-		    nbSolution++;
+	for(CQuery a_connex_query:queries){
+	    
+	    Integer numberAnswer = indexCQuery.indexEvaluationQuery(a_connex_query);
+	    
+	    if(numberAnswer!=null){
+		number_of_reexecuted_query ++;
+		if(numberAnswer < NUMBER_OF_EXPECTED_ANSWERS){
+		    if(queries.size()!=1){
+			System.out.println("******************* End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
+		    }
+		    return false;
 		}
-	    } finally {
-		qexec.close();
+		continue;
 	    }
-	} finally {
-	}
 
-	indexCQuery.put(query, nbSolution);
-	number_of_executed_query ++;
-	if(nbSolution >= NUMBER_OF_EXPECTED_ANSWERS){
-	    System.out.println("Execution of : "+query.getQueryLabel()+"                          Once Succes");
-	}
-	else {
-	    System.out.println("Execution of : "+query.getQueryLabel()+"                          Once Echec");
-	}
+	    int nbSolution = 0;
+	    try {
+		QueryExecution qexec = QueryExecutionFactory.create(a_connex_query.getSPARQLQuery(), SESSION.getDataset());
+		try {
+		    ResultSet results = qexec.execSelect();
+		    while (results.hasNext() && (nbSolution < NUMBER_OF_EXPECTED_ANSWERS)) {
+			results.nextSolution();
+			nbSolution++;
+			}
+		    } finally {
+			qexec.close();
+		    }
+		} finally {
+		}
+	    
+	    indexCQuery.put(query, nbSolution);
+	    number_of_executed_query ++;
 
-	return nbSolution >= NUMBER_OF_EXPECTED_ANSWERS;
+	    if(nbSolution >= NUMBER_OF_EXPECTED_ANSWERS){
+		System.out.println("Execution of : "+a_connex_query.getQueryLabel()+"                           Once Succes");
+	    }
+	    else {
+		System.out.println("Execution of : "+a_connex_query.getQueryLabel()+"                           Once Echec");
+	    }
+	    
+	    if(nbSolution < NUMBER_OF_EXPECTED_ANSWERS){
+		if(queries.size()!=1){
+		    System.out.println("*******************End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
+		}
+		return false;
+	    }
+	}
+	
+	if(queries.size()!=1){
+	    System.out.println("*******************End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
+	}
+	return true;
     }
    
     /**

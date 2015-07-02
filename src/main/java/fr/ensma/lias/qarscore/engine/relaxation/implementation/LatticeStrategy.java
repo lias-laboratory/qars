@@ -19,6 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.implementation;
 
+import java.util.List;
+
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
@@ -64,33 +66,54 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
     @Override
     public boolean hasLeastKAnswers(CQuery query) {
 
-	number_of_query_executed ++;
-	if (!query.isValidQuery()) {
-	    return false;
+//	if (!query.isValidQuery()) {
+//	    return false;
+//	}
+//	List<CQuery> queries = new ArrayList<CQuery>();
+//	queries.add(query);
+	List<CQuery> queries = query.getCartesianProduct();
+	if(queries.size()!=1){
+	    System.out.println("*******************Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
+	}
+	
+	for(CQuery a_connex_query:queries){
+	   
+	    number_of_query_executed ++;
+	    int nbSolution = 0;
+	    
+	    try {
+		QueryExecution qexec = QueryExecutionFactory.create(a_connex_query.getSPARQLQuery(), SESSION.getDataset());
+		try {
+		    ResultSet results = qexec.execSelect();
+		    while (results.hasNext() && (nbSolution < NUMBER_OF_EXPECTED_ANSWERS)) {
+			results.nextSolution();
+			nbSolution++;
+			}
+		    } finally {
+			qexec.close();
+		    }
+		} finally {
+		}
+	    
+	    if(nbSolution >= NUMBER_OF_EXPECTED_ANSWERS){
+		System.out.println("Execution of : "+a_connex_query.getQueryLabel()+"                           Succes");
+	    }
+	    else {
+		System.out.println("Execution of : "+a_connex_query.getQueryLabel()+"                           Echec");
+	    }
+	    
+	    if(nbSolution < NUMBER_OF_EXPECTED_ANSWERS){
+		if(queries.size()!=1){
+		    System.out.println("*******************End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
+		}
+		return false;
+	    }
+	}
+	
+	if(queries.size()!=1){
+	    System.out.println("*******************End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
 	}
 
-	int nbSolution = 0;
-	try {
-	    QueryExecution qexec = QueryExecutionFactory.create(
-		    query.getSPARQLQuery(), SESSION.getDataset());
-	    try {
-		ResultSet results = qexec.execSelect();
-		while (results.hasNext()
-			&& (nbSolution < NUMBER_OF_EXPECTED_ANSWERS)) {
-		    results.nextSolution();
-		    nbSolution++;
-		}
-	    } finally {
-		qexec.close();
-	    }
-	} finally {
-	}
-	if(nbSolution >= NUMBER_OF_EXPECTED_ANSWERS){
-	    System.out.println("Execution of : "+query.getQueryLabel()+"                           Succes");
-	}
-	else {
-	    System.out.println("Execution of : "+query.getQueryLabel()+"                           Echec");
-	}
-	return nbSolution >= NUMBER_OF_EXPECTED_ANSWERS;
+	return true;
     }
 }

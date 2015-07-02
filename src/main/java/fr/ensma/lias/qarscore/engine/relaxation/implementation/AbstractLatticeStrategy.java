@@ -41,7 +41,8 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
    
    /**
      * Computes all the MFS and XSS of a CQuery query
-     * 
+     * In comment we can put old PXSS at the end of the list of PXSS
+     * Or like in the initial case we can insert new PXSS at the END due to this choice the efficiency of the algorithm could change?
      * @param query
      */
    protected void computeMFS(CQuery query) {
@@ -53,12 +54,14 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
 	    return;
 	}
 
-//	if (hasLeastKAnswers(query)) {
-//	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
-//	    return;
-//	}
+	CQuery anCause = getFirstOneMFS(query);
+	
+	if (anCause.getElementList().isEmpty()) {
+	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
+	    return;
+	}
 
-	failingCauses.add(getOneMFS(query));
+	failingCauses.add(anCause);
 
 	ArrayList<CQuery> potentialsMaximalSubqueries = new ArrayList<CQuery>();
 	for (CElement elt : failingCauses.get(failingCauses.size() - 1)
@@ -77,7 +80,9 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
 		continue;
 	    }
 
-	    if (hasLeastKAnswers(tempquery)) {
+	    anCause = getOneMFS(tempquery);
+	    
+	    if (anCause.getElementList().isEmpty()) {
 		ArrayList<CQuery> oldMaximalSubqueries = potentialsMaximalSubqueries;
 		potentialsMaximalSubqueries = new ArrayList<CQuery>();
 		potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
@@ -99,7 +104,7 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
 		continue;
 	    }
 
-	    failingCauses.add(getOneMFS(tempquery));
+	    failingCauses.add(anCause);
 	    ArrayList<CQuery> newMaximalSubqueries = new ArrayList<CQuery>();
 	    ArrayList<CQuery> oldMaximalSubqueries = new ArrayList<CQuery>();
 
@@ -117,11 +122,19 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
 		    oldMaximalSubqueries.add(pxss);
 		}
 	    }
+	    // Ancienne PXSS avant les nouvelles
 	    potentialsMaximalSubqueries = oldMaximalSubqueries;
 	    potentialsMaximalSubqueries.addAll(newMaximalSubqueries);
+	    
+	    // Nouvelles PXSS avant les anciennes
+//	    potentialsMaximalSubqueries = newMaximalSubqueries;
+//	    potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
 	}
     }
 
+   /**
+    * Execute the query save in the strategy, the main query
+    */
     @Override
     public boolean hasLeastKAnswers() {
 
@@ -177,17 +190,63 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
 	}
 	return true;
     }
-
+    
     @Override
     public CQuery getOneMFS(CQuery query) {
 
-	if (!query.isValidQuery()) {
-	    return null;
-	}
+//	if (!query.isValidQuery()) {
+//	    return null;
+//	}
 
 	if (hasLeastKAnswers(query)) {
 	    return CQueryFactory.createCQuery(new ArrayList<CElement>());
 	}
+
+	if (query.getElementList().size() == 1) {
+	    return CQueryFactory.cloneCQuery(query);
+	}
+
+	List<CElement> causes = new ArrayList<CElement>();
+	CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+
+	for (int i = 0; i < query.getElementList().size() - 1; i++) {
+	    CElement elt = query.getElementList().get(i);
+	    tempQuery.getElementList().remove(elt);
+	    CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
+	    temp.getElementList().addAll(causes);
+	    if (temp.isValidQuery()) {
+		if (hasLeastKAnswers(temp)) {
+		    causes.add(elt);
+		}
+	    }
+	}
+
+	CElement elt = query.getElementList().get(
+		query.getElementList().size() - 1);
+
+	if (causes.size() == 0) {
+	    causes.add(elt);
+	    return CQueryFactory.createCQuery(causes);
+	}
+
+	tempQuery.getElementList().remove(elt);
+	CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
+	temp.getElementList().addAll(causes);
+	if (temp.isValidQuery()) {
+	    if (hasLeastKAnswers(temp)) {
+		causes.add(elt);
+	    }
+	}
+	return CQueryFactory.createCQuery(causes);
+    }
+
+    /**
+     * Special get one MFS for a query which we are sure that it fails
+     * so we don't execute the first hasLeastKAnswers
+     * @param query
+     * @return
+     */
+    public CQuery getFirstOneMFS(CQuery query) {
 
 	if (query.getElementList().size() == 1) {
 	    return CQueryFactory.cloneCQuery(query);
