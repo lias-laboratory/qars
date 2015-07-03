@@ -564,7 +564,7 @@ public class CQuery implements Comparable<CQuery> {
 	return label;
     }
     
-    @Override
+/*    @Override
     public int hashCode() {
 
 	int code = 0;
@@ -573,4 +573,4 @@ public class CQuery implements Comparable<CQuery> {
 	}		
 	return code;
     }
-}
+*/}

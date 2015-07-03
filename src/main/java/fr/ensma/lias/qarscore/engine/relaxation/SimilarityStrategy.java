@@ -56,6 +56,7 @@ public class SimilarityStrategy {
 
 	RelaxationOperators operator_relax = OperatorsFactory.createOperator(s);
 	boolean exist_relaxation = false;
+	
 	if (node.isURI()) {
 	    if (session.getOntologyModel().getOntClass(node.getURI()) != null) {
 		Map<CQuery, List<Double>> genqueries = operator_relax
