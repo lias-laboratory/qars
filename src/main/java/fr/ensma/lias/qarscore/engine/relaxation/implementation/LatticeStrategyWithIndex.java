@@ -27,8 +27,8 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
-import fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryIndexMap;
-import fr.ensma.lias.qarscore.engine.relaxation.optimization.CQueryTreeMap;
+import fr.ensma.lias.qarscore.engine.relaxation.optimization.*;
+
 
 /**
  * @author Geraud FOKOU
@@ -37,10 +37,11 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 
     public static int number_of_executed_query = 0;
     public static int number_of_reexecuted_query = 0;
+    public static int size_of_cartesian_product = 0;
     private final int NUMBER_OF_EXPECTED_ANSWERS ;
     private final Session SESSION;
 
-    private CQueryIndexMap indexCQuery ;
+    public CQueryIndexMap indexCQuery ;
 
     /**
      * Get a lattice strategy relaxation for a session s and a number answers of
@@ -79,6 +80,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 //	queries.add(query);
 	List<CQuery> queries = query.getCartesianProduct();
 	if(queries.size()!=1){
+	    size_of_cartesian_product++;
 	    System.out.println("*******************Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
 	}
 	
@@ -112,7 +114,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 		} finally {
 		}
 	    
-	    indexCQuery.put(query, nbSolution);
+	    indexCQuery.put(a_connex_query, nbSolution);
 	    number_of_executed_query ++;
 
 	    if(nbSolution >= NUMBER_OF_EXPECTED_ANSWERS){
@@ -120,9 +122,6 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 	    }
 	    else {
 		System.out.println("Execution of : "+a_connex_query.getQueryLabel()+"                           Once Echec");
-	    }
-	    
-	    if(nbSolution < NUMBER_OF_EXPECTED_ANSWERS){
 		if(queries.size()!=1){
 		    System.out.println("*******************End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
 		}

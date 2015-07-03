@@ -34,6 +34,7 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
 public class LatticeStrategy extends AbstractLatticeStrategy {
 
     public static int number_of_query_executed = 0;
+    public static int size_of_cartesian_product = 0;
     private final int NUMBER_OF_EXPECTED_ANSWERS ;
     private final Session SESSION;
 
@@ -73,6 +74,7 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
 //	queries.add(query);
 	List<CQuery> queries = query.getCartesianProduct();
 	if(queries.size()!=1){
+	    size_of_cartesian_product++;
 	    System.out.println("*******************Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
 	}
 	
@@ -100,13 +102,11 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
 	    }
 	    else {
 		System.out.println("Execution of : "+a_connex_query.getQueryLabel()+"                           Echec");
-	    }
-	    
-	    if(nbSolution < NUMBER_OF_EXPECTED_ANSWERS){
 		if(queries.size()!=1){
 		    System.out.println("*******************End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
 		}
 		return false;
+
 	    }
 	}
 	

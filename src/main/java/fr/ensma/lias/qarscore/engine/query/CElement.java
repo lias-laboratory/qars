@@ -37,6 +37,8 @@ import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
  */
 public class CElement {
 
+    private final int ELEMENT_INDEX;
+    
     /**
      * give the number of triple clause make.
      */
@@ -64,14 +66,16 @@ public class CElement {
 
 	super();
 	TriplePath currentClause;
-
+	ELEMENT_INDEX = CElement.numberClause++;
+	
 	if (currentElement instanceof ElementPathBlock) {
 
 	    this.element = currentElement;
 
 	    currentClause = ((ElementPathBlock) element).getPattern().getList()
 		    .get(0);
-	    label = "t" + Integer.toString(CElement.numberClause++);
+	    
+	    label = "t" + Integer.toString(ELEMENT_INDEX);
 
 	    if (currentClause.getSubject().isVariable()) {
 		mentionnedVar.add(currentClause.getSubject());
@@ -271,4 +275,10 @@ public class CElement {
 	}
 	return false;
     }
+    
+    @Override
+    public int hashCode() {
+	return ELEMENT_INDEX*Integer.hashCode(ELEMENT_INDEX);
+    }
+
 }

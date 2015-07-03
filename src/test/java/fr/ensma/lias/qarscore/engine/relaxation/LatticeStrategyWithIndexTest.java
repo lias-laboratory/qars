@@ -181,12 +181,13 @@ public class LatticeStrategyWithIndexTest extends SessionTDBTest {
     public void testTraceParameter() {
 
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_7);
+		.createCQuery(SPARQLQueriesSample.QUERY_6);
 	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
 
 	System.out.println("Number of executed queries :"+ LatticeStrategyWithIndex.number_of_executed_query);
 	System.out.println("Number of re-executed queries :"+ LatticeStrategyWithIndex.number_of_reexecuted_query);
+	System.out.println("Number of cartesian queries :"+ LatticeStrategyWithIndex.size_of_cartesian_product);
     }
 
     @Test

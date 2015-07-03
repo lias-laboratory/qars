@@ -30,47 +30,54 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public class CQueryHashMap implements CQueryIndexMap{
 
-    private Map<CQuery, Integer> hashMapIndex;
+    public Map<String, Integer> mapIndex;
     
     /**
      * 
      */
     public CQueryHashMap() {
-	hashMapIndex = new HashMap<CQuery, Integer>();
+	mapIndex = new HashMap<String, Integer>(20);
     }
 
     @Override
     public boolean contains(CQuery query){
 	
-	return this.hashMapIndex.containsKey(query);
+	return this.mapIndex.containsKey(query.getQueryLabel());
     }
     
     @Override
     public Integer get(CQuery query){
 	
-	return this.hashMapIndex.get(query);
+	return this.mapIndex.get(query.getQueryLabel());
     }
 
     @Override
     public void put(CQuery query, Integer numberAnswers) {
-	this.hashMapIndex.put(query, numberAnswers);
+	
+	this.mapIndex.put(query.getQueryLabel(), numberAnswers);
     }
     
-    public Set<CQuery> getKeySet(){
+    public Set<String> getKeySet(){
 	
-	return this.hashMapIndex.keySet();
+	return this.mapIndex.keySet();
     }
 
     @Override
     public Integer indexEvaluationQuery(CQuery query) {
 	
-	Integer numberAnswer = this.hashMapIndex.get(query);
+	
+	Integer numberAnswer = this.mapIndex.get(query.getQueryLabel());
+	
+	if(numberAnswer!=null){
+	    System.out.println("Execution of : "+query.getQueryLabel()+"                use equality relation");
+	}
+	
 	return numberAnswer;
     }
 
     @Override
     public int size() {
 	
-	return this.hashMapIndex.size();
+	return this.mapIndex.size();
     }
 }

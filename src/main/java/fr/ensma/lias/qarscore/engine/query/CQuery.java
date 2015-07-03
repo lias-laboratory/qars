@@ -563,5 +563,14 @@ public class CQuery implements Comparable<CQuery> {
 	
 	return label;
     }
+    
+    @Override
+    public int hashCode() {
 
+	int code = 0;
+	for(CElement elt:this.elementList){
+	    code = code + elt.hashCode();
+	}		
+	return code;
+    }
 }

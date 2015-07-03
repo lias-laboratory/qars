@@ -31,7 +31,7 @@ import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 /**
  * @author Geraud FOKOU
  */
-public class CQueryIndexTest {
+public class CQueryTreeMapTest {
 
     private CQuery conjunctiveQuery;
     private CQueryTreeMap indexOfQuery;
