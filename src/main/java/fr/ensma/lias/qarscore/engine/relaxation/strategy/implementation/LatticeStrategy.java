@@ -48,7 +48,21 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
 	    CQuery query, int answers) {
 	return new LatticeStrategy(s, query, answers);
     }
+    
+    protected static LatticeStrategy getLatticeStrategy(Session s) {
+	return new LatticeStrategy(s);
+    }
 
+    protected LatticeStrategy(Session s) {
+	number_of_query_executed = 0;
+	number_of_query_reexecuted = 0;
+	size_of_cartesian_product = 0;
+	duration_of_execution = 0;
+	
+	NUMBER_OF_EXPECTED_ANSWERS = 1;
+	SESSION = s;	
+    }
+    
     /**
      * private constructor
      */

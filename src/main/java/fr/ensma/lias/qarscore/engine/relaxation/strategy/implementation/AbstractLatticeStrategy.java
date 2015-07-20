@@ -296,12 +296,10 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
 
     @Override
     public List<CQuery> getAllMFS(CQuery query) {
-
-	if (this.actualQuery == query) {
-	    return failingCauses;
-	}
 	this.actualQuery = query;
+	duration_of_execution = System.currentTimeMillis();
 	this.computeMFS(query);
+	duration_of_execution = System.currentTimeMillis() - duration_of_execution;
 	return failingCauses;
     }
 
