@@ -39,7 +39,7 @@ public class BenchmarkTest {
 
     private static final String QUERIES_STAR_FILE = "queries-star.test";
 
-    private static final String folder = "/Users/baronm/Public/tdbrepository/tdbrepository100";
+    private static final String folder = "/home/lias/jena/tdbrepository100";
 
     class QueryExplain {
 
@@ -225,7 +225,8 @@ public class BenchmarkTest {
     /**
      * test indicator
      */
-    private void show_indicator() {
+    private void show_indicator(int name) {
+	logger.info("Query number:" + name);
 	logger.info("Time Duration of MFS Computation: "
 		+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution);
 	logger.info("Number of Executed queries: "
@@ -251,7 +252,7 @@ public class BenchmarkTest {
 			+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution;
 	    }
 
-	    show_indicator();
+	    show_indicator(queryExplain.getIndex());
 	    logger.info(entire_duration);
 	}
     }

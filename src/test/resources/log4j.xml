@@ -19,23 +19,23 @@
 	</appender>
 
 	<logger name="org.apache.jena">
-		<level value="info" />
+		<level value="off" />
 		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.apache.jena.riot.stream.JenaIOEnvironment">
-		<level value="debug" />
+		<level value="off" />
 		<appender-ref ref="console" />
 	</logger>
 
-<!-- 	<logger name="fr.ensma.lias.qarscore.benchmark">
+ 	<logger name="fr.ensma.lias.qarscore.benchmark">
 		<level value="info" />
 		<appender-ref ref="console" />
-	</logger> -->
+	</logger>
 
 	<root>
-		<priority value="info" />
-		<appender-ref ref="console" />
+		<priority value="off" />
+		<appender-ref ref="ROLL" />
 	</root>
 
 </log4j:configuration>
