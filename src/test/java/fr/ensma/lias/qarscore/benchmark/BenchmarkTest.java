@@ -32,25 +32,27 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class BenchmarkTest {
 
     private Session session;
-    
+
     private RelaxationStrategies relaxationStrategy;
 
-    private Logger logger;
-    
+    private Logger logger = Logger.getLogger(BenchmarkTest.class);
+
     private static final String QUERIES_STAR_FILE = "queries-star.test";
-    
+
+    private static final String folder = "/Users/baronm/Public/tdbrepository/tdbrepository250";
+
     class QueryExplain {
 
 	protected int index;
 
 	protected String description;
-	
+
 	protected String query;
 
 	protected List<String> mfs;
 
 	protected List<String> xss;
-	
+
 	public String getDescription() {
 	    return description;
 	}
@@ -127,7 +129,7 @@ public class BenchmarkTest {
 
 		if (mTest.matches()) { // # Test
 		    addTestResultPair(queries, test, mfsresult, xssresult, testNumber, testName);
-		    
+
 		    testNumber = mTest.group(1);
 		    testName = mTest.group(2);
 
@@ -162,7 +164,7 @@ public class BenchmarkTest {
 		    line = line.trim();
 		    if (!line.isEmpty()) {
 			curbuf.append(line);
-			curbuf.append("\n");			
+			curbuf.append("\n");
 		    }
 		}
 	    }
@@ -177,7 +179,7 @@ public class BenchmarkTest {
 		}
 	    }
 	}
-	
+
 	return queries;
     }
 
@@ -191,70 +193,74 @@ public class BenchmarkTest {
 	currentQuery.setQuery(query.toString().trim());
 	currentQuery.setIndex(Integer.valueOf(number));
 	currentQuery.setDescription(description.trim());
-	
+
 	BufferedReader bufReader = new BufferedReader(new StringReader(mfsResult.toString()));
 	String line = null;
 	while ((line = bufReader.readLine()) != null) {
 	    currentQuery.addMFS(line.trim());
 	}
-	
+
 	bufReader = new BufferedReader(new StringReader(xssResult.toString()));
 	line = null;
 	while ((line = bufReader.readLine()) != null) {
 	    currentQuery.addXSS(line.trim());
 	}
-	
+
 	queries.add(currentQuery);
     }
-        
+
     @Before
     public void setUp() {
-	logger = Logger.getRootLogger();
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
 
-	session = SessionFactory.getTDBSession("target/TDB/LUBM100");
+	session = SessionFactory.getTDBSession(folder);
 	Assert.assertNotNull(session.getDataset());
 	Assert.assertNotNull(session.getModel());
 	Assert.assertNotNull(session.getOntologyModel());
 	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());	
+	Assert.assertNotNull(session.getBaseModel());
     }
 
     /**
      * test indicator
      */
-    private void show_indicator(){
-	logger.info("Time Duration of MFS Computation: "+((AbstractLatticeStrategy)relaxationStrategy).duration_of_execution);
-	logger.info("Number of Executed queries: "+((AbstractLatticeStrategy)relaxationStrategy).number_of_query_executed);
-	logger.info("Number of redundant queries: "+((AbstractLatticeStrategy)relaxationStrategy).number_of_query_reexecuted);
-	logger.info("Number of Cartesian Product: "+((AbstractLatticeStrategy)relaxationStrategy).size_of_cartesian_product);
+    private void show_indicator() {
+	logger.info("Time Duration of MFS Computation: "
+		+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution);
+	logger.info("Number of Executed queries: "
+		+ ((AbstractLatticeStrategy) relaxationStrategy).number_of_query_executed);
+	logger.info("Number of redundant queries: "
+		+ ((AbstractLatticeStrategy) relaxationStrategy).number_of_query_reexecuted);
+	logger.info("Number of Cartesian Product: "
+		+ ((AbstractLatticeStrategy) relaxationStrategy).size_of_cartesian_product);
+    }
+
+    private void testTimePerformance(RelaxationStrategies relaxationStrategy, String queriesFilename) throws IOException {
+	List<QueryExplain> newTestResultPairList = this.newTestResultPairList("/" + queriesFilename);
+
+	for (QueryExplain queryExplain : newTestResultPairList) {
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain.getQuery());
+
+	    relaxationStrategy.getAllMFS(conjunctiveQuery);
+
+	    long entire_duration = 0;
+	    for (int i = 0; i < 5; i++) {
+		relaxationStrategy.getAllMFS(conjunctiveQuery);
+		entire_duration = entire_duration
+			+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution;
+	    }
+
+	    show_indicator();
+	    logger.info(entire_duration);
+	}
     }
     
     @Test
     public void latticeStrategyTest() throws IOException {
-	List<QueryExplain> newTestResultPairList = this.newTestResultPairList("/" + QUERIES_STAR_FILE);
+	logger.info("Start");
 	
-	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session, false);
-	
-	for (QueryExplain queryExplain : newTestResultPairList) {
-	    testTimePerformance(relaxationStrategy, queryExplain.getQuery());	    
-	}
-    }
-    
-    private void testTimePerformance(RelaxationStrategies relaxationStrategy, String query) {
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(query);
-	
-	relaxationStrategy.getAllMFS(conjunctiveQuery);
-	
-	long entire_duration = 0;
-	for (int i = 0; i < 5; i++) {
-	    relaxationStrategy.getAllMFS(conjunctiveQuery);
-	    entire_duration = entire_duration + ((AbstractLatticeStrategy)relaxationStrategy).duration_of_execution;
-	}
-	
-	show_indicator();
-	logger.info(entire_duration);
+//	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session, false);
+//	testTimePerformance(relaxationStrategy, QUERIES_STAR_FILE);
     }
 }
