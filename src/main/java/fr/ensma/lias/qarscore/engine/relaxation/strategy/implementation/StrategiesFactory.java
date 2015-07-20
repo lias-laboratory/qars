@@ -28,6 +28,12 @@ import fr.ensma.lias.qarscore.engine.relaxation.strategy.RelaxationStrategies;
  */
 public class StrategiesFactory {
 
+    
+    public static RelaxationStrategies getDefaultLatticeStrategy(Session session,
+	    CQuery query, int limitAnswers) {
+	return LatticeDFSStrategy.getLatticeDFSStrategy(session, query, limitAnswers);
+    }
+
     public static RelaxationStrategies getLatticeStrategy(Session session,
 	    CQuery query, int limitAnswers) {
 	return getLatticeStrategy(session, query, limitAnswers, false);
