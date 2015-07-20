@@ -25,7 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import fr.ensma.lias.qarscore.connection.AllConnectionTests;
 import fr.ensma.lias.qarscore.engine.query.AllQueryTests;
-import fr.ensma.lias.qarscore.engine.relaxation.AllRelaxationTests;
+import fr.ensma.lias.qarscore.engine.relaxation.strategy.AllRelaxationTests;
 import fr.ensma.lias.qarscore.loader.AllLoaderTests;
 import fr.ensma.lias.qarscore.parser.AllParserTests;
 import fr.ensma.lias.qarscore.statement.AllStatementTests;

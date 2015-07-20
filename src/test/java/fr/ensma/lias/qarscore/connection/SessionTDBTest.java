@@ -84,7 +84,7 @@ public class SessionTDBTest {
     @Test
     public void testSessionTDB() {
 
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
+	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
 
 	Session session = SessionFactory.getTDBSession("target/TDB/LUBM1");

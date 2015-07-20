@@ -432,6 +432,30 @@ public class CQuery implements Comparable<CQuery> {
     }
 
     /**
+     * Replace if exist the CElement elt by the otherElt
+     * @param elt
+     * @param otherElt
+     * @return
+     */
+    public boolean replace(CElement elt, CElement otherElt){
+	
+	int index = 0;
+	boolean found = false;
+	while((index<this.getElementList().size())&&(!found)){
+	    found = this.getElementList().get(index).equals(elt);
+	    index++;
+	}
+	if(!found){
+	    return false;
+	}
+	index --;
+	this.getElementList().remove(index);
+	this.getElementList().add(index, otherElt);
+	
+	return true;
+    }
+    
+    /**
      * replace all the Node with value node by othernode
      * 
      * @param classe
@@ -451,7 +475,7 @@ public class CQuery implements Comparable<CQuery> {
 
 	for (CElement element : tempListCElement) {
 	    CElement newElement = element.replace(node, otherNode);
-	    if (newElement == element) {
+	    if (newElement.equals(element)) {
 		elementList.add(element);
 	    } else {
 		elementList.add(newElement);
@@ -564,7 +588,7 @@ public class CQuery implements Comparable<CQuery> {
 	return label;
     }
     
-/*    @Override
+    @Override
     public int hashCode() {
 
 	int code = 0;
@@ -573,4 +597,4 @@ public class CQuery implements Comparable<CQuery> {
 	}		
 	return code;
     }
-*/}
+}

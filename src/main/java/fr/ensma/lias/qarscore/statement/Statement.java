@@ -25,7 +25,7 @@ import java.util.Map;
 import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree;
+import fr.ensma.lias.qarscore.engine.relaxation.utils.RelaxationTree;
 
 /**
  * @author Geraud FOKOU

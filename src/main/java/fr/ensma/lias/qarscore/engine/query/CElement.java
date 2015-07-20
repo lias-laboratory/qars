@@ -229,6 +229,82 @@ public class CElement {
 	return null;
     }
 
+    /**
+     * replace the subject of an element by another node
+     * @param otherNode
+     * @return
+     */
+    public CElement replace_subject(Node otherNode){
+	
+	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
+		.getList().get(0);
+
+	TriplePath new_pattern ;
+	
+	if (currentClause.getPredicate() != null) {
+	    new_pattern = new TriplePath(new Triple(otherNode, currentClause.getPredicate(),
+		    currentClause.getObject()));
+	}
+	else {
+	    new_pattern = new TriplePath(otherNode, currentClause.getPath(),
+		    currentClause.getObject());
+	}
+	
+	 ElementPathBlock newPathBlock = new ElementPathBlock();
+	 newPathBlock.addTriple(new_pattern);
+	    
+	return new CElement(newPathBlock);
+    }
+    
+    /**
+     * replace the predicate of an element by another node
+     * @param otherNode
+     * @return
+     */
+    public CElement replace_predicat(Node otherNode){
+	
+	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
+		.getList().get(0);
+
+	TriplePath new_pattern ;
+
+	new_pattern = new TriplePath(new Triple(currentClause.getSubject(), otherNode,
+		    currentClause.getObject()));
+	
+	ElementPathBlock newPathBlock = new ElementPathBlock();
+	newPathBlock.addTriple(new_pattern);
+	    
+	return new CElement(newPathBlock);
+    }
+
+    /**
+     * replace the object of an element by another node
+     * @param otherNode
+     * @return
+     */
+    public CElement replace_object(Node otherNode){
+	
+	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
+		.getList().get(0);
+
+	TriplePath new_pattern ;
+	
+	if (currentClause.getPredicate() != null) {
+	    new_pattern = new TriplePath(new Triple(currentClause.getSubject(), currentClause.getPredicate(),
+		    otherNode));
+	}
+	else {
+	    new_pattern = new TriplePath(currentClause.getSubject(), currentClause.getPath(),
+		    otherNode);
+	}
+	
+	 ElementPathBlock newPathBlock = new ElementPathBlock();
+	 newPathBlock.addTriple(new_pattern);
+	    
+	return new CElement(newPathBlock);
+    }
+
+    
     /*
      * (non-Javadoc)
      * 
@@ -276,9 +352,8 @@ public class CElement {
 	return false;
     }
     
-/*    @Override
+    @Override
     public int hashCode() {
 	return ELEMENT_INDEX*Integer.hashCode(ELEMENT_INDEX);
     }
-*/
 }

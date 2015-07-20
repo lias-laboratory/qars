@@ -38,7 +38,7 @@ import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree;
+import fr.ensma.lias.qarscore.engine.relaxation.utils.RelaxationTree;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -57,7 +57,7 @@ public class StatementTest extends SessionTDBTest {
     @Before
     public void setUp() {
 	super.setUp();
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
+	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
 
 	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
@@ -120,7 +120,7 @@ public class StatementTest extends SessionTDBTest {
     public void testExecuteSPARQLQuery() {
 
 	ResultSet result = queryStatement
-		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_23);
+		.executeSPARQLQuery(SPARQLQueriesSample.QUERY_16);
 	Assert.assertNotNull(result);
 	int i = 0;
 	while (result.hasNext()) {

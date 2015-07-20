@@ -55,6 +55,26 @@ public abstract class JenaSession implements Session {
     protected Model model;
 
     /**
+     * reasoning model of semantic data
+     */
+    protected Model owl_rdfs_model;
+    
+    /**
+     * reasoning model of semantic data
+     */
+    protected Model owl_trans_model;
+
+    /**
+     * reasoning model of semantic data
+     */
+    protected Model rdfs_rdfs_model;
+
+    /**
+     * reasoning model of semantic data
+     */
+    protected Model rdfs_trans_model;
+
+    /**
      * Ontology model of semantic data
      */
     protected OntModel ontologyModel;
@@ -66,6 +86,35 @@ public abstract class JenaSession implements Session {
 
     @Override
     public Model getModel() {
+	
+//	if(Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_RDFS_INF)){
+//	    if(owl_rdfs_model == null){
+//		owl_rdfs_model = ModelFactory.createInfModel(ReasonerRegistry.getRDFSReasoner(), model);
+//	    }
+//	    return owl_rdfs_model;
+//	}
+//
+//	if(Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_TRANS_INF)){
+//	    if(owl_trans_model == null){
+//		owl_trans_model = ModelFactory.createInfModel(ReasonerRegistry.getTransitiveReasoner(), model);
+//	    }
+//	    return owl_trans_model;
+//	}
+//	
+//	if(Properties.getModelMemSpec().equals(OntModelSpec.RDFS_MEM_RDFS_INF)){
+//	    if(rdfs_rdfs_model == null){
+//		rdfs_rdfs_model = ModelFactory.createInfModel(ReasonerRegistry.getRDFSReasoner(), model);
+//	    }
+//	    return rdfs_rdfs_model;
+//	}
+//
+//	if(Properties.getModelMemSpec().equals(OntModelSpec.RDFS_MEM_TRANS_INF)){
+//	    if(rdfs_trans_model == null){
+//		rdfs_trans_model = ModelFactory.createInfModel(ReasonerRegistry.getTransitiveReasoner(), model);
+//	    }
+//	    return rdfs_trans_model;
+//	}
+
 	return model;
     }
 

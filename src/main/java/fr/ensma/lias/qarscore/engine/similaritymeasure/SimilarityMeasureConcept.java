@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import fr.ensma.lias.qarscore.connection.Session;
@@ -185,5 +186,11 @@ public class SimilarityMeasureConcept {
 	ic_class2 = information_content.get(classe2);
 
 	return ic_lcc / (ic_class1 + ic_class2 - ic_lcc);
+    }
+
+    public double similarity(OntProperty cuurentProperty,
+	    OntProperty superProperty) {
+	// TODO Auto-generated method stub
+	return 0;
     }
 }

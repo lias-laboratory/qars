@@ -195,7 +195,8 @@ public class SPARQLQueriesSample {
     // Not empty query: three answers
     public static String QUERY_16 = LUBM_PREFIX
 	    + "SELECT ?X "
-	    + "WHERE {  ?X rdf:type ub:GraduateStudent . "
+	    + "WHERE {  ?X rdf:type ub:Student . "
+//	    + "WHERE {  ?X rdf:type ub:GraduateStudent . "
 	    + "?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>. "
 	    + "}";
 

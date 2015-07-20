@@ -30,10 +30,10 @@ import com.hp.hpl.jena.query.ResultSet;
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.RelaxationStrategies;
-import fr.ensma.lias.qarscore.engine.relaxation.SimilarityStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.StrategiesFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.implementation.utils.RelaxationTree;
+import fr.ensma.lias.qarscore.engine.relaxation.strategy.RelaxationStrategies;
+import fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategy.implementation.StrategiesFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.utils.RelaxationTree;
 import fr.ensma.lias.qarscore.statement.Statement;
 
 /**
@@ -85,7 +85,7 @@ public class StatementImpl implements Statement {
 	if (!currentQuery.isValidQuery()) {
 	    return null;
 	}
-	return QueryExecutionFactory.create(getQuery(), session.getDataset())
+	return QueryExecutionFactory.create(getQuery(), session.getModel())
 		.execSelect();
     }
 
