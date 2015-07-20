@@ -28,48 +28,41 @@ import fr.ensma.lias.qarscore.engine.relaxation.strategy.RelaxationStrategies;
  */
 public class StrategiesFactory {
 
-    public static RelaxationStrategies getLatticeStrategy(Session session,
-	    CQuery query, int limitAnswers) {
+    public static RelaxationStrategies getLatticeStrategy(Session session, CQuery query, int limitAnswers) {
 	return getLatticeStrategy(session, query, limitAnswers, false);
     }
 
-    public static RelaxationStrategies getLatticeStrategy(Session session,
-	    CQuery query) {
+    public static RelaxationStrategies getLatticeStrategy(Session session, CQuery query) {
 	return getLatticeStrategy(session, query, 1, false);
     }
 
-    public static RelaxationStrategies getLatticeStrategy(Session session,
-	    CQuery query, boolean index) {
-
-	return getLatticeStrategy(session, query, 1, index );
+    public static RelaxationStrategies getLatticeStrategy(Session session, CQuery query, boolean index) {
+	return getLatticeStrategy(session, query, 1, index);
     }
 
-    public static RelaxationStrategies getLatticeStrategy(Session session,
-	 boolean index) {
-
-	if(!index){
+    public static RelaxationStrategies getLatticeDFSStrategy(Session session) {
+	return LatticeDFSStrategy.getLatticeDFSStrategy(session);
+    }
+    
+    public static RelaxationStrategies getLatticeStrategy(Session session, boolean index) {
+	if (!index) {
 	    return LatticeStrategy.getLatticeStrategy(session);
-	}
-	else {
+	} else {
 	    return LatticeStrategyWithIndex.getLatticeStrategyWithIndex(session);
 	}
-
     }
-    
-    
-    public static RelaxationStrategies getLatticeStrategy(Session session,
-	    CQuery query, int limitAnswers, boolean index) {
-	
-	if(!index){
+
+    public static RelaxationStrategies getLatticeStrategy(Session session, CQuery query, int limitAnswers,
+	    boolean index) {
+
+	if (!index) {
 	    return LatticeStrategy.getLatticeStrategy(session, query, limitAnswers);
-	}
-	else {
+	} else {
 	    return LatticeStrategyWithIndex.getLatticeStrategyWithIndex(session, query, limitAnswers);
 	}
     }
 
-    public static RelaxationStrategies getMatrixStrategy(Session session,
-	    CQuery query, int limitAnswers) {
+    public static RelaxationStrategies getMatrixStrategy(Session session, CQuery query, int limitAnswers) {
 	if (query.isStarQuery()) {
 	    return new MatrixStrategyStarQuery(session, query, limitAnswers);
 	}

@@ -41,6 +41,8 @@ public class BenchmarkTest {
 
     private static final String folder = "/home/lias/jena/tdbrepository100";
 
+//    private static final String folder = "/Users/baronm/Public/tdbrepository/tdbrepository100";
+    
     class QueryExplain {
 
 	protected int index;
@@ -216,16 +218,12 @@ public class BenchmarkTest {
 
 	session = SessionFactory.getTDBSession(folder);
 	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getModel());
-	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());
     }
 
     /**
      * test indicator
      */
-    private void show_indicator(int name) {
+    private void show_indicator(String name) {
 	logger.info("Query number:" + name);
 	logger.info("Time Duration of MFS Computation: "
 		+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution);
@@ -252,14 +250,14 @@ public class BenchmarkTest {
 			+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution;
 	    }
 
-	    show_indicator(queryExplain.getIndex());
-	    logger.info(entire_duration);
+	    show_indicator(queryExplain.getDescription());
+	    logger.info(entire_duration / 5.0);
 	}
     }
     
     @Test
     public void latticeStrategyTest() throws IOException {	
-	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session, false);
+	relaxationStrategy = StrategiesFactory.getLatticeDFSStrategy(session);
 	testTimePerformance(relaxationStrategy, QUERIES_STAR_FILE);
     }
 }

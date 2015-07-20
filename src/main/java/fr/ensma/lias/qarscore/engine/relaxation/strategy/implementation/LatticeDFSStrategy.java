@@ -51,7 +51,24 @@ public class LatticeDFSStrategy extends AbstractLatticeStrategy {
 	    CQuery query, int answers) {
 	return new LatticeDFSStrategy(s, query, answers);
     }
+    
+    protected static LatticeStrategy getLatticeDFSStrategy(Session s) {
+	return new LatticeStrategy(s);
+    }
 
+    /**
+     * private constructor
+     */
+    protected LatticeDFSStrategy(Session s) {
+	number_of_query_executed = 0;
+	number_of_query_reexecuted = 0;
+	size_of_cartesian_product = 0;
+	duration_of_execution = 0;
+	
+	NUMBER_OF_EXPECTED_ANSWERS = 1;
+	SESSION = s;
+    }
+    
     /**
      * private constructor
      */
@@ -195,7 +212,7 @@ public class LatticeDFSStrategy extends AbstractLatticeStrategy {
 
 	try {
 	    QueryExecution qexec = QueryExecutionFactory.create(
-		    query.getSPARQLQuery(), SESSION.getModel());
+		    query.getSPARQLQuery(), SESSION.getDataset()); // .getModel());
 	    try {
 		ResultSet results = qexec.execSelect();
 		while (results.hasNext()

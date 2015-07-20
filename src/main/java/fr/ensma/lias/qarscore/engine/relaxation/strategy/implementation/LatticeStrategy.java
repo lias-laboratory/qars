@@ -104,7 +104,7 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
 	    int nbSolution = 0;
 	    
 	    try {
-		QueryExecution qexec = QueryExecutionFactory.create(a_connex_query.getSPARQLQuery(), SESSION.getModel());
+		QueryExecution qexec = QueryExecutionFactory.create(a_connex_query.getSPARQLQuery(), SESSION.getDataset());
 		try {
 		    ResultSet results = qexec.execSelect();
 		    while (results.hasNext() && (nbSolution < NUMBER_OF_EXPECTED_ANSWERS)) {
