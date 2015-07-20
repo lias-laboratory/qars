@@ -43,6 +43,19 @@ public class StrategiesFactory {
 
 	return getLatticeStrategy(session, query, 1, index );
     }
+
+    public static RelaxationStrategies getLatticeStrategy(Session session,
+	 boolean index) {
+
+	if(!index){
+	    return LatticeStrategy.getLatticeStrategy(session);
+	}
+	else {
+	    return LatticeStrategyWithIndex.getLatticeStrategyWithIndex(session);
+	}
+
+    }
+    
     
     public static RelaxationStrategies getLatticeStrategy(Session session,
 	    CQuery query, int limitAnswers, boolean index) {

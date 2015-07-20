@@ -54,6 +54,21 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 	return new LatticeStrategyWithIndex(s, query, answers);
     }
 
+    protected static LatticeStrategyWithIndex getLatticeStrategyWithIndex(Session s) {
+	return new LatticeStrategyWithIndex(s);
+    }
+    
+    protected LatticeStrategyWithIndex(Session s) {
+	number_of_query_executed = 0;
+	number_of_query_reexecuted = 0;
+	size_of_cartesian_product = 0;
+	duration_of_execution = 0;
+	
+	NUMBER_OF_EXPECTED_ANSWERS = 1;
+	SESSION = s;	
+	indexCQuery = new CQueryTreeMap(); // Tree index we can also use HaspMap Index
+    }    
+    
     /**
      * private constructor
      */
