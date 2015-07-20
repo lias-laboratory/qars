@@ -39,7 +39,7 @@ public class BenchmarkTest {
 
     private static final String QUERIES_STAR_FILE = "queries-star.test";
 
-    private static final String folder = "/Users/baronm/Public/tdbrepository/tdbrepository250";
+    private static final String folder = "/Users/baronm/Public/tdbrepository/tdbrepository100";
 
     class QueryExplain {
 
@@ -257,10 +257,8 @@ public class BenchmarkTest {
     }
     
     @Test
-    public void latticeStrategyTest() throws IOException {
-	logger.info("Start");
-	
-//	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session, false);
-//	testTimePerformance(relaxationStrategy, QUERIES_STAR_FILE);
+    public void latticeStrategyTest() throws IOException {	
+	relaxationStrategy = StrategiesFactory.getLatticeStrategy(session, false);
+	testTimePerformance(relaxationStrategy, QUERIES_STAR_FILE);
     }
 }

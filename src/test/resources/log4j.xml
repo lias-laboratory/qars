@@ -19,12 +19,12 @@
 	</appender>
 
 	<logger name="org.apache.jena">
-		<level value="debug" />
+		<level value="info" />
 		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.apache.jena.riot.stream.JenaIOEnvironment">
-		<level value="info" />
+		<level value="debug" />
 		<appender-ref ref="console" />
 	</logger>
 
