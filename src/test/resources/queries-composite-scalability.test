@@ -1,0 +1,80 @@
+# Test 1 (Query 10TP-1)
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> <http://www.Department4.University11.edu> . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> <http://www.University902.edu> . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y7 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y8 . <http://www.Department2.University16.edu/FullProfessor1/Publication2> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+
+# MFS 1
+SELECT * WHERE { ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y7 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y8 }
+SELECT * WHERE { ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> <http://www.University902.edu> }
+SELECT * WHERE { ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 }
+SELECT * WHERE { ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> <http://www.Department4.University11.edu> }
+SELECT * WHERE { ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y5 }
+
+# XSS 1
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> <http://www.Department4.University11.edu> . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y8 . <http://www.Department2.University16.edu/FullProfessor1/Publication2> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y8 . <http://www.Department2.University16.edu/FullProfessor1/Publication2> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> <http://www.Department4.University11.edu> . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y5 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y8 . <http://www.Department2.University16.edu/FullProfessor1/Publication2> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> <http://www.Department4.University11.edu> . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y7 . <http://www.Department2.University16.edu/FullProfessor1/Publication2> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y7 . <http://www.Department2.University16.edu/FullProfessor1/Publication2> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y2 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> <http://www.Department4.University11.edu> . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y7 . <http://www.Department2.University16.edu/FullProfessor1/Publication2> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+
+# Test 2 (Query 10TP-2)
+SELECT * WHERE { <http://www.Department0.University22.edu/FullProfessor8> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y1 . ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y1 . <http://www.Department0.University11.edu/FullProfessor4> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y1 . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#member> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y3 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y5 . <http://www.Department0.University15.edu/FullProfessor2/Publication1> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y3 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y6 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y6 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y8 }
+
+# MFS 2
+SELECT * WHERE { ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y6 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y6 }
+SELECT * WHERE { ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y3 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#member> ?Y3 }
+SELECT * WHERE { <http://www.Department0.University11.edu/FullProfessor4> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y1 }
+SELECT * WHERE { <http://www.Department0.University22.edu/FullProfessor8> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y1 }
+SELECT * WHERE { ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y5 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y6 }
+
+# XSS 2
+SELECT * WHERE { ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y1 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y5 . <http://www.Department0.University15.edu/FullProfessor2/Publication1> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y3 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y6 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y8 }
+SELECT * WHERE { ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y1 . <http://www.Department0.University15.edu/FullProfessor2/Publication1> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y3 . ?Y3 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y6 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y8 }
+
+# Test 3 (Query 10TP-3)
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y2 . ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y5 . <http://www.Department11.University0.edu> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#affiliateOf> ?Y4 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y4 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y7 . ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#orgPublication> ?Y8 . ?Y9 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#orgPublication> ?Y8 . ?Y8 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y10 }
+
+# MFS 3
+SELECT * WHERE { ?Y9 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#orgPublication> ?Y8 }
+SELECT * WHERE { ?Y7 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#orgPublication> ?Y8 }
+SELECT * WHERE { ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y4 }
+SELECT * WHERE { <http://www.Department11.University0.edu> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#affiliateOf> ?Y4 }
+SELECT * WHERE { ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y5 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y7 }
+SELECT * WHERE { ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y7 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y2 }
+SELECT * WHERE { ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y3 }
+
+# XSS 3
+SELECT * WHERE { ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y7 . ?Y8 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y10 }
+SELECT * WHERE { ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y5 . ?Y8 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y10 }
+SELECT * WHERE { ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y5 . ?Y8 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y10 }
+
+# Test 4 (Query 10TP-4)
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y2 . <http://www.Department0.University22.edu/FullProfessor8> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y2 . ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#subOrganizationOf> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> <http://www.Department2.University1.edu> . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y4 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y8 . ?Y9 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#orgPublication> ?Y6 }
+
+# MFS 4
+SELECT * WHERE { ?Y9 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#orgPublication> ?Y6 }
+SELECT * WHERE { ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> <http://www.Department2.University1.edu> }
+SELECT * WHERE { ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 }
+SELECT * WHERE { <http://www.Department0.University22.edu/FullProfessor8> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y2 }
+
+# XSS 4
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y2 . ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#subOrganizationOf> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y4 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y8 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y2 . ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#subOrganizationOf> ?Y3 . ?Y4 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y3 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y4 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y8 }
+
+# Test 5 (Query 10TP-5)
+SELECT * WHERE { ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y1 . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y3 . <http://www.Department0.University12.edu/FullProfessor6> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y1 . <http://www.Department0.University15.edu/FullProfessor2/Publication1> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> <http://www.University829.edu> . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 . ?Y5 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y5 . ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#affiliateOf> ?Y7 . <http://www.Department0.University10.edu/AssistantProfessor1/Publication3> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+
+# MFS 5
+SELECT * WHERE { ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#affiliateOf> ?Y7 }
+SELECT * WHERE { ?Y6 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y5 }
+SELECT * WHERE { <http://www.Department0.University15.edu/FullProfessor2/Publication1> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> <http://www.University829.edu> }
+SELECT * WHERE { <http://www.Department0.University12.edu/FullProfessor6> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y1 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y3 . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 }
+SELECT * WHERE { ?Y2 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#hasAlumnus> ?Y1 }
+
+# XSS 5
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> <http://www.University829.edu> . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 . ?Y5 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 . <http://www.Department0.University10.edu/AssistantProfessor1/Publication3> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y3 . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> <http://www.University829.edu> . ?Y5 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 . <http://www.Department0.University10.edu/AssistantProfessor1/Publication3> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+SELECT * WHERE { <http://www.Department0.University15.edu/FullProfessor2/Publication1> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 . ?Y5 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 . <http://www.Department0.University10.edu/AssistantProfessor1/Publication3> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }
+SELECT * WHERE { ?Y1 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y3 . <http://www.Department0.University15.edu/FullProfessor2/Publication1> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?Y5 <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y4 . <http://www.Department0.University10.edu/AssistantProfessor1/Publication3> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y7 }

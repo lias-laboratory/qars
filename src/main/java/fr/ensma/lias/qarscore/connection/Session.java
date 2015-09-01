@@ -49,4 +49,6 @@ public interface Session {
     String getOntoJSON();
 
     Statement createStatement();
+    
+    void close();
 }

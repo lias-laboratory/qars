@@ -43,8 +43,7 @@ public class SessionTDB extends JenaSession {
 	return session;
     }
 
-    private SessionTDB(String folderTDB) {
-	
+    private SessionTDB(String folderTDB) {	
 	dataset = TDBFactory.createDataset(folderTDB);
 	
 	model = dataset.getDefaultModel();
@@ -76,5 +75,11 @@ public class SessionTDB extends JenaSession {
     @Override
     public Store getDataStore() {
 	return null;
+    }
+
+    @Override
+    public void close() {
+	dataset.close();
+	session = null;
     }
 }
