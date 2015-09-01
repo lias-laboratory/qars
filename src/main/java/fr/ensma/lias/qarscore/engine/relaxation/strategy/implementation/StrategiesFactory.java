@@ -28,18 +28,14 @@ import fr.ensma.lias.qarscore.engine.relaxation.strategy.RelaxationStrategies;
  */
 public class StrategiesFactory {
 
-<<<<<<< HEAD
     
     public static RelaxationStrategies getDefaultLatticeStrategy(Session session,
 	    CQuery query, int limitAnswers) {
 	return LatticeDFSStrategy.getLatticeDFSStrategy(session, query, limitAnswers);
     }
 
-    public static RelaxationStrategies getLatticeStrategy(Session session,
-	    CQuery query, int limitAnswers) {
-=======
     public static RelaxationStrategies getLatticeStrategy(Session session, CQuery query, int limitAnswers) {
->>>>>>> branch 'master' of http://s-localforge-lias/gitblit/r/java/qarscore.git
+
 	return getLatticeStrategy(session, query, limitAnswers, false);
     }
 
@@ -52,7 +48,7 @@ public class StrategiesFactory {
     }
 
     public static RelaxationStrategies getLatticeDFSStrategy(Session session) {
-	return LatticeDFSStrategy.getLatticeDFSStrategy(session);
+	return LatticeDFSStrategy.getLatticeDFSStrategy(session, null, 1);
     }
     
     public static RelaxationStrategies getLatticeStrategy(Session session, boolean index) {
