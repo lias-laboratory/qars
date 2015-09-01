@@ -19,14 +19,11 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection.implementation;
 
-import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.reasoner.ReasonerRegistry;
 import com.hp.hpl.jena.sdb.Store;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
 import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.engine.similaritymeasure.SimilarityMeasureConcept;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -52,27 +49,28 @@ public class SessionTDB extends JenaSession {
 	
 	model = dataset.getDefaultModel();
 	
-	if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_RDFS_INF)) {
-	    model = ModelFactory.createInfModel(ReasonerRegistry.getRDFSReasoner(), model);
-	}
-
-	if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_TRANS_INF)) {
-	    model = ModelFactory.createInfModel(ReasonerRegistry.getTransitiveReasoner(), model);
-	}
-
-	if (Properties.getModelMemSpec().equals(OntModelSpec.RDFS_MEM_RDFS_INF)) {
-	    model = ModelFactory.createInfModel(ReasonerRegistry.getRDFSReasoner(), model);
-	}
-
-	if (Properties.getModelMemSpec()
-		.equals(OntModelSpec.RDFS_MEM_TRANS_INF)) {
-	    model = ModelFactory.createInfModel(ReasonerRegistry.getTransitiveReasoner(), model);
-	}
-
-	//model = ModelFactory.createInfModel(Properties.getModelMemSpec().getReasoner(), dataset.getDefaultModel());
+//	if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_RDFS_INF)) {
+//	    model = ModelFactory.createInfModel(ReasonerRegistry.getRDFSReasoner(), model);
+//	}
+//
+//	if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_TRANS_INF)) {
+//	    model = ModelFactory.createInfModel(ReasonerRegistry.getTransitiveReasoner(), model);
+//	}
+//
+//	if (Properties.getModelMemSpec().equals(OntModelSpec.RDFS_MEM_RDFS_INF)) {
+//	    model = ModelFactory.createInfModel(ReasonerRegistry.getRDFSReasoner(), model);
+//	}
+//
+//	if (Properties.getModelMemSpec()
+//		.equals(OntModelSpec.RDFS_MEM_TRANS_INF)) {
+//	    model = ModelFactory.createInfModel(ReasonerRegistry.getTransitiveReasoner(), model);
+//	}
+//
+//	//model = ModelFactory.createInfModel(Properties.getModelMemSpec().getReasoner(), dataset.getDefaultModel());
 	ontologyModel = ModelFactory.createOntologyModel(
 		Properties.getModelMemSpec(), model);
-	SimilarityMeasureConcept.get_concept_measure(this);
+//	
+//	SimilarityMeasureConcept.get_concept_measure(this);
     }
 
     @Override
