@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,11 +38,19 @@ public class BenchmarkTest {
 
     private Logger logger = Logger.getLogger(BenchmarkTest.class);
 
-    private static final String QUERIES_STAR_FILE = "queries-star.test";
+//    private static final String folder = "/home/lias/jena/tdbrepository";
 
-    private static final String folder = "/home/lias/jena/tdbrepository100";
+//    private List<String> fullQueries = Arrays.asList("queries-chain.test", "queries-composite.test", "queries-star.test");
+    
+//    private List<String> oneQueries = Arrays.asList("queries-chain-scalability.test", "queries-composite-scalability.test", "queries-star-scalability.test");    
 
-//    private static final String folder = "/Users/baronm/Public/tdbrepository/tdbrepository100";
+    private List<String> fullQueries = Arrays.asList("queries-star.test");
+    
+    private List<String> oneQueries = Arrays.asList("queries-star-scalability.test");    
+    
+    private List<String> repository = Arrays.asList("100", "250", "500", "750");
+    
+    private static final String folder = "/Users/baronm/Public/tdbrepository/tdbrepository";
     
     class QueryExplain {
 
@@ -215,49 +224,56 @@ public class BenchmarkTest {
     public void setUp() {
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
-
-	session = SessionFactory.getTDBSession(folder);
-	Assert.assertNotNull(session.getDataset());
     }
 
-    /**
-     * test indicator
-     */
-    private void show_indicator(String name) {
-	logger.info("Query number:" + name);
-	logger.info("Time Duration of MFS Computation: "
-		+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution);
-	logger.info("Number of Executed queries: "
-		+ ((AbstractLatticeStrategy) relaxationStrategy).number_of_query_executed);
-	logger.info("Number of redundant queries: "
-		+ ((AbstractLatticeStrategy) relaxationStrategy).number_of_query_reexecuted);
-	logger.info("Number of Cartesian Product: "
-		+ ((AbstractLatticeStrategy) relaxationStrategy).size_of_cartesian_product);
-    }
-
-    private void testTimePerformance(RelaxationStrategies relaxationStrategy, String queriesFilename) throws IOException {
+    private void testTimePerformance(RelaxationStrategies relaxationStrategy, String queriesFilename, String repo) throws IOException {
 	List<QueryExplain> newTestResultPairList = this.newTestResultPairList("/" + queriesFilename);
-
+	ResultExplain newResultExplain = new ResultExplain(queriesFilename + repo + ".csv");
+	
 	for (QueryExplain queryExplain : newTestResultPairList) {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain.getQuery());
 
 	    relaxationStrategy.getAllMFS(conjunctiveQuery);
 
+	    int numberQueryExecuted = 0;
 	    long entire_duration = 0;
 	    for (int i = 0; i < 5; i++) {
 		relaxationStrategy.getAllMFS(conjunctiveQuery);
 		entire_duration = entire_duration
 			+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution;
+		numberQueryExecuted += ((AbstractLatticeStrategy) relaxationStrategy).number_of_query_executed;
 	    }
 
-	    show_indicator(queryExplain.getDescription());
-	    logger.info(entire_duration / 5.0);
+	    logger.info(queryExplain.getDescription() + " " + (entire_duration / 5.0) + " " + (numberQueryExecuted / 5.0));
+	    newResultExplain.add(queryExplain.getDescription(), entire_duration / 5.0, numberQueryExecuted / 5.0);
+	}
+	
+	newResultExplain.generateReport();
+    }
+    
+    private void latticeStrategy(String fullQuery, String oneQuery) throws IOException {	
+	session = SessionFactory.getTDBSession(folder + repository.get(0));
+	Assert.assertNotNull(session.getDataset());
+
+	relaxationStrategy = StrategiesFactory.getLatticeDFSStrategy(session);
+	testTimePerformance(relaxationStrategy, fullQuery, repository.get(0));
+	session.close();
+	
+	for (int i = 1; i <= repository.size(); i++) {
+	    session = SessionFactory.getTDBSession(folder + repository.get(i));
+	    Assert.assertNotNull(session.getDataset());
+
+	    relaxationStrategy = StrategiesFactory.getLatticeDFSStrategy(session);
+	    testTimePerformance(relaxationStrategy, oneQuery, repository.get(i));	
+	    
+	    session.close();
 	}
     }
     
     @Test
-    public void latticeStrategyTest() throws IOException {	
-	relaxationStrategy = StrategiesFactory.getLatticeDFSStrategy(session);
-	testTimePerformance(relaxationStrategy, QUERIES_STAR_FILE);
+    public void startLatticeStrategyTest() throws IOException {
+	for(int i = 0 ; i < fullQueries.size(); i++) {
+	    latticeStrategy(fullQueries.get(i), oneQueries.get(i));
+	}
     }
 }

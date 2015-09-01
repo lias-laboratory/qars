@@ -1,0 +1,102 @@
+# Test 1 (Query 10TP-1)
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y4 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> ?Y6 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y7 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y8 }
+
+# MFS 1
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y8 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> ?Y6 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> ?Y2 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y7 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y4 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> }
+
+# XSS 1
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> ?Y4 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y7 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y8 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University1.edu/FullProfessor6> }
+
+# Test 2 (Query 10TP-2)
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'PhD' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> <http://www.Department0.University3.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'Lecturer4@Department0.University0.edu' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> <http://www.Department0.University0.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> <http://www.Department2.University11.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department4.University3.edu> }
+
+# MFS 2
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department4.University3.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> <http://www.Department2.University11.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> <http://www.Department0.University0.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department4.University3.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'Lecturer4@Department0.University0.edu' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department4.University3.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> <http://www.Department0.University3.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department4.University3.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'PhD' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> ?Y1 }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department4.University3.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'Lecturer4@Department0.University0.edu' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y2 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> <http://www.Department0.University3.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'Lecturer4@Department0.University0.edu' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> <http://www.Department0.University3.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'Lecturer4@Department0.University0.edu' }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'Lecturer4@Department0.University0.edu' }
+
+# XSS 2
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department4.University3.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y2 }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> <http://www.Department0.University3.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y2 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'Lecturer4@Department0.University0.edu' }
+
+# Test 3 (Query 10TP-3)
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#telephone> ?Y4 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> <http://www.University947.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> '30' }
+
+# MFS 3
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> '30' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> <http://www.University947.edu> }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y5 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y3 }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y1 }
+
+# XSS 3
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> 'AssociateProfessor5' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#telephone> ?Y4 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> <http://www.University947.edu> }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#telephone> ?Y4 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> <http://www.University947.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#telephone> ?Y4 }
+
+# Test 4 (Query 10TP-4)
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#officeNumber> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> ?Y4 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> ?Y6 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y7 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y8 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y9 }
+
+# MFS 4
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> ?Y6 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y9 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> ?Y4 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#officeNumber> ?Y3 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y8 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y7 }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 }
+
+# XSS 4
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y7 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y8 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#mastersDegreeFrom> ?Y9 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y5 }
+
+# Test 5 (Query 10TP-5)
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#officeNumber> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> ?Y4 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University10.edu/FullProfessor7> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> <http://www.Department0.University0.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> <http://www.Department0.University0.edu/Course42> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> 'Research23' . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'AssociateProfessor2@Department0.University0' }
+
+# MFS 5
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> 'AssociateProfessor2@Department0.University0' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> <http://www.Department0.University0.edu/Course42> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> 'Research23' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#doctoralDegreeFrom> <http://www.Department0.University0.edu> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University10.edu/FullProfessor7> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> 'Research23' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#age> ?Y4 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> 'Research23' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#officeNumber> ?Y1 }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University10.edu/FullProfessor7> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> <http://www.Department0.University0.edu/Course42> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> <http://www.Department0.University0.edu/Course42> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> <http://www.Department0.University0.edu/Course42> }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> <http://www.Department0.University0.edu/Course42> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University10.edu/FullProfessor7> }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University10.edu/FullProfessor7> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y3 }
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y2 }
+
+# XSS 5
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#headOf> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#researchInterest> 'Research23' }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> <http://www.Department0.University0.edu/Course42> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> <http://www.Department0.University10.edu/FullProfessor7> }

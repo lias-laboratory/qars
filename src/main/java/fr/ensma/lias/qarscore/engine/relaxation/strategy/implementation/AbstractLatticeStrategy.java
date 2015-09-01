@@ -298,6 +298,7 @@ public abstract class AbstractLatticeStrategy implements RelaxationStrategies {
     public List<CQuery> getAllMFS(CQuery query) {
 	this.actualQuery = query;
 	duration_of_execution = System.currentTimeMillis();
+	number_of_query_executed = 0;
 	this.computeMFS(query);
 	duration_of_execution = System.currentTimeMillis() - duration_of_execution;
 	return failingCauses;

@@ -73,4 +73,10 @@ public class SessionTDB extends JenaSession {
     public Store getDataStore() {
 	return null;
     }
+
+    @Override
+    public void close() {
+	dataset.close();
+	session = null;
+    }
 }

@@ -4,38 +4,14 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
 	debug="false">
 
-
-	<appender name="ROLL" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="test.log" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{DATE} %-5p %-15c{1}: %m%n" />
-		</layout>
-	</appender>
-
 	<appender name="console" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%-5p] [%C{1}]: %m%n" />
 		</layout>
 	</appender>
 
-	<logger name="org.apache.jena">
-		<level value="off" />
-		<appender-ref ref="console" />
-	</logger>
-
-	<logger name="org.apache.jena.riot.stream.JenaIOEnvironment">
-		<level value="off" />
-		<appender-ref ref="console" />
-	</logger>
-
- 	<logger name="fr.ensma.lias.qarscore.benchmark">
+	<logger name="fr.ensma.lias.qarscore.benchmark.BenchmarkTest">
 		<level value="info" />
 		<appender-ref ref="console" />
 	</logger>
-
-	<root>
-		<priority value="off" />
-		<appender-ref ref="ROLL" />
-	</root>
-
 </log4j:configuration>
