@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 
 /**
  * @author Geraud FOKOU
@@ -38,6 +40,7 @@ public class SimilarityMeasureConcept {
     private static SimilarityMeasureConcept measure_concept;
 
     private Map<OntClass, Double> information_content;
+    
     private Session session;
 
     public static SimilarityMeasureConcept get_concept_measure(Session s) {
@@ -50,10 +53,10 @@ public class SimilarityMeasureConcept {
     public SimilarityMeasureConcept(Session s) {
 
 	session = s;
-	int size_data = session.getOntologyModel().listIndividuals().toList()
+	int size_data = ((JenaSession)session).getOntology().listIndividuals().toList()
 		.size();
 	information_content = new HashMap<OntClass, Double>();
-	ExtendedIterator<OntClass> listClass = session.getOntologyModel()
+	ExtendedIterator<OntClass> listClass = ((JenaSession)session).getOntology()
 		.listNamedClasses();
 
 	while (listClass.hasNext()) {
@@ -191,6 +194,11 @@ public class SimilarityMeasureConcept {
     public double similarity(OntProperty cuurentProperty,
 	    OntProperty superProperty) {
 	// TODO Auto-generated method stub
+	return 0;
+    }
+    
+    public double concept_similarity(Node original_node, Node relaxed_node){
+	
 	return 0;
     }
 }

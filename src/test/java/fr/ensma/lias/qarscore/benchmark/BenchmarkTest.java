@@ -20,21 +20,23 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.RelaxationStrategies;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.implementation.AbstractLatticeStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.implementation.StrategiesFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
+import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.StrategyFactory;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Mickael BARON
+ * @author Geraud FOKOU
  */
 public class BenchmarkTest {
 
     private Session session;
 
-    private RelaxationStrategies relaxationStrategy;
+    private MFSSearch relaxationStrategy;
 
     private Logger logger = Logger.getLogger(BenchmarkTest.class);
 
@@ -226,7 +228,7 @@ public class BenchmarkTest {
 	Properties.setOntoLang("OWL");
     }
 
-    private void testTimePerformance(RelaxationStrategies relaxationStrategy, String queriesFilename, String repo) throws IOException {
+    private void testTimePerformance(MFSSearch relaxationStrategy, String queriesFilename, String repo) throws IOException {
 	List<QueryExplain> newTestResultPairList = this.newTestResultPairList("/" + queriesFilename);
 	ResultExplain newResultExplain = new ResultExplain(queriesFilename + repo + ".csv");
 	
@@ -251,19 +253,19 @@ public class BenchmarkTest {
 	newResultExplain.generateReport();
     }
     
-    private void latticeStrategy(String fullQuery, String oneQuery) throws IOException {	
+    private void latticeStrategy(String fullQuery, String oneQuery) throws Exception {	
 	session = SessionFactory.getTDBSession(folder + repository.get(0));
-	Assert.assertNotNull(session.getDataset());
+	Assert.assertNotNull(((JenaSession)session).getDataset());
 
-	relaxationStrategy = StrategiesFactory.getLatticeDFSStrategy(session);
+	relaxationStrategy = StrategyFactory.getLatticeDFSStrategy(session);
 	testTimePerformance(relaxationStrategy, fullQuery, repository.get(0));
 	session.close();
 	
 	for (int i = 1; i <= repository.size(); i++) {
 	    session = SessionFactory.getTDBSession(folder + repository.get(i));
-	    Assert.assertNotNull(session.getDataset());
+	    Assert.assertNotNull(((JenaSession)session).getDataset());
 
-	    relaxationStrategy = StrategiesFactory.getLatticeDFSStrategy(session);
+	    relaxationStrategy = StrategyFactory.getLatticeDFSStrategy(session);
 	    testTimePerformance(relaxationStrategy, oneQuery, repository.get(i));	
 	    
 	    session.close();
@@ -271,9 +273,29 @@ public class BenchmarkTest {
     }
     
     @Test
-    public void startLatticeStrategyTest() throws IOException {
+    public void startLatticeStrategyTest() throws Exception {
 	for(int i = 0 ; i < fullQueries.size(); i++) {
 	    latticeStrategy(fullQueries.get(i), oneQueries.get(i));
+	}
+    }
+    
+    @Test
+    
+    public void theTest(){
+	
+	String tab[][]={{"toto", "titi", "tutu", "tete", "tata"}, {"1", "2", "3"}};
+	int i = 0, j = 0;
+	 
+	for(String sousTab[] : tab)
+	{
+	  i = 0;
+	  for(String str : sousTab)
+	  {     
+	    System.out.println("La valeur de la nouvelle boucle est  : " + str);
+	    System.out.println("La valeur du tableau à l'indice ["+j+"]["+i+"] est : " + tab[j][i]);
+	    i++;
+	  }
+	  j++;
 	}
     }
 }

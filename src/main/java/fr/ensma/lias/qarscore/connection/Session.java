@@ -19,36 +19,21 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection;
 
-import java.util.List;
+import com.hp.hpl.jena.graph.Node;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.sdb.Store;
+import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 
-import fr.ensma.lias.qarscore.statement.Statement;
 
 /**
  * @author Geraud FOKOU
  */
 public interface Session {
-
-    Dataset getDataset();
-
-    Model getModel();
-
-    OntModel getOntologyModel();
-
-    Model getBaseModel();
-
-    List<Triple> getOntologyTriple();
-
-    Store getDataStore();
-
-    String getOntoJSON();
-
-    Statement createStatement();
     
-    void close();
+    void close() throws Exception;
+    void open();
+    boolean isopen();
+    boolean isclose();
+    QueryStatement createStatement(String query);
+    double similarityMeasureClass(Node original_node, Node relaxed_node);
+    double similarityMeasureProperty(Node original_node, Node relaxed_node);
 }

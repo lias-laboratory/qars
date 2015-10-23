@@ -205,6 +205,22 @@ public class CQuery implements Comparable<CQuery> {
 
 	return isValid;
     }
+    
+    /**
+     * Return true if the current query contains the element
+     * @param element
+     * @return
+     */
+    public boolean contain(CElement element){
+	
+	boolean found = false;
+	int i = 0;
+	while((!found)&&(i<this.elementList.size())) {
+	    found = this.elementList.get(i).equals(element);
+	    i++;
+	}
+	return found;
+    }
 
     /**
      * Return the corresponding SPARQL Query
@@ -229,7 +245,10 @@ public class CQuery implements Comparable<CQuery> {
 	if (selectedQueryVar.size() == 0) {
 	    tempQuery.setQueryResultStar(true);
 	} else {
-	    tempQuery.addProjectVars(selectedQueryVar);
+	    for(Node var:selectedQueryVar){
+		tempQuery.addResultVar(var);
+	    }
+	   // tempQuery.addProjectVars(selectedQueryVar);
 	}
 	return tempQuery;
 

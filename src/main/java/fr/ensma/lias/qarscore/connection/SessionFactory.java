@@ -19,12 +19,14 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import fr.ensma.lias.qarscore.connection.implementation.SessionSDB;
-import fr.ensma.lias.qarscore.connection.implementation.SessionTDB;
+import fr.ensma.lias.qarscore.connection.implementation.SesameSession;
+import fr.ensma.lias.qarscore.connection.implementation.SessionJenaSDB;
+import fr.ensma.lias.qarscore.connection.implementation.SessionJenaTDB;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -58,7 +60,7 @@ public class SessionFactory {
 	if (connect == null)
 	    return null;
 
-	return SessionSDB.getSessionSDB(connect);
+	return SessionJenaSDB.getSessionSDB(connect);
     }
 
     /**
@@ -68,6 +70,21 @@ public class SessionFactory {
      * @return
      */
     public static Session getTDBSession(String folder) {
-	return SessionTDB.getSessionTDB(folder);
+	return SessionJenaTDB.getSessionTDB(folder);
     }
+    
+    public static Session getNativeSesameSession(String folder){
+	return SesameSession.getNativeSesameSession(folder);
+    }
+
+    public static Session getInMemorySesameSession(File[] datafiles,
+	    String baseURI, String lang) {
+	return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang);
+    }
+    
+    public static Session getInMemorySesameSession(File[] datafiles,
+	    String baseURI, String lang, boolean persist) {
+	return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang, persist);
+    }
+
 }

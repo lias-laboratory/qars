@@ -26,22 +26,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.connection.SessionFactory;
-import fr.ensma.lias.qarscore.connection.SessionTDBTest;
-import fr.ensma.lias.qarscore.properties.Properties;
+import fr.ensma.lias.qarscore.InitTest;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 
 /**
  * @author Geraud FOKOU
  */
-public class NodeJSONTest extends SessionTDBTest {
+public class NodeJSONTest extends InitTest {
 
     private Logger logger;
-    private Session session;
 
     /**
      * @throws java.lang.Exception
@@ -50,16 +46,6 @@ public class NodeJSONTest extends SessionTDBTest {
     public void setUp() {
 	super.setUp();
 	logger = Logger.getRootLogger();
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
-	Properties.setOntoLang("OWL");
-
-	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
-
-	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getModel());
-	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());
     }
 
     /**
@@ -67,7 +53,7 @@ public class NodeJSONTest extends SessionTDBTest {
      */
     @After
     public void tearDown() throws Exception {
-	super.teardDown();
+	super.tearDown();
     }
 
     /**
@@ -78,13 +64,13 @@ public class NodeJSONTest extends SessionTDBTest {
     @Test
     public void testNodeJSON() {
 
-	ExtendedIterator<OntClass> listRoot = session.getOntologyModel()
+	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
 		.listHierarchyRootClasses();
 	while (listRoot.hasNext()) {
 	    OntClass currentClass = listRoot.next();
 	    if (currentClass.getURI() != null) {
 		NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-			currentClass.getNameSpace(), session.getOntologyModel()
+			currentClass.getNameSpace(), ((JenaSession)sessionJena).getOntology()
 				.getNsURIPrefix(currentClass.getNameSpace()),
 			currentClass.getURI(), currentClass.getLocalName());
 		Assert.assertNotNull(nodejs);
@@ -103,12 +89,12 @@ public class NodeJSONTest extends SessionTDBTest {
      */
     @Test
     public void testGetAttributesNames() {
-	ExtendedIterator<OntClass> listRoot = session.getOntologyModel()
+	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
 		.listHierarchyRootClasses();
 	OntClass currentClass = listRoot.next();
 	if (currentClass.getURI() != null) {
 	    NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-		    currentClass.getNameSpace(), session.getOntologyModel()
+		    currentClass.getNameSpace(), ((JenaSession)sessionJena).getOntology()
 			    .getNsURIPrefix(currentClass.getNameSpace()),
 		    currentClass.getURI(), currentClass.getLocalName());
 	    Assert.assertNotNull(nodejs);

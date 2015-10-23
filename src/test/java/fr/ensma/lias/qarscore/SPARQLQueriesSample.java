@@ -33,7 +33,7 @@ public class SPARQLQueriesSample {
 	    + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 	    + "PREFIX owl:  <http://www.w3.org/2002/07/owl#> "
 	    + "PREFIX xdt:  <http://www.w3.org/2001/XMLSchema#> ";
-
+    
     // 1 triple pattern Chain ou Star
     public static String QUERY_1 = LUBM_PREFIX + "SELECT ?X WHERE { "
 	    + "?X rdf:type ub:VisitingProfessor . " + "}";

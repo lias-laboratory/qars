@@ -25,45 +25,28 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hp.hpl.jena.ontology.OntModelSpec;
-
+import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.SPARQLQueriesSample;
-import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.connection.SessionFactory;
-import fr.ensma.lias.qarscore.connection.SessionTDBTest;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
  */
-public class JSONParserCQueryTest extends SessionTDBTest {
+public class JSONParserCQueryTest extends InitTest {
 
     private Logger logger;
-    private Session session;
-
 
     @Before
     public void setUp() {
 	super.setUp();
 	logger = Logger.getRootLogger();
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
-	Properties.setOntoLang("OWL");
-
-	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
-
-	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getModel());
-	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());
     }
 
 
     @After
-    public void tearDown() {
-	super.teardDown();
+    public void tearDown() throws Exception {
+	super.tearDown();
     }
 
     /**

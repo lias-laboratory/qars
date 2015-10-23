@@ -28,20 +28,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hp.hpl.jena.ontology.OntModelSpec;
-
-import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.connection.SessionFactory;
-import fr.ensma.lias.qarscore.connection.SessionTDBTest;
-import fr.ensma.lias.qarscore.properties.Properties;
+import fr.ensma.lias.qarscore.InitTest;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 
 /**
  * @author Geraud FOKOU
  */
-public class JSONParserModelTest extends SessionTDBTest{
+public class JSONParserModelTest extends InitTest{
 
     private Logger logger;
-    private Session session;
 
     /**
      * @throws java.lang.Exception
@@ -50,16 +45,6 @@ public class JSONParserModelTest extends SessionTDBTest{
     public void setUp() {
 	super.setUp();
 	logger = Logger.getRootLogger();
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
-	Properties.setOntoLang("OWL");
-
-	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
-
-	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getModel());
-	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());
     }
 
     /**
@@ -67,12 +52,12 @@ public class JSONParserModelTest extends SessionTDBTest{
      */
     @After
     public void tearDown() throws Exception {
-	super.teardDown();
+	super.tearDown();
     }
 
     @Test
     public void TestGetListNodeJs(){
-	JSONParserModel parser = new JSONParserModel(session.getOntologyModel());
+	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology());
 	Assert.assertNotNull(parser);
 	List<NodeJSON> nodes = parser.getListNodeJs();
 	Assert.assertNotNull(nodes);
@@ -85,7 +70,7 @@ public class JSONParserModelTest extends SessionTDBTest{
     @Test
     public void testGetParser() {
 	
-	JSONParserModel parser = new JSONParserModel(session.getOntologyModel());
+	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology());
 	Assert.assertNotNull(parser.getListNodeJs());
 	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
 	Assert.assertTrue(!parser.getListEdgesSubclass().isEmpty());
@@ -98,7 +83,7 @@ public class JSONParserModelTest extends SessionTDBTest{
 	List<String> exclude = new ArrayList<String>();
 	exclude.add("Director");
 	exclude.add("TeachingAssistant");
-	JSONParserModel parser = new JSONParserModel(session.getOntologyModel(), exclude);
+	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology(), exclude);
 	Assert.assertNotNull(parser.getListNodeJs());
 	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
 	Assert.assertTrue(!parser.getListEdgesSubclass().isEmpty());

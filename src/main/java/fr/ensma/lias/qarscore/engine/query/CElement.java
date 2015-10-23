@@ -161,7 +161,7 @@ public class CElement {
      * @param triplet
      * @return
      */
-    protected static CElement createCTriple(Element currentElement) {
+    public static CElement createCTriple(Element currentElement) {
 	return new CElement(currentElement);
     }
 

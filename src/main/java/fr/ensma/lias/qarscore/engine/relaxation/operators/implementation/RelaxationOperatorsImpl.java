@@ -29,6 +29,7 @@ import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.ontology.OntClass;
 
 import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
@@ -128,7 +129,7 @@ public class RelaxationOperatorsImpl extends PrimitiveRelaxationOperators implem
 
 	int depht = 0;
 	Map<CQuery, List<Double>> relaxedQueries = new HashMap<CQuery, List<Double>>();
-	OntClass currentClass = session.getOntologyModel().getOntClass(
+	OntClass currentClass = ((JenaSession)session).getOntology().getOntClass(
 		classe.getURI());
 	if (currentClass == null) {
 	    return relaxedQueries;
@@ -167,7 +168,7 @@ public class RelaxationOperatorsImpl extends PrimitiveRelaxationOperators implem
 
 	int depht = 0;
 	Map<CQuery, List<Double>> relaxedQueries = new HashMap<CQuery, List<Double>>();
-	OntClass currentClass = session.getOntologyModel().getOntClass(
+	OntClass currentClass = ((JenaSession)session).getOntology().getOntClass(
 		classe.getURI());
 
 	if (currentClass == null) {
@@ -208,7 +209,7 @@ public class RelaxationOperatorsImpl extends PrimitiveRelaxationOperators implem
 
 	int depht = 0;
 	Map<CQuery, List<Double>> relaxedQueries = new HashMap<CQuery, List<Double>>();
-	OntClass currentClass = session.getOntologyModel().getOntClass(
+	OntClass currentClass = ((JenaSession)session).getOntology().getOntClass(
 		classe.getURI());
 
 	if (currentClass == null) {
@@ -248,7 +249,7 @@ public class RelaxationOperatorsImpl extends PrimitiveRelaxationOperators implem
 
 	int depht = 0;
 	Map<CQuery, List<Double>> relaxedQueries = new HashMap<CQuery, List<Double>>();
-	OntClass currentClass = session.getOntologyModel().getOntClass(
+	OntClass currentClass = ((JenaSession)session).getOntology().getOntClass(
 		classe.getURI());
 	if (currentClass == null) {
 	    return relaxedQueries;
@@ -304,7 +305,7 @@ public class RelaxationOperatorsImpl extends PrimitiveRelaxationOperators implem
     public Map<CQuery, Double> sibling(CQuery query, Node classe, Session session) {
 
 	Map<CQuery, Double> relaxedQueries = new HashMap<CQuery, Double>();
-	OntClass currentClass = session.getOntologyModel().getOntClass(
+	OntClass currentClass = ((JenaSession)session).getOntology().getOntClass(
 		classe.getURI());
 	if (currentClass == null) {
 	    return relaxedQueries;

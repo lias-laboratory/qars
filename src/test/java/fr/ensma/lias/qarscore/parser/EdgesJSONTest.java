@@ -26,22 +26,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.connection.SessionFactory;
-import fr.ensma.lias.qarscore.connection.SessionTDBTest;
-import fr.ensma.lias.qarscore.properties.Properties;
+import fr.ensma.lias.qarscore.InitTest;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 
 /**
  * @author Geraud FOKOU
  */
-public class EdgesJSONTest extends SessionTDBTest {
+public class EdgesJSONTest extends InitTest {
 
     private Logger logger;
-    private Session session;
 
     /**
      * @throws java.lang.Exception
@@ -50,16 +46,6 @@ public class EdgesJSONTest extends SessionTDBTest {
     public void setUp() {
 	super.setUp();
 	logger = Logger.getRootLogger();
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
-	Properties.setOntoLang("OWL");
-
-	session = SessionFactory.getTDBSession("target/TDB/LUBM1");
-
-	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getModel());
-	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());
     }
 
     /**
@@ -67,19 +53,19 @@ public class EdgesJSONTest extends SessionTDBTest {
      */
     @After
     public void tearDown() throws Exception {
-	super.teardDown();
+	super.tearDown();
     }
 
     @Test
     public void testEdgesConstruction() {
 
-	ExtendedIterator<OntClass> listRoot = session.getOntologyModel()
+	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
 		.listHierarchyRootClasses();
 	while (listRoot.hasNext()) {
 	    OntClass currentRoot = listRoot.next();
 	    if (currentRoot.getURI() != null) {
 		NodeJSON nodejs = new NodeJSON(currentRoot.getLocalName(),
-			currentRoot.getNameSpace(), session.getOntologyModel().getNsURIPrefix(currentRoot.getNameSpace()), currentRoot.getURI(),
+			currentRoot.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(currentRoot.getNameSpace()), currentRoot.getURI(),
 			currentRoot.getLocalName());
 		Assert.assertNotNull(nodejs);
 		Assert.assertTrue(nodejs.getNodeIRI().contains(
@@ -96,7 +82,7 @@ public class EdgesJSONTest extends SessionTDBTest {
 		    if (currentProperty.isObjectProperty()) {
 			EdgesJSON edge = new EdgesJSON(
 				currentProperty.getLocalName(),
-				currentProperty.getNameSpace(), session.getOntologyModel().getNsURIPrefix(currentProperty.getNameSpace()),
+				currentProperty.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(currentProperty.getNameSpace()),
 				currentProperty.getURI(),
 				currentProperty.getLocalName(),
 				"ObjectProperty");
@@ -107,7 +93,7 @@ public class EdgesJSONTest extends SessionTDBTest {
 			    Assert.assertTrue(range.isClass());
 			    Assert.assertNotNull(edge);
 			    NodeJSON nodejs1 = new NodeJSON(
-				    range.getLocalName(), range.getNameSpace(), session.getOntologyModel().getNsURIPrefix(range.getNameSpace()),
+				    range.getLocalName(), range.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(range.getNameSpace()),
 				    range.getURI(), range.getLocalName());
 			    edge.setEdgeSource(nodejs);
 			    edge.setEdgeDestination(nodejs1);

@@ -16,27 +16,27 @@
 			</roles>
 		</developer>
 		<developer>
-            <id>fokoug</id>
-            <name>FOKOU Géraud</name>
-            <email>geraud.fokou@ensma.fr</email>
-            <organization>LIAS / ENSMA</organization>
-            <url>http://www.lias-lab.fr/members/geraudfokou</url>
-            <roles>
-                <role>Leader</role>
-                <role>Developer</role>
-            </roles>		
+			<id>fokoug</id>
+			<name>FOKOU Géraud</name>
+			<email>geraud.fokou@ensma.fr</email>
+			<organization>LIAS / ENSMA</organization>
+			<url>http://www.lias-lab.fr/members/geraudfokou</url>
+			<roles>
+				<role>Leader</role>
+				<role>Developer</role>
+			</roles>
 		</developer>
-        <developer>
-            <id>jeans</id>
-            <name>JEAN Stéphane</name>
-            <email>jean@ensma.fr</email>
-            <organization>LIAS / ENSMA</organization>
-            <url>http://www.lias-lab.fr/members/stephanejean</url>
-            <roles>
-                <role>Leader</role>
-                <role>Developer</role>
-            </roles>        
-        </developer>		
+		<developer>
+			<id>jeans</id>
+			<name>JEAN Stéphane</name>
+			<email>jean@ensma.fr</email>
+			<organization>LIAS / ENSMA</organization>
+			<url>http://www.lias-lab.fr/members/stephanejean</url>
+			<roles>
+				<role>Leader</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<dependencies>
 		<dependency>
@@ -85,6 +85,11 @@
 			<groupId>org.roaringbitmap</groupId>
 			<artifactId>RoaringBitmap</artifactId>
 			<version>0.4.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-runtime</artifactId>
+			<version>4.0.0-M1</version>
 		</dependency>
 	</dependencies>
 	<build>

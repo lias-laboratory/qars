@@ -19,8 +19,6 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection;
 
-import java.io.File;
-
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -28,8 +26,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.rdf.model.Resource;
 
-import fr.ensma.lias.qarscore.loader.BulkLoader;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -37,70 +36,44 @@ import fr.ensma.lias.qarscore.properties.Properties;
  */
 public class SessionTDBTest {
 
-    /**
-     * Method for deleting a directory after deleting all the files and folder
-     * in this directory
-     * 
-     * @param folder
-     * @return
-     */
-    private boolean deleteDirectory(File folder) {
-	if (!folder.isDirectory()) {
-	    return folder.delete();
-	}
-
-	for (File dataFile : folder.listFiles()) {
-	    deleteDirectory(dataFile);
-	}
-
-	return folder.delete();
-    }
+    public Session session;
+    public String dataset_path = "target/TDB/LUBM1";
 
     @Before
     public void setUp() {
 
-	File folderTDB = new File("target/TDB/LUBM1");
-	if (folderTDB.exists()) {
-	    deleteDirectory(folderTDB);
-	}
-	folderTDB.mkdirs();
+	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
+	Properties.setOntoLang("OWL");
 
-	String[] args = new String[4];
-	args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
-	args[1] = "OWL";
-	args[2] = "TDB";
-	args[3] = "target/TDB/LUBM1";
-	BulkLoader.main(args);
+	session = SessionFactory.getTDBSession(dataset_path);
     }
 
     @After
-    public void teardDown() {
-	File folderTDB = new File("target/TDB/LUBM1");
-	if (folderTDB.exists()) {
-	    deleteDirectory(folderTDB);
+    public void tearDown() {
+	try {
+	    session.close();
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
     }
 
     @Test
     public void testSessionTDB() {
 
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
-	Properties.setOntoLang("OWL");
+	Assert.assertNotNull(((JenaSession) session).getDataset());
+	Assert.assertNotNull(((JenaSession) session).getModel());
+	Assert.assertNotNull(((JenaSession) session).getOntology());
+	Assert.assertTrue(((JenaSession) session).getTripleList().size() != 0);
+	Logger.getRootLogger().info(
+		((JenaSession) session).getDataset().toString());
 
-	Session session = SessionFactory.getTDBSession("target/TDB/LUBM1");
-
-	Assert.assertNotNull(session.getDataset());
-	Assert.assertNotNull(session.getModel());
-	Assert.assertNotNull(session.getOntologyModel());
-	Assert.assertNull(session.getDataStore());
-	Assert.assertNotNull(session.getBaseModel());
-	Assert.assertTrue(session.getOntologyTriple().size() != 0);
-
-	String ontoJson = session.getOntoJSON();
-	Assert.assertNotNull(ontoJson);
-	String entity = "Professor";
-	Logger.getRootLogger().info(ontoJson);
-	Assert.assertTrue(ontoJson.contains(entity));
-
+	for (Resource classe : ((JenaSession) session).getInformation_content()
+		.keySet()) {
+	    Logger.getRootLogger().info(
+		    classe.getURI()
+			    + " has information content "
+			    + ((JenaSession) session).getInformation_content()
+				    .get(classe));
+	}
     }
 }

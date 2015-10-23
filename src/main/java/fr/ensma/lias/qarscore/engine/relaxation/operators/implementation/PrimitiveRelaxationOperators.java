@@ -31,6 +31,7 @@ import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 
 import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.similaritymeasure.SimilarityMeasureConcept;
 
@@ -89,7 +90,7 @@ public abstract class PrimitiveRelaxationOperators {
 	    
 	    if(current_node.isURI()){
 		
-		OntClass currentClass = session.getOntologyModel().getOntClass(
+		OntClass currentClass = ((JenaSession) session).getOntology().getOntClass(
 			current_node.getURI());
 		
 		if(currentClass!=null){
@@ -126,7 +127,7 @@ public abstract class PrimitiveRelaxationOperators {
 	    
 	    if(current_node.isURI()){
 		
-		OntClass currentClass = session.getOntologyModel().getOntClass(
+		OntClass currentClass = ((JenaSession)session).getOntology().getOntClass(
 			current_node.getURI());
 		
 		if(currentClass!=null){
@@ -162,15 +163,15 @@ public abstract class PrimitiveRelaxationOperators {
 	    Node current_node = currentClause.getPredicate();
 	    if(current_node!=null){
 		if(current_node.isURI()){
-		    OntProperty cuurentProperty = session.getOntologyModel().getOntProperty(current_node.getURI());
-		    if(cuurentProperty!=null){
-			    List<? extends OntProperty> directSuperProperty = cuurentProperty.listSuperProperties(true).toList();
+		    OntProperty curentProperty = ((JenaSession)session).getOntology().getOntProperty(current_node.getURI());
+		    if(curentProperty!=null){
+			    List<? extends OntProperty> directSuperProperty = curentProperty.listSuperProperties(true).toList();
 			    for ( OntProperty superProperty : directSuperProperty) {
 				if (superProperty.isURIResource()) {
 				    CElement element_relaxed = element_to_relax.replace_subject(NodeFactory.createURI(superProperty.getURI()));
 				    if (!element_relaxed.equals(element_to_relax)) {
 					double current_similarity = SimilarityMeasureConcept.get_concept_measure(session).similarity(
-						cuurentProperty, superProperty);
+						curentProperty, superProperty);
 					relaxedPatterns.put(element_relaxed, (2/3)+(current_similarity*1/3));
 				    }
 				}

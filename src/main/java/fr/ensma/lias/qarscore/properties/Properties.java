@@ -36,6 +36,10 @@ public class Properties {
     private static String DEFAULT_ONTO_LANG = "RDF/XML";
 
     private static OntModelSpec DEFAULT_MODEL_SPECIFICATION = OntModelSpec.OWL_MEM;
+    
+    private static String RELAXATION_STRATEGY = "AUTO";
+    
+    private static int RELAXATION_ANSWERS_SIZE = 1;
 
     /**
      * return the appropriate jdbc class's name for the current SDB database
@@ -107,6 +111,48 @@ public class Properties {
 	default:
 	    DEFAULT_ONTO_LANG = "RDF/XML";
 	}
+    }
+
+    /**
+     * @return the RELAXATION_STRATEGY
+     */
+    public static String getRELAXATION_STRATEGY() {
+        return RELAXATION_STRATEGY;
+    }
+
+
+    public static void setlatticeStrategy(){
+	RELAXATION_STRATEGY = "LBA";
+    }
+    
+    public static void setlatticeOptimizeStrategy(){
+	RELAXATION_STRATEGY = "LBA/OPT";
+    }
+
+    public static void setMatrixStrategy(){
+	RELAXATION_STRATEGY = "MBA";
+    }
+
+
+    public static void setIshmaelStrategy(){
+	RELAXATION_STRATEGY = "ISHMAEL";
+    }
+
+    public static void setSimilarityStrategy(){
+	RELAXATION_STRATEGY = "SIM";
+    }
+    
+    public static void setAutomaticStrategy(int size){
+	RELAXATION_STRATEGY = "AUTO";
+	RELAXATION_ANSWERS_SIZE = size;
+    }
+
+
+    /**
+     * @return the rELAXATION_ANSWERS_SIZE
+     */
+    public static int getRELAXATION_ANSWERS_SIZE() {
+        return RELAXATION_ANSWERS_SIZE;
     }
 
     /**
