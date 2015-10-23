@@ -24,17 +24,26 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.hp.hpl.jena.ontology.OntModelSpec;
+
+import fr.ensma.lias.qarscore.connection.Session;
+import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.strategy.GraphRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.strategy.HuangRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.strategy.MFSRelaxationGraph;
+import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
  */
-public class StrategyRelaxationTest extends InitTest {
+public class ServerStrategyRelaxationTest {
+
+    public String repository_path = "target/Sesame/NativeRepository/LUBM1";
+    public String tdb_path = "target/TDB/LUBM1";
+    public Session sessionJena, sessionSesame;
 
     private final int TOP_K = 10;
     /* (non-Javadoc)
@@ -42,7 +51,11 @@ public class StrategyRelaxationTest extends InitTest {
      */
     @Before
     public void setUp() {
-	super.setUp();
+	//Properties.setModelMemSpec(OntModelSpec.OWL_DL_MEM);
+	Properties.setModelMemSpec(OntModelSpec.OWL_DL_MEM_RDFS_INF);
+	Properties.setOntoLang("OWL");
+	sessionJena = SessionFactory.getTDBSession(tdb_path);
+	sessionSesame = SessionFactory.getNativeSesameSession(repository_path);
     }
 
     /* (non-Javadoc)
@@ -50,7 +63,13 @@ public class StrategyRelaxationTest extends InitTest {
      */
     @After
     public void tearDown() throws Exception {
-	super.tearDown();
+	try {
+	    sessionJena.close();
+	    sessionSesame.close();
+	} catch (Exception e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
     @Test

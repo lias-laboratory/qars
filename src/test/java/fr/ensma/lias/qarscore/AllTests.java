@@ -29,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(value = { 
 	/*AllConnectionTests.class, AllLoaderTests.class,
-	AllQueryTests.class, AllParserTests.class, AllRelaxationTests.class */ StrategyRelaxationTest.class})
+	AllQueryTests.class, AllParserTests.class, AllRelaxationTests.class */ ServerStrategyRelaxationTest.class})
 public class AllTests {
 
 }
