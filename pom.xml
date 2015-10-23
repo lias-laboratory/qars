@@ -40,6 +40,11 @@
 	</developers>
 	<dependencies>
 		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-api</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-sdb</artifactId>
 			<version>1.4.2</version>
@@ -89,7 +94,7 @@
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-runtime</artifactId>
-			<version>4.0.0-M1</version>
+			<version>4.0.0</version>
 		</dependency>
 	</dependencies>
 	<build>
