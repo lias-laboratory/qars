@@ -113,7 +113,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.16</version>
 				<configuration>
-					<argLine>-Xmx4g -Xms2g -XX:MaxPermSize=1g</argLine>
+					<argLine>-Xmx5g -Xms3g </argLine>
 					<skipTests>false</skipTests>
 					<test>AllTests.java</test>
 				</configuration>
