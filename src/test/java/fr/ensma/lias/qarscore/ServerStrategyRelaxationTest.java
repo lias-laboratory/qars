@@ -42,8 +42,8 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class ServerStrategyRelaxationTest {
 
     public String repository_path = "target/Sesame/NativeRepository/LUBM1";
-   // public String tdb_path = "/home/lias/tdb100repository";
-    public String tdb_path = "c:/TDB/UBA1";
+    public String tdb_path = "/home/lias/tdb100repository";
+   // public String tdb_path = "c:/TDB/UBA1";
     public Session sessionJena, sessionSesame;
 
     private final int TOP_K = 10;
