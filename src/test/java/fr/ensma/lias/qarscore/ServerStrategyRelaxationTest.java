@@ -43,8 +43,8 @@ public class ServerStrategyRelaxationTest {
 
     public String repository_path = "target/Sesame/NativeRepository/LUBM1";
     public String tdb_path = "/home/lias/tdb100repository";
-   // public String tdb_path = "c:/TDB/UBA1";
-    public Session sessionJena, sessionSesame;
+    //public String tdb_path = "c:/TDB/UBA1";
+    public Session sessionJena;
 
     private final int TOP_K = 10;
     /* (non-Javadoc)
@@ -56,7 +56,6 @@ public class ServerStrategyRelaxationTest {
 	Properties.setModelMemSpec(OntModelSpec.OWL_DL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
 	sessionJena = SessionFactory.getTDBSession(tdb_path);
-	//sessionSesame = SessionFactory.getNativeSesameSession(repository_path);
     }
 
     /* (non-Javadoc)
@@ -66,7 +65,6 @@ public class ServerStrategyRelaxationTest {
     public void tearDown() throws Exception {
 	try {
 	    sessionJena.close();
-	   // sessionSesame.close();
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
