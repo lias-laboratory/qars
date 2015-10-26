@@ -19,6 +19,10 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +46,8 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class ServerStrategyRelaxationTest {
 
     public String repository_path = "target/Sesame/NativeRepository/LUBM1";
-    public String tdb_path = "/home/lias/tdb100repository";
+    //public String tdb_path = "/home/lias/tdb100repository";
+    public String tdb_path = "target/TDB/LUBM1";
     public Session sessionJena, sessionSesame;
 
     private final int TOP_K = 10;
@@ -52,6 +57,17 @@ public class ServerStrategyRelaxationTest {
     @Before
     public void setUp() {
 	//Properties.setModelMemSpec(OntModelSpec.OWL_DL_MEM);
+	// get a RuntimeMXBean reference
+	RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+	 
+	// get the jvm's input arguments as a list of strings
+	List<String> listOfArguments = runtimeMxBean.getInputArguments();
+	 
+	// print the arguments using my logger
+	for (String a: listOfArguments) {
+	    Logger.getRootLogger().info("ARG:"+a);
+	}
+
 	Properties.setModelMemSpec(OntModelSpec.OWL_DL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
 	sessionJena = SessionFactory.getTDBSession(tdb_path);
