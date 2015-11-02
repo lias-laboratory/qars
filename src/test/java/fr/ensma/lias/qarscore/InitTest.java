@@ -19,10 +19,9 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore;
 
+import org.apache.jena.ontology.OntModelSpec;
 import org.junit.After;
 import org.junit.Before;
-
-import com.hp.hpl.jena.ontology.OntModelSpec;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;

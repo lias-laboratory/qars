@@ -21,11 +21,11 @@ package fr.ensma.lias.qarscore.connection.implementation;
 
 import java.util.HashMap;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 import fr.ensma.lias.qarscore.connection.Session;
 
@@ -50,8 +50,7 @@ public class SessionJenaTDB extends JenaSession {
 
 	dataset = TDBFactory.createDataset(folderTDB);
 	// model = dataset.getDefaultModel();
-	// ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM,
-	// model);
+	// ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
 
 	set_model();
 

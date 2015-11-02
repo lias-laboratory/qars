@@ -24,15 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.openrdf.model.Model;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.util.URIUtil;
 import org.openrdf.model.vocabulary.RDFS;
-
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
 
 import fr.ensma.lias.qarscore.connection.implementation.SesameSession;
 import fr.ensma.lias.qarscore.connection.statement.ModelStatement;

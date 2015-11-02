@@ -19,14 +19,13 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection;
 
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.model.URI;
-
-import com.hp.hpl.jena.ontology.OntModelSpec;
 
 import fr.ensma.lias.qarscore.connection.implementation.SesameSession;
 import fr.ensma.lias.qarscore.properties.Properties;

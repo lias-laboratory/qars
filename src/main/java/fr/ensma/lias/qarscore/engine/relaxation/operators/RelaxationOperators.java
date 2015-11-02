@@ -22,7 +22,7 @@ package fr.ensma.lias.qarscore.engine.relaxation.operators;
 import java.util.List;
 import java.util.Map;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;

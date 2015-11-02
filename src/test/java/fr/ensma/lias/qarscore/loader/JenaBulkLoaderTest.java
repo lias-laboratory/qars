@@ -21,12 +21,11 @@ package fr.ensma.lias.qarscore.loader;
 
 import java.io.File;
 
+import org.apache.jena.ontology.OntModelSpec;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.hp.hpl.jena.ontology.OntModelSpec;
 
 import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.implementation.JenaSession;

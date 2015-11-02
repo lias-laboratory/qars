@@ -19,7 +19,7 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.utils;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 /**
  * @author Geraud FOKOU

@@ -19,7 +19,7 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 

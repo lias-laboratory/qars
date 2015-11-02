@@ -21,6 +21,7 @@ package fr.ensma.lias.qarscore.connection.statement.implementation;
 
 import java.util.Map;
 
+import org.apache.jena.query.ResultSet;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
@@ -28,8 +29,6 @@ import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryException;
-
-import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.implementation.SesameSession;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;

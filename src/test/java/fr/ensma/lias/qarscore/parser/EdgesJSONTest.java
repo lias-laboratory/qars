@@ -19,15 +19,14 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.parser;
 
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.connection.implementation.JenaSession;

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.jena.graph.Node;
 import org.openrdf.model.IRI;
 import org.openrdf.model.Model;
 import org.openrdf.model.Resource;
@@ -23,8 +24,6 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.nativerdf.NativeStore;
-
-import com.hp.hpl.jena.graph.Node;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;

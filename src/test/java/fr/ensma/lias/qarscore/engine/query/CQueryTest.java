@@ -21,14 +21,13 @@ package fr.ensma.lias.qarscore.engine.query;
 
 import java.util.List;
 
+import org.apache.jena.sparql.syntax.ElementFilter;
+import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.hp.hpl.jena.sparql.syntax.ElementFilter;
-import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 
 import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 

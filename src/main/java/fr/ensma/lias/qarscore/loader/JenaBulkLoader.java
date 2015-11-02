@@ -28,16 +28,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.sdb.SDBFactory;
-import com.hp.hpl.jena.sdb.Store;
-import com.hp.hpl.jena.sdb.StoreDesc;
-import com.hp.hpl.jena.sdb.sql.SDBConnection;
-import com.hp.hpl.jena.sdb.store.StoreFactory;
-import com.hp.hpl.jena.tdb.TDBFactory;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sdb.SDBFactory;
+import org.apache.jena.sdb.Store;
+import org.apache.jena.sdb.StoreDesc;
+import org.apache.jena.sdb.sql.SDBConnection;
+import org.apache.jena.sdb.store.StoreFactory;
+import org.apache.jena.tdb.TDBFactory;
 
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 import fr.ensma.lias.qarscore.properties.Properties;

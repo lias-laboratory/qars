@@ -22,15 +22,15 @@ package fr.ensma.lias.qarscore.connection.implementation;
 import java.sql.Connection;
 import java.util.HashMap;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.sdb.SDBFactory;
-import com.hp.hpl.jena.sdb.Store;
-import com.hp.hpl.jena.sdb.StoreDesc;
-import com.hp.hpl.jena.sdb.sql.SDBConnection;
-import com.hp.hpl.jena.sdb.store.StoreFactory;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.sdb.SDBFactory;
+import org.apache.jena.sdb.Store;
+import org.apache.jena.sdb.StoreDesc;
+import org.apache.jena.sdb.sql.SDBConnection;
+import org.apache.jena.sdb.store.StoreFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.properties.Properties;

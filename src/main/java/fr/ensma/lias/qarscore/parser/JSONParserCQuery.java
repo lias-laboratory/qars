@@ -22,9 +22,9 @@ package fr.ensma.lias.qarscore.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.TriplePath;
-import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.TriplePath;
+import org.apache.jena.sparql.syntax.ElementPathBlock;
 
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;

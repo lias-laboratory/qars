@@ -19,6 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection.statement;
 
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -26,9 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.TupleQueryResult;
-
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.SPARQLQueriesSample;

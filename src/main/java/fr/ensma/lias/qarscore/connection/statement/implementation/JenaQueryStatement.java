@@ -21,9 +21,9 @@ package fr.ensma.lias.qarscore.connection.statement.implementation;
 
 import java.util.Map;
 
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.ResultSet;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
@@ -74,7 +74,7 @@ public class JenaQueryStatement implements QueryStatement {
 
 	try {
 	    qexec = QueryExecutionFactory.create(sparqlQuery,
-		    session.getDataset());
+		    session.getModel());
 	    try {
 		results = qexec.execSelect();
 	    } finally {

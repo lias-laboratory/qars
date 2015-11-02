@@ -21,7 +21,7 @@ package fr.ensma.lias.qarscore.connection.statement;
 
 import java.util.Map;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 /**
  * @author Geraud FOKOU

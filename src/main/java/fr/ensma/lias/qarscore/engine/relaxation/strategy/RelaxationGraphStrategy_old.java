@@ -24,9 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
-
-import com.hp.hpl.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 
+import org.apache.jena.ontology.OntModelSpec;
 import org.openrdf.model.Model;
 import org.openrdf.model.Resource;
 import org.openrdf.repository.Repository;
@@ -41,8 +42,6 @@ import org.openrdf.sail.inferencer.fc.DirectTypeHierarchyInferencer;
 import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
 import org.openrdf.sail.memory.MemoryStore;
 import org.openrdf.sail.nativerdf.NativeStore;
-
-import com.hp.hpl.jena.ontology.OntModelSpec;
 
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 import fr.ensma.lias.qarscore.properties.Properties;

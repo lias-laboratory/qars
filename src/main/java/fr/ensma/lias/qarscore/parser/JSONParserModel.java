@@ -22,11 +22,11 @@ package fr.ensma.lias.qarscore.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
  * @author Geraud FOKOU

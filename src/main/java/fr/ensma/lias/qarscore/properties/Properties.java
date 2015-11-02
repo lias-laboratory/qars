@@ -19,9 +19,9 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.properties;
 
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.sdb.store.DatabaseType;
-import com.hp.hpl.jena.sdb.store.LayoutType;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.sdb.store.DatabaseType;
+import org.apache.jena.sdb.store.LayoutType;
 
 /**
  * @author Geraud FOKOU
