@@ -44,9 +44,9 @@ import fr.ensma.lias.qarscore.properties.Properties;
  */
 public class ServerStrategyRelaxationTest extends InitTest{
 
-   // final static String PATH = "c:/resources/UBA/Uni1.owl";
+    //final static String PATH = "c:/resources/UBA/Uni1.owl";
     final static String TDB_PATH = "/home/lias/tdb1repository";
-    //final static String TDB_PATH = "C:/TDB/UBA1";
+    //final static String TDB_PATH = "C:/TDB/UBA";
     final static String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
 	    + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
 	    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
