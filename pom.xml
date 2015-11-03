@@ -71,16 +71,6 @@
 <!-- 			<artifactId>jsonld-java-jena</artifactId> -->
 <!-- 			<version>0.4.1</version> -->
 <!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.slf4j</groupId> -->
-<!-- 			<artifactId>slf4j-api</artifactId> -->
-<!-- 			<version>1.7.12</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.slf4j</groupId> -->
-<!-- 			<artifactId>slf4j-log4j12</artifactId> -->
-<!-- 			<version>1.7.12</version> -->
-<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.roaringbitmap</groupId>
 			<artifactId>RoaringBitmap</artifactId>
@@ -109,9 +99,9 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.16</version>
 				<configuration>
-					<argLine>-Xmx12g -Xms8g -XX:MaxPermSize=2048M</argLine>
+					<argLine>-Xmx12g -Xms8g </argLine>
 					<skipTests>false</skipTests>
-					<test>AllTests.java</test>
+					<test>ServerStrategyRelaxationTest.java</test>
 				</configuration>
 			</plugin>
 			<plugin>
