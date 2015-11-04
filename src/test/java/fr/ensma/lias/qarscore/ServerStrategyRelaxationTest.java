@@ -20,10 +20,16 @@
 package fr.ensma.lias.qarscore;
 
 import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.tdb.TDBLoader;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -42,11 +48,11 @@ import fr.ensma.lias.qarscore.properties.Properties;
 /**
  * @author Geraud FOKOU
  */
-public class ServerStrategyRelaxationTest extends InitTest{
+public class ServerStrategyRelaxationTest extends InitTest {
 
-    //final static String PATH = "c:/resources/UBA/Uni1.owl";
+    // final static String PATH = "c:/resources/UBA/Uni1.owl";
     final static String TDB_PATH = "/home/lias/tdb5repository";
-    //final static String TDB_PATH = "C:/TDB/UBA";
+    // final static String TDB_PATH = "C:/TDB/UBA";
     final static String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
 	    + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
 	    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
@@ -58,7 +64,10 @@ public class ServerStrategyRelaxationTest extends InitTest{
 	    + "?X rdf:type ub:Professor . " + "}";
 
     private final int TOP_K = 10;
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see fr.ensma.lias.qarscore.InitTest#setUp()
      */
     @Before
@@ -68,7 +77,9 @@ public class ServerStrategyRelaxationTest extends InitTest{
 	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see fr.ensma.lias.qarscore.InitTest#tearDown()
      */
     @After
@@ -81,67 +92,121 @@ public class ServerStrategyRelaxationTest extends InitTest{
     }
 
     @Test
-    public void testsaturationwithsession() {
+    public void testsaturationwithoutsession() {
 	
+	final String PATH = "/home/lias/Uni1.owl";
+	final String TDB_PATH = "/home/lias/tdb1repository";
+
+	Dataset dataset = TDBFactory.createDataset(TDB_PATH);
+	Model dataModel = dataset.getDefaultModel();
+	// TDBLoader.load(dataset, PATH);
+	TDBLoader.loadModel(dataset.getDefaultModel(), PATH);
+	dataModel.commit();
+	// dataset.commit();
+
 	QueryExecution query_exec = QueryExecutionFactory.create(QUERY,
-		((JenaSession)sessionJena).getModel());
+		dataModel);
+
+	ResultSet result = query_exec.execSelect();
+	Logger.getRootLogger().info("Result without saturation");
+	while (result.hasNext()) {
+	    QuerySolution sol = result.next();
+	    Logger.getRootLogger().info(sol.get("X"));
+	}
+
+	dataModel = ModelFactory.createInfModel(
+		ReasonerRegistry.getRDFSReasoner(), dataset.getDefaultModel());
+
+	query_exec = QueryExecutionFactory.create(QUERY, dataModel);
+
+	result = query_exec.execSelect();
+	Logger.getRootLogger().info("Result with saturation");
+	while (result.hasNext()) {
+	    QuerySolution sol = result.next();
+	    Logger.getRootLogger().info(sol.get("X"));
+	}
+
+    }
+
+    public void testsaturationwithsession() {
+
+	QueryExecution query_exec = QueryExecutionFactory.create(QUERY,
+		((JenaSession) sessionJena).getModel());
 
 	ResultSet result = query_exec.execSelect();
 	Logger.getRootLogger().info("Result with saturation");
 	while (result.hasNext()) {
 	    QuerySolution sol = result.next();
-	    //Logger.getRootLogger().info(sol.get("X"));
+	    // Logger.getRootLogger().info(sol.get("X"));
 	    System.out.println(sol.get("X"));
 	}
     }
 
-//    @Test
-    public void testRelaxationWithHuangStrategy(){
-	
+    // @Test
+    public void testRelaxationWithHuangStrategy() {
+
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_1);
-	
-	HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(conjunctiveQuery, sessionJena);
-	boolean hasTopk =false;
+
+	HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(
+		conjunctiveQuery, sessionJena);
+	boolean hasTopk = false;
 	int number_answers = 0;
-	while ((!hasTopk)&&(relaxed_query.hasNext())){
-	    QueryStatement stm = sessionJena.createStatement(relaxed_query.next().toString());
+	while ((!hasTopk) && (relaxed_query.hasNext())) {
+	    QueryStatement stm = sessionJena.createStatement(relaxed_query
+		    .next().toString());
 	    number_answers = number_answers + stm.getResultSetSize();
-	    Logger.getRootLogger().info(relaxed_query.getCurrent_relaxed_query().toString()+" "+relaxed_query.getCurrent_similarity()+" "+relaxed_query.getCurrent_level()+" "+number_answers);
-	    hasTopk = number_answers >= TOP_K;
-	}
-    }
-    
-//    @Test
-    public void testRelaxationWithGraphStrategy(){
-	
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_1);
-	
-	GraphRelaxationStrategy relaxed_query = new GraphRelaxationStrategy(conjunctiveQuery, sessionJena);
-	boolean hasTopk =false;
-	int number_answers = 0;
-	while ((!hasTopk)&&(relaxed_query.hasNext())){
-	    QueryStatement stm = sessionJena.createStatement(relaxed_query.next().toString());
-	    number_answers = number_answers + stm.getResultSetSize();
-	    Logger.getRootLogger().info(relaxed_query.getCurrent_relaxed_query().toString()+" "+relaxed_query.getCurrent_similarity()+" "+relaxed_query.getCurrent_level()+" "+number_answers);
+	    Logger.getRootLogger().info(
+		    relaxed_query.getCurrent_relaxed_query().toString() + " "
+			    + relaxed_query.getCurrent_similarity() + " "
+			    + relaxed_query.getCurrent_level() + " "
+			    + number_answers);
 	    hasTopk = number_answers >= TOP_K;
 	}
     }
 
-//    @Test
-    public void testRelaxationWithMFSStrategy(){
-	
+    // @Test
+    public void testRelaxationWithGraphStrategy() {
+
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_1);
-	
-	MFSRelaxationGraph relaxed_query = new MFSRelaxationGraph(conjunctiveQuery, sessionJena);
-	boolean hasTopk =false;
+
+	GraphRelaxationStrategy relaxed_query = new GraphRelaxationStrategy(
+		conjunctiveQuery, sessionJena);
+	boolean hasTopk = false;
 	int number_answers = 0;
-	while ((!hasTopk)&&(relaxed_query.hasNext())){
-	    QueryStatement stm = sessionJena.createStatement(relaxed_query.next().toString());
+	while ((!hasTopk) && (relaxed_query.hasNext())) {
+	    QueryStatement stm = sessionJena.createStatement(relaxed_query
+		    .next().toString());
 	    number_answers = number_answers + stm.getResultSetSize();
-	    Logger.getRootLogger().info(relaxed_query.getCurrent_relaxed_query().toString()+" "+relaxed_query.getCurrent_similarity()+" "+relaxed_query.getCurrent_level()+" "+number_answers);
+	    Logger.getRootLogger().info(
+		    relaxed_query.getCurrent_relaxed_query().toString() + " "
+			    + relaxed_query.getCurrent_similarity() + " "
+			    + relaxed_query.getCurrent_level() + " "
+			    + number_answers);
+	    hasTopk = number_answers >= TOP_K;
+	}
+    }
+
+    // @Test
+    public void testRelaxationWithMFSStrategy() {
+
+	CQuery conjunctiveQuery = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.QUERY_1);
+
+	MFSRelaxationGraph relaxed_query = new MFSRelaxationGraph(
+		conjunctiveQuery, sessionJena);
+	boolean hasTopk = false;
+	int number_answers = 0;
+	while ((!hasTopk) && (relaxed_query.hasNext())) {
+	    QueryStatement stm = sessionJena.createStatement(relaxed_query
+		    .next().toString());
+	    number_answers = number_answers + stm.getResultSetSize();
+	    Logger.getRootLogger().info(
+		    relaxed_query.getCurrent_relaxed_query().toString() + " "
+			    + relaxed_query.getCurrent_similarity() + " "
+			    + relaxed_query.getCurrent_level() + " "
+			    + number_answers);
 	    hasTopk = number_answers >= TOP_K;
 	}
     }
