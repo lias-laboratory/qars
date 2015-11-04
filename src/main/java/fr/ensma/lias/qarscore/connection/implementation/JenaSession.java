@@ -130,7 +130,7 @@ public abstract class JenaSession implements Session {
 		    ReasonerRegistry.getRDFSReasoner(),
 		    dataset.getDefaultModel());
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_MEM_RDFS_INF, model);
+		    OntModelSpec.OWL_MEM_RDFS_INF, dataset.getDefaultModel());
 	}
 
 	/**
@@ -142,7 +142,7 @@ public abstract class JenaSession implements Session {
 		    ReasonerRegistry.getTransitiveReasoner(),
 		    dataset.getDefaultModel());
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_MEM_TRANS_INF, model);
+		    OntModelSpec.OWL_MEM_TRANS_INF, dataset.getDefaultModel());
 	}
 
 	/**
@@ -152,7 +152,7 @@ public abstract class JenaSession implements Session {
 		OntModelSpec.OWL_MEM)) {
 	    model = dataset.getDefaultModel();
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_MEM, model);
+		    OntModelSpec.OWL_MEM, dataset.getDefaultModel());
 	}
 	/**
 	 * Default model without inferred triple 
@@ -161,7 +161,7 @@ public abstract class JenaSession implements Session {
 		OntModelSpec.OWL_DL_MEM)) {
 	    model = dataset.getDefaultModel();
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_DL_MEM, model);
+		    OntModelSpec.OWL_DL_MEM, dataset.getDefaultModel());
 	}
 
 	/**
@@ -173,7 +173,7 @@ public abstract class JenaSession implements Session {
 		    ReasonerRegistry.getOWLReasoner(),
 		    dataset.getDefaultModel());
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_DL_MEM_RULE_INF, model);
+		    OntModelSpec.OWL_DL_MEM_RULE_INF, dataset.getDefaultModel());
 	}
 
 	/**
@@ -185,14 +185,14 @@ public abstract class JenaSession implements Session {
 		    ReasonerRegistry.getRDFSReasoner(),
 		    dataset.getDefaultModel());
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_DL_MEM_RULE_INF, model);
+		    OntModelSpec.OWL_DL_MEM_RULE_INF, dataset.getDefaultModel());
 	}
 
 	else if (Properties.getModelMemSpec().equals(
 		OntModelSpec.RDFS_MEM)) {
 	    model = dataset.getDefaultModel();
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.RDFS_MEM, model);
+		    OntModelSpec.RDFS_MEM, dataset.getDefaultModel());
 	}
 	/**
 	 * Return a prebuilt standard configuration for the default RDFS reasoner
@@ -203,7 +203,7 @@ public abstract class JenaSession implements Session {
 		    ReasonerRegistry.getRDFSReasoner(),
 		    dataset.getDefaultModel());
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.RDFS_MEM_RDFS_INF, model);
+		    OntModelSpec.RDFS_MEM_RDFS_INF, dataset.getDefaultModel());
 	}
 
 	/**
@@ -215,7 +215,7 @@ public abstract class JenaSession implements Session {
 		    ReasonerRegistry.getTransitiveReasoner(),
 		    dataset.getDefaultModel());
 	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.RDFS_MEM_TRANS_INF, model);
+		    OntModelSpec.RDFS_MEM_TRANS_INF, dataset.getDefaultModel());
 	}
 	
 	else {

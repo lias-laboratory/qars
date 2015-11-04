@@ -51,7 +51,7 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class ServerStrategyRelaxationTest extends InitTest {
 
     // final static String PATH = "c:/resources/UBA/Uni1.owl";
-    final static String TDB_PATH = "/home/lias/tdb5repository";
+    final static String TDB_PATH = "/home/lias/tdb1repository";
     // final static String TDB_PATH = "C:/TDB/UBA";
     final static String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
 	    + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
@@ -91,7 +91,7 @@ public class ServerStrategyRelaxationTest extends InitTest {
 	}
     }
 
-    @Test
+   // @Test
     public void testsaturationwithoutsession() {
 	
 	final String PATH = "/home/lias/Uni1.owl";
@@ -128,6 +128,7 @@ public class ServerStrategyRelaxationTest extends InitTest {
 
     }
 
+    @Test
     public void testsaturationwithsession() {
 
 	QueryExecution query_exec = QueryExecutionFactory.create(QUERY,
@@ -137,8 +138,7 @@ public class ServerStrategyRelaxationTest extends InitTest {
 	Logger.getRootLogger().info("Result with saturation");
 	while (result.hasNext()) {
 	    QuerySolution sol = result.next();
-	    // Logger.getRootLogger().info(sol.get("X"));
-	    System.out.println(sol.get("X"));
+	    Logger.getRootLogger().info(sol.get("X"));
 	}
     }
 
