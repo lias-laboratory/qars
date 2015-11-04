@@ -45,7 +45,7 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class ServerStrategyRelaxationTest extends InitTest{
 
     //final static String PATH = "c:/resources/UBA/Uni1.owl";
-    final static String TDB_PATH = "/home/lias/tdb1repository";
+    final static String TDB_PATH = "/home/lias/tdb5repository";
     //final static String TDB_PATH = "C:/TDB/UBA";
     final static String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
 	    + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
@@ -83,10 +83,6 @@ public class ServerStrategyRelaxationTest extends InitTest{
     @Test
     public void testsaturationwithsession() {
 	
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
-	Properties.setOntoLang("OWL");
-	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
-
 	QueryExecution query_exec = QueryExecutionFactory.create(QUERY,
 		((JenaSession)sessionJena).getModel());
 
@@ -94,10 +90,12 @@ public class ServerStrategyRelaxationTest extends InitTest{
 	Logger.getRootLogger().info("Result with saturation");
 	while (result.hasNext()) {
 	    QuerySolution sol = result.next();
-	    Logger.getRootLogger().info(sol.get("X"));
+	    //Logger.getRootLogger().info(sol.get("X"));
+	    System.out.println(sol.get("X"));
 	}
     }
 
+//    @Test
     public void testRelaxationWithHuangStrategy(){
 	
 	CQuery conjunctiveQuery = CQueryFactory
@@ -114,6 +112,7 @@ public class ServerStrategyRelaxationTest extends InitTest{
 	}
     }
     
+//    @Test
     public void testRelaxationWithGraphStrategy(){
 	
 	CQuery conjunctiveQuery = CQueryFactory
@@ -130,6 +129,7 @@ public class ServerStrategyRelaxationTest extends InitTest{
 	}
     }
 
+//    @Test
     public void testRelaxationWithMFSStrategy(){
 	
 	CQuery conjunctiveQuery = CQueryFactory

@@ -19,7 +19,7 @@ import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 import fr.ensma.lias.qarscore.properties.Properties;
 
-public class SaturationTest extends InitTest{
+public class SaturationTest extends InitTest {
 
     final static String PATH = "c:/resources/UBA/Uni1.owl";
     final static String TDB_PATH = "c:/TDB/UBA";
@@ -32,7 +32,7 @@ public class SaturationTest extends InitTest{
 
     final static String QUERY = LUBM_PREFIX + "SELECT ?X WHERE { "
 	    + "?X rdf:type ub:Professor . " + "}";
- 
+
     @Before
     public void setUp() {
     }
@@ -45,10 +45,10 @@ public class SaturationTest extends InitTest{
     public void testwithoutsession() {
 	Dataset dataset = TDBFactory.createDataset(TDB_PATH);
 	Model dataModel = dataset.getDefaultModel();
-	//TDBLoader.load(dataset, PATH);
-	//TDBLoader.loadModel(dataset.getDefaultModel(), PATH);
-	//dataModel.commit();
-	//dataset.commit();
+	// TDBLoader.load(dataset, PATH);
+	// TDBLoader.loadModel(dataset.getDefaultModel(), PATH);
+	// dataModel.commit();
+	// dataset.commit();
 
 	QueryExecution query_exec = QueryExecutionFactory.create(QUERY,
 		dataModel);
@@ -63,8 +63,7 @@ public class SaturationTest extends InitTest{
 	dataModel = ModelFactory.createInfModel(
 		ReasonerRegistry.getRDFSReasoner(), dataset.getDefaultModel());
 
-	query_exec = QueryExecutionFactory.create(QUERY,
-		dataModel);
+	query_exec = QueryExecutionFactory.create(QUERY, dataModel);
 
 	result = query_exec.execSelect();
 	Logger.getRootLogger().info("Result with saturation");
@@ -82,7 +81,7 @@ public class SaturationTest extends InitTest{
 	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
 
 	QueryExecution query_exec = QueryExecutionFactory.create(QUERY,
-		((JenaSession)sessionJena).getModel());
+		((JenaSession) sessionJena).getModel());
 
 	ResultSet result = query_exec.execSelect();
 	Logger.getRootLogger().info("Result without saturation");
@@ -94,13 +93,13 @@ public class SaturationTest extends InitTest{
 
     @Test
     public void testsaturationwithsession() {
-	
+
 	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
 	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
 
 	QueryExecution query_exec = QueryExecutionFactory.create(QUERY,
-		((JenaSession)sessionJena).getModel());
+		((JenaSession) sessionJena).getModel());
 
 	ResultSet result = query_exec.execSelect();
 	Logger.getRootLogger().info("Result with saturation");

@@ -138,7 +138,8 @@ public class MFSRelaxationGraph extends HuangRelaxationStrategy{
 		this.insert(current_graph.getChild_elt()[j]);
 	    }
 	    if(!relaxe_mfs.containsValue(false)){
-		return CQueryFactory.createCQuery(elt_relaxed_query);
+		current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query);
+		return current_relaxed_query;
 	    }
 	}
     }
