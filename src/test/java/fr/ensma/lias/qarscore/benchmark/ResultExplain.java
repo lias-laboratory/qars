@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ResultExplain {
 
-    private String logger;
+    private String logger_stat;
 
     protected Map<String, QueryReport> result = new LinkedHashMap<String, QueryReport>();
     
@@ -45,7 +45,7 @@ public class ResultExplain {
     }
 
     public ResultExplain(String loggerName) {
-	logger = loggerName;
+	logger_stat = loggerName;
     }
 
     private static double round(double d, int decimalPlace) {
@@ -85,7 +85,7 @@ public class ResultExplain {
 	}
 	
 	BufferedWriter fichier = new BufferedWriter(new FileWriter(
- 		logger.toString()));
+ 		logger_stat.toString()));
  	fichier.write(buffer.toString());
  	fichier.close();
     }

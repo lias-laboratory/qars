@@ -23,13 +23,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import fr.ensma.lias.qarscore.benchmark.BenchmarkTest;
+
 /**
  * @author Mickael BARON
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = { 
 	/*AllConnectionTests.class, AllLoaderTests.class,
-	AllQueryTests.class, AllParserTests.class, AllRelaxationTests.class */ ServerStrategyRelaxationTest.class})
+	AllQueryTests.class, AllParserTests.class, AllRelaxationTests.class  ServerStrategyRelaxationTest.class*/BenchmarkTest.class})
 public class AllTests {
 
 }

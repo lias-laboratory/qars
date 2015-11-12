@@ -12,19 +12,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.jena.ontology.OntModelSpec;
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
-import org.junit.Assert;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.Priority;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
+import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.StrategyFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.strategy.GraphRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategy.HuangRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategy.MFSRelaxationGraph;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -33,26 +40,65 @@ import fr.ensma.lias.qarscore.properties.Properties;
  */
 public class BenchmarkTest {
 
-    private Session session;
-
-    private MFSSearch relaxationStrategy;
-
+    /**
+     * set test parameter
+     */
+    private static final int NB_EXEC = 1;
+    // private static final int NB_QUERY_BY_TYPE = 5;
+    private static final int INDEX_OF_REPOSITORY = 0;
+    private final int TOP_K = 10;
+    /**
+     * set session and other tools
+     */
+    private static Session session;
+    public MFSSearch relaxationStrategy;
+    
+    /**
+     * looger tools
+     */
     private Logger logger = Logger.getLogger(BenchmarkTest.class);
+    private static PatternLayout layout;
+    private FileAppender fileAppender;
+    /**
+     * Set repository folder Windows
+     */
+    // private final static String PATH = "c:/resources/UBA/Uni1.owl";
+    // private final static String folder = "C:/TDB/UBA";
 
-//    private static final String folder = "/home/lias/jena/tdbrepository";
+    /**
+     * Set repository folder linux
+     */
+    private static List<String> repository = Arrays.asList(
+	    "/home/lias/tdb1repository", "/home/lias/tdb5repository",
+	    "/home/lias/tdb100repository", "/home/lias/tdb250repository",
+	    "/home/lias/tdb500repository", "/home/lias/tdb750repository");
 
-//    private List<String> fullQueries = Arrays.asList("queries-chain.test", "queries-composite.test", "queries-star.test");
-    
-//    private List<String> oneQueries = Arrays.asList("queries-chain-scalability.test", "queries-composite-scalability.test", "queries-star-scalability.test");    
+    /**
+     * Set repository folder linux
+     */
+    private static List<String> repository_alias = Arrays.asList("tdb1",
+	    "tdb5", "tdb100", "tdb250", "tdb500", "tdb750");
 
-    private List<String> fullQueries = Arrays.asList("queries-star.test");
-    
-    private List<String> oneQueries = Arrays.asList("queries-star-scalability.test");    
-    
-    private List<String> repository = Arrays.asList("100", "250", "500", "750");
-    
-    private static final String folder = "/Users/baronm/Public/tdbrepository/tdbrepository";
-    
+    /**
+     * Set queries files
+     */
+    private final String QUERIES_STAR_FILE = "queries-star.test";
+    private final String QUERIES_CHAIN_FILE = "queries-chain.test";
+    private final String QUERIES_COMPOSITE_FILE = "queries-composite.test";
+
+    // private final String QUERIES_SCALE_STAR_FILE =
+    // "queries-star-scalability.test";
+    // private final String QUERIES_SCALE_CHAIN_FILE =
+    // "queries-chain-scalability.test";
+    // private final String QUERIES_SCALE_COMPOSITE_FILE =
+    // "queries-composite-scalability.test";
+
+    /**
+     * test tools
+     */
+    private List<QueryExplain> newTestResultPairList = null;
+    private ResultExplain newResultExplain = null;
+
     class QueryExplain {
 
 	protected int index;
@@ -111,7 +157,8 @@ public class BenchmarkTest {
 	}
     }
 
-    protected List<QueryExplain> newTestResultPairList(final String filename) throws IOException {
+    protected List<QueryExplain> newTestResultPairList(final String filename)
+	    throws IOException {
 	final List<QueryExplain> queries = new ArrayList<QueryExplain>();
 	final URL fileUrl = BenchmarkTest.class.getResource(filename);
 	final FileReader file = new FileReader(fileUrl.getFile());
@@ -140,7 +187,8 @@ public class BenchmarkTest {
 		final Matcher mXSS = pXSS.matcher(line);
 
 		if (mTest.matches()) { // # Test
-		    addTestResultPair(queries, test, mfsresult, xssresult, testNumber, testName);
+		    addTestResultPair(queries, test, mfsresult, xssresult,
+			    testNumber, testName);
 
 		    testNumber = mTest.group(1);
 		    testName = mTest.group(2);
@@ -152,23 +200,29 @@ public class BenchmarkTest {
 		    curbuf = test;
 		} else if (mMFS.matches()) { // # Result
 		    if (testNumber == null) {
-			throw new RuntimeException("Test file has result without a test (line " + lineNumber + ")");
+			throw new RuntimeException(
+				"Test file has result without a test (line "
+					+ lineNumber + ")");
 		    }
 		    final String resultNumber = mMFS.group(1);
 		    if (!testNumber.equals(resultNumber)) {
-			throw new RuntimeException(
-				"Result " + resultNumber + " test " + testNumber + " (line " + lineNumber + ")");
+			throw new RuntimeException("Result " + resultNumber
+				+ " test " + testNumber + " (line "
+				+ lineNumber + ")");
 		    }
 
 		    curbuf = mfsresult;
 		} else if (mXSS.matches()) {
 		    if (testNumber == null) {
-			throw new RuntimeException("Test file has result without a test (line " + lineNumber + ")");
+			throw new RuntimeException(
+				"Test file has result without a test (line "
+					+ lineNumber + ")");
 		    }
 		    final String resultNumber = mXSS.group(1);
 		    if (!testNumber.equals(resultNumber)) {
-			throw new RuntimeException(
-				"Result " + resultNumber + " test " + testNumber + " (line " + lineNumber + ")");
+			throw new RuntimeException("Result " + resultNumber
+				+ " test " + testNumber + " (line "
+				+ lineNumber + ")");
 		    }
 
 		    curbuf = xssresult;
@@ -181,7 +235,8 @@ public class BenchmarkTest {
 		}
 	    }
 
-	    addTestResultPair(queries, test, mfsresult, xssresult, testNumber, testName);
+	    addTestResultPair(queries, test, mfsresult, xssresult, testNumber,
+		    testName);
 
 	} finally {
 	    if (in != null) {
@@ -195,8 +250,9 @@ public class BenchmarkTest {
 	return queries;
     }
 
-    private void addTestResultPair(List<QueryExplain> queries, StringBuffer query, StringBuffer mfsResult,
-	    StringBuffer xssResult, String number, String description) throws IOException {
+    private void addTestResultPair(List<QueryExplain> queries,
+	    StringBuffer query, StringBuffer mfsResult, StringBuffer xssResult,
+	    String number, String description) throws IOException {
 	if (query == null || mfsResult == null || xssResult == null) {
 	    return;
 	}
@@ -206,7 +262,8 @@ public class BenchmarkTest {
 	currentQuery.setIndex(Integer.valueOf(number));
 	currentQuery.setDescription(description.trim());
 
-	BufferedReader bufReader = new BufferedReader(new StringReader(mfsResult.toString()));
+	BufferedReader bufReader = new BufferedReader(new StringReader(
+		mfsResult.toString()));
 	String line = null;
 	while ((line = bufReader.readLine()) != null) {
 	    currentQuery.addMFS(line.trim());
@@ -221,80 +278,428 @@ public class BenchmarkTest {
 	queries.add(currentQuery);
     }
 
-    @Before
-    public void setUp() {
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
+	session = SessionFactory.getTDBSession(repository
+		.get(INDEX_OF_REPOSITORY));
+	layout = new PatternLayout();
+	String conversionPattern = "%-7p %d [%t] %c %x - %m%n";
+	layout.setConversionPattern(conversionPattern);
     }
 
-    private void testTimePerformance(MFSSearch relaxationStrategy, String queriesFilename, String repo) throws IOException {
-	List<QueryExplain> newTestResultPairList = this.newTestResultPairList("/" + queriesFilename);
-	ResultExplain newResultExplain = new ResultExplain(queriesFilename + repo + ".csv");
-	
+    @Before
+    public void setUp() throws IOException {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+	try {
+	    session.close();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
+    private void testRelaxationWithHuangStrategy() {
+
 	for (QueryExplain queryExplain : newTestResultPairList) {
-	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain.getQuery());
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
+	    HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(
+		    conjunctiveQuery, session);
+
+	    boolean hasTopk = false;
+	    int number_answers = 0;
+	    int numberRelaxedQueryExecuted = 0;
+	    long begin = System.currentTimeMillis();
+
+	    while ((!hasTopk) && (relaxed_query.hasNext())) {
+		QueryStatement stm = session.createStatement(relaxed_query
+			.next().toString());
+		number_answers = number_answers + stm.getResultSetSize();
+		numberRelaxedQueryExecuted = numberRelaxedQueryExecuted + 1;
+		logger.info(
+			relaxed_query.getCurrent_relaxed_query().toString()
+				+ " " + relaxed_query.getCurrent_similarity()
+				+ " " + relaxed_query.getCurrent_level() + " "
+				+ number_answers);
+		hasTopk = number_answers >= TOP_K;
+	    }
+
+	    long end = System.currentTimeMillis();
+	    float duration = ((float) (end - begin));
+	    newResultExplain.add(queryExplain.getDescription(), duration
+		    / NB_EXEC, numberRelaxedQueryExecuted / NB_EXEC);
+	}
+
+	try {
+	    newResultExplain.generateReport();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    private void testRelaxationWithGraphStrategy() {
+
+	for (QueryExplain queryExplain : newTestResultPairList) {
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
+	    GraphRelaxationStrategy relaxed_query = new GraphRelaxationStrategy(
+		    conjunctiveQuery, session);
+
+	    boolean hasTopk = false;
+	    int number_answers = 0;
+	    int numberRelaxedQueryExecuted = 0;
+	    long begin = System.currentTimeMillis();
+
+	    while ((!hasTopk) && (relaxed_query.hasNext())) {
+		QueryStatement stm = session.createStatement(relaxed_query
+			.next().toString());
+		number_answers = number_answers + stm.getResultSetSize();
+		numberRelaxedQueryExecuted = numberRelaxedQueryExecuted + 1;
+		logger.info(
+			relaxed_query.getCurrent_relaxed_query().toString()
+				+ " " + relaxed_query.getCurrent_similarity()
+				+ " " + relaxed_query.getCurrent_level() + " "
+				+ number_answers);
+		hasTopk = number_answers >= TOP_K;
+	    }
+
+	    long end = System.currentTimeMillis();
+	    float duration = ((float) (end - begin));
+	    newResultExplain.add(queryExplain.getDescription(), duration
+		    / NB_EXEC, numberRelaxedQueryExecuted / NB_EXEC);
+	}
+
+	try {
+	    newResultExplain.generateReport();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    private void testRelaxationWithMFSStrategy() {
+
+	for (QueryExplain queryExplain : newTestResultPairList) {
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
+	    MFSRelaxationGraph relaxed_query = new MFSRelaxationGraph(
+		    conjunctiveQuery, session);
+
+	    boolean hasTopk = false;
+	    int number_answers = 0;
+	    int numberRelaxedQueryExecuted = 0;
+	    long begin = System.currentTimeMillis();
+
+	    while ((!hasTopk) && (relaxed_query.hasNext())) {
+		QueryStatement stm = session.createStatement(relaxed_query
+			.next().toString());
+		number_answers = number_answers + stm.getResultSetSize();
+		numberRelaxedQueryExecuted = numberRelaxedQueryExecuted + 1;
+		logger.info(
+			relaxed_query.getCurrent_relaxed_query().toString()
+				+ " " + relaxed_query.getCurrent_similarity()
+				+ " " + relaxed_query.getCurrent_level() + " "
+				+ number_answers);
+		hasTopk = number_answers >= TOP_K;
+	    }
+
+	    long end = System.currentTimeMillis();
+	    float duration = ((float) (end - begin));
+	    newResultExplain.add(queryExplain.getDescription(), duration
+		    / NB_EXEC, numberRelaxedQueryExecuted / NB_EXEC);
+	}
+
+	try {
+	    newResultExplain.generateReport();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    /*******************************
+     * Experiments for LUBM
+     ********************************/
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testStarLUBM() throws Exception {
+
+	newTestResultPairList = this.newTestResultPairList("/"
+		+ QUERIES_STAR_FILE);
+
+	/***********************************
+	 * Huang relaxation strategy test
+	 ********************************/
+
+	String fileCSV = "exp-" + "star" + "-" + "Huang_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+	
+	String logfile = "exp-" + "star" + "-" + "Huang_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	newResultExplain = new ResultExplain(fileCSV);
+	
+	testRelaxationWithHuangStrategy();
+
+	/***********************************
+	 * Graph relaxation strategy test
+	 ********************************/
+
+	fileCSV = "exp-" + "star" + "-" + "Graph_relaxation" + "-" + "Jena"
+		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
+		+ ".csv";
+
+	logfile = "exp-" + "star" + "-" + "Graph_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+	
+	newResultExplain = new ResultExplain(fileCSV);
+
+	testRelaxationWithGraphStrategy();
+
+	/***********************************
+	 * MFS relaxation strategy test
+	 ********************************/
+
+	fileCSV = "exp-" + "star" + "-" + "MFS_relaxation" + "-" + "Jena" + "-"
+		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+
+	logfile = "exp-" + "star" + "-" + "MFS_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	newResultExplain = new ResultExplain(fileCSV);
+
+	testRelaxationWithMFSStrategy();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testChainLUBM() throws Exception {
+	
+	newTestResultPairList = this.newTestResultPairList("/"
+		+ QUERIES_CHAIN_FILE);
+
+	/***********************************
+	 * Huang relaxation strategy test
+	 ********************************/
+
+	String fileCSV = "exp-" + "chain" + "-" + "Huang_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+	
+	String logfile = "exp-" + "chain" + "-" + "Huang_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	newResultExplain = new ResultExplain(fileCSV);
+	
+	testRelaxationWithHuangStrategy();
+
+	/***********************************
+	 * Graph relaxation strategy test
+	 ********************************/
+
+	fileCSV = "exp-" + "chain" + "-" + "Graph_relaxation" + "-" + "Jena"
+		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
+		+ ".csv";
+
+	logfile = "exp-" + "chain" + "-" + "Graph_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+	
+	newResultExplain = new ResultExplain(fileCSV);
+
+	testRelaxationWithGraphStrategy();
+
+	/***********************************
+	 * MFS relaxation strategy test
+	 ********************************/
+
+	fileCSV = "exp-" + "chain" + "-" + "MFS_relaxation" + "-" + "Jena" + "-"
+		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+
+	logfile = "exp-" + "chain" + "-" + "MFS_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	newResultExplain = new ResultExplain(fileCSV);
+
+	testRelaxationWithMFSStrategy();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testCompositeLUBM() throws Exception {
+	
+	newTestResultPairList = this.newTestResultPairList("/"
+		+ QUERIES_COMPOSITE_FILE);
+
+	/***********************************
+	 * Huang relaxation strategy test
+	 ********************************/
+
+	String fileCSV = "exp-" + "composite" + "-" + "Huang_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+
+	
+	String logfile = "exp-" + "composite" + "-" + "Huang_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	newResultExplain = new ResultExplain(fileCSV);
+	
+	testRelaxationWithHuangStrategy();
+
+	/***********************************
+	 * Graph relaxation strategy test
+	 ********************************/
+
+	fileCSV = "exp-" + "composite" + "-" + "Graph_relaxation" + "-" + "Jena"
+		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
+		+ ".csv";
+
+	logfile = "exp-" + "composite" + "-" + "Graph_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+	
+	newResultExplain = new ResultExplain(fileCSV);
+
+	testRelaxationWithGraphStrategy();
+
+	/***********************************
+	 * MFS relaxation strategy test
+	 ********************************/
+
+	fileCSV = "exp-" + "composite" + "-" + "MFS_relaxation" + "-" + "Jena" + "-"
+		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+
+	logfile = "exp-" + "composite" + "-" + "MFS_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+	
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	newResultExplain = new ResultExplain(fileCSV);
+
+	testRelaxationWithMFSStrategy();
+    }
+
+    public void testTimePerformance(MFSSearch relaxationStrategy,
+	    String queriesFilename, String repo) throws IOException {
+
+	List<QueryExplain> newTestResultPairList = this
+		.newTestResultPairList("/" + queriesFilename);
+	ResultExplain newResultExplain = new ResultExplain(queriesFilename
+		+ repo + ".csv");
+
+	for (QueryExplain queryExplain : newTestResultPairList) {
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
 
 	    relaxationStrategy.getAllMFS(conjunctiveQuery);
 
 	    int numberQueryExecuted = 0;
 	    long entire_duration = 0;
-	    for (int i = 0; i < 5; i++) {
+	    for (int i = 0; i < NB_EXEC; i++) {
 		relaxationStrategy.getAllMFS(conjunctiveQuery);
 		entire_duration = entire_duration
 			+ ((AbstractLatticeStrategy) relaxationStrategy).duration_of_execution;
 		numberQueryExecuted += ((AbstractLatticeStrategy) relaxationStrategy).number_of_query_executed;
 	    }
 
-	    logger.info(queryExplain.getDescription() + " " + (entire_duration / 5.0) + " " + (numberQueryExecuted / 5.0));
-	    newResultExplain.add(queryExplain.getDescription(), entire_duration / 5.0, numberQueryExecuted / 5.0);
+	    logger.info(queryExplain.getDescription() + " "
+		    + (entire_duration / NB_EXEC) + " "
+		    + (numberQueryExecuted / NB_EXEC));
+	    newResultExplain.add(queryExplain.getDescription(), entire_duration
+		    / NB_EXEC, numberQueryExecuted / NB_EXEC);
 	}
-	
+
 	newResultExplain.generateReport();
-    }
-    
-    private void latticeStrategy(String fullQuery, String oneQuery) throws Exception {	
-	session = SessionFactory.getTDBSession(folder + repository.get(0));
-	Assert.assertNotNull(((JenaSession)session).getDataset());
-
-	relaxationStrategy = StrategyFactory.getLatticeDFSStrategy(session);
-	testTimePerformance(relaxationStrategy, fullQuery, repository.get(0));
-	session.close();
-	
-	for (int i = 1; i <= repository.size(); i++) {
-	    session = SessionFactory.getTDBSession(folder + repository.get(i));
-	    Assert.assertNotNull(((JenaSession)session).getDataset());
-
-	    relaxationStrategy = StrategyFactory.getLatticeDFSStrategy(session);
-	    testTimePerformance(relaxationStrategy, oneQuery, repository.get(i));	
-	    
-	    session.close();
-	}
-    }
-    
-    @Test
-    public void startLatticeStrategyTest() throws Exception {
-	for(int i = 0 ; i < fullQueries.size(); i++) {
-	    latticeStrategy(fullQueries.get(i), oneQueries.get(i));
-	}
-    }
-    
-    @Test
-    
-    public void theTest(){
-	
-	String tab[][]={{"toto", "titi", "tutu", "tete", "tata"}, {"1", "2", "3"}};
-	int i = 0, j = 0;
-	 
-	for(String sousTab[] : tab)
-	{
-	  i = 0;
-	  for(String str : sousTab)
-	  {     
-	    System.out.println("La valeur de la nouvelle boucle est  : " + str);
-	    System.out.println("La valeur du tableau à l'indice ["+j+"]["+i+"] est : " + tab[j][i]);
-	    i++;
-	  }
-	  j++;
-	}
     }
 }
