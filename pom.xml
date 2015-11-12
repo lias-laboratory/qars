@@ -101,7 +101,7 @@
 				<configuration>
 					<argLine>-Xmx12g -Xms8g </argLine>
 					<skipTests>false</skipTests>
-					<test>ServerStrategyRelaxationTest.java</test>
+					<test>BenchmarkTest.java</test>
 				</configuration>
 			</plugin>
 			<plugin>
