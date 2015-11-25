@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation.strategy;
+package fr.ensma.lias.qarscore.engine.relaxation.strategies;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -29,6 +29,7 @@ import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.RelaxationTree;
 
 /**
@@ -61,7 +62,7 @@ public class SimilarityStrategyOldTest extends InitTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy_old#SimilarityStrategy(fr.ensma.lias.qarscore.engine.query.CQuery, fr.ensma.lias.qarscore.connection.Session)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old#SimilarityStrategy(fr.ensma.lias.qarscore.engine.query.CQuery, fr.ensma.lias.qarscore.connection.Session)}
      * .
      */
     @Test
@@ -80,7 +81,7 @@ public class SimilarityStrategyOldTest extends InitTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy_old#relaxation_tree(fr.ensma.lias.qarscore.engine.relaxation.utils.RelaxationTree, fr.ensma.lias.qarscore.connection.Session)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old#relaxation_tree(fr.ensma.lias.qarscore.engine.relaxation.utils.RelaxationTree, fr.ensma.lias.qarscore.connection.Session)}
      * .
      */
     @Test
@@ -113,7 +114,7 @@ public class SimilarityStrategyOldTest extends InitTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy_old#next_step()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old#next_step()}
      * .
      */
     @Test
@@ -146,7 +147,7 @@ public class SimilarityStrategyOldTest extends InitTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy_old#next_gen_relax(java.lang.String)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old#next_gen_relax(java.lang.String)}
      * .
      */
     @Test
@@ -178,7 +179,7 @@ public class SimilarityStrategyOldTest extends InitTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy_old#next_sib_relax(java.lang.String)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old#next_sib_relax(java.lang.String)}
      * .
      */
     @Test
@@ -204,7 +205,7 @@ public class SimilarityStrategyOldTest extends InitTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy_old#get_root_query()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old#get_root_query()}
      * .
      */
     @Test
@@ -224,7 +225,7 @@ public class SimilarityStrategyOldTest extends InitTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy_old#get_last_relaxed_queries()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old#get_last_relaxed_queries()}
      * .
      */
     @Test
@@ -245,7 +246,7 @@ public class SimilarityStrategyOldTest extends InitTest {
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategy.SimilarityStrategy_old#getRelaxed_queries_graph()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.strategies.SimilarityStrategy_old#getRelaxed_queries_graph()}
      * .
      */
     @Test

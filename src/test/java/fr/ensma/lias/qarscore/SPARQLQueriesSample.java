@@ -33,7 +33,7 @@ public class SPARQLQueriesSample {
 	    + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 	    + "PREFIX owl:  <http://www.w3.org/2002/07/owl#> "
 	    + "PREFIX xdt:  <http://www.w3.org/2001/XMLSchema#> ";
-    
+
     // 1 triple pattern Chain ou Star
     public static String QUERY_1 = LUBM_PREFIX + "SELECT ?X WHERE { "
 	    + "?X rdf:type ub:VisitingProfessor . " + "}";
@@ -196,7 +196,7 @@ public class SPARQLQueriesSample {
     public static String QUERY_16 = LUBM_PREFIX
 	    + "SELECT ?X "
 	    + "WHERE {  ?X rdf:type ub:Student . "
-//	    + "WHERE {  ?X rdf:type ub:GraduateStudent . "
+	    // + "WHERE {  ?X rdf:type ub:GraduateStudent . "
 	    + "?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>. "
 	    + "}";
 
@@ -265,7 +265,8 @@ public class SPARQLQueriesSample {
     // Requête pour avoir tout les étudiants ayant obtenu leurs diplômes
     // supérieurs à l'université 8, qui suivent GraduateCourse 65
     // au département 0 de l'université 0
-    // et qui sont supervisé par un professeur ayant eu son doctorat à l'université 0
+    // et qui sont supervisé par un professeur ayant eu son doctorat à
+    // l'université 0
     public static String EDBT_QUERY_3 = LUBM_PREFIX
 	    + "SELECT ?X ?Y1 ?Y2 ?Y3 ?Y4 ?Y7 ?Y8 ?Y9 "
 	    + "WHERE { ?X rdf:type ub:GraduateStudent . "
@@ -290,5 +291,56 @@ public class SPARQLQueriesSample {
 	    + "?X ub:emailAddress ?Y2 . " + "?X ub:telephone ?Y3 . "
 	    + "?X ub:teacherOf ?Y4 . " + "?Y5 ub:advisor ?X . "
 	    + "?Y5 ub:telephone ?Y7 . " + "?Y5 ub:memberOf ?Y8 . " + "}";
+
+    /**
+     * Queries uses on WWW paper of Huang
+     */
+    // Empty query visitingProfessor is empty
+    public static String WWW_QUERY_1 = LUBM_PREFIX
+	    + "SELECT ?X ?Y1 ?Y2 ?Y3 ?Y4 "
+	    + "WHERE { ?X rdf:type ub:VisitingProfessor . "
+	    + "?X ub:memberOf <http://www.Department1.University1.edu> . "
+	    + "?X ub:name ?Y1 . " + "?X ub:emailAddress ?Y2 . "
+	    + "?X ub:telephone ?Y3 . " + "?X ub:undergraduateDegreeFrom ?Y4 . "
+	    + " }";
+
+    // Empty query Professor is empty
+    public static String WWW_QUERY_2 = LUBM_PREFIX + "SELECT ?X ?Y "
+	    + "WHERE { ?X rdf:type ub:Professor . "
+	    + "?X ub:worksFor <http://www.Department0.University0.edu> . "
+	    + "?X ub:researchInterest 'Research2' . "
+	    + "?X ub:doctoralDegreeFrom ?Y . " + "}";
+
+    // Not empty query : one answers
+    public static String WWW_QUERY_3 = LUBM_PREFIX
+	    + "SELECT ?X "
+	    + "WHERE { ?X ub:undergraduateDegreeFrom <http://www.University303.edu> . "
+	    + "?X rdf:type ub:GraduateStudent. "
+	    + "?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse65> . "
+	    + "}";
+
+    // Empty query: Not headOf for University
+    public static String WWW_QUERY_4 = LUBM_PREFIX + "SELECT ?X ?Y "
+	    + "WHERE { ?X ub:advisor ?Y . "
+	    + "?Y ub:headOf <http://www.University476.edu> . " + "}";
+
+    // Empty query: triplet 2
+    public static String WWW_QUERY_5 = LUBM_PREFIX
+	    + "SELECT ?X ?Y "
+	    + "WHERE { <http://www.Department0.University0.edu/GraduateStudent73> ub:advisor ?Y . "
+	    + "?Y ub:doctoralDegreeFrom <http://www.University0.edu> . " + "}";
+
+    // Empty query triplet 1
+    public static String WWW_QUERY_6 = LUBM_PREFIX + "SELECT ?X ?Y1 "
+	    + "WHERE { ?X ub:researchInterest 'Research28' . "
+	    + "?Y1 ub:subOrganizationOf <http://www.University8.edu> . "
+	    + "?X rdf:type ub:Lecturer . " + "?X ub:worksFor ?Y1 . " + "}";
+
+    // Empty query T1/\T2, T1/\T3
+    public static String WWW_QUERY_7 = LUBM_PREFIX + "SELECT ?X ?Y1 ?Y2 "
+	    + "WHERE { ?X rdf:type ub:FullProfessor . "
+	    + "?X ub:doctoralDegreeFrom <http://www.University8.edu> . "
+	    + "?X ub:researchInterest 'Research23' . "
+	    + "?X ub:teacherOf ?Y1 . " + "?Y2 ub:takesCourse ?Y1 . " + "}";
 
 }

@@ -92,7 +92,6 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
     @Override
     public boolean hasLeastKAnswers(CQuery query) {
 
-
 /*	//use the following code for execution without cartesian product
 	 
 	List<CQuery> queries = new ArrayList<CQuery>();

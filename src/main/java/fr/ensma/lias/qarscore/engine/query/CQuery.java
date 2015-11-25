@@ -612,7 +612,7 @@ public class CQuery implements Comparable<CQuery> {
 
 	int code = 0;
 	for(CElement elt:this.elementList){
-	    code = code + elt.hashCode();
+	    code = code*elt.hashCode();
 	}		
 	return code;
     }

@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation.strategy;
+package fr.ensma.lias.qarscore.engine.relaxation.strategies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,30 +40,18 @@ public class HuangRelaxationStrategy {
     protected NodeRelaxed[][] relaxation_of_element;
     protected GraphRelaxationIndex relaxed_graph;
     protected List<GraphRelaxationIndex> relaxed_queries;
-    protected List<GraphRelaxationIndex> already_relaxed_queries;
+    private List<GraphRelaxationIndex> already_relaxed_queries;
     protected CQuery current_relaxed_query;
     protected double current_similarity;
     protected int current_level;
 
-    /*
-     * For heritage
-     */
-    protected HuangRelaxationStrategy(){
-    }
-    
     public HuangRelaxationStrategy(CQuery query, Session s) {
 	query_to_relax = query;
 	session = s;
 	relaxed_queries = new ArrayList<GraphRelaxationIndex>();
-	already_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
-	start_relaxation();
     }
 
-    protected void start_relaxation() {
-
-	int[] relexation_limit_index = new int[query_to_relax.getElementList()
-		.size()];
-	int[] relaxation_index = new int[query_to_relax.getElementList().size()];
+    protected void triple_relaxation(int[] relaxation_limit_index, int[] relaxation_index) {
 
 	relaxation_of_element = new NodeRelaxed[query_to_relax.getElementList()
 		.size()][];
@@ -71,13 +59,23 @@ public class HuangRelaxationStrategy {
 	    CElement element = query_to_relax.getElementList().get(i);
 	    relaxation_of_element[i] = (new TripleRelaxation(element, session,
 		    TripleRelaxation.SIM_ORDER)).get_relaxed_node_list();
-	    relexation_limit_index[i] = relaxation_of_element[i].length;
+	    relaxation_limit_index[i] = relaxation_of_element[i].length;
 	    relaxation_index[i] = 0;
 	}
+    }
+    
+    public void begin_relax_process() {
 
+	int[] relaxation_limit_index = new int[query_to_relax.getElementList()
+		.size()];
+	int[] relaxation_index = new int[query_to_relax.getElementList().size()];
+
+	already_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
+	triple_relaxation(relaxation_limit_index, relaxation_index);
 	relaxed_graph = new GraphRelaxationIndex(relaxation_index,
-		relexation_limit_index, true);
+		relaxation_limit_index, true);
 	relaxed_queries.add(relaxed_graph);
+
     }
 
     public CQuery next() {
@@ -92,19 +90,8 @@ public class HuangRelaxationStrategy {
 
 	for (int i = 0; i < current_graph.getElement_index().length; i++) {
 
-	    CElement relax_element = CElement.createCTriple(query_to_relax
-		    .getElementList().get(0).getElement());
-	    relax_element = relax_element
-		    .replace_subject(relaxation_of_element[i][current_graph
-			    .getElement_index()[i]].getNode_1());
-	    relax_element = relax_element
-		    .replace_predicat(relaxation_of_element[i][current_graph
-			    .getElement_index()[i]].getNode_2());
-	    relax_element = relax_element
-		    .replace_object(relaxation_of_element[i][current_graph
-			    .getElement_index()[i]].getNode_3());
-
-	    elt_relaxed_query.add(relax_element);
+	    elt_relaxed_query.add(getRelaxedElement(i,
+		    current_graph.getElement_index()[i]));
 	    this.current_similarity = this.current_similarity
 		    * relaxation_of_element[i][current_graph.getElement_index()[i]]
 			    .getSimilarity();
@@ -114,47 +101,47 @@ public class HuangRelaxationStrategy {
 	}
 
 	for (int j = 0; j < current_graph.getChild_elt().length; j++) {
-	    if(!alreadyRelaxed(current_graph.getChild_elt()[j])){
-		 this.insert(current_graph.getChild_elt()[j]);
+	    if (!alreadyRelaxed(current_graph.getChild_elt()[j])) {
+		this.insert(current_graph.getChild_elt()[j]);
 	    }
 	}
 
 	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query);
-	
+
 	return current_relaxed_query;
     }
 
     private boolean alreadyRelaxed(GraphRelaxationIndex graphRelaxationIndex) {
-	
+
 	boolean found = false;
 	int i = 0;
-	while((!found)&&(i<this.already_relaxed_queries.size())){
-	    found  = hasSameIndex(graphRelaxationIndex.getElement_index(), already_relaxed_queries.get(i).getElement_index());
-	    i = i+1;
+	while ((!found) && (i < this.already_relaxed_queries.size())) {
+	    found = hasSameIndex(graphRelaxationIndex.getElement_index(),
+		    already_relaxed_queries.get(i).getElement_index());
+	    i = i + 1;
 	}
-	if(found){
+	if (found) {
 	    return found;
 	}
 	i = 0;
-	while((!found)&&(i<this.relaxed_queries.size())){
-	    found  = hasSameIndex(graphRelaxationIndex.getElement_index(), relaxed_queries.get(i).getElement_index());
-	    i = i+1;
+	while ((!found) && (i < this.relaxed_queries.size())) {
+	    found = hasSameIndex(graphRelaxationIndex.getElement_index(),
+		    relaxed_queries.get(i).getElement_index());
+	    i = i + 1;
 	}
 	return found;
     }
 
+    private boolean hasSameIndex(int[] element_index, int[] other_element_index) {
 
-    private boolean hasSameIndex(int[] element_index,
-	    int[] other_element_index) {
-	
-	if(element_index!=other_element_index){
+	if (element_index != other_element_index) {
 	    return false;
 	}
 	boolean is_same = true;
-	int  i=0;
-	while ((is_same) && (i<other_element_index.length)){
+	int i = 0;
+	while ((is_same) && (i < other_element_index.length)) {
 	    is_same = is_same && other_element_index[i] == element_index[i];
-	    i = i +1;
+	    i = i + 1;
 	}
 	return is_same;
     }
@@ -193,6 +180,23 @@ public class HuangRelaxationStrategy {
 	}
     }
 
+    protected CElement getRelaxedElement(int num_triple, int relaxation_rank) {
+
+	CElement relax_element = CElement.createCTriple(query_to_relax
+		.getElementList().get(0).getElement());
+	relax_element = relax_element
+		.replace_subject(relaxation_of_element[num_triple][relaxation_rank]
+			.getNode_1());
+	relax_element = relax_element
+		.replace_predicat(relaxation_of_element[num_triple][relaxation_rank]
+			.getNode_2());
+	relax_element = relax_element
+		.replace_object(relaxation_of_element[num_triple][relaxation_rank]
+			.getNode_3());
+
+	return relax_element;
+    }
+
     public boolean hasNext() {
 
 	return (!this.relaxed_queries.isEmpty());
@@ -223,7 +227,7 @@ public class HuangRelaxationStrategy {
      * @return the current_relaxed_query
      */
     public CQuery getCurrent_relaxed_query() {
-        return current_relaxed_query;
+	return current_relaxed_query;
     }
 
     /**

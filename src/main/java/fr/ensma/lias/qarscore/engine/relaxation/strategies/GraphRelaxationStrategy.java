@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation.strategy;
+package fr.ensma.lias.qarscore.engine.relaxation.strategies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,41 +26,28 @@ import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.operators.TripleRelaxation;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
-import fr.ensma.lias.qarscore.engine.relaxation.utils.NodeRelaxed;
 
 /**
  * @author Geraud FOKOU
  */
-public class GraphRelaxationStrategy extends HuangRelaxationStrategy{
+public class GraphRelaxationStrategy extends HuangRelaxationStrategy {
 
     public GraphRelaxationStrategy(CQuery query, Session s) {
-	query_to_relax = query;
-	session = s;
-	relaxed_queries = new ArrayList<GraphRelaxationIndex>();
-	start_relaxation();
+	super(query, s);
     }
 
-    protected void start_relaxation() {
-
-	int[] relexation_limit_index = new int[query_to_relax.getElementList()
+    public void begin_relax_process() {
+	
+	int[] relaxation_limit_index = new int[query_to_relax.getElementList()
 		.size()];
 	int[] relaxation_index = new int[query_to_relax.getElementList().size()];
 
-	relaxation_of_element = new NodeRelaxed[query_to_relax.getElementList()
-		.size()][];
-	for (int i = 0; i < query_to_relax.getElementList().size(); i++) {
-	    CElement element = query_to_relax.getElementList().get(i);
-	    relaxation_of_element[i] = (new TripleRelaxation(element, session,
-		    TripleRelaxation.SIM_ORDER)).get_relaxed_node_list();
-	    relexation_limit_index[i] = relaxation_of_element[i].length;
-	    relaxation_index[i] = 0;
-	}
-
+	triple_relaxation(relaxation_limit_index, relaxation_index);
 	relaxed_graph = new GraphRelaxationIndex(relaxation_index,
-		relexation_limit_index);
+		relaxation_limit_index, true);
 	relaxed_queries.add(relaxed_graph);
+
     }
 
     public CQuery next() {
@@ -75,19 +62,8 @@ public class GraphRelaxationStrategy extends HuangRelaxationStrategy{
 
 	for (int i = 0; i < current_graph.getElement_index().length; i++) {
 
-	    CElement relax_element = CElement.createCTriple(query_to_relax
-		    .getElementList().get(0).getElement());
-	    relax_element = relax_element
-		    .replace_subject(relaxation_of_element[i][current_graph
-			    .getElement_index()[i]].getNode_1());
-	    relax_element = relax_element
-		    .replace_predicat(relaxation_of_element[i][current_graph
-			    .getElement_index()[i]].getNode_2());
-	    relax_element = relax_element
-		    .replace_object(relaxation_of_element[i][current_graph
-			    .getElement_index()[i]].getNode_3());
-
-	    elt_relaxed_query.add(relax_element);
+	    elt_relaxed_query.add(getRelaxedElement(i,
+		    current_graph.getElement_index()[i]));
 	    this.current_similarity = this.current_similarity
 		    * relaxation_of_element[i][current_graph.getElement_index()[i]]
 			    .getSimilarity();
@@ -101,7 +77,8 @@ public class GraphRelaxationStrategy extends HuangRelaxationStrategy{
 	}
 
 	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query);
-	
+
 	return current_relaxed_query;
     }
+
 }

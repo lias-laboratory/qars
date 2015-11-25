@@ -28,86 +28,99 @@ import java.util.List;
 public class GraphRelaxationIndex {
 
     private int[] element_index_limit;
-
     private int[] element_index;
-    private GraphRelaxationIndex[] child_elt;
+    private int start_index = 0;
+    private boolean with_redundance;
 
     public GraphRelaxationIndex(int[] index, int[] index_limit) {
 
 	element_index = index;
 	element_index_limit = index_limit;
-	generate_child(this, 0);
+	start_index = 0;
+	with_redundance = false;
     }
 
-    public GraphRelaxationIndex(int[] index, int[] index_limit, boolean redundant) {
+    public GraphRelaxationIndex(int[] index, int[] index_limit,
+	    boolean redundant) {
 
 	element_index = index;
 	element_index_limit = index_limit;
-	if(!redundant){
-	    generate_child(this, 0);
-	}
-	else {
-	    generate_child(this);
-	}
+	start_index = 0;
+	with_redundance = redundant;
     }
 
-    public GraphRelaxationIndex(int[] index, int[] index_limit, int start_index) {
+    public GraphRelaxationIndex(int[] index, int[] index_limit, int s_index) {
 
 	element_index = index;
 	element_index_limit = index_limit;
-	generate_child(this, start_index);
+	start_index = s_index;
+	with_redundance = false;
     }
 
-    
-    private void generate_child(GraphRelaxationIndex element_index2, int start_index) {
+    private GraphRelaxationIndex[] generate_distinct_child() {
 
 	List<GraphRelaxationIndex> child_list = new ArrayList<GraphRelaxationIndex>();
-	for (int i = start_index; i < element_index2.element_index.length; i++) {
-	    if (element_index2.element_index[i] + 1 < element_index_limit[i]) {
-		int [] child = new int [element_index2.element_index.length];
-		for(int j=0; j<element_index2.element_index.length; j++){
-		    child[j] = element_index2.element_index[j];
+
+	for (int i = start_index; i < element_index.length; i++) {
+	    if (element_index[i] + 1 < element_index_limit[i]) {
+		int[] child = new int[element_index.length];
+		for (int j = 0; j < element_index.length; j++) {
+		    child[j] = element_index[j];
 		}
-		child[i] = element_index2.element_index[i] + 1;
-		child_list.add(new GraphRelaxationIndex(child, element_index_limit, i));
+		child[i] = element_index[i] + 1;
+		child_list.add(new GraphRelaxationIndex(child,
+			element_index_limit, i));
 	    }
 	}
-	child_elt = new GraphRelaxationIndex[child_list.size()];
-	for(int i=0; i<child_list.size(); i++){
+
+	GraphRelaxationIndex[] child_elt = new GraphRelaxationIndex[child_list
+		.size()];
+	for (int i = 0; i < child_list.size(); i++) {
 	    child_elt[i] = child_list.get(i);
 	}
+	return child_elt;
     }
 
-    private void generate_child(GraphRelaxationIndex element_index2) {
+    private GraphRelaxationIndex[] generate_redundant_child() {
 
 	List<GraphRelaxationIndex> child_list = new ArrayList<GraphRelaxationIndex>();
-	for (int i = 0; i < element_index2.element_index.length; i++) {
-	    if (element_index2.element_index[i] + 1 < element_index_limit[i]) {
-		int [] child = new int [element_index2.element_index.length];
-		for(int j=0; j<element_index2.element_index.length; j++){
-		    child[j] = element_index2.element_index[j];
+	for (int i = 0; i < element_index.length; i++) {
+	    if (element_index[i] + 1 < element_index_limit[i]) {
+		int[] child = new int[element_index.length];
+		for (int j = 0; j < element_index.length; j++) {
+		    child[j] = element_index[j];
 		}
-		child[i] = element_index2.element_index[i] + 1;
-		child_list.add(new GraphRelaxationIndex(child, element_index_limit, true));
+		child[i] = element_index[i] + 1;
+		child_list.add(new GraphRelaxationIndex(child,
+			element_index_limit, true));
 	    }
 	}
-	child_elt = new GraphRelaxationIndex[child_list.size()];
-	for(int i=0; i<child_list.size(); i++){
+
+	GraphRelaxationIndex[] child_elt = new GraphRelaxationIndex[child_list
+		.size()];
+	for (int i = 0; i < child_list.size(); i++) {
 	    child_elt[i] = child_list.get(i);
 	}
+	return child_elt;
+
     }
 
     /**
      * @return the element_index
      */
     public int[] getElement_index() {
-        return element_index;
+	return element_index;
     }
 
     /**
      * @return the child_elt
      */
     public GraphRelaxationIndex[] getChild_elt() {
-        return child_elt;
+
+	if (this.with_redundance) {
+	    return generate_redundant_child();
+	} else {
+	    return generate_distinct_child();
+	}
     }
 }

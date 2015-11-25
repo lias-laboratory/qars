@@ -60,7 +60,7 @@ public class SessionJenaTDB extends JenaSession {
 	information_content = new HashMap<Resource, Double>();
 	
 	ExtendedIterator<OntClass> listClass = this.getOntology().listClasses();
-
+	
 	while (listClass.hasNext()) {
 	    OntClass currentClass = listClass.next();
 	    double classe_size = getInstanceNumber(currentClass);

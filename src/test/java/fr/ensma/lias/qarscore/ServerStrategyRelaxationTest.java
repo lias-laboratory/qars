@@ -40,9 +40,9 @@ import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.GraphRelaxationStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.HuangRelaxationStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.MFSRelaxationGraph;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.GraphRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.HuangRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.MFSRelaxationStrategy;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -194,7 +194,7 @@ public class ServerStrategyRelaxationTest extends InitTest {
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_1);
 
-	MFSRelaxationGraph relaxed_query = new MFSRelaxationGraph(
+	MFSRelaxationStrategy relaxed_query = new MFSRelaxationStrategy(
 		conjunctiveQuery, sessionJena);
 	boolean hasTopk = false;
 	int number_answers = 0;

@@ -36,6 +36,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.log4j.Logger;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
@@ -89,7 +90,7 @@ public abstract class JenaSession implements Session {
     protected double getInstanceNumber(OntClass classe) {
 
 	int number = classe.listInstances(true).toList().size();
-	List<OntClass> subclasses = classe.listSubClasses(true).toList();
+	List<OntClass> subclasses = classe.listSubClasses().toList();
 
 	while (!subclasses.isEmpty()) {
 
@@ -103,7 +104,7 @@ public abstract class JenaSession implements Session {
 	    }
 
 	    number = number + currentClass.listInstances(true).toList().size();
-	    subclasses.addAll(currentClass.listSubClasses(true).toList());
+//	    subclasses.addAll(currentClass.listSubClasses(true).toList());
 	}
 	return number;
     }
@@ -117,6 +118,16 @@ public abstract class JenaSession implements Session {
     protected double getInstanceNumber(OntProperty property) {
 	
 	int number = this.ontology.listResourcesWithProperty(property, null).toList().size();
+	List<OntProperty> subproperties = new ArrayList<OntProperty>();
+	subproperties.addAll(property.listSubProperties().toList());
+
+	while (!subproperties.isEmpty()) {
+
+	    OntProperty currentProperty = (OntProperty) subproperties.get(0);
+	    subproperties.remove(currentProperty);   
+	    number = number + this.ontology.listResourcesWithProperty(currentProperty, null).toList().size();
+//	    subproperties.addAll(currentProperty.listSubProperties(true).toList());
+	}
 	return number;
     }
 
@@ -369,8 +380,13 @@ public abstract class JenaSession implements Session {
 	}
 
 	double ic_lcc = 0;
+	try {
+	    ic_lcc = information_content.get(least_common_class);
+	} catch (NullPointerException e){
+	   Logger.getRootLogger().debug(e.getMessage());
+	   return 0;
+	}
 	
-	ic_lcc = information_content.get(least_common_class);
 	
 	double ic_class1 = 0;
 	double ic_class2 = 0;

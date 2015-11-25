@@ -29,16 +29,16 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.GraphRelaxationStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.HuangRelaxationStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategy.MFSRelaxationGraph;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.GraphRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.HuangRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.MFSRelaxationStrategy;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Mickael BARON
  * @author Geraud FOKOU
  */
-public class BenchmarkTest {
+public class BenchmarkSearchMFSTest {
 
     /**
      * set test parameter
@@ -56,7 +56,7 @@ public class BenchmarkTest {
     /**
      * looger tools
      */
-    private Logger logger = Logger.getLogger(BenchmarkTest.class);
+    private Logger logger = Logger.getLogger(BenchmarkSearchMFSTest.class);
     private static PatternLayout layout;
     private FileAppender fileAppender;
     /**
@@ -160,7 +160,7 @@ public class BenchmarkTest {
     protected List<QueryExplain> newTestResultPairList(final String filename)
 	    throws IOException {
 	final List<QueryExplain> queries = new ArrayList<QueryExplain>();
-	final URL fileUrl = BenchmarkTest.class.getResource(filename);
+	final URL fileUrl = BenchmarkSearchMFSTest.class.getResource(filename);
 	final FileReader file = new FileReader(fileUrl.getFile());
 	BufferedReader in = null;
 	try {
@@ -393,7 +393,7 @@ public class BenchmarkTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
-	    MFSRelaxationGraph relaxed_query = new MFSRelaxationGraph(
+	    MFSRelaxationStrategy relaxed_query = new MFSRelaxationStrategy(
 		    conjunctiveQuery, session);
 
 	    boolean hasTopk = false;

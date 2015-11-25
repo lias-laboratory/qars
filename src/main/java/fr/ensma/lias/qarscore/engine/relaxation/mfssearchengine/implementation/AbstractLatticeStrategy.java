@@ -61,8 +61,15 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	if (!query.isValidQuery()) {
 	    return;
 	}
-
-	CQuery anCause = getFirstOneMFS(query);
+	
+	/**
+	 * If you aren't sure that query is an empty query
+	 */
+	CQuery anCause = getOneMFS(query);
+	/**
+	 * if you are sure that query is an empty query
+	 */
+	//CQuery anCause = getFirstOneMFS(query);
 	
 	if (anCause.getElementList().isEmpty()) {
 	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
