@@ -100,8 +100,8 @@
 				<version>2.16</version>
 				<configuration>
 					<argLine>-Xmx12g -Xms8g </argLine>
-					<skipTests>false</skipTests>
-					<test>BenchmarkTest.java</test>
+					<skipTests>true</skipTests>
+					<test>BenchmarkStrategiesTest.java</test>
 				</configuration>
 			</plugin>
 			<plugin>

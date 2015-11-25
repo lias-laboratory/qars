@@ -31,7 +31,10 @@ import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.strategies.GraphRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.strategies.HuangRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.INCFULLMFSRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.strategies.MFSRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.MFSUpdateRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.SYSFULLMFSRelaxationStrategy;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -44,7 +47,6 @@ public class BenchmarkStrategiesTest {
      * set test parameter
      */
     private static final int NB_EXEC = 1;
-    // private static final int NB_QUERY_BY_TYPE = 5;
     private static final int INDEX_OF_REPOSITORY = 0;
     private final int TOP_K = 10;
     /**
@@ -52,7 +54,7 @@ public class BenchmarkStrategiesTest {
      */
     private static Session session;
     public MFSSearch relaxationStrategy;
-    
+
     /**
      * looger tools
      */
@@ -69,9 +71,12 @@ public class BenchmarkStrategiesTest {
      * Set repository folder linux
      */
     private static List<String> repository = Arrays.asList(
-	    "/home/lias/tdb1repository", "/home/lias/tdb5repository",
-	    "/home/lias/tdb100repository", "/home/lias/tdb250repository",
-	    "/home/lias/tdb500repository", "/home/lias/tdb750repository");
+	    "/home/lias/tdb1repository-saturated",
+	    "/home/lias/tdb5repository-saturated",
+	    "/home/lias/tdb100repository-saturated",
+	    "/home/lias/tdb250repository-saturated",
+	    "/home/lias/tdb500repository-saturated",
+	    "/home/lias/tdb750repository-saturated");
 
     /**
      * Set repository folder linux
@@ -85,6 +90,7 @@ public class BenchmarkStrategiesTest {
     private final String QUERIES_STAR_FILE = "queries-star.test";
     private final String QUERIES_CHAIN_FILE = "queries-chain.test";
     private final String QUERIES_COMPOSITE_FILE = "queries-composite.test";
+    private final String QUERIES_HUANG_FILE = "queries-huang.test";
 
     // private final String QUERIES_SCALE_STAR_FILE =
     // "queries-star-scalability.test";
@@ -280,7 +286,7 @@ public class BenchmarkStrategiesTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
+	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
 	Properties.setOntoLang("OWL");
 	session = SessionFactory.getTDBSession(repository
 		.get(INDEX_OF_REPOSITORY));
@@ -313,31 +319,35 @@ public class BenchmarkStrategiesTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
+	    long begin = System.currentTimeMillis();
 	    HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(
 		    conjunctiveQuery, session);
-
+	    relaxed_query.begin_relax_process();
 	    boolean hasTopk = false;
 	    int number_answers = 0;
-	    int numberRelaxedQueryExecuted = 0;
-	    long begin = System.currentTimeMillis();
-
+	    int number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = session.createStatement(relaxed_query
 			.next().toString());
-		number_answers = number_answers + stm.getResultSetSize();
-		numberRelaxedQueryExecuted = numberRelaxedQueryExecuted + 1;
-		logger.info(
-			relaxed_query.getCurrent_relaxed_query().toString()
-				+ " " + relaxed_query.getCurrent_similarity()
-				+ " " + relaxed_query.getCurrent_level() + " "
-				+ number_answers);
+		int query_answers_size = stm.getResultSetSize();
+		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
-	    }
 
+		number_relaxed_queries = number_relaxed_queries + 1;
+		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
+			+ " " + relaxed_query.getCurrent_similarity() + " "
+			+ relaxed_query.getCurrent_level() + " "
+			+ query_answers_size);
+
+	    }
 	    long end = System.currentTimeMillis();
 	    float duration = ((float) (end - begin));
-	    newResultExplain.add(queryExplain.getDescription(), duration
-		    / NB_EXEC, numberRelaxedQueryExecuted / NB_EXEC);
+	    logger.info(number_relaxed_queries + " " + duration + " "
+		    + number_answers);
+	    /*
+	     * newResultExplain.add(queryExplain.getDescription(), duration /
+	     * NB_EXEC, number_relaxed_queries / NB_EXEC);
+	     */
 	}
 
 	try {
@@ -353,31 +363,31 @@ public class BenchmarkStrategiesTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
+	    long begin = System.currentTimeMillis();
 	    GraphRelaxationStrategy relaxed_query = new GraphRelaxationStrategy(
 		    conjunctiveQuery, session);
-
+	    relaxed_query.begin_relax_process();
 	    boolean hasTopk = false;
 	    int number_answers = 0;
-	    int numberRelaxedQueryExecuted = 0;
-	    long begin = System.currentTimeMillis();
-
+	    int number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = session.createStatement(relaxed_query
 			.next().toString());
-		number_answers = number_answers + stm.getResultSetSize();
-		numberRelaxedQueryExecuted = numberRelaxedQueryExecuted + 1;
-		logger.info(
-			relaxed_query.getCurrent_relaxed_query().toString()
-				+ " " + relaxed_query.getCurrent_similarity()
-				+ " " + relaxed_query.getCurrent_level() + " "
-				+ number_answers);
+		int query_answers_size = stm.getResultSetSize();
+		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
+
+		number_relaxed_queries = number_relaxed_queries + 1;
+		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
+			+ " " + relaxed_query.getCurrent_similarity() + " "
+			+ relaxed_query.getCurrent_level() + " "
+			+ query_answers_size);
 	    }
 
 	    long end = System.currentTimeMillis();
-	    float duration = ((float) (end - begin));
-	    newResultExplain.add(queryExplain.getDescription(), duration
-		    / NB_EXEC, numberRelaxedQueryExecuted / NB_EXEC);
+	    long duration = end - begin;
+	    logger.info(number_relaxed_queries + " " + duration + " "
+		    + number_answers);
 	}
 
 	try {
@@ -393,31 +403,197 @@ public class BenchmarkStrategiesTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
+	    long begin = System.currentTimeMillis();
 	    MFSRelaxationStrategy relaxed_query = new MFSRelaxationStrategy(
 		    conjunctiveQuery, session);
-
+	    relaxed_query.begin_relax_process();
 	    boolean hasTopk = false;
 	    int number_answers = 0;
-	    int numberRelaxedQueryExecuted = 0;
-	    long begin = System.currentTimeMillis();
-
+	    int number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = session.createStatement(relaxed_query
 			.next().toString());
-		number_answers = number_answers + stm.getResultSetSize();
-		numberRelaxedQueryExecuted = numberRelaxedQueryExecuted + 1;
+		int query_answers_size = stm.getResultSetSize();
+		number_answers = number_answers + query_answers_size;
+		hasTopk = number_answers >= TOP_K;
+
+		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(
 			relaxed_query.getCurrent_relaxed_query().toString()
 				+ " " + relaxed_query.getCurrent_similarity()
 				+ " " + relaxed_query.getCurrent_level() + " "
-				+ number_answers);
-		hasTopk = number_answers >= TOP_K;
+				+ query_answers_size);
 	    }
 
 	    long end = System.currentTimeMillis();
 	    float duration = ((float) (end - begin));
+	    int number_queries_mfs = ((AbstractLatticeStrategy) relaxed_query
+		    .getMFSSearchEngine()).number_of_query_executed;
+	    long duration_mfs_search = ((AbstractLatticeStrategy) relaxed_query
+		    .getMFSSearchEngine()).duration_of_execution;
+	    logger.info(
+		    number_queries_mfs + " " + duration_mfs_search + " "
+			    + number_relaxed_queries + " " + duration + " "
+			    + number_answers);
+
 	    newResultExplain.add(queryExplain.getDescription(), duration
-		    / NB_EXEC, numberRelaxedQueryExecuted / NB_EXEC);
+		    / NB_EXEC, number_relaxed_queries / NB_EXEC);
+	}
+
+	try {
+	    newResultExplain.generateReport();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    private void testRelaxationWithUpdateMFSStrategy() {
+
+	for (QueryExplain queryExplain : newTestResultPairList) {
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
+	    long begin = System.currentTimeMillis();
+	    MFSUpdateRelaxationStrategy relaxed_query = new MFSUpdateRelaxationStrategy(
+		    conjunctiveQuery, session);
+	    relaxed_query.begin_relax_process();
+	    boolean hasTopk = false;
+	    int number_answers = 0;
+	    int number_relaxed_queries = 0;
+	    while ((!hasTopk) && (relaxed_query.hasNext())) {
+		QueryStatement stm = session.createStatement(relaxed_query
+			.next().toString());
+		int query_answers_size = stm.getResultSetSize();
+		number_answers = number_answers + query_answers_size;
+		hasTopk = number_answers >= TOP_K;
+
+		number_relaxed_queries = number_relaxed_queries + 1;
+		logger.info(
+			relaxed_query.getCurrent_relaxed_query().toString()
+				+ " " + relaxed_query.getCurrent_similarity()
+				+ " " + relaxed_query.getCurrent_level() + " "
+				+ query_answers_size);
+	    }
+
+	    long end = System.currentTimeMillis();
+	    float duration = ((float) (end - begin));
+	    int number_queries_mfs = ((AbstractLatticeStrategy) relaxed_query
+		    .getMFSSearchEngine()).number_of_query_executed;
+	    long duration_mfs_search = ((AbstractLatticeStrategy) relaxed_query
+		    .getMFSSearchEngine()).duration_of_execution;
+	    int number_check_queries = relaxed_query.number_check_queries;
+	    logger.info(
+		    number_check_queries + " " + number_queries_mfs + " "
+			    + duration_mfs_search + " "
+			    + number_relaxed_queries + " " + duration + " "
+			    + number_answers);
+
+	    newResultExplain.add(queryExplain.getDescription(), duration
+		    / NB_EXEC, number_relaxed_queries / NB_EXEC);
+	}
+
+	try {
+	    newResultExplain.generateReport();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    private void testRelaxationWithFullIncMFSStrategy() {
+
+	for (QueryExplain queryExplain : newTestResultPairList) {
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
+	    long begin = System.currentTimeMillis();
+	    INCFULLMFSRelaxationStrategy relaxed_query = new INCFULLMFSRelaxationStrategy(
+		    conjunctiveQuery, session);
+	    relaxed_query.begin_relax_process();
+	    boolean hasTopk = false;
+	    int number_answers = 0;
+	    int number_relaxed_queries = 0;
+	    while ((!hasTopk) && (relaxed_query.hasNext())) {
+		QueryStatement stm = session.createStatement(relaxed_query
+			.next().toString());
+		int query_answers_size = stm.getResultSetSize();
+		number_answers = number_answers + query_answers_size;
+		hasTopk = number_answers >= TOP_K;
+
+		number_relaxed_queries = number_relaxed_queries + 1;
+		logger.info(
+			relaxed_query.getCurrent_relaxed_query().toString()
+				+ " " + relaxed_query.getCurrent_similarity()
+				+ " " + relaxed_query.getCurrent_level() + " "
+				+ query_answers_size);
+	    }
+
+	    long end = System.currentTimeMillis();
+	    float duration = ((float) (end - begin));
+	    int number_queries_mfs = ((AbstractLatticeStrategy) relaxed_query
+		    .getMFSSearchEngine()).number_of_query_executed;
+	    long duration_mfs_search = ((AbstractLatticeStrategy) relaxed_query
+		    .getMFSSearchEngine()).duration_of_execution;
+	    int number_check_queries = relaxed_query.number_check_queries;
+	    logger.info(
+		    number_check_queries + " " + number_queries_mfs + " "
+			    + duration_mfs_search + " "
+			    + number_relaxed_queries + " " + duration + " "
+			    + number_answers);
+
+	    newResultExplain.add(queryExplain.getDescription(), duration
+		    / NB_EXEC, number_relaxed_queries / NB_EXEC);
+	}
+
+	try {
+	    newResultExplain.generateReport();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    private void testRelaxationWithFullSysMFSStrategy() {
+
+	for (QueryExplain queryExplain : newTestResultPairList) {
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
+	    long begin = System.currentTimeMillis();
+	    SYSFULLMFSRelaxationStrategy relaxed_query = new SYSFULLMFSRelaxationStrategy(
+		    conjunctiveQuery, session);
+	    relaxed_query.begin_relax_process();
+	    boolean hasTopk = false;
+	    int number_answers = 0;
+	    int number_relaxed_queries = 0;
+	    while ((!hasTopk) && (relaxed_query.hasNext())) {
+		QueryStatement stm = session.createStatement(relaxed_query
+			.next().toString());
+		int query_answers_size = stm.getResultSetSize();
+		number_answers = number_answers + query_answers_size;
+		hasTopk = number_answers >= TOP_K;
+
+		number_relaxed_queries = number_relaxed_queries + 1;
+		logger.info(
+			relaxed_query.getCurrent_relaxed_query().toString()
+				+ " " + relaxed_query.getCurrent_similarity()
+				+ " " + relaxed_query.getCurrent_level() + " "
+				+ query_answers_size);
+	    }
+
+	    long end = System.currentTimeMillis();
+	    float duration = ((float) (end - begin));
+	    int number_queries_mfs = ((AbstractLatticeStrategy) relaxed_query
+		    .getMFSSearchEngine()).number_of_query_executed;
+	    long duration_mfs_search = ((AbstractLatticeStrategy) relaxed_query
+		    .getMFSSearchEngine()).duration_of_execution;
+	    int number_check_queries = relaxed_query.number_check_queries;
+	    logger.info(
+		    number_check_queries + " " + number_queries_mfs + " "
+			    + duration_mfs_search + " "
+			    + number_relaxed_queries + " " + duration + " "
+			    + number_answers);
+
+	    newResultExplain.add(queryExplain.getDescription(), duration
+		    / NB_EXEC, number_relaxed_queries / NB_EXEC);
 	}
 
 	try {
@@ -442,14 +618,10 @@ public class BenchmarkStrategiesTest {
 	 * Huang relaxation strategy test
 	 ********************************/
 
-	String fileCSV = "exp-" + "star" + "-" + "Huang_relaxation" + "-"
-		+ "Jena" + "-" + "lubm"
-		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
-	
 	String logfile = "exp-" + "star" + "-" + "Huang_relaxation" + "-"
 		+ "Jena" + "-" + "lubm"
 		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
+
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
@@ -458,22 +630,17 @@ public class BenchmarkStrategiesTest {
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
 
-	newResultExplain = new ResultExplain(fileCSV);
-	
+
 	testRelaxationWithHuangStrategy();
 
 	/***********************************
 	 * Graph relaxation strategy test
 	 ********************************/
 
-	fileCSV = "exp-" + "star" + "-" + "Graph_relaxation" + "-" + "Jena"
+	logfile = "exp-" + "star" + "-" + "Graph_relaxation" + "-" + "Jena"
 		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
-		+ ".csv";
+		+ ".log";
 
-	logfile = "exp-" + "star" + "-" + "Graph_relaxation" + "-"
-		+ "Jena" + "-" + "lubm"
-		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
@@ -481,8 +648,7 @@ public class BenchmarkStrategiesTest {
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
-	
-	newResultExplain = new ResultExplain(fileCSV);
+
 
 	testRelaxationWithGraphStrategy();
 
@@ -490,13 +656,9 @@ public class BenchmarkStrategiesTest {
 	 * MFS relaxation strategy test
 	 ********************************/
 
-	fileCSV = "exp-" + "star" + "-" + "MFS_relaxation" + "-" + "Jena" + "-"
-		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+	logfile = "exp-" + "star" + "-" + "MFS_relaxation" + "-" + "Jena" + "-"
+		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
 
-	logfile = "exp-" + "star" + "-" + "MFS_relaxation" + "-"
-		+ "Jena" + "-" + "lubm"
-		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
@@ -505,15 +667,65 @@ public class BenchmarkStrategiesTest {
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
 
-	newResultExplain = new ResultExplain(fileCSV);
-
 	testRelaxationWithMFSStrategy();
+	
+	/***********************************
+	 * UPDATE MFS relaxation strategy test
+	 ********************************/
+
+	logfile = "exp-" + "star" + "-" + "UPDATE_MFS_relaxation" + "-" + "Jena" + "-"
+		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	testRelaxationWithUpdateMFSStrategy();
+
+	/***********************************
+	 * FULL INC MFS relaxation strategy test
+	 ********************************/
+
+	logfile = "exp-" + "star" + "-" + "FULL_INC_MFS_relaxation" + "-" + "Jena" + "-"
+		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	testRelaxationWithFullIncMFSStrategy();
+
+	/***********************************
+	 * FULL SYS MFS relaxation strategy test
+	 ********************************/
+
+	logfile = "exp-" + "star" + "-" + "FULL_SYS_MFS_relaxation" + "-" + "Jena" + "-"
+		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
+
+	fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setThreshold(Priority.DEBUG);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.addAppender(fileAppender);
+
+	testRelaxationWithFullIncMFSStrategy();
+
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void testChainLUBM() throws Exception {
-	
+
 	newTestResultPairList = this.newTestResultPairList("/"
 		+ QUERIES_CHAIN_FILE);
 
@@ -524,11 +736,11 @@ public class BenchmarkStrategiesTest {
 	String fileCSV = "exp-" + "chain" + "-" + "Huang_relaxation" + "-"
 		+ "Jena" + "-" + "lubm"
 		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
-	
+
 	String logfile = "exp-" + "chain" + "-" + "Huang_relaxation" + "-"
 		+ "Jena" + "-" + "lubm"
 		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
+
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
@@ -538,7 +750,7 @@ public class BenchmarkStrategiesTest {
 	logger.addAppender(fileAppender);
 
 	newResultExplain = new ResultExplain(fileCSV);
-	
+
 	testRelaxationWithHuangStrategy();
 
 	/***********************************
@@ -549,10 +761,10 @@ public class BenchmarkStrategiesTest {
 		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
 		+ ".csv";
 
-	logfile = "exp-" + "chain" + "-" + "Graph_relaxation" + "-"
-		+ "Jena" + "-" + "lubm"
-		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
+	logfile = "exp-" + "chain" + "-" + "Graph_relaxation" + "-" + "Jena"
+		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
+		+ ".log";
+
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
@@ -560,7 +772,7 @@ public class BenchmarkStrategiesTest {
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
-	
+
 	newResultExplain = new ResultExplain(fileCSV);
 
 	testRelaxationWithGraphStrategy();
@@ -569,13 +781,14 @@ public class BenchmarkStrategiesTest {
 	 * MFS relaxation strategy test
 	 ********************************/
 
-	fileCSV = "exp-" + "chain" + "-" + "MFS_relaxation" + "-" + "Jena" + "-"
-		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+	fileCSV = "exp-" + "chain" + "-" + "MFS_relaxation" + "-" + "Jena"
+		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
+		+ ".csv";
 
-	logfile = "exp-" + "chain" + "-" + "MFS_relaxation" + "-"
-		+ "Jena" + "-" + "lubm"
-		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
+	logfile = "exp-" + "chain" + "-" + "MFS_relaxation" + "-" + "Jena"
+		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
+		+ ".log";
+
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
@@ -593,7 +806,7 @@ public class BenchmarkStrategiesTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testCompositeLUBM() throws Exception {
-	
+
 	newTestResultPairList = this.newTestResultPairList("/"
 		+ QUERIES_COMPOSITE_FILE);
 
@@ -605,11 +818,10 @@ public class BenchmarkStrategiesTest {
 		+ "Jena" + "-" + "lubm"
 		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
 
-	
 	String logfile = "exp-" + "composite" + "-" + "Huang_relaxation" + "-"
 		+ "Jena" + "-" + "lubm"
 		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
+
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
@@ -619,21 +831,21 @@ public class BenchmarkStrategiesTest {
 	logger.addAppender(fileAppender);
 
 	newResultExplain = new ResultExplain(fileCSV);
-	
+
 	testRelaxationWithHuangStrategy();
 
 	/***********************************
 	 * Graph relaxation strategy test
 	 ********************************/
 
-	fileCSV = "exp-" + "composite" + "-" + "Graph_relaxation" + "-" + "Jena"
-		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
-		+ ".csv";
+	fileCSV = "exp-" + "composite" + "-" + "Graph_relaxation" + "-"
+		+ "Jena" + "-" + "lubm"
+		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
 
 	logfile = "exp-" + "composite" + "-" + "Graph_relaxation" + "-"
 		+ "Jena" + "-" + "lubm"
 		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
+
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
@@ -641,7 +853,7 @@ public class BenchmarkStrategiesTest {
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
-	
+
 	newResultExplain = new ResultExplain(fileCSV);
 
 	testRelaxationWithGraphStrategy();
@@ -650,13 +862,14 @@ public class BenchmarkStrategiesTest {
 	 * MFS relaxation strategy test
 	 ********************************/
 
-	fileCSV = "exp-" + "composite" + "-" + "MFS_relaxation" + "-" + "Jena" + "-"
-		+ "lubm" + repository_alias.get(INDEX_OF_REPOSITORY) + ".csv";
+	fileCSV = "exp-" + "composite" + "-" + "MFS_relaxation" + "-" + "Jena"
+		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
+		+ ".csv";
 
-	logfile = "exp-" + "composite" + "-" + "MFS_relaxation" + "-"
-		+ "Jena" + "-" + "lubm"
-		+ repository_alias.get(INDEX_OF_REPOSITORY) + ".log";
-	
+	logfile = "exp-" + "composite" + "-" + "MFS_relaxation" + "-" + "Jena"
+		+ "-" + "lubm" + repository_alias.get(INDEX_OF_REPOSITORY)
+		+ ".log";
+
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);

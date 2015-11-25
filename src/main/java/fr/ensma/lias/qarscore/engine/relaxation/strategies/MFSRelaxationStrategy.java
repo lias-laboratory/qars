@@ -141,7 +141,7 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	return has_mfs;
     }
 
-    protected MFSSearch getMFSSearchEngine() {
+    public MFSSearch getMFSSearchEngine() {
 	return mfs_finders;
     }
 }
