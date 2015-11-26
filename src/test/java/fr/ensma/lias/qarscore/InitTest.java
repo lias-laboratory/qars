@@ -34,8 +34,8 @@ public class InitTest {
 
     public static Session sessionJena;
     public static Session sessionSesame;
-    public static String tdb_path = "C:/TDB/UBA";
-//    public static String tdb_path = "/home/lias/tdb5repository-saturated";
+//    public static String tdb_path = "C:/TDB/UBA";
+    public static String tdb_path = "/home/lias/tdb5repository-saturated";
     public static String tdb_alias = "tdb5";
     
     public final int TOP_K = 10;
@@ -48,8 +48,8 @@ public class InitTest {
      */
     @Before
     public void setUp(){
-//	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);		
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
+	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);		
+//	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
 	sessionJena = SessionFactory.getTDBSession(tdb_path);
     }
