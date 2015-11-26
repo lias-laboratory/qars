@@ -35,6 +35,11 @@
 		<appender-ref ref="console" />
 	</logger>
 
+	<logger name="fr.ensma.lias.qarscore.connection.SessionTDBTest">
+		<level value="debug" />
+		<appender-ref ref="ROLL" />
+	</logger>
+
 <!--  	<logger name="fr.ensma.lias.qarscore.ResultExplain">
 		<level value="debug" />
  		<appender-ref ref="file" />

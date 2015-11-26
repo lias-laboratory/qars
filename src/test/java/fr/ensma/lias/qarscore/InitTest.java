@@ -33,8 +33,9 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class InitTest {
 
     public final int TOP_K = 10;
-    public String repository_path = "target/Sesame/NativeRepository/LUBM1";
-    public String tdb_path = "C:/TDB/UBA";
+    public String repository_path = "target/Sesame/NativeRepository/LUBM1";  
+    public String tdb_path = "/home/lias/tdb100repository-saturated";
+//    public String tdb_path = "C:/TDB/UBA";
     public Session sessionJena, sessionSesame;
     
 
