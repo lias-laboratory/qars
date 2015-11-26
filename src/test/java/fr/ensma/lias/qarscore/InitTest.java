@@ -32,15 +32,20 @@ import fr.ensma.lias.qarscore.properties.Properties;
  */
 public class InitTest {
 
+    public static Session sessionJena;
+    public static Session sessionSesame;
+    public static String tdb_path = "/home/lias/tdb100repository-saturated";
+    public static String tdb_alias = "tdb100";
+    
     public final int TOP_K = 10;
     public String repository_path = "target/Sesame/NativeRepository/LUBM1";  
-    public String tdb_path = "/home/lias/tdb100repository-saturated";
+
 //    public String tdb_path = "C:/TDB/UBA";
-    public Session sessionJena, sessionSesame;
     
 
     /**
      * @throws java.lang.Exception
+     * For sesame: sessionSesame = SessionFactory.getNativeSesameSession(repository_path);
      */
     @Before
     public void setUp(){
@@ -48,19 +53,18 @@ public class InitTest {
 //	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
 	sessionJena = SessionFactory.getTDBSession(tdb_path);
-	//sessionSesame = SessionFactory.getNativeSesameSession(repository_path);
     }
 
+   
     /**
      * @throws java.lang.Exception
+     * For Sesame: sessionSesame.close();
      */
     @After
     public void tearDown() throws Exception {
 	try {
 	    sessionJena.close();
-//	    sessionSesame.close();
 	} catch (Exception e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
     }
