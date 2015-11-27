@@ -130,19 +130,23 @@ public class SessionTDBTest extends InitTest {
 
 	while (listProperty.hasNext()) {
 	    OntProperty currentProperty = listProperty.next();
-	    int number = ontology.listResourcesWithProperty(currentProperty, null).toSet().size();
-	    logger.info("Proper instance size of "+currentProperty.getLocalName()+": "+ number);
+	    List<Resource> instancied_by = ontology.listResourcesWithProperty(currentProperty, null).toList();
+	    int number = 0; //ontology.listResourcesWithProperty(currentProperty, null).toSet().size();
 	    List<OntProperty> subproperties = new ArrayList<OntProperty>();
 	    subproperties.addAll(currentProperty.listSubProperties().toList());
 	    while (!subproperties.isEmpty()) {
 		OntProperty currentSubProperty = subproperties.get(0);
 		subproperties.remove(currentSubProperty);
 		if (!currentProperty.equals(currentSubProperty)) {
-		    int number_1 =  ontology.listResourcesWithProperty(currentSubProperty, null).toList().size();
+		    List<Resource> sub_instanciation = ontology.listResourcesWithProperty(currentSubProperty, null).toList();
+		    instancied_by.removeAll(sub_instanciation);
+		    int number_1 =  sub_instanciation.size();
 		    logger.info(currentSubProperty.getLocalName()+"["+number_1+"]-->"+ currentProperty.getLocalName());
 		    number = number + number_1;
 		}
 	    }
+	    logger.info("Proper instance size of "+currentProperty.getLocalName()+": "+ instancied_by.size());
+	    number = number + instancied_by.size();
 	    property_Triplet.put(currentProperty, number);
 	}
 
@@ -156,7 +160,7 @@ public class SessionTDBTest extends InitTest {
 	logger.info(ontology.listStatements().toList().size());
     }
     
-//    @Test
+    @Test
     public void testSessionStatTDB() {
 	QueryStatement stm = sessionJena.createStatement(StatisticDataSetQueryTest.NUMBER_TRIPLET_PROPERTY);
 	ResultSet result = (ResultSet) stm.executeQuery();
