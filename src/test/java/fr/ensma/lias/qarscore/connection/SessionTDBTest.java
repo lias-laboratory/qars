@@ -160,7 +160,7 @@ public class SessionTDBTest extends InitTest {
 	logger.info(ontology.listStatements().toList().size());
     }
     
-    @Test
+//    @Test
     public void testSessionStatTDB() {
 	QueryStatement stm = sessionJena.createStatement(StatisticDataSetQueryTest.NUMBER_TRIPLET_PROPERTY);
 	ResultSet result = (ResultSet) stm.executeQuery();

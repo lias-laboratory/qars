@@ -35,8 +35,8 @@ public class InitTest {
     public static Session sessionJena;
     public static Session sessionSesame;
 //    public static String tdb_path = "C:/TDB/UBA";
-    public static String tdb_path = "/home/lias/tdb5repository-saturated";
-    public static String tdb_alias = "tdb5";
+    public static String tdb_path = "/home/lias/tdb100repository-saturated";
+    public static String tdb_alias = "tdb100";
     
     public final int TOP_K = 10;
     public String repository_path = "target/Sesame/NativeRepository/LUBM1";  
