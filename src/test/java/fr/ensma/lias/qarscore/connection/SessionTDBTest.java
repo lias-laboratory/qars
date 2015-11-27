@@ -26,7 +26,11 @@ import java.util.Map;
 
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.log4j.Logger;
@@ -36,7 +40,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
+import fr.ensma.lias.qarscore.StatisticDataSetQueryTest;
 import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
+import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 
 /**
  * @author Geraud FOKOU
@@ -89,7 +95,8 @@ public class SessionTDBTest extends InitTest {
     public void testOntologyTDB() {
 	Assert.assertNotNull(((JenaSession) sessionJena).getDataset());
 	Assert.assertNotNull(((JenaSession) sessionJena).getModel());
-	OntModel ontology = ((JenaSession) sessionJena).getOntology();
+	OntModel ontology_1 = ((JenaSession) sessionJena).getOntology();
+	OntModel ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, ontology_1.getBaseModel());
 	Assert.assertNotNull(ontology);
 
 	ExtendedIterator<OntClass> listClass = ontology.listClasses();
@@ -123,17 +130,17 @@ public class SessionTDBTest extends InitTest {
 
 	while (listProperty.hasNext()) {
 	    OntProperty currentProperty = listProperty.next();
-	    int number = ontology
-		    .listResourcesWithProperty(currentProperty, null).toList()
-		    .size();
+	    int number = ontology.listResourcesWithProperty(currentProperty, null).toSet().size();
+	    logger.info("Proper instance size of "+currentProperty.getLocalName()+": "+ number);
 	    List<OntProperty> subproperties = new ArrayList<OntProperty>();
 	    subproperties.addAll(currentProperty.listSubProperties().toList());
 	    while (!subproperties.isEmpty()) {
 		OntProperty currentSubProperty = subproperties.get(0);
 		subproperties.remove(currentSubProperty);
 		if (!currentProperty.equals(currentSubProperty)) {
-		    logger.info(currentSubProperty.getLocalName() + "-->"+ currentProperty.getLocalName());
-		    number = number + ontology.listResourcesWithProperty(currentSubProperty, null).toList().size();
+		    int number_1 =  ontology.listResourcesWithProperty(currentSubProperty, null).toList().size();
+		    logger.info(currentSubProperty.getLocalName()+"["+number_1+"]-->"+ currentProperty.getLocalName());
+		    number = number + number_1;
 		}
 	    }
 	    property_Triplet.put(currentProperty, number);
@@ -148,4 +155,15 @@ public class SessionTDBTest extends InitTest {
 	logger.info("All Triple Number");
 	logger.info(ontology.listStatements().toList().size());
     }
+    
+//    @Test
+    public void testSessionStatTDB() {
+	QueryStatement stm = sessionJena.createStatement(StatisticDataSetQueryTest.NUMBER_TRIPLET_PROPERTY);
+	ResultSet result = (ResultSet) stm.executeQuery();
+	while(result.hasNext()){
+	    QuerySolution sol = result.next();
+	    logger.info(sol.getResource("property")+":"+sol.getLiteral("numberProperty"));
+	}
+    }
+
 }
