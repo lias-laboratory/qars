@@ -64,15 +64,11 @@ public class SessionJenaSDB extends JenaSession {
 	store = StoreFactory.create(storeDesc, connectSDB);
 
 	dataset = SDBFactory.connectDataset(store);
-	// model = SDBFactory.connectDefaultModel(store);
-	// ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM,
-	// model);
-
 	set_model();
+	if(!load_stat_data(connectSDB.getLabel())){
+	    set_stat_data();
+	}
 
-	int size_data = this.getOntology().listIndividuals().toList().size();
-	int size_prop = this.getOntology().listStatements().toList().size();
-	
 	information_content = new HashMap<Resource, Double>();
 	
 	ExtendedIterator<OntClass> list_root = ((JenaSession) session)
@@ -90,10 +86,8 @@ public class SessionJenaSDB extends JenaSession {
 		continue;
 	    }
 
-	    double classe_size = getInstanceNumber(currentClass);
-	    // double classe_size =
-	    // Double.valueOf((1+currentClass.listInstances(true).toList().size()));
-	    double icc_class = -1 * Math.log10(classe_size / size_data);
+	    double classe_size = getSizeInstanceByClass(currentClass);
+	    double icc_class = -1 * Math.log10(classe_size / stat_meta_data.getSize_instance());
 
 	    information_content.put(currentClass, icc_class);
 	}
@@ -102,10 +96,8 @@ public class SessionJenaSDB extends JenaSession {
 
 	while (listClass.hasNext()) {
 	    OntClass currentClass = listClass.next();
-	    double classe_size = getInstanceNumber(currentClass);
-	    // double classe_size =
-	    // Double.valueOf((1+currentClass.listInstances(true).toList().size()));
-	    double icc_class = -1 * Math.log10(classe_size / size_prop);
+	    double classe_size = getSizeInstanceByClass(currentClass);
+	    double icc_class = -1 * Math.log10(classe_size / stat_meta_data.getSize_instance());
 
 	    information_content.put(currentClass, icc_class);
 	}
@@ -114,10 +106,8 @@ public class SessionJenaSDB extends JenaSession {
 
 	while (listProperty.hasNext()) {
 	    OntProperty currentProperty = listProperty.next();
-	    double property_size = getInstanceNumber(currentProperty);
-	    // double classe_size =
-	    // Double.valueOf((1+currentClass.listInstances(true).toList().size()));
-	    double icc_property = -1 * Math.log10(property_size / size_data);
+	    double property_size = getTripleSizeByProperty(currentProperty);
+	    double icc_property = -1 * Math.log10(property_size / stat_meta_data.getSize_triple());
 
 	    information_content.put(currentProperty, icc_property);
 	}

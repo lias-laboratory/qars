@@ -19,20 +19,19 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -40,9 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.StatisticDataSetQueryTest;
 import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
-import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 
 /**
  * @author Geraud FOKOU
@@ -99,75 +96,38 @@ public class SessionTDBTest extends InitTest {
 	OntModel ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, ontology_1.getBaseModel());
 	Assert.assertNotNull(ontology);
 
-	ExtendedIterator<OntClass> listClass = ontology.listClasses();
-	logger.info("SubClassOf");
-	while (listClass.hasNext()) {
-	    OntClass currentClass = listClass.next();
-	    class_instance.put(currentClass, currentClass.listInstances(false)
-		    .toList().size());
-	    List<OntClass> subclasses = currentClass.listSubClasses(true)
-		    .toList();
-	    while (!subclasses.isEmpty()) {
-		OntClass currentSubClass = subclasses.get(0);
-		subclasses.remove(currentSubClass);
-		logger.info(currentSubClass.getLocalName() + "-->"
-			+ currentClass.getLocalName());
-	    }
-	}
+	String rdf_prefix = "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ";
 
-	logger.info("Instance by class");
-	for (OntClass key : class_instance.keySet()) {
-	    logger.info(key.getLocalName() + ":"
-		    + class_instance.get(key).intValue());
-	}
+	String instance_by_class_query = rdf_prefix
+		+ " SELECT ?classe (COUNT(?instance) AS ?numberInstance)  "
+		+ "WHERE {?instance rdf:type ?classe . }" + "GROUP BY ?classe "
+		+ "ORDER BY ?numberInstance ";
 
-	logger.info("All Instance Number");
-	logger.info(ontology.listIndividuals().toList().size());
+	String triple_by_property_query = rdf_prefix
+		+ " SELECT ?property (COUNT(?property) AS ?numberProperty)  "
+		+ "WHERE { ?s ?property ?o  .} " + "GROUP BY ?property "
+		+ "ORDER BY ?numberProperty ";
 
-	logger.info("SubpropertyOf");
-	ExtendedIterator<OntProperty> listProperty = ontology
-		.listAllOntProperties();
-
-	while (listProperty.hasNext()) {
-	    OntProperty currentProperty = listProperty.next();
-	    List<Resource> instancied_by = ontology.listResourcesWithProperty(currentProperty, null).toList();
-	    int number = 0; //ontology.listResourcesWithProperty(currentProperty, null).toSet().size();
-	    List<OntProperty> subproperties = new ArrayList<OntProperty>();
-	    subproperties.addAll(currentProperty.listSubProperties().toList());
-	    while (!subproperties.isEmpty()) {
-		OntProperty currentSubProperty = subproperties.get(0);
-		subproperties.remove(currentSubProperty);
-		if (!currentProperty.equals(currentSubProperty)) {
-		    List<Resource> sub_instanciation = ontology.listResourcesWithProperty(currentSubProperty, null).toList();
-		    instancied_by.removeAll(sub_instanciation);
-		    int number_1 =  sub_instanciation.size();
-		    logger.info(currentSubProperty.getLocalName()+"["+number_1+"]-->"+ currentProperty.getLocalName());
-		    number = number + number_1;
-		}
-	    }
-	    logger.info("Proper instance size of "+currentProperty.getLocalName()+": "+ instancied_by.size());
-	    number = number + instancied_by.size();
-	    property_Triplet.put(currentProperty, number);
-	}
-
-	logger.info("Triple by Property");
-	for (OntProperty key : property_Triplet.keySet()) {
-	    logger.info(key.getLocalName() + ":"
-		    + property_Triplet.get(key).intValue());
-	}
-
-	logger.info("All Triple Number");
-	logger.info(ontology.listStatements().toList().size());
-    }
-    
-//    @Test
-    public void testSessionStatTDB() {
-	QueryStatement stm = sessionJena.createStatement(StatisticDataSetQueryTest.NUMBER_TRIPLET_PROPERTY);
-	ResultSet result = (ResultSet) stm.executeQuery();
+	QueryExecution qexec = QueryExecutionFactory.create(
+		instance_by_class_query, ((JenaSession) sessionJena).getModel());
+	ResultSet result = qexec.execSelect();
 	while(result.hasNext()){
 	    QuerySolution sol = result.next();
-	    logger.info(sol.getResource("property")+":"+sol.getLiteral("numberProperty"));
+	    logger.info(sol.getResource("classe").getLocalName()+"--->"+sol.getLiteral("numberInstance").getInt());
 	}
-    }
+  
+	int size_instance = ontology.listIndividuals().toList().size();
+	logger.info("Number of Instances --->"+size_instance);
+	
+	qexec = QueryExecutionFactory.create(
+		triple_by_property_query, ((JenaSession) sessionJena).getModel());
+	result = qexec.execSelect();
+	while(result.hasNext()){
+	    QuerySolution sol = result.next();
+	    logger.info(sol.getResource("property").getLocalName()+"--->"+sol.getLiteral("numberProperty").getInt());
+	}
 
+	int size_triple = ontology.listStatements().toList().size();
+	logger.info("Number of Triple --->"+size_triple);
+    }
 }

@@ -49,38 +49,30 @@ public class SessionJenaTDB extends JenaSession {
     private SessionJenaTDB(String folderTDB) {
 
 	dataset = TDBFactory.createDataset(folderTDB);
-	// model = dataset.getDefaultModel();
-	// ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, model);
-
 	set_model();
-
-	int size_data = this.getOntology().listIndividuals().toList().size();
-	int size_prop = this.getOntology().listStatements().toList().size();
+	if(!load_stat_data(folderTDB)){
+	    set_stat_data();
+	}
 	
 	information_content = new HashMap<Resource, Double>();
 	
-	ExtendedIterator<OntClass> listClass = this.getOntology().listClasses();
+	ExtendedIterator<OntClass> listClass = baseontology.listClasses();
 	
 	while (listClass.hasNext()) {
 	    OntClass currentClass = listClass.next();
-	    double classe_size = getInstanceNumber(currentClass);
-	    // double classe_size =
-	    // Double.valueOf((1+currentClass.listInstances(true).toList().size()));
-	    double icc_class = -1 * Math.log10(classe_size / size_data);
-
+	    double classe_size = getSizeInstanceByClass(currentClass);
+	    double icc_class = -1 * Math.log10(classe_size / stat_meta_data.getSize_instance());
 	    information_content.put(currentClass, icc_class);
 	}
 	
-	ExtendedIterator<OntProperty> listProperty = this.getOntology().listAllOntProperties();
+	ExtendedIterator<OntProperty> listProperty = baseontology
+		.listAllOntProperties();
 
 	while (listProperty.hasNext()) {
 	    OntProperty currentProperty = listProperty.next();
-	    double property_size = getInstanceNumber(currentProperty);
-	    // double classe_size =
-	    // Double.valueOf((1+currentClass.listInstances(true).toList().size()));
-	    double icc_property = -1 * Math.log10(property_size / size_prop);
-
+	    double property_size = getTripleSizeByProperty(currentProperty);
+	    double icc_property = -1 * Math.log10(property_size / stat_meta_data.getSize_triple());
 	    information_content.put(currentProperty, icc_property);
 	}
-    }    
+    }
 }
