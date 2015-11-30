@@ -54,11 +54,8 @@ public class SessionTDBTest extends InitTest {
     public void setUp() {
 
 	super.setUp();
-	// Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
-	// Properties.setOntoLang("OWL");
 	class_instance = new HashMap<OntClass, Integer>();
 	property_Triplet = new HashMap<OntProperty, Integer>();
-	// sessionJena = SessionFactory.getTDBSession(tdb_path);
     }
 
     @After

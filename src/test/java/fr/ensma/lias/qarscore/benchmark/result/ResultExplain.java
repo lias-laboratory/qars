@@ -1,4 +1,4 @@
-package fr.ensma.lias.qarscore.benchmark;
+package fr.ensma.lias.qarscore.benchmark.result;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
