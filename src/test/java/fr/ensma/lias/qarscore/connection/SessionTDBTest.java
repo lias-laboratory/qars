@@ -31,7 +31,6 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -75,14 +74,6 @@ public class SessionTDBTest extends InitTest {
 	Assert.assertNotNull(((JenaSession) sessionJena).getOntology());
 	Assert.assertTrue(((JenaSession) sessionJena).getTripleList().size() != 0);
 	logger.info(((JenaSession) sessionJena).getDataset().toString());
-
-	for (Resource classe : ((JenaSession) sessionJena)
-		.getInformation_content().keySet()) {
-	    logger.info(classe.getURI()
-		    + " has information content "
-		    + ((JenaSession) sessionJena).getInformation_content().get(
-			    classe));
-	}
     }
 
     @Test

@@ -21,8 +21,6 @@ package fr.ensma.lias.qarscore.connection.metadata;
 
 import java.util.Map;
 
-import org.apache.jena.rdf.model.Resource;
-
 /**
  * @author Geraud FOKOU
  */
@@ -31,12 +29,12 @@ public class JenaMetaDataSet {
     /**
      * Number of instance by class
      */
-    protected Map<Resource, Integer> instance_by_class;
+    protected Map<String, Integer> instance_by_class;
 
     /**
      * Number of triple by property
      */
-    protected Map<Resource, Integer> triple_by_property;
+    protected Map<String, Integer> triple_by_property;
 
     /**
      * Number of instance in the dataset
@@ -52,7 +50,7 @@ public class JenaMetaDataSet {
     /**
      * @return the instance_by_class
      */
-    public Map<Resource, Integer> getInstance_by_class() {
+    public Map<String, Integer> getInstance_by_class() {
         return instance_by_class;
     }
 
@@ -60,7 +58,7 @@ public class JenaMetaDataSet {
     /**
      * @param instance_by_class the instance_by_class to set
      */
-    public void setInstance_by_class(Map<Resource, Integer> instance_by_class) {
+    public void setInstance_by_class(Map<String, Integer> instance_by_class) {
         this.instance_by_class = instance_by_class;
     }
 
@@ -68,7 +66,7 @@ public class JenaMetaDataSet {
     /**
      * @return the triple_by_property
      */
-    public Map<Resource, Integer> getTriple_by_property() {
+    public Map<String, Integer> getTriple_by_property() {
         return triple_by_property;
     }
 
@@ -76,7 +74,7 @@ public class JenaMetaDataSet {
     /**
      * @param triple_by_property the triple_by_property to set
      */
-    public void setTriple_by_property(Map<Resource, Integer> triple_by_property) {
+    public void setTriple_by_property(Map<String, Integer> triple_by_property) {
         this.triple_by_property = triple_by_property;
     }
 
@@ -119,8 +117,8 @@ public class JenaMetaDataSet {
      * @param size_instance
      * @param size_triple
      */
-    public JenaMetaDataSet(Map<Resource, Integer> instance_by_class2,
-	    Map<Resource, Integer> triple_by_property2, int size_instance,
+    public JenaMetaDataSet(Map<String, Integer> instance_by_class2,
+	    Map<String, Integer> triple_by_property2, int size_instance,
 	    int size_triple) {
 	super();
 	this.instance_by_class = instance_by_class2;
@@ -128,5 +126,20 @@ public class JenaMetaDataSet {
 	this.size_instance = size_instance;
     }
 
+    public double getInformationContent(String uri){
+	
+	double information;
+	if(instance_by_class.containsKey(uri)){
+	    information = instance_by_class.get(uri);
+	    return -1 * Math.log10(information / size_instance);
+	}
+	else if(triple_by_property.containsKey(uri)){
+	    information = triple_by_property.get(uri);
+	    return -1 * Math.log10(information / size_triple);
+	}
+	else {
+	    return 0;
+	}
+    }
     
 }

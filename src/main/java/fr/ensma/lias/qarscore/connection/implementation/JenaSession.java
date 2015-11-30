@@ -38,7 +38,6 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.reasoner.ReasonerRegistry;
 
@@ -83,18 +82,6 @@ public abstract class JenaSession implements Session {
      * Statistics data
      */
     protected JenaMetaDataSet stat_meta_data;
-
-    /**
-     * Statistics about data in the session
-     */
-    protected Map<Resource, Double> information_content;
-
-    /**
-     * @return the information_content
-     */
-    public Map<Resource, Double> getInformation_content() {
-	return information_content;
-    }
 
     /**
      * The number of instance of one class
@@ -254,8 +241,8 @@ public abstract class JenaSession implements Session {
 
     protected void set_stat_data() {
 
-	Map<Resource, Integer> instance_by_class = new HashMap<Resource, Integer>();
-	Map<Resource, Integer> triple_by_property = new HashMap<Resource, Integer>();
+	Map<String, Integer> instance_by_class = new HashMap<String, Integer>();
+	Map<String, Integer> triple_by_property = new HashMap<String, Integer>();
 	String rdf_prefix = "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ";
 
 	String instance_by_class_query = rdf_prefix
@@ -273,7 +260,7 @@ public abstract class JenaSession implements Session {
 	ResultSet result = qexec.execSelect();
 	while(result.hasNext()){
 	    QuerySolution sol = result.next();
-	    instance_by_class.put(sol.getResource("classe"), sol.getLiteral("numberInstance").getInt());
+	    instance_by_class.put(sol.getResource("classe").getURI(), sol.getLiteral("numberInstance").getInt());
 	}
   
 	int size_instance = baseontology.listIndividuals().toList().size();
@@ -283,7 +270,7 @@ public abstract class JenaSession implements Session {
 	result = qexec.execSelect();
 	while(result.hasNext()){
 	    QuerySolution sol = result.next();
-	    triple_by_property.put(sol.getResource("property"), sol.getLiteral("numberProperty").getInt());
+	    triple_by_property.put(sol.getResource("property").getURI(), sol.getLiteral("numberProperty").getInt());
 	}
 
 	int size_triple = baseontology.listStatements().toList().size();
@@ -450,10 +437,8 @@ public abstract class JenaSession implements Session {
 	    return 0;
 	}
 */
-	double ic_class1 = 0;
-	double ic_class2 = 0;
-	ic_class1 = information_content.get(original_class);
-	ic_class2 = information_content.get(relaxed_class);
+	double ic_class1 = this.stat_meta_data.getInformationContent(original_class.getURI());
+	double ic_class2 = this.stat_meta_data.getInformationContent(relaxed_class.getURI());
 
 	return ic_class2 / ic_class1;
 
@@ -480,11 +465,9 @@ public abstract class JenaSession implements Session {
 
 	ic_lcp = information_content.get(least_common_Property);
 */
-	double ic_prop1 = 0;
-	double ic_prop2 = 0;
-	ic_prop1 = information_content.get(original_property);
-	ic_prop2 = information_content.get(relaxed_property);
-
+	double ic_prop1 = this.stat_meta_data.getInformationContent(original_property.getURI());
+	double ic_prop2 = this.stat_meta_data.getInformationContent(relaxed_property.getURI());
+	
 	return ic_prop2 / ic_prop1;
 
     }

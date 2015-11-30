@@ -20,17 +20,12 @@
 package fr.ensma.lias.qarscore.connection.implementation;
 
 import java.sql.Connection;
-import java.util.HashMap;
 
-import org.apache.jena.ontology.OntClass;
-import org.apache.jena.ontology.OntProperty;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.sdb.SDBFactory;
 import org.apache.jena.sdb.Store;
 import org.apache.jena.sdb.StoreDesc;
 import org.apache.jena.sdb.sql.SDBConnection;
 import org.apache.jena.sdb.store.StoreFactory;
-import org.apache.jena.util.iterator.ExtendedIterator;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.properties.Properties;
@@ -67,49 +62,6 @@ public class SessionJenaSDB extends JenaSession {
 	set_model();
 	if(!load_stat_data(connectSDB.getLabel())){
 	    set_stat_data();
-	}
-
-	information_content = new HashMap<Resource, Double>();
-	
-	ExtendedIterator<OntClass> list_root = ((JenaSession) session)
-		.getOntology().listHierarchyRootClasses();
-	while (list_root.hasNext()) {
-	    OntClass currentClass = list_root.next();
-
-	    if (currentClass.getURI() == null) {
-		continue;
-	    }
-	    if (currentClass.isIntersectionClass()) {
-		continue;
-	    }
-	    if (currentClass.isRestriction()) {
-		continue;
-	    }
-
-	    double classe_size = getSizeInstanceByClass(currentClass);
-	    double icc_class = -1 * Math.log10(classe_size / stat_meta_data.getSize_instance());
-
-	    information_content.put(currentClass, icc_class);
-	}
-
-	ExtendedIterator<OntClass> listClass = this.getOntology().listClasses();
-
-	while (listClass.hasNext()) {
-	    OntClass currentClass = listClass.next();
-	    double classe_size = getSizeInstanceByClass(currentClass);
-	    double icc_class = -1 * Math.log10(classe_size / stat_meta_data.getSize_instance());
-
-	    information_content.put(currentClass, icc_class);
-	}
-	
-	ExtendedIterator<OntProperty> listProperty = this.getOntology().listAllOntProperties();
-
-	while (listProperty.hasNext()) {
-	    OntProperty currentProperty = listProperty.next();
-	    double property_size = getTripleSizeByProperty(currentProperty);
-	    double icc_property = -1 * Math.log10(property_size / stat_meta_data.getSize_triple());
-
-	    information_content.put(currentProperty, icc_property);
 	}
     }
 
