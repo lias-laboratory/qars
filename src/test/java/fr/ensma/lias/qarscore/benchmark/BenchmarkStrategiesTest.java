@@ -44,6 +44,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      * set test parameter
      */
     private final int TOP_K = 10;
+    private int time_multiple = 1;
     /**
      * set session and other tools
      */
@@ -267,7 +268,8 @@ public class BenchmarkStrategiesTest extends InitTest {
     public void setUp() {
 	super.setUp();
 	layout = new PatternLayout();
-	String conversionPattern = "%-7p %d [%t] %c %x - %m%n";
+	String conversionPattern ="%-5p [%C{1}]: %m%n";
+//	String conversionPattern = "%-7p %d [%t] %c %x - %m%n";
 	layout.setConversionPattern(conversionPattern);
     }
 
@@ -285,7 +287,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	for (QueryExplain queryExplain : newTestResultPairList) {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
-
+	    
+	    logger.info("\t"+"**************************Begin QUERY "+queryExplain.description+"***********************************");
 	    long begin = System.currentTimeMillis();
 	    HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
@@ -301,16 +304,15 @@ public class BenchmarkStrategiesTest extends InitTest {
 		hasTopk = number_answers >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
-		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
+		logger.info("\t"+relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
 			+ query_answers_size);
 	    }
 	    long end = System.currentTimeMillis();
 	    float duration = ((float) (end - begin));
-	    logger.info(number_relaxed_queries + " " + duration + " "
+	    logger.info("\t"+number_relaxed_queries + " " + duration + " "
 		    + number_answers);
-
+	    logger.info("\t"+"**************************End QUERY "+queryExplain.description+"***********************************");
 	    double duration_mfs_search = 0.0;
 	    int number_check_queries = 0;
 	    int number_queries_mfs = 0;
@@ -557,7 +559,6 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testLUBM_Huang() throws Exception {
 
@@ -566,7 +567,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	String fileCSV = "exp-" + current_query_set
 		+ "-Huang_relaxation-strategy-Jena-lubm-" + tdb_alias + ".csv";
-	newResultExplain = new ResultStrategyExplain(fileCSV, 1);
+	newResultExplain = new ResultStrategyExplain(fileCSV, time_multiple);
 
 	/**********************************
 	 * Huang relaxation strategy test *
@@ -577,8 +578,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
-	fileAppender.setImmediateFlush(false);
-	fileAppender.setThreshold(Priority.DEBUG);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
@@ -589,7 +588,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     @SuppressWarnings("deprecation")
-    @Test
+//    @Test
     public void testLUBM_Graph() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -597,7 +596,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	String fileCSV = "exp-" + current_query_set
 		+ "-Graph_relaxation-strategy-Jena-lubm-" + tdb_alias + ".csv";
-	newResultExplain = new ResultStrategyExplain(fileCSV);
+	newResultExplain = new ResultStrategyExplain(fileCSV, time_multiple);
 
 	/**********************************
 	 * Graph relaxation strategy test *
@@ -620,7 +619,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     @SuppressWarnings("deprecation")
-    @Test
+//    @Test
     public void testLUBM_MFS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -628,7 +627,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	String fileCSV = "exp-" + current_query_set
 		+ "-MFS_relaxation-strategy-Jena-lubm-" + tdb_alias + ".csv";
-	newResultExplain = new ResultStrategyExplain(fileCSV);
+	newResultExplain = new ResultStrategyExplain(fileCSV, time_multiple);
 
 	/********************************
 	 * MFS relaxation strategy test *
@@ -651,7 +650,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     @SuppressWarnings("deprecation")
-    @Test
+//    @Test
     public void testLUBM_MFSUpdate() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -660,7 +659,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	String fileCSV = "exp-" + current_query_set
 		+ "-MFSUPDATE_relaxation-strategy-Jena-lubm-" + tdb_alias
 		+ ".csv";
-	newResultExplain = new ResultStrategyExplain(fileCSV);
+	newResultExplain = new ResultStrategyExplain(fileCSV, time_multiple);
 
 	/***************************************
 	 * MFS UPDATE relaxation strategy test *
@@ -684,7 +683,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     @SuppressWarnings("deprecation")
-    @Test
+//    @Test
     public void testLUBM_MFSFULLINC() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -693,7 +692,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	String fileCSV = "exp-" + current_query_set
 		+ "-MFSFULLINC_relaxation-strategy-Jena-lubm-" + tdb_alias
 		+ ".csv";
-	newResultExplain = new ResultStrategyExplain(fileCSV);
+	newResultExplain = new ResultStrategyExplain(fileCSV, time_multiple);
 
 	/*****************************************
 	 * MFS FULL INC relaxation strategy test *
@@ -717,7 +716,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     @SuppressWarnings("deprecation")
-    @Test
+ //   @Test
     public void testLUBM_MFSFULLSYS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -726,7 +725,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	String fileCSV = "exp-" + current_query_set
 		+ "-MFSFULLSYS_relaxation-strategy-Jena-lubm-" + tdb_alias
 		+ ".csv";
-	newResultExplain = new ResultStrategyExplain(fileCSV);
+	newResultExplain = new ResultStrategyExplain(fileCSV, time_multiple);
 
 	/*****************************************
 	 * MFS FULL SYS relaxation strategy test *
