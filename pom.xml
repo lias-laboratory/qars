@@ -101,7 +101,7 @@
 				<configuration>
 					<argLine>-Xmx12g -Xms8g </argLine>
 					<skipTests>false</skipTests>
-					<test>SessionTDBTest.java</test>
+					<test>BenchmarkStrategiesTest.java</test>
 				</configuration>
 			</plugin>
 			<plugin>
