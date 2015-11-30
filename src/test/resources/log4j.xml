@@ -19,7 +19,7 @@
 		<param name="immediateFlush" value="false" />
 		<param name="threshold" value="debug" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-7p %d [%t] %c %x - %m%n" />
+			<param name="ConversionPattern" value="[%-5p] [%C{1}]: %m%n" />
 		</layout>
 	</appender>
 
