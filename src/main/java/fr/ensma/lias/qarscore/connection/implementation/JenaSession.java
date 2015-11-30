@@ -439,7 +439,9 @@ public abstract class JenaSession implements Session {
 */
 	double ic_class1 = this.stat_meta_data.getInformationContent(original_class.getURI());
 	double ic_class2 = this.stat_meta_data.getInformationContent(relaxed_class.getURI());
-
+	if(ic_class1 == 0){
+	    return 0;
+	}
 	return ic_class2 / ic_class1;
 
     }
@@ -467,7 +469,9 @@ public abstract class JenaSession implements Session {
 */
 	double ic_prop1 = this.stat_meta_data.getInformationContent(original_property.getURI());
 	double ic_prop2 = this.stat_meta_data.getInformationContent(relaxed_property.getURI());
-	
+	if(ic_prop1 == 0){
+	    return 0;
+	}
 	return ic_prop2 / ic_prop1;
 
     }
