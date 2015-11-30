@@ -4,10 +4,12 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
 	debug="false">
 
-	<!-- <appender name="ROLL" class="org.apache.log4j.RollingFileAppender"> 
-		<param name="File" value="test.log" /> <layout class="org.apache.log4j.PatternLayout"> 
-		<param name="ConversionPattern" value="%d{DATE} %-5p %-15c{1}: %m%n" /> </layout> 
-		</appender> -->
+	<appender name="fileR" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="session.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{DATE} %-5p %-15c{1}: %m%n" />
+		</layout>
+	</appender>
 	<appender name="console" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%-5p] [%C{1}]: %m%n" />
@@ -39,7 +41,7 @@
 
 	<logger name="fr.ensma.lias.qarscore.connection.SessionTDBTest">
 		<level value="debug" />
-		<appender-ref ref="file" />
+		<appender-ref ref="fileR" />
 	</logger>
 
 	<logger name="fr.ensma.lias.qarscore.benchmark.BenchmarkStrategiesTest">

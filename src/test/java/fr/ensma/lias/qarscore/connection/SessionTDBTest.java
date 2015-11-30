@@ -66,7 +66,7 @@ public class SessionTDBTest extends InitTest {
 	}
     }
 
-    // @Test
+    @Test
     public void testSessionTDB() {
 
 	Assert.assertNotNull(((JenaSession) sessionJena).getDataset());
@@ -74,9 +74,16 @@ public class SessionTDBTest extends InitTest {
 	Assert.assertNotNull(((JenaSession) sessionJena).getOntology());
 	Assert.assertTrue(((JenaSession) sessionJena).getTripleList().size() != 0);
 	logger.info(((JenaSession) sessionJena).getDataset().toString());
+	for(String key:((JenaSession) sessionJena).getStat_meta_data().getInstance_by_class().keySet()){
+	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInformationContent(key));
+	}
+	for(String key:((JenaSession) sessionJena).getStat_meta_data().getTriple_by_property().keySet()){
+	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInformationContent(key));
+	}
+
     }
 
-    @Test
+   // @Test
     public void testOntologyTDB() {
 	Assert.assertNotNull(((JenaSession) sessionJena).getDataset());
 	Assert.assertNotNull(((JenaSession) sessionJena).getModel());

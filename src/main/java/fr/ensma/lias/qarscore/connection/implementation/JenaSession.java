@@ -82,37 +82,18 @@ public abstract class JenaSession implements Session {
      * Statistics data
      */
     protected JenaMetaDataSet stat_meta_data;
-
+    
+ 
     /**
-     * The number of instance of one class
-     * 
-     * @param classe
-     * @return
+     * @return the stat_meta_data
      */
-    protected double getSizeInstanceByClass(OntClass classe) {
-
-	Integer number = stat_meta_data.getInstance_by_class().get(classe);
-	if (number == null) {
-	    return 0;
-	}
-	return number;
+    public JenaMetaDataSet getStat_meta_data() {
+        return stat_meta_data;
     }
 
     /**
-     * The number of instance of one property
      * 
-     * @param property
-     * @return
      */
-    protected double getTripleSizeByProperty(OntProperty property) {
-
-	Integer number = stat_meta_data.getTriple_by_property().get(property);
-	if (number == null) {
-	    return 0;
-	}
-	return number;
-    }
-
     protected void set_model() {
 
 	/**
@@ -239,6 +220,9 @@ public abstract class JenaSession implements Session {
 
     }
 
+    /**
+     * 
+     */
     protected void set_stat_data() {
 
 	Map<String, Integer> instance_by_class = new HashMap<String, Integer>();
