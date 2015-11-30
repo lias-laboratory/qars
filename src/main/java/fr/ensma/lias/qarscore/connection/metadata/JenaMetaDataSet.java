@@ -134,14 +134,14 @@ public class JenaMetaDataSet {
 	    if(information == 0){
 		return 0;
 	    }
-	    return -1 * Math.log10(information / size_instance);
+	    return -1 * Math.log10(information / (double)size_instance);
 	}
 	else if(triple_by_property.containsKey(uri)){
 	    information = triple_by_property.get(uri);
 	    if(information == 0){
 		return 0;
 	    }
-	    return -1 * Math.log10(information / size_triple);
+	    return -1 * Math.log10(information / (double)size_triple);
 	}
 	else {
 	    return 0;
