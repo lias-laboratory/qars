@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ import java.util.regex.Pattern;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.apache.log4j.Priority;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +45,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      */
     private final int TOP_K = 10;
     private int time_multiple = 1;
+    private String time_value ;
     /**
      * set session and other tools
      */
@@ -70,13 +71,6 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     private String current_query_set = "huang";
-
-    // private final String QUERIES_SCALE_STAR_FILE =
-    // "queries-star-scalability.test";
-    // private final String QUERIES_SCALE_CHAIN_FILE =
-    // "queries-chain-scalability.test";
-    // private final String QUERIES_SCALE_COMPOSITE_FILE =
-    // "queries-composite-scalability.test";
 
     /**
      * test tools
@@ -271,6 +265,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	String conversionPattern ="%-5p [%C{1}]: %m%n";
 //	String conversionPattern = "%-7p %d [%t] %c %x - %m%n";
 	layout.setConversionPattern(conversionPattern);
+	LocalDateTime time = LocalDateTime.now() ;
+	time_value = ""+time.getDayOfMonth()+time.getMonthValue()+time.getHour()+time.getMinute()+time.getSecond();
     }
 
     @After
@@ -288,7 +284,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 	    
-	    logger.info("\t"+"**************************Begin QUERY "+queryExplain.description+"***********************************");
+	    logger.info("**************************Begin QUERY "+queryExplain.description+"***********************************");
 	    long begin = System.currentTimeMillis();
 	    HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
@@ -304,15 +300,15 @@ public class BenchmarkStrategiesTest extends InitTest {
 		hasTopk = number_answers >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
-		logger.info("\t"+relaxed_query.getCurrent_relaxed_query().toString()
+		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
 			+ query_answers_size);
 	    }
 	    long end = System.currentTimeMillis();
 	    float duration = ((float) (end - begin));
-	    logger.info("\t"+number_relaxed_queries + " " + duration + " "
+	    logger.info(number_relaxed_queries + " " + duration + " "
 		    + number_answers);
-	    logger.info("\t"+"**************************End QUERY "+queryExplain.description+"***********************************");
+	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
 	    double duration_mfs_search = 0.0;
 	    int number_check_queries = 0;
 	    int number_queries_mfs = 0;
@@ -331,6 +327,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
+	    logger.info("**************************Begin QUERY "+queryExplain.description+"***********************************");
 	    long begin = System.currentTimeMillis();
 	    GraphRelaxationStrategy relaxed_query = new GraphRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
@@ -348,7 +345,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
 			+ query_answers_size);
 	    }
 
@@ -356,7 +352,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    long duration = end - begin;
 	    logger.info(number_relaxed_queries + " " + duration + " "
 		    + number_answers);
-
+	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
+	    
 	    double duration_mfs_search = 0.0;
 	    int number_queries_mfs = 0;
 	    int number_check_queries = 0;
@@ -375,6 +372,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
+	    logger.info("**************************Begin QUERY "+queryExplain.description+"***********************************");
 	    long begin = System.currentTimeMillis();
 	    MFSRelaxationStrategy relaxed_query = new MFSRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
@@ -392,7 +390,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
 			+ query_answers_size);
 	    }
 
@@ -405,7 +402,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    logger.info(number_queries_mfs + " " + duration_mfs_search + " "
 		    + number_relaxed_queries + " " + duration + " "
 		    + number_answers);
-
+	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
+	    
 	    int number_check_queries = 0;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
@@ -421,6 +419,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
+	    logger.info("**************************Begin QUERY "+queryExplain.description+"***********************************");
 	    long begin = System.currentTimeMillis();
 	    MFSUpdateRelaxationStrategy relaxed_query = new MFSUpdateRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
@@ -438,7 +437,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
 			+ query_answers_size);
 	    }
 
@@ -452,7 +450,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    logger.info(number_check_queries + " " + number_queries_mfs + " "
 		    + duration_mfs_search + " " + number_relaxed_queries + " "
 		    + duration + " " + number_answers);
-
+	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
+	    
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
@@ -467,6 +466,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
+	    logger.info("**************************Begin QUERY "+queryExplain.description+"***********************************");
 	    long begin = System.currentTimeMillis();
 	    INCFULLMFSRelaxationStrategy relaxed_query = new INCFULLMFSRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
@@ -484,7 +484,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
 			+ query_answers_size);
 	    }
 
@@ -498,7 +497,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    logger.info(number_check_queries + " " + number_queries_mfs + " "
 		    + duration_mfs_search + " " + number_relaxed_queries + " "
 		    + duration + " " + number_answers);
-
+	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
+	    
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
@@ -514,6 +514,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
+	    logger.info("**************************Begin QUERY "+queryExplain.description+"***********************************");
 	    long begin = System.currentTimeMillis();
 	    SYSFULLMFSRelaxationStrategy relaxed_query = new SYSFULLMFSRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
@@ -531,7 +532,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
 			+ query_answers_size);
 	    }
 
@@ -546,7 +546,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    logger.info(number_check_queries + " " + number_queries_mfs + " "
 		    + duration_mfs_search + " " + number_relaxed_queries + " "
 		    + duration + " " + number_answers);
-
+	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
+	    
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
@@ -572,14 +573,15 @@ public class BenchmarkStrategiesTest extends InitTest {
 	/**********************************
 	 * Huang relaxation strategy test *
 	 *********************************/
-
-	String logfile = "exp-" + current_query_set + "-" + "Huang_relaxation"
-		+ "-" + "Jena" + "-" + "lubm" + tdb_alias + ".log";
+		
+	String logfile = "exp-" + "Huang_relaxation"
+		+ "-"+ "lubm" + tdb_alias +"-"+time_value+".log";
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
+	logger.removeAllAppenders();
 	logger.addAppender(fileAppender);
 
 	testRelaxationWithHuangStrategy();
@@ -587,8 +589,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @SuppressWarnings("deprecation")
-//    @Test
+ //   @Test
     public void testLUBM_Graph() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -602,13 +603,12 @@ public class BenchmarkStrategiesTest extends InitTest {
 	 * Graph relaxation strategy test *
 	 **********************************/
 
-	String logfile = "exp-" + current_query_set + "-" + "Graph_relaxation"
-		+ "-" + "Jena" + "-" + "lubm" + tdb_alias + ".log";
-
+	String logfile = "exp-" + "Graph_relaxation"
+		+ "-"+ "lubm" + tdb_alias +"-"+time_value+".log";
+	
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
-	fileAppender.setThreshold(Priority.DEBUG);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
@@ -618,8 +618,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @SuppressWarnings("deprecation")
-//    @Test
+    
+ //   @Test
     public void testLUBM_MFS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -632,14 +632,12 @@ public class BenchmarkStrategiesTest extends InitTest {
 	/********************************
 	 * MFS relaxation strategy test *
 	 ********************************/
-
-	String logfile = "exp-" + current_query_set + "-" + "MFS_relaxation"
-		+ "-" + "Jena" + "-" + "lubm" + tdb_alias + ".log";
+	String logfile = "exp-" + "MFS_relaxation"
+		+ "-"+ "lubm" + tdb_alias +"-"+time_value+".log";
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
-	fileAppender.setThreshold(Priority.DEBUG);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
@@ -649,8 +647,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @SuppressWarnings("deprecation")
-//    @Test
+    
+ //   @Test
     public void testLUBM_MFSUpdate() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -664,15 +662,12 @@ public class BenchmarkStrategiesTest extends InitTest {
 	/***************************************
 	 * MFS UPDATE relaxation strategy test *
 	 ***************************************/
-
-	String logfile = "exp-" + current_query_set + "-"
-		+ "MFSUPDATE_relaxation" + "-" + "Jena" + "-" + "lubm"
-		+ tdb_alias + ".log";
+	String logfile = "exp-" + "MFSUPDATE_relaxation"
+		+ "-"+ "lubm" + tdb_alias +"-"+time_value+".log";
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
-	fileAppender.setThreshold(Priority.DEBUG);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
@@ -682,8 +677,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @SuppressWarnings("deprecation")
-//    @Test
+  
+//   @Test
     public void testLUBM_MFSFULLINC() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -697,15 +692,12 @@ public class BenchmarkStrategiesTest extends InitTest {
 	/*****************************************
 	 * MFS FULL INC relaxation strategy test *
 	 *****************************************/
-
-	String logfile = "exp-" + current_query_set + "-"
-		+ "MFSFullINC_relaxation" + "-" + "Jena" + "-" + "lubm"
-		+ tdb_alias + ".log";
+	String logfile = "exp-" + "MFSFullINC_relaxation"
+		+ "-"+ "lubm" + tdb_alias +"-"+time_value+".log";
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
-	fileAppender.setThreshold(Priority.DEBUG);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
@@ -715,7 +707,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @SuppressWarnings("deprecation")
+    
  //   @Test
     public void testLUBM_MFSFULLSYS() throws Exception {
 
@@ -730,15 +722,12 @@ public class BenchmarkStrategiesTest extends InitTest {
 	/*****************************************
 	 * MFS FULL SYS relaxation strategy test *
 	 ****************************************/
-
-	String logfile = "exp-" + current_query_set + "-"
-		+ "MFSFullSys_relaxation" + "-" + "Jena" + "-" + "lubm"
-		+ tdb_alias + ".log";
+	String logfile = "exp-" + "MFSFullSys_relaxation"
+		+ "-"+ "lubm" + tdb_alias +"-"+time_value+".log";
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
 	fileAppender.setImmediateFlush(false);
-	fileAppender.setThreshold(Priority.DEBUG);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);

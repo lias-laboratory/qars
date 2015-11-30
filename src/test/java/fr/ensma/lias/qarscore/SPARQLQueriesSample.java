@@ -27,8 +27,8 @@ public class SPARQLQueriesSample {
     /**
      * Prefixes of Queries
      */
-    public static String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
-	    + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
+    public static String LUBM_PREFIX = "PREFIX base: <http://swat.cse.lehigh.edu/onto/univ-bench.owl> "
+	    + "PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> "
 	    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
 	    + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 	    + "PREFIX owl:  <http://www.w3.org/2002/07/owl#> "
