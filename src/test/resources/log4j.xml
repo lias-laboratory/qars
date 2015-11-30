@@ -16,7 +16,6 @@
 
 	<appender name="file" class="org.apache.log4j.FileAppender">
 		<param name="File" value="benchmark.log" />
-		<param name="immediateFlush" value="false" />
 		<param name="threshold" value="debug" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%-5p] [%C{1}]: %m%n" />

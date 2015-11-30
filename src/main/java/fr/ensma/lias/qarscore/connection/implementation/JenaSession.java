@@ -41,7 +41,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.reasoner.ReasonerRegistry;
-import org.apache.log4j.Logger;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.metadata.JenaMetaDataSet;
@@ -436,7 +435,7 @@ public abstract class JenaSession implements Session {
 	    return -1;
 	}
 
-	OntClass least_common_class = getLeastCommonClassAncestor(
+/*	OntClass least_common_class = getLeastCommonClassAncestor(
 		original_class, relaxed_class);
 
 	if (least_common_class == null) {
@@ -450,13 +449,13 @@ public abstract class JenaSession implements Session {
 	    Logger.getRootLogger().debug(e.getMessage());
 	    return 0;
 	}
-
+*/
 	double ic_class1 = 0;
 	double ic_class2 = 0;
 	ic_class1 = information_content.get(original_class);
 	ic_class2 = information_content.get(relaxed_class);
 
-	return ic_lcc / (ic_class1 + ic_class2 - ic_lcc);
+	return ic_class2 / ic_class1;
 
     }
 
@@ -470,7 +469,7 @@ public abstract class JenaSession implements Session {
 	    return -1;
 	}
 
-	OntProperty least_common_Property = getLeastCommonPropertyAncestor(
+/*	OntProperty least_common_Property = getLeastCommonPropertyAncestor(
 		original_property, relaxed_property);
 
 	if (least_common_Property == null) {
@@ -480,13 +479,13 @@ public abstract class JenaSession implements Session {
 	double ic_lcp = 0;
 
 	ic_lcp = information_content.get(least_common_Property);
-
+*/
 	double ic_prop1 = 0;
 	double ic_prop2 = 0;
 	ic_prop1 = information_content.get(original_property);
 	ic_prop2 = information_content.get(relaxed_property);
 
-	return ic_lcp / (ic_prop1 + ic_prop2 - ic_lcp);
+	return ic_prop2 / ic_prop1;
 
     }
 
@@ -496,6 +495,7 @@ public abstract class JenaSession implements Session {
      * @param relaxed_class
      * @return
      */
+    @SuppressWarnings("unused")
     private OntClass getLeastCommonClassAncestor(OntClass original_class,
 	    OntClass relaxed_class) {
 
@@ -590,6 +590,7 @@ public abstract class JenaSession implements Session {
      * @param relaxed_property
      * @return
      */
+    @SuppressWarnings("unused")
     private OntProperty getLeastCommonPropertyAncestor(
 	    OntProperty original_property, OntProperty relaxed_property) {
 
