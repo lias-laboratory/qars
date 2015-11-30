@@ -257,7 +257,7 @@ public abstract class JenaSession implements Session {
 	    triple_by_property.put(sol.getResource("property").getURI(), sol.getLiteral("numberProperty").getInt());
 	}
 
-	int size_triple = baseontology.listStatements().toList().size();
+	int size_triple = ontology.listStatements().toList().size();
 	stat_meta_data = new JenaMetaDataSet(instance_by_class,
 		triple_by_property, size_instance, size_triple);
     }

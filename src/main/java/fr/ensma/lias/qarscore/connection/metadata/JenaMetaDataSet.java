@@ -124,6 +124,7 @@ public class JenaMetaDataSet {
 	this.instance_by_class = instance_by_class2;
 	this.triple_by_property = triple_by_property2;
 	this.size_instance = size_instance;
+	this.size_triple = size_triple;
     }
 
     public double getInformationContent(String uri){
