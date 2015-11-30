@@ -75,12 +75,15 @@ public class SessionTDBTest extends InitTest {
 	Assert.assertTrue(((JenaSession) sessionJena).getTripleList().size() != 0);
 	logger.info(((JenaSession) sessionJena).getDataset().toString());
 	for(String key:((JenaSession) sessionJena).getStat_meta_data().getInstance_by_class().keySet()){
+	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInstance_by_class().get(key));
 	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInformationContent(key));
 	}
 	for(String key:((JenaSession) sessionJena).getStat_meta_data().getTriple_by_property().keySet()){
+	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getTriple_by_property().get(key));
 	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInformationContent(key));
 	}
-
+	 logger.info(((JenaSession) sessionJena).getStat_meta_data().getSize_instance());
+	 logger.info(((JenaSession) sessionJena).getStat_meta_data().getSize_triple());
     }
 
    // @Test
