@@ -177,8 +177,8 @@ public class ResultStrategyExplain {
 		    + "\t"
 		    + queryRelaxationProcessTimeAverage.toString().replace('.',
 			    ',') + "\t" + sizeAllQuery.toString() + "\t"
-		    + sizeRelaxationQuery.toString() + "\t"
-		    + sizeMFSQuery.toString() + "\n");
+		    + sizeMFSQuery.toString() + "\t"
+		    + sizeRelaxationQuery.toString() + "\n");
 	}
 
 	BufferedWriter fichier = new BufferedWriter(new FileWriter(

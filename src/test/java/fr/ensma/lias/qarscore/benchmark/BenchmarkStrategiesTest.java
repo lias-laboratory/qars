@@ -68,9 +68,10 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("chain", "queries-chain.test");
 	QUERIES_TYPE_FILE.put("composite", "queries-composite.test");
 	QUERIES_TYPE_FILE.put("huang", "queries-huang.test");
+	QUERIES_TYPE_FILE.put("mixed", "queries-mixed.test");
     }
 
-    private String current_query_set = "huang";
+    private String current_query_set = "mixed";
 
     /**
      * test tools
@@ -436,7 +437,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
-			+ " " + relaxed_query.getCurrent_similarity() + " "
+			+ " " + relaxed_query.getCurrent_similarity() + " "+relaxed_query.getCurrent_level()+ " "
 			+ query_answers_size);
 	    }
 
@@ -560,7 +561,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-//    @Test
+    @Test
     public void testLUBM_Huang() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -619,7 +620,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     
-    @Test
+//    @Test
     public void testLUBM_MFS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -647,7 +648,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     
- //   @Test
+//    @Test
     public void testLUBM_MFSUpdate() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -666,7 +667,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
-	fileAppender.setImmediateFlush(false);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
