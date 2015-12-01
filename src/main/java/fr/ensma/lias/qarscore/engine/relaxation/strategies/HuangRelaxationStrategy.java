@@ -178,6 +178,7 @@ public class HuangRelaxationStrategy {
 	} else {
 	    relaxed_queries.add(child);
 	}
+	already_relaxed_queries.add(child);
     }
 
     protected CElement getRelaxedElement(int num_triple, int relaxation_rank) {
