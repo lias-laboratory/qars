@@ -45,7 +45,7 @@ public class GraphRelaxationStrategy extends HuangRelaxationStrategy {
 
 	triple_relaxation(relaxation_limit_index, relaxation_index);
 	relaxed_graph = new GraphRelaxationIndex(relaxation_index,
-		relaxation_limit_index, true);
+		relaxation_limit_index);
 	relaxed_queries.add(relaxed_graph);
 
     }
