@@ -112,38 +112,30 @@ public class JenaModelStatement implements ModelStatement {
 	return subPropertiesNodes;
     }
 
-    /*
-     * @Override public Map<Node, Integer> getSuperClasses(Node classeNode) {
-     * 
-     * Map<Node, Integer> superNodes = new HashMap<Node, Integer>(); List<Node>
-     * toFindSuperClass = new ArrayList<Node>();
-     * toFindSuperClass.add(classeNode); int level = 0;
-     * 
-     * while (!toFindSuperClass.isEmpty()) { Node currentNode =
-     * toFindSuperClass.remove(0); if (currentNode.isURI()) { OntClass
-     * currentClass = session.getOntology().getOntClass( currentNode.getURI());
-     * if (currentClass != null) { List<OntClass> supClasses =
-     * currentClass.listSuperClasses( true).toList(); level = level + 1; for
-     * (OntClass superClass : supClasses) { if (superClass.isURIResource()) {
-     * Node relax_node = NodeFactory.createURI(superClass .getURI());
-     * superNodes.put(relax_node, level); toFindSuperClass.add(relax_node); } }
-     * } } } return superNodes; }
-     */
     @Override
     public Map<Node, Integer> getSuperClasses(Node classeNode) {
 
 	Map<Node, Integer> superNodes = new HashMap<Node, Integer>();
-	if (classeNode.isURI()) {
-	    OntClass currentClass = session.getOntology().getOntClass(
-		    classeNode.getURI());
-	    if (currentClass != null) {
-		List<OntClass> supClasses = currentClass
-			.listSuperClasses(false).toList();
-		for (OntClass superClass : supClasses) {
-		    if (superClass.isURIResource()) {
-			Node relax_node = NodeFactory.createURI(superClass
-				.getURI());
-			superNodes.put(relax_node, 1);
+	List<Node> toFindSuperClass = new ArrayList<Node>();
+	toFindSuperClass.add(classeNode);
+	int level = 0;
+
+	while (!toFindSuperClass.isEmpty()) {
+	    Node currentNode = toFindSuperClass.remove(0);
+	    if (currentNode.isURI()) {
+		OntClass currentClass = session.getOntology().getOntClass(
+			currentNode.getURI());
+		if (currentClass != null) {
+		    List<OntClass> supClasses = currentClass.listSuperClasses(
+			    true).toList();
+		    level = level + 1;
+		    for (OntClass superClass : supClasses) {
+			if (superClass.isURIResource()) {
+			    Node relax_node = NodeFactory.createURI(superClass
+				    .getURI());
+			    superNodes.put(relax_node, level);
+			    toFindSuperClass.add(relax_node);
+			}
 		    }
 		}
 	    }
@@ -151,7 +143,20 @@ public class JenaModelStatement implements ModelStatement {
 	return superNodes;
     }
 
-/*    @Override
+    /*
+     * @Override public Map<Node, Integer> getSuperClasses(Node classeNode) {
+     * 
+     * Map<Node, Integer> superNodes = new HashMap<Node, Integer>(); if
+     * (classeNode.isURI()) { OntClass currentClass =
+     * session.getOntology().getOntClass( classeNode.getURI()); if (currentClass
+     * != null) { List<OntClass> supClasses = currentClass
+     * .listSuperClasses(false).toList(); for (OntClass superClass : supClasses)
+     * { if (superClass.isURIResource()) { Node relax_node =
+     * NodeFactory.createURI(superClass .getURI()); superNodes.put(relax_node,
+     * 1); } } } } return superNodes; }
+     */
+    
+    @Override
     public Map<Node, Integer> getSuperProperty(Node property) {
 
 	Map<Node, Integer> superPropertiesNodes = new HashMap<Node, Integer>();
@@ -182,28 +187,19 @@ public class JenaModelStatement implements ModelStatement {
 	}
 	return superPropertiesNodes;
     }
-*/
-    @Override
-    public Map<Node, Integer> getSuperProperty(Node property) {
 
-	Map<Node, Integer> superPropertiesNodes = new HashMap<Node, Integer>();
-	if (property.isURI()) {
-	    OntProperty curentProperty = session.getOntology().getOntProperty(
-		    property.getURI());
-
-	    if (curentProperty != null) {
-		List<? extends OntProperty> superProperties = curentProperty
-			.listSuperProperties(false).toList();
-		for (OntProperty superProperty : superProperties) {
-		    if (superProperty.isURIResource()) {
-			Node relax_property = NodeFactory
-				.createURI(superProperty.getURI());
-			superPropertiesNodes.put(relax_property, 1);
-		    }
-		}
-	    }
-	}
-	return superPropertiesNodes;
-    }
-
+    /*
+     * @Override public Map<Node, Integer> getSuperProperty(Node property) {
+     * 
+     * Map<Node, Integer> superPropertiesNodes = new HashMap<Node, Integer>();
+     * if (property.isURI()) { OntProperty curentProperty =
+     * session.getOntology().getOntProperty( property.getURI());
+     * 
+     * if (curentProperty != null) { List<? extends OntProperty> superProperties
+     * = curentProperty .listSuperProperties(false).toList(); for (OntProperty
+     * superProperty : superProperties) { if (superProperty.isURIResource()) {
+     * Node relax_property = NodeFactory .createURI(superProperty.getURI());
+     * superPropertiesNodes.put(relax_property, 1); } } } } return
+     * superPropertiesNodes; }
+     */
 }
