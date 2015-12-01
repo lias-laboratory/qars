@@ -280,6 +280,13 @@ public abstract class JenaSession implements Session {
     }
 
     /**
+     * @return the baseontology
+     */
+    public OntModel getBaseontology() {
+        return baseontology;
+    }
+
+    /**
      * Return all the triple of the ontology for the data set in the SDB Triple
      * store
      */
