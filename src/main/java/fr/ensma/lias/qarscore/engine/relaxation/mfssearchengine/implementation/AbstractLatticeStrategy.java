@@ -19,10 +19,13 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
@@ -39,7 +42,7 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
     public int size_of_cartesian_product = 0;
     public long duration_of_execution = 0;
 
-    protected Logger logger = Logger.getRootLogger();
+    protected Logger logger = Logger.getLogger(AbstractLatticeStrategy.class);
     protected CQuery CURRENT_CONJUNCTIVE_QUERY ;
     protected List<CQuery> MFS_CURRENT_QUERY ;
     protected List<CQuery> XSS_CURRENT_QUERY ;
@@ -47,7 +50,16 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
     protected List<CQuery> failingCauses ;
     protected List<CQuery> maximalSubqueries ;
    
+    
    /**
+     * 
+     */
+    public AbstractLatticeStrategy() {
+	super();
+	this.logger_init();
+    }
+
+/**
      * Computes all the MFS and XSS of a CQuery query
      * In comment we can put old PXSS at the end of the list of PXSS
      * Or like in the initial case we can insert new PXSS at the END due to this choice the efficiency of the algorithm could change?
@@ -323,5 +335,26 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	    this.computeMFS(query);
 	    return maximalSubqueries;
 	}
-    }    
+    }
+    
+    protected void logger_init(){
+	
+	LocalDateTime time = LocalDateTime.now() ;
+	String time_value = ""+time.getDayOfMonth()+time.getMonthValue()+time.getHour()+time.getMinute()+time.getSecond();
+	
+	String logfile = "mfsSearch-Process"+"-"+time_value+".log";
+	
+	PatternLayout layout = new PatternLayout();
+	String conversionPattern ="%-5p [%C{1}]: %m%n";
+	layout.setConversionPattern(conversionPattern);
+
+	FileAppender fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setImmediateFlush(false);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.removeAllAppenders();
+	logger.addAppender(fileAppender);
+
+    }
 }

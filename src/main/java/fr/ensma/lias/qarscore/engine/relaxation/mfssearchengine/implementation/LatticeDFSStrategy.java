@@ -52,6 +52,7 @@ public class LatticeDFSStrategy extends AbstractLatticeStrategy {
      * private constructor
      */
     protected LatticeDFSStrategy(Session s, CQuery query, int answers) {
+	super();
 	number_of_query_executed = 0;
 	number_of_query_reexecuted = 0;
 	size_of_cartesian_product = 0;

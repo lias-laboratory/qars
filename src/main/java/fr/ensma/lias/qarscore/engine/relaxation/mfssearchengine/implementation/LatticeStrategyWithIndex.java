@@ -55,6 +55,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
     }
     
     protected LatticeStrategyWithIndex(Session s) {
+	super();
 	number_of_query_executed = 0;
 	number_of_query_reexecuted = 0;
 	size_of_cartesian_product = 0;
@@ -69,6 +70,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
      * private constructor
      */
     protected LatticeStrategyWithIndex(Session s, CQuery query, int answers) {
+	super();
 	number_of_query_executed = 0;
 	number_of_query_reexecuted = 0;
 	size_of_cartesian_product = 0;
