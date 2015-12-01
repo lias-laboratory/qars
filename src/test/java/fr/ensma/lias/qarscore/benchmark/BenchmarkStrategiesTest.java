@@ -344,7 +344,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
-			+ " " + relaxed_query.getCurrent_similarity() + " "
+			+ " " + relaxed_query.getCurrent_similarity() + " "+relaxed_query.getCurrent_level()+" "
 			+ query_answers_size);
 	    }
 
@@ -389,7 +389,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
-			+ " " + relaxed_query.getCurrent_similarity() + " "
+			+ " " + relaxed_query.getCurrent_similarity() + " "+relaxed_query.getCurrent_level()+" "
 			+ query_answers_size);
 	    }
 
@@ -589,7 +589,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @Test
+//    @Test
     public void testLUBM_Graph() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -619,7 +619,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     
- //   @Test
+    @Test
     public void testLUBM_MFS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -637,7 +637,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
-	fileAppender.setImmediateFlush(false);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
