@@ -116,25 +116,29 @@ public class JenaModelStatement implements ModelStatement {
     public Map<Node, Integer> getSuperClasses(Node classeNode) {
 
 	Map<Node, Integer> superNodes = new HashMap<Node, Integer>();
-	List<Node> toFindSuperClass = new ArrayList<Node>();
-	toFindSuperClass.add(classeNode);
+	List<String> toFindSuperClass = new ArrayList<String>();
+	List<String> alreadyInserted = new ArrayList<String>();
+	if (classeNode.isURI()) {
+	    toFindSuperClass.add(classeNode.getURI());
+	}
 	int level = 0;
 
 	while (!toFindSuperClass.isEmpty()) {
-	    Node currentNode = toFindSuperClass.remove(0);
-	    if (currentNode.isURI()) {
-		OntClass currentClass = session.getOntology().getOntClass(
-			currentNode.getURI());
-		if (currentClass != null) {
-		    List<OntClass> supClasses = currentClass.listSuperClasses(
-			    true).toList();
-		    level = level + 1;
-		    for (OntClass superClass : supClasses) {
-			if (superClass.isURIResource()) {
+	    String currentURI = toFindSuperClass.remove(0);
+	    OntClass currentClass = session.getOntology().getOntClass(
+		    currentURI);
+	    if (currentClass != null) {
+		List<OntClass> supClasses = currentClass.listSuperClasses(true)
+			.toList();
+		level = level + 1;
+		for (OntClass superClass : supClasses) {
+		    if (superClass.isURIResource()) {
+			if (!alreadyInserted.contains(superClass.getURI())) {
 			    Node relax_node = NodeFactory.createURI(superClass
 				    .getURI());
 			    superNodes.put(relax_node, level);
-			    toFindSuperClass.add(relax_node);
+			    alreadyInserted.add(relax_node.getURI());
+			    toFindSuperClass.add(relax_node.getURI());
 			}
 		    }
 		}
@@ -155,31 +159,37 @@ public class JenaModelStatement implements ModelStatement {
      * NodeFactory.createURI(superClass .getURI()); superNodes.put(relax_node,
      * 1); } } } } return superNodes; }
      */
-    
+
     @Override
     public Map<Node, Integer> getSuperProperty(Node property) {
 
 	Map<Node, Integer> superPropertiesNodes = new HashMap<Node, Integer>();
-	List<Node> toFindSuperProperties = new ArrayList<Node>();
-	toFindSuperProperties.add(property);
+	List<String> toFindSuperProperties = new ArrayList<String>();
+	List<String> alreadyInserted = new ArrayList<String>();
+	if (property.isURI()) {
+	    toFindSuperProperties.add(property.getURI());
+	    alreadyInserted.add(property.getURI());
+	}
+
 	int level = 0;
 
 	while (!toFindSuperProperties.isEmpty()) {
-	    Node currentPropertyNode = toFindSuperProperties.remove(0);
-	    if (currentPropertyNode.isURI()) {
-		OntProperty curentProperty = session.getOntology()
-			.getOntProperty(currentPropertyNode.getURI());
+	    String currentPropertyURI = toFindSuperProperties.remove(0);
+	    OntProperty curentProperty = session.getOntology().getOntProperty(
+		    currentPropertyURI);
 
-		if (curentProperty != null) {
-		    List<? extends OntProperty> superProperties = curentProperty
-			    .listSuperProperties(true).toList();
-		    level = level + 1;
-		    for (OntProperty superProperty : superProperties) {
-			if (superProperty.isURIResource()) {
+	    if (curentProperty != null) {
+		List<? extends OntProperty> superProperties = curentProperty
+			.listSuperProperties(true).toList();
+		level = level + 1;
+		for (OntProperty superProperty : superProperties) {
+		    if (superProperty.isURIResource()) {
+			if (!alreadyInserted.contains(superProperty.getURI())) {
 			    Node relax_property = NodeFactory
 				    .createURI(superProperty.getURI());
 			    superPropertiesNodes.put(relax_property, level);
-			    toFindSuperProperties.add(relax_property);
+			    alreadyInserted.add(relax_property.getURI());
+			    toFindSuperProperties.add(relax_property.getURI());
 			}
 		    }
 		}
