@@ -68,6 +68,27 @@ public class JenaQueryStatement implements QueryStatement {
 	}
 	return size ;
     }
+    
+    @Override
+    public int getResultSetSize(int limit) {
+	
+	int size =  0;
+
+	if (results == null) {
+	    this.executeQuery();
+	}
+	
+	try {
+	    while ((results.hasNext())&&(size<limit)) {
+		results.nextSolution();
+		size++;
+	    }
+	} finally {
+	    results = null;
+	}
+	return size ;
+    }
+
 
     @Override
     public ResultSet executeQuery() {
@@ -109,5 +130,4 @@ public class JenaQueryStatement implements QueryStatement {
 	    results = null;
 	}
     }
-
 }

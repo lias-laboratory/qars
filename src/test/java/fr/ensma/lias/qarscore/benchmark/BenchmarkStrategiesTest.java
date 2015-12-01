@@ -296,7 +296,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize();
+		int query_answers_size = stm.getResultSetSize(TOP_K);
 		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
 
@@ -339,7 +339,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize();
+		int query_answers_size = stm.getResultSetSize(TOP_K);
 		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
 
@@ -384,7 +384,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize();
+		int query_answers_size = stm.getResultSetSize(TOP_K);
 		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
 
@@ -431,7 +431,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize();
+		int query_answers_size = stm.getResultSetSize(TOP_K);
 		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
 
@@ -478,7 +478,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize();
+		int query_answers_size = stm.getResultSetSize(TOP_K);
 		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
 
@@ -526,7 +526,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize();
+		int query_answers_size = stm.getResultSetSize(TOP_K);
 		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
 

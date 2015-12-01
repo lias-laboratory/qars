@@ -22,7 +22,6 @@ package fr.ensma.lias.qarscore.connection.statement.implementation;
 import java.util.Map;
 
 import org.apache.jena.query.ResultSet;
-import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -75,7 +74,6 @@ public class SesameQueryStatement implements QueryStatement {
 	return results;
     }
 
-    @SuppressWarnings("unused")
     @Override
     public int getResultSetSize() {
 
@@ -86,7 +84,7 @@ public class SesameQueryStatement implements QueryStatement {
 	}
 	try {
 	    while (results.hasNext()) {
-		BindingSet currentRow = results.next();
+		results.next();
 		size++;
 	    }
 	} catch (QueryEvaluationException e) {
@@ -94,6 +92,27 @@ public class SesameQueryStatement implements QueryStatement {
 	} finally {
 	}
 	return size;
+    }
+
+    @Override
+    public int getResultSetSize(int limit) {
+	
+	int size = 0;
+
+	if (results == null) {
+	    this.executeQuery();
+	}
+	try {
+	    while ((results.hasNext())&&(size<limit)) {
+		results.next();
+		size++;
+	    }
+	} catch (QueryEvaluationException e) {
+	    e.printStackTrace();
+	} finally {
+	}
+	return size;
+
     }
 
     @Override
@@ -117,5 +136,4 @@ public class SesameQueryStatement implements QueryStatement {
 	    results = null;
 	}
     }
-
 }
