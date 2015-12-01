@@ -86,6 +86,7 @@ public class HuangRelaxationStrategy {
 	}
 	GraphRelaxationIndex current_graph = relaxed_queries.remove(0);
 	already_relaxed_queries.add(current_graph);
+	
 	this.current_similarity = 1.0;
 	this.current_level = 0;
 
@@ -101,13 +102,13 @@ public class HuangRelaxationStrategy {
 			    .getRelaxation_level();
 	}
 
+	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query);
+	
 	for (int j = 0; j < current_graph.getChild_elt().length; j++) {
 	    if (!alreadyRelaxed(current_graph.getChild_elt()[j])) {
 		this.insert(current_graph.getChild_elt()[j]);
 	    }
 	}
-
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query);
 
 	return current_relaxed_query;
     }
@@ -135,9 +136,14 @@ public class HuangRelaxationStrategy {
 
     private boolean hasSameIndex(int[] element_index, int[] other_element_index) {
 
-	if (element_index != other_element_index) {
+	if (element_index == other_element_index) {
+	    return true;
+	}
+
+	if (element_index.length != other_element_index.length) {
 	    return false;
 	}
+	
 	boolean is_same = true;
 	int i = 0;
 	while ((is_same) && (i < other_element_index.length)) {
