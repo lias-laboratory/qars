@@ -85,6 +85,7 @@ public class HuangRelaxationStrategy {
 	    return null;
 	}
 	GraphRelaxationIndex current_graph = relaxed_queries.remove(0);
+	already_relaxed_queries.add(current_graph);
 	this.current_similarity = 1.0;
 	this.current_level = 0;
 
@@ -178,7 +179,6 @@ public class HuangRelaxationStrategy {
 	} else {
 	    relaxed_queries.add(child);
 	}
-	already_relaxed_queries.add(child);
     }
 
     protected CElement getRelaxedElement(int num_triple, int relaxation_rank) {
