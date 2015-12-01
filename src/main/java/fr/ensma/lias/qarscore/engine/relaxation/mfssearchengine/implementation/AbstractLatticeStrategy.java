@@ -350,7 +350,6 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 
 	FileAppender fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
-	fileAppender.setImmediateFlush(false);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.removeAllAppenders();

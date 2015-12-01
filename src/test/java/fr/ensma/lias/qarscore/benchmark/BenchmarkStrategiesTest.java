@@ -608,7 +608,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 	
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
-	fileAppender.setImmediateFlush(false);
 	fileAppender.setLayout(layout);
 	fileAppender.activateOptions();
 	logger.removeAllAppenders();
