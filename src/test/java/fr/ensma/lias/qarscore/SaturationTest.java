@@ -1,5 +1,6 @@
 package fr.ensma.lias.qarscore;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.tdb.TDBFactory;
-import org.apache.jena.tdb.TDBLoader;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -28,9 +28,10 @@ import fr.ensma.lias.qarscore.properties.Properties;
 public class SaturationTest extends InitTest {
 
     final static String PATH = "c:/resources/UBA/Uni1.owl";
+    final static String PATH_ONTO = "c:/resources/UBA/univ-bench.owl";
     final static String TDB_PATH = "c:/TDB/UBA";
-    final static String LUBM_PREFIX = "PREFIX base: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl> "
-	    + "PREFIX ub:   <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#> "
+    final static String LUBM_PREFIX = "PREFIX base: <http://swat.cse.lehigh.edu/onto/univ-bench.owl> "
+	    + "PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> "
 	    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
 	    + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 	    + "PREFIX owl:  <http://www.w3.org/2002/07/owl#> "
@@ -46,12 +47,14 @@ public class SaturationTest extends InitTest {
 
     @Test
     public void testwithoutsession() {
+	
+	List<String> path_entry = new ArrayList<String>();
+	path_entry.add(PATH_ONTO);
+	path_entry.add(PATH);
 	Dataset dataset = TDBFactory.createDataset(TDB_PATH);
 	Model dataModel = dataset.getDefaultModel();
-	//TDBLoader.load(dataset, PATH);
-	TDBLoader.loadModel(dataset.getDefaultModel(), PATH);
-	dataModel.commit();
-	// dataset.commit();
+//	TDBLoader.loadModel(dataset.getDefaultModel(), path_entry, false);
+//	dataModel.commit();
 
 	QueryExecution query_exec = QueryExecutionFactory.create(SPARQLQueriesSample.WWW_QUERY_1,
 		dataModel);
