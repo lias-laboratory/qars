@@ -53,7 +53,6 @@ public class JenaQueryStatement implements QueryStatement {
     public int getResultSetSize() {
 
 	int size =  0;
-
 	if (results == null) {
 	    this.executeQuery();
 	}
