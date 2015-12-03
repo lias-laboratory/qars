@@ -133,7 +133,7 @@ public class ResultStrategyExplain {
 	    int relaxation_queries) {
 
 	//String substring = name.substring(6, name.length() - 4);
-	String substring = name.substring(6, 8);
+	String substring = name.substring(6, name.length());
 
 	
 	QueryReport newQueryReport = null;

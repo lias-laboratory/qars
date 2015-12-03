@@ -284,6 +284,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	long begin_query, begin, end_query, end;
 	boolean hasTopk ; 
 	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	float duration;
 	double duration_mfs_search;
 	
 	for (QueryExplain queryExplain : newTestResultPairList) {
@@ -313,7 +314,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 			+ query_answers_size + " "+((float) (end_query - begin_query)));
 	    }
 	    end = System.currentTimeMillis();
-	    float duration = ((float) (end - begin));
+	    duration = ((float) (end - begin));
 	    logger.info(number_relaxed_queries + " " + duration + " "
 		    + number_answers);
 	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
@@ -331,40 +332,48 @@ public class BenchmarkStrategiesTest extends InitTest {
 
     private void testRelaxationWithGraphStrategy() {
 
+	long begin_query, begin, end_query, end;
+	boolean hasTopk;
+	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	float duration;
+	double duration_mfs_search;
+	 
 	for (QueryExplain queryExplain : newTestResultPairList) {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
 	    logger.info("**************************Begin QUERY "+queryExplain.description+"***********************************");
-	    long begin = System.currentTimeMillis();
+	    begin = System.currentTimeMillis();
 	    GraphRelaxationStrategy relaxed_query = new GraphRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
-	    boolean hasTopk = false;
-	    int number_answers = 0;
-	    int number_relaxed_queries = 0;
+	    hasTopk = false;
+	    number_answers = 0;
+	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
+		begin_query = System.currentTimeMillis();
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
 		int query_answers_size = stm.getResultSetSize(TOP_K);
+		end_query = System.currentTimeMillis();
 		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "+relaxed_query.getCurrent_level()+" "
-			+ query_answers_size);
+			+ query_answers_size + " "+((float) (end_query - begin_query)));
 	    }
 
-	    long end = System.currentTimeMillis();
-	    long duration = end - begin;
+	    end = System.currentTimeMillis();
+	    duration = ((float) (end - begin));
 	    logger.info(number_relaxed_queries + " " + duration + " "
 		    + number_answers);
 	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
 	    
-	    double duration_mfs_search = 0.0;
-	    int number_queries_mfs = 0;
-	    int number_check_queries = 0;
+	    duration_mfs_search = 0.0;
+	    number_queries_mfs = 0;
+	    number_check_queries = 0;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
