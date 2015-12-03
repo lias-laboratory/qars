@@ -146,11 +146,11 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 			MFS_QUERY[i].select(j), relax_degree[j]));
 	    }
 
+	    number_check_queries = number_check_queries + 1;
 	    QueryStatement stm = session.createStatement((CQueryFactory
 		    .createCQuery(updated_mfs_query)).toString());
 
-	    if (stm.getResultSetSize() == 0) {
-		number_check_queries = number_check_queries + 1;
+	    if (stm.getResultSetSize(1) == 0) {
 		mfs_relaxation_degree[i].add(relax_degree);
 		has_new_mfs = true;
 	    }

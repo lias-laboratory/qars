@@ -126,7 +126,7 @@ public class INCFULLMFSRelaxationStrategy extends MFSUpdateRelaxationStrategy {
 		    .createCQuery(updated_mfs_query)).toString());
 	    number_check_queries = number_check_queries + 1;
 
-	    if (stm.getResultSetSize() == 0) {
+	    if (stm.getResultSetSize(1) == 0) {
 		mfs_subqueries.add(updated_mfs_query);
 		mfs_relaxation_degree[i].add(relax_degree);
 	    } else {
@@ -256,7 +256,7 @@ public class INCFULLMFSRelaxationStrategy extends MFSUpdateRelaxationStrategy {
 	QueryStatement stm = session.createStatement(query.toString());
 
 	number_check_queries++;
-	if (stm.getResultSetSize() != 0) {
+	if (stm.getResultSetSize(1) != 0) {
 	    return mfs_elt;
 	}
 	
@@ -281,7 +281,7 @@ public class INCFULLMFSRelaxationStrategy extends MFSUpdateRelaxationStrategy {
 	    if (temp.isValidQuery()) {
 		number_check_queries++;
 		stm = session.createStatement(temp.toString());
-		if (stm.getResultSetSize() != 0) {
+		if (stm.getResultSetSize(1) != 0) {
 		    causes.add(elt);
 		}
 	    }
@@ -296,7 +296,7 @@ public class INCFULLMFSRelaxationStrategy extends MFSUpdateRelaxationStrategy {
 	if (temp.isValidQuery()) {
 	    number_check_queries++;
 	    stm = session.createStatement(temp.toString());
-	    if (stm.getResultSetSize() != 0) {
+	    if (stm.getResultSetSize(1) != 0) {
 		causes.add(elt);
 	    }
 	}
