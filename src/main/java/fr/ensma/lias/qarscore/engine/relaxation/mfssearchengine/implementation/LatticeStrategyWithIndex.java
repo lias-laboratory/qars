@@ -120,7 +120,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 		continue;
 	    }
 
-	    int nbSolution = SESSION.createStatement(a_connex_query.toString()).getResultSetSize();	    
+	    int nbSolution = SESSION.createStatement(a_connex_query.toString()).getResultSetSize(NUMBER_OF_EXPECTED_ANSWERS);	    
 	    indexCQuery.put(a_connex_query, nbSolution);
 	    number_of_query_executed ++;
 

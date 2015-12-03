@@ -197,7 +197,7 @@ public class LatticeDFSStrategy extends AbstractLatticeStrategy {
 
 	number_of_query_executed++;
 	int nbSolution = SESSION.createStatement(query.toString())
-		.getResultSetSize();
+		.getResultSetSize(NUMBER_OF_EXPECTED_ANSWERS);
 
 	if (nbSolution >= NUMBER_OF_EXPECTED_ANSWERS) {
 	    logger.info("Execution of : " + query.getQueryLabel()

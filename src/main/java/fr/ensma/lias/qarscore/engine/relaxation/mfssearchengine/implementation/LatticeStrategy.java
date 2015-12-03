@@ -99,7 +99,7 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
 	for(CQuery a_connex_query:queries){
 	   
 	    number_of_query_executed ++;
-	    int nbSolution = SESSION.createStatement(a_connex_query.toString()).getResultSetSize();
+	    int nbSolution = SESSION.createStatement(a_connex_query.toString()).getResultSetSize(NUMBER_OF_EXPECTED_ANSWERS);
 	    
 	    /*
 	     * Think to put the right log if you don't want to execute with cartesian product
