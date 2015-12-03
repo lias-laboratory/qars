@@ -132,8 +132,10 @@ public class ResultStrategyExplain {
 	    double relaxation_process, int all_queries, int mfs_queries,
 	    int relaxation_queries) {
 
-	String substring = name.substring(6, name.length() - 4);
+	//String substring = name.substring(6, name.length() - 4);
+	String substring = name.substring(6, 8);
 
+	
 	QueryReport newQueryReport = null;
 	if (!result.containsKey(substring)) {
 	    newQueryReport = new QueryReport();

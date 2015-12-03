@@ -69,7 +69,7 @@ public class LatticeStrategyTest extends InitTest{
      * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy#getOneMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
      * .
      */
-    @Test
+//    @Test
     public void testGetOneMFS() {
 
 	CQuery conjunctiveQuery = CQueryFactory
@@ -95,7 +95,7 @@ public class LatticeStrategyTest extends InitTest{
     @Test
     public void testGetAllMFS() {
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.WWW_QUERY_7);
+		.createCQuery(SPARQLQueriesSample.TEST_1);
 	
 	relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
 		conjunctiveQuery);
@@ -126,7 +126,7 @@ public class LatticeStrategyTest extends InitTest{
      * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy#getAllXSS()}
      * .
      */
-    @Test
+//    @Test
     public void testGetAllXSS() {
 
 	CQuery conjunctiveQuery = CQueryFactory
@@ -150,7 +150,7 @@ public class LatticeStrategyTest extends InitTest{
 	}
     }
     
-    @Test
+//    @Test
     public void testHasLeastKAnswers() {
 
 	CQuery conjunctiveQuery = CQueryFactory
@@ -160,7 +160,7 @@ public class LatticeStrategyTest extends InitTest{
 	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
     }
 
-    @Test
+ //   @Test
     public void testTraceParameter() {
 
 	CQuery conjunctiveQuery = CQueryFactory
@@ -171,7 +171,7 @@ public class LatticeStrategyTest extends InitTest{
 	show_indicator();
     }
 
-    @Test
+ //   @Test
     public void testTimePerformance() {
 
 	CQuery conjunctiveQuery = CQueryFactory

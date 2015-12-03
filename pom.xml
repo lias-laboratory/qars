@@ -101,7 +101,7 @@
 				<configuration>
 					<argLine>-Xmx12g -Xms8g </argLine>
 					<skipTests>false</skipTests>
-					<test>BenchmarkStrategiesTest.java</test>
+					<test>LatticeStrategyTest.java</test>
 				</configuration>
 			</plugin>
 			<plugin>

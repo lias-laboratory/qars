@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.benchmark.result.ResultStrategyExplain;
@@ -71,7 +70,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("mixed", "queries-mixed.test");
     }
 
-    private String current_query_set = "mixed";
+    private String current_query_set = "huang";
 
     /**
      * test tools
@@ -561,7 +560,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-    @Test
+//    @Test
     public void testLUBM_Huang() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
