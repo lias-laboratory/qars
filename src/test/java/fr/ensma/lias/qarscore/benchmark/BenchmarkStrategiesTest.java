@@ -647,8 +647,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
-			    + number_relaxed_queries, number_queries_mfs,
-		    number_relaxed_queries + number_check_queries);
+			    + number_relaxed_queries, number_queries_mfs + number_check_queries,
+		    number_relaxed_queries);
 	}
     }
 
