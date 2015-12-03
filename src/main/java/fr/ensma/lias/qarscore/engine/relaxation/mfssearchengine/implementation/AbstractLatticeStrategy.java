@@ -43,15 +43,14 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
     public long duration_of_execution = 0;
 
     protected Logger logger = Logger.getLogger(AbstractLatticeStrategy.class);
-    protected CQuery CURRENT_CONJUNCTIVE_QUERY ;
-    protected List<CQuery> MFS_CURRENT_QUERY ;
-    protected List<CQuery> XSS_CURRENT_QUERY ;
-    protected CQuery actualQuery ;
-    protected List<CQuery> failingCauses ;
-    protected List<CQuery> maximalSubqueries ;
-   
-    
-   /**
+    protected CQuery CURRENT_CONJUNCTIVE_QUERY;
+    protected List<CQuery> MFS_CURRENT_QUERY;
+    protected List<CQuery> XSS_CURRENT_QUERY;
+    protected CQuery actualQuery;
+    protected List<CQuery> failingCauses;
+    protected List<CQuery> maximalSubqueries;
+
+    /**
      * 
      */
     public AbstractLatticeStrategy() {
@@ -59,21 +58,31 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	this.logger_init();
     }
 
-/**
-     * Computes all the MFS and XSS of a CQuery query
-     * In comment we can put old PXSS at the end of the list of PXSS
-     * Or like in the initial case we can insert new PXSS at the END due to this choice the efficiency of the algorithm could change?
+    /**
+     * Computes all the MFS and XSS of a CQuery query In comment we can put old
+     * PXSS at the end of the list of PXSS Or like in the initial case we can
+     * insert new PXSS at the END due to this choice the efficiency of the
+     * algorithm could change?
+     * 
      * @param query
      */
-   protected void computeMFS(CQuery query) {
-       
+    protected void computeMFS(CQuery query) {
+
+	/**
+	 * log the current query
+	 */
+	for (int i = 0; i < query.getElementList().size(); i++) {
+	    logger.info(query.getElementList().get(i).getElement().toString()
+		    + "-->" + query.getElementList().get(i).getLabel());
+	}
+
 	failingCauses = new ArrayList<CQuery>();
 	maximalSubqueries = new ArrayList<CQuery>();
 
 	if (!query.isValidQuery()) {
 	    return;
 	}
-	
+
 	/**
 	 * If you aren't sure that query is an empty query
 	 */
@@ -81,8 +90,8 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	/**
 	 * if you are sure that query is an empty query
 	 */
-	//CQuery anCause = getFirstOneMFS(query);
-	
+	// CQuery anCause = getFirstOneMFS(query);
+
 	if (anCause.getElementList().isEmpty()) {
 	    maximalSubqueries.add(CQueryFactory.cloneCQuery(query));
 	    return;
@@ -108,7 +117,7 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	    }
 
 	    anCause = getOneMFS(tempquery);
-	    
+
 	    if (anCause.getElementList().isEmpty()) {
 		ArrayList<CQuery> oldMaximalSubqueries = potentialsMaximalSubqueries;
 		potentialsMaximalSubqueries = new ArrayList<CQuery>();
@@ -152,16 +161,16 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	    // Ancienne PXSS avant les nouvelles
 	    potentialsMaximalSubqueries = oldMaximalSubqueries;
 	    potentialsMaximalSubqueries.addAll(newMaximalSubqueries);
-	    
+
 	    // Nouvelles PXSS avant les anciennes
-//	    potentialsMaximalSubqueries = newMaximalSubqueries;
-//	    potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
+	    // potentialsMaximalSubqueries = newMaximalSubqueries;
+	    // potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
 	}
     }
 
-   /**
-    * Execute the query save in the strategy, the main query
-    */
+    /**
+     * Execute the query save in the strategy, the main query
+     */
     @Override
     public boolean hasLeastKAnswers() {
 
@@ -193,7 +202,7 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
     }
 
     @Override
-    abstract public boolean hasLeastKAnswers(CQuery query) ;
+    abstract public boolean hasLeastKAnswers(CQuery query);
 
     @Override
     public boolean isMFS(CQuery query) {
@@ -217,13 +226,13 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	}
 	return true;
     }
-    
+
     @Override
     public CQuery getOneMFS(CQuery query) {
 
-//	if (!query.isValidQuery()) {
-//	    return null;
-//	}
+	// if (!query.isValidQuery()) {
+	// return null;
+	// }
 
 	if (hasLeastKAnswers(query)) {
 	    return CQueryFactory.createCQuery(new ArrayList<CElement>());
@@ -268,8 +277,9 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
     }
 
     /**
-     * Special get one MFS for a query which we are sure that it fails
-     * so we don't execute the first hasLeastKAnswers
+     * Special get one MFS for a query which we are sure that it fails so we
+     * don't execute the first hasLeastKAnswers
+     * 
      * @param query
      * @return
      */
@@ -321,7 +331,8 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	size_of_cartesian_product = 0;
 	duration_of_execution = System.currentTimeMillis();
 	this.computeMFS(query);
-	duration_of_execution = System.currentTimeMillis() - duration_of_execution;
+	duration_of_execution = System.currentTimeMillis()
+		- duration_of_execution;
 	return failingCauses;
     }
 
@@ -336,16 +347,17 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	    return maximalSubqueries;
 	}
     }
-    
-    protected void logger_init(){
-	
-	LocalDateTime time = LocalDateTime.now() ;
-	String time_value = ""+time.getDayOfMonth()+time.getMonthValue()+time.getHour()+time.getMinute()+time.getSecond();
-	
-	String logfile = "mfsSearch-Process"+"-"+time_value+".log";
-	
+
+    protected void logger_init() {
+
+	LocalDateTime time = LocalDateTime.now();
+	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
+		+ time.getHour() + time.getMinute() + time.getSecond();
+
+	String logfile = "mfsSearch-Process" + "-" + time_value + ".log";
+
 	PatternLayout layout = new PatternLayout();
-	String conversionPattern ="%-5p [%C{1}]: %m%n";
+	String conversionPattern = "%-5p [%C{1}]: %m%n";
 	layout.setConversionPattern(conversionPattern);
 
 	FileAppender fileAppender = new FileAppender();
@@ -354,10 +366,5 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	fileAppender.activateOptions();
 	logger.removeAllAppenders();
 	logger.addAppender(fileAppender);
-	for(int i = 0; i<CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++){
-	    logger.info(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i).getElement().toString()+"-->"+CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i).getLabel());
-	}
-	
-
     }
 }

@@ -32,7 +32,7 @@ import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
  */
 public class LatticeDFSStrategy extends AbstractLatticeStrategy {
 
-    private final int NUMBER_OF_EXPECTED_ANSWERS ;
+    private final int NUMBER_OF_EXPECTED_ANSWERS;
     private final Session SESSION;
 
     /**
@@ -57,7 +57,7 @@ public class LatticeDFSStrategy extends AbstractLatticeStrategy {
 	number_of_query_reexecuted = 0;
 	size_of_cartesian_product = 0;
 	duration_of_execution = 0;
-	
+
 	NUMBER_OF_EXPECTED_ANSWERS = answers;
 	SESSION = s;
 	CURRENT_CONJUNCTIVE_QUERY = query;
@@ -76,6 +76,14 @@ public class LatticeDFSStrategy extends AbstractLatticeStrategy {
      * @param query
      */
     protected void computeMFS(CQuery query) {
+
+	/**
+	 * log the current query
+	 */
+	for (int i = 0; i < query.getElementList().size(); i++) {
+	    logger.info(query.getElementList().get(i).getElement().toString()
+		    + "-->" + query.getElementList().get(i).getLabel());
+	}
 
 	failingCauses = new ArrayList<CQuery>();
 	maximalSubqueries = new ArrayList<CQuery>();
@@ -188,8 +196,9 @@ public class LatticeDFSStrategy extends AbstractLatticeStrategy {
     public boolean hasLeastKAnswers(CQuery query) {
 
 	number_of_query_executed++;
-	int nbSolution = SESSION.createStatement(query.toString()).getResultSetSize();
-	
+	int nbSolution = SESSION.createStatement(query.toString())
+		.getResultSetSize();
+
 	if (nbSolution >= NUMBER_OF_EXPECTED_ANSWERS) {
 	    logger.info("Execution of : " + query.getQueryLabel()
 		    + "                           Succes " + nbSolution);
