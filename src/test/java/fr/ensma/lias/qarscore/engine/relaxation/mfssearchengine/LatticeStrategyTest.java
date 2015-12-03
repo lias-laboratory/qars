@@ -95,7 +95,7 @@ public class LatticeStrategyTest extends InitTest{
     @Test
     public void testGetAllMFS() {
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.TEST_1);
+		.createCQuery(SPARQLQueriesSample.QUERY_1);
 	
 	relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
 		conjunctiveQuery);

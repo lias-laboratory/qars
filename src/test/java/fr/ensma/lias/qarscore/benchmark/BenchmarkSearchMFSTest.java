@@ -45,7 +45,6 @@ public class BenchmarkSearchMFSTest {
      * set test parameter
      */
     private static final int NB_EXEC = 1;
-    // private static final int NB_QUERY_BY_TYPE = 5;
     private static final int INDEX_OF_REPOSITORY = 0;
     private final int TOP_K = 10;
     /**

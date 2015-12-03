@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.benchmark.result.ResultStrategyExplain;
@@ -280,38 +281,45 @@ public class BenchmarkStrategiesTest extends InitTest {
 
     private void testRelaxationWithHuangStrategy() {
 
+	long begin_query, begin, end_query, end;
+	boolean hasTopk ; 
+	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	double duration_mfs_search;
+	
 	for (QueryExplain queryExplain : newTestResultPairList) {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 	    
 	    logger.info("**************************Begin QUERY "+queryExplain.description+"***********************************");
-	    long begin = System.currentTimeMillis();
+	    begin = System.currentTimeMillis();
 	    HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
-	    boolean hasTopk = false;
-	    int number_answers = 0;
-	    int number_relaxed_queries = 0;
+	    hasTopk = false;
+	    number_answers = 0;
+	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
+		begin_query = System.currentTimeMillis();
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
 		int query_answers_size = stm.getResultSetSize(TOP_K);
+		end_query = System.currentTimeMillis();
 		number_answers = number_answers + query_answers_size;
 		hasTopk = number_answers >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "+relaxed_query.getCurrent_level()+" "
-			+ query_answers_size);
+			+ query_answers_size + ((float) (end_query - begin_query)));
 	    }
-	    long end = System.currentTimeMillis();
+	    end = System.currentTimeMillis();
 	    float duration = ((float) (end - begin));
 	    logger.info(number_relaxed_queries + " " + duration + " "
 		    + number_answers);
 	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
-	    double duration_mfs_search = 0.0;
-	    int number_check_queries = 0;
-	    int number_queries_mfs = 0;
+	    duration_mfs_search = 0.0;
+	    number_check_queries = 0;
+	    number_queries_mfs = 0;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
@@ -560,14 +568,14 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-//    @Test
+    @Test
     public void testLUBM_Huang() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
 		+ QUERIES_TYPE_FILE.get(current_query_set));
 
 	String fileCSV = "exp-" + current_query_set
-		+ "-Huang_relaxation-strategy-Jena-lubm-" + tdb_alias + ".csv";
+		+ "-Huang_relaxation-strategy-lubm-" + tdb_alias  +"-"+time_value+ ".csv";
 	newResultExplain = new ResultStrategyExplain(fileCSV, time_multiple);
 
 	/**********************************

@@ -342,7 +342,4 @@ public class SPARQLQueriesSample {
 	    + "?X ub:doctoralDegreeFrom <http://www.University8.edu> . "
 	    + "?X ub:researchInterest 'Research23' . "
 	    + "?X ub:teacherOf ?Y1 . " + "?Y2 ub:takesCourse ?Y1 . " + "}";
-
-    public static String TEST_1 = "SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y2 . ?S <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?X . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> ?Y4 }";
-
 }
