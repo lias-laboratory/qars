@@ -35,7 +35,6 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 
     protected List<int[]>[] mfs_relaxation_degree;
-    public int number_check_queries = 0;
 
     /**
      * 

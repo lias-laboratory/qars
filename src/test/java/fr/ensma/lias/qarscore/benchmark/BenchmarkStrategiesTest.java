@@ -321,13 +321,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    + number_answers);
 	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
 	    duration_mfs_search = 0.0;
-	    number_check_queries = 0;
+	    number_check_queries = relaxed_query.number_check_queries;
 	    number_queries_mfs = 0;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
-			    + number_relaxed_queries, number_queries_mfs,
-		    number_relaxed_queries + number_check_queries);
+			    + number_relaxed_queries, number_queries_mfs + number_check_queries,
+		    number_relaxed_queries);
 
 	}
     }
@@ -377,12 +377,12 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    
 	    duration_mfs_search = 0.0;
 	    number_queries_mfs = 0;
-	    number_check_queries = 0;
+	    number_check_queries = relaxed_query.number_check_queries;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
-			    + number_relaxed_queries, number_queries_mfs,
-		    number_relaxed_queries + number_check_queries);
+			    + number_relaxed_queries, number_queries_mfs + number_check_queries,
+		    number_relaxed_queries);
 
 	}
     }
@@ -435,12 +435,12 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    + number_answers);
 	    logger.info("**************************End QUERY "+queryExplain.description+"***********************************");
 	    
-	    number_check_queries = 0;
+	    number_check_queries = relaxed_query.number_check_queries;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
-			    + number_relaxed_queries, number_queries_mfs,
-		    number_relaxed_queries + number_check_queries);
+			    + number_relaxed_queries, number_queries_mfs + number_check_queries,
+		    number_relaxed_queries);
 	}
     }
 
@@ -496,8 +496,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
-			    + number_relaxed_queries, number_queries_mfs,
-		    number_relaxed_queries + number_check_queries);
+			    + number_relaxed_queries, number_queries_mfs + number_check_queries,
+		    number_relaxed_queries);
 	}
     }
 
@@ -553,8 +553,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
-			    + number_relaxed_queries, number_queries_mfs,
-		    number_relaxed_queries + number_check_queries);
+			    + number_relaxed_queries, number_queries_mfs + number_check_queries,
+		    number_relaxed_queries);
 	}
 
     }
