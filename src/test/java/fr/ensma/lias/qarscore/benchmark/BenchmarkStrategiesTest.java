@@ -591,7 +591,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-    @Test
+ //   @Test
     public void testLUBM_Huang() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -650,7 +650,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     
-//    @Test
+    @Test
     public void testLUBM_MFS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"

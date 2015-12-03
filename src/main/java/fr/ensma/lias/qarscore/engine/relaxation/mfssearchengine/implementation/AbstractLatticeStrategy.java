@@ -354,6 +354,10 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	fileAppender.activateOptions();
 	logger.removeAllAppenders();
 	logger.addAppender(fileAppender);
+	for(int i = 0; i<CURRENT_CONJUNCTIVE_QUERY.getElementList().size(); i++){
+	    logger.info(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i).getElement().toString()+"-->"+CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i).getLabel());
+	}
+	
 
     }
 }
