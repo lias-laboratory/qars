@@ -69,9 +69,10 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("composite", "queries-composite.test");
 	QUERIES_TYPE_FILE.put("huang", "queries-huang.test");
 	QUERIES_TYPE_FILE.put("mixed", "queries-mixed.test");
+	QUERIES_TYPE_FILE.put("one", "queries-mixed-one.test");
     }
 
-    private String current_query_set = "huang";
+    private String current_query_set = "one";
 
     /**
      * test tools
@@ -656,7 +657,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-    // @Test
+    @Test
     public void testLUBM_Huang() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -800,7 +801,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @Test
+//    @Test
     public void testLUBM_MFSFULLSYS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
