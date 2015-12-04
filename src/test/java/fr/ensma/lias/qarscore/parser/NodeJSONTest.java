@@ -19,23 +19,18 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.parser;
 
-import org.apache.jena.ontology.OntClass;
-import org.apache.jena.ontology.OntProperty;
-import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.log4j.Logger;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 
 /**
  * @author Geraud FOKOU
  */
 public class NodeJSONTest extends InitTest {
 
+    @SuppressWarnings("unused")
     private Logger logger;
 
     /**
@@ -60,58 +55,58 @@ public class NodeJSONTest extends InitTest {
      * {@link fr.ensma.lias.qarscore.parser.NodeJSON#NodeJSON(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
      * .
      */
-    @Test
-    public void testNodeJSON() {
-
-	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
-		.listHierarchyRootClasses();
-	while (listRoot.hasNext()) {
-	    OntClass currentClass = listRoot.next();
-	    if (currentClass.getURI() != null) {
-		NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-			currentClass.getNameSpace(), ((JenaSession)sessionJena).getOntology()
-				.getNsURIPrefix(currentClass.getNameSpace()),
-			currentClass.getURI(), currentClass.getLocalName());
-		Assert.assertNotNull(nodejs);
-		Assert.assertTrue(nodejs.getNodeIRI().contains(
-			nodejs.getNodeName()));
-		Assert.assertTrue(nodejs.getNodeIRI().contains(
-			nodejs.getNodeNameSpace()));
-		logger.info(nodejs.toString());
-	    }
-	}
-    }
+//    @Test
+//    public void testNodeJSON() {
+//
+//	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
+//		.listHierarchyRootClasses();
+//	while (listRoot.hasNext()) {
+//	    OntClass currentClass = listRoot.next();
+//	    if (currentClass.getURI() != null) {
+//		NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
+//			currentClass.getNameSpace(), ((JenaSession)sessionJena).getOntology()
+//				.getNsURIPrefix(currentClass.getNameSpace()),
+//			currentClass.getURI(), currentClass.getLocalName());
+//		Assert.assertNotNull(nodejs);
+//		Assert.assertTrue(nodejs.getNodeIRI().contains(
+//			nodejs.getNodeName()));
+//		Assert.assertTrue(nodejs.getNodeIRI().contains(
+//			nodejs.getNodeNameSpace()));
+//		logger.info(nodejs.toString());
+//	    }
+//	}
+//    }
 
     /**
      * Test method for
      * {@link fr.ensma.lias.qarscore.parser.NodeJSON#getAttributesNames()}.
      */
-    @Test
-    public void testGetAttributesNames() {
-	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
-		.listHierarchyRootClasses();
-	OntClass currentClass = listRoot.next();
-	if (currentClass.getURI() != null) {
-	    NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-		    currentClass.getNameSpace(), ((JenaSession)sessionJena).getOntology()
-			    .getNsURIPrefix(currentClass.getNameSpace()),
-		    currentClass.getURI(), currentClass.getLocalName());
-	    Assert.assertNotNull(nodejs);
-	    Assert.assertTrue(nodejs.getNodeIRI()
-		    .contains(nodejs.getNodeName()));
-	    Assert.assertTrue(nodejs.getNodeIRI().contains(
-		    nodejs.getNodeNameSpace()));
-
-	    ExtendedIterator<OntProperty> allProperties = currentClass
-		    .listDeclaredProperties(true);
-	    while (allProperties.hasNext()) {
-		OntProperty currentProperty = allProperties.next();
-		if (currentProperty.isDatatypeProperty()) {
-		    nodejs.add(currentProperty.getLocalName(), currentProperty
-			    .getRDFType().getLocalName(), currentProperty.getURI());
-		}
-	    }
-	    logger.info(nodejs.toString());
-	}
-    }
+//    @Test
+//    public void testGetAttributesNames() {
+//	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
+//		.listHierarchyRootClasses();
+//	OntClass currentClass = listRoot.next();
+//	if (currentClass.getURI() != null) {
+//	    NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
+//		    currentClass.getNameSpace(), ((JenaSession)sessionJena).getOntology()
+//			    .getNsURIPrefix(currentClass.getNameSpace()),
+//		    currentClass.getURI(), currentClass.getLocalName());
+//	    Assert.assertNotNull(nodejs);
+//	    Assert.assertTrue(nodejs.getNodeIRI()
+//		    .contains(nodejs.getNodeName()));
+//	    Assert.assertTrue(nodejs.getNodeIRI().contains(
+//		    nodejs.getNodeNameSpace()));
+//
+//	    ExtendedIterator<OntProperty> allProperties = currentClass
+//		    .listDeclaredProperties(true);
+//	    while (allProperties.hasNext()) {
+//		OntProperty currentProperty = allProperties.next();
+//		if (currentProperty.isDatatypeProperty()) {
+//		    nodejs.add(currentProperty.getLocalName(), currentProperty
+//			    .getRDFType().getLocalName(), currentProperty.getURI());
+//		}
+//	    }
+//	    logger.info(nodejs.toString());
+//	}
+//    }
 }

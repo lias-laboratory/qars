@@ -19,11 +19,9 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.jena.ontology.OntClass;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
@@ -35,7 +33,6 @@ import org.junit.Test;
 import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
@@ -100,30 +97,6 @@ public class EDBT_Scenario_Test {
 	    number_answers++;
 	}
 	Assert.assertTrue(number_answers == 0);
-
-	OntClass class_to_relax = ((JenaSession)session).getOntology()
-		.getOntClass(
-			"http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#UndergraduateStudent");
-	Assert.assertNotNull(class_to_relax);
-	Logger.getRootLogger().info(class_to_relax);
-	Map<String, String> relax_operator = new HashMap<String, String>();
-	relax_operator.put(class_to_relax.getURI(), "SIB");
-	
-	Properties.setSimilarityStrategy();
-	Map<ResultSet, Double> relaxed_result = queryStatement.relaxedQuery(relax_operator);
-	
-	Assert.assertNotNull(relaxed_result);
-	Assert.assertTrue(relaxed_result.entrySet().size() == 1);
-	for (ResultSet one_result : relaxed_result.keySet()) {
-	    number_answers = 0;
-	    while (one_result.hasNext()) {
-		QuerySolution solution = one_result.next();
-		Logger.getRootLogger().info(
-			solution.get(one_result.getResultVars().get(0)));
-		number_answers++;
-	    }
-	    Logger.getRootLogger().info(relaxed_result.get(one_result));
-	}
     }
 
     @Test

@@ -19,23 +19,18 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.parser;
 
-import org.apache.jena.ontology.OntClass;
-import org.apache.jena.ontology.OntProperty;
-import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.log4j.Logger;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 
 /**
  * @author Geraud FOKOU
  */
 public class EdgesJSONTest extends InitTest {
 
+    @SuppressWarnings("unused")
     private Logger logger;
 
     /**
@@ -55,53 +50,53 @@ public class EdgesJSONTest extends InitTest {
 	super.tearDown();
     }
 
-    @Test
-    public void testEdgesConstruction() {
-
-	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
-		.listHierarchyRootClasses();
-	while (listRoot.hasNext()) {
-	    OntClass currentRoot = listRoot.next();
-	    if (currentRoot.getURI() != null) {
-		NodeJSON nodejs = new NodeJSON(currentRoot.getLocalName(),
-			currentRoot.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(currentRoot.getNameSpace()), currentRoot.getURI(),
-			currentRoot.getLocalName());
-		Assert.assertNotNull(nodejs);
-		Assert.assertTrue(nodejs.getNodeIRI().contains(
-			nodejs.getNodeName()));
-		Assert.assertTrue(nodejs.getNodeIRI().contains(
-			nodejs.getNodeNameSpace()));
-
-		logger.info(nodejs.toString());
-
-		ExtendedIterator<OntProperty> allProperties = currentRoot
-			.listDeclaredProperties(true);
-		while (allProperties.hasNext()) {
-		    OntProperty currentProperty = allProperties.next();
-		    if (currentProperty.isObjectProperty()) {
-			EdgesJSON edge = new EdgesJSON(
-				currentProperty.getLocalName(),
-				currentProperty.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(currentProperty.getNameSpace()),
-				currentProperty.getURI(),
-				currentProperty.getLocalName(),
-				"ObjectProperty");
-			logger.info(edge.getEdgeName());
-			if (currentProperty.getRange() != null) {
-			    OntClass range = currentProperty.getRange()
-				    .asClass();
-			    Assert.assertTrue(range.isClass());
-			    Assert.assertNotNull(edge);
-			    NodeJSON nodejs1 = new NodeJSON(
-				    range.getLocalName(), range.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(range.getNameSpace()),
-				    range.getURI(), range.getLocalName());
-			    edge.setEdgeSource(nodejs);
-			    edge.setEdgeDestination(nodejs1);
-
-			}
-			logger.info(edge.toString());
-		    }
-		}
-	    }
-	}
-    }
+//    @Test
+//    public void testEdgesConstruction() {
+//
+//	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()
+//		.listHierarchyRootClasses();
+//	while (listRoot.hasNext()) {
+//	    OntClass currentRoot = listRoot.next();
+//	    if (currentRoot.getURI() != null) {
+//		NodeJSON nodejs = new NodeJSON(currentRoot.getLocalName(),
+//			currentRoot.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(currentRoot.getNameSpace()), currentRoot.getURI(),
+//			currentRoot.getLocalName());
+//		Assert.assertNotNull(nodejs);
+//		Assert.assertTrue(nodejs.getNodeIRI().contains(
+//			nodejs.getNodeName()));
+//		Assert.assertTrue(nodejs.getNodeIRI().contains(
+//			nodejs.getNodeNameSpace()));
+//
+//		logger.info(nodejs.toString());
+//
+//		ExtendedIterator<OntProperty> allProperties = currentRoot
+//			.listDeclaredProperties(true);
+//		while (allProperties.hasNext()) {
+//		    OntProperty currentProperty = allProperties.next();
+//		    if (currentProperty.isObjectProperty()) {
+//			EdgesJSON edge = new EdgesJSON(
+//				currentProperty.getLocalName(),
+//				currentProperty.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(currentProperty.getNameSpace()),
+//				currentProperty.getURI(),
+//				currentProperty.getLocalName(),
+//				"ObjectProperty");
+//			logger.info(edge.getEdgeName());
+//			if (currentProperty.getRange() != null) {
+//			    OntClass range = currentProperty.getRange()
+//				    .asClass();
+//			    Assert.assertTrue(range.isClass());
+//			    Assert.assertNotNull(edge);
+//			    NodeJSON nodejs1 = new NodeJSON(
+//				    range.getLocalName(), range.getNameSpace(), ((JenaSession)sessionJena).getOntology().getNsURIPrefix(range.getNameSpace()),
+//				    range.getURI(), range.getLocalName());
+//			    edge.setEdgeSource(nodejs);
+//			    edge.setEdgeDestination(nodejs1);
+//
+//			}
+//			logger.info(edge.toString());
+//		    }
+//		}
+//	    }
+//	}
+//    }
 }

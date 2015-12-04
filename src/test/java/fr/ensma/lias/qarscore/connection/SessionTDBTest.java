@@ -23,22 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.jena.ontology.OntClass;
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.ontology.OntProperty;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.log4j.Logger;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 
 /**
  * @author Geraud FOKOU
@@ -66,66 +56,66 @@ public class SessionTDBTest extends InitTest {
 	}
     }
 
-    @Test
-    public void testSessionTDB() {
-
-	Assert.assertNotNull(((JenaSession) sessionJena).getDataset());
-	Assert.assertNotNull(((JenaSession) sessionJena).getModel());
-	Assert.assertNotNull(((JenaSession) sessionJena).getOntology());
-	Assert.assertTrue(((JenaSession) sessionJena).getTripleList().size() != 0);
-	logger.info(((JenaSession) sessionJena).getDataset().toString());
-	for(String key:((JenaSession) sessionJena).getStat_meta_data().getInstance_by_class().keySet()){
-	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInstance_by_class().get(key));
-	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInformationContent(key));
-	}
-	for(String key:((JenaSession) sessionJena).getStat_meta_data().getTriple_by_property().keySet()){
-	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getTriple_by_property().get(key));
-	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInformationContent(key));
-	}
-	 logger.info(((JenaSession) sessionJena).getStat_meta_data().getSize_instance());
-	 logger.info(((JenaSession) sessionJena).getStat_meta_data().getSize_triple());
-    }
-
-   // @Test
-    public void testOntologyTDB() {
-	Assert.assertNotNull(((JenaSession) sessionJena).getDataset());
-	Assert.assertNotNull(((JenaSession) sessionJena).getModel());
-	OntModel ontology_1 = ((JenaSession) sessionJena).getOntology();
-	OntModel ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, ontology_1.getBaseModel());
-	Assert.assertNotNull(ontology);
-
-	String rdf_prefix = "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ";
-
-	String instance_by_class_query = rdf_prefix
-		+ " SELECT ?classe (COUNT(?instance) AS ?numberInstance)  "
-		+ "WHERE {?instance rdf:type ?classe . }" + "GROUP BY ?classe "
-		+ "ORDER BY ?numberInstance ";
-
-	String triple_by_property_query = rdf_prefix
-		+ " SELECT ?property (COUNT(?property) AS ?numberProperty)  "
-		+ "WHERE { ?s ?property ?o  .} " + "GROUP BY ?property "
-		+ "ORDER BY ?numberProperty ";
-
-	QueryExecution qexec = QueryExecutionFactory.create(
-		instance_by_class_query, ((JenaSession) sessionJena).getModel());
-	ResultSet result = qexec.execSelect();
-	while(result.hasNext()){
-	    QuerySolution sol = result.next();
-	    logger.info(sol.getResource("classe").getLocalName()+"--->"+sol.getLiteral("numberInstance").getInt());
-	}
-  
-	int size_instance = ontology.listIndividuals().toList().size();
-	logger.info("Number of Instances --->"+size_instance);
-	
-	qexec = QueryExecutionFactory.create(
-		triple_by_property_query, ((JenaSession) sessionJena).getModel());
-	result = qexec.execSelect();
-	while(result.hasNext()){
-	    QuerySolution sol = result.next();
-	    logger.info(sol.getResource("property").getLocalName()+"--->"+sol.getLiteral("numberProperty").getInt());
-	}
-
-	int size_triple = ontology.listStatements().toList().size();
-	logger.info("Number of Triple --->"+size_triple);
-    }
+//    @Test
+//    public void testSessionTDB() {
+//
+//	Assert.assertNotNull(((JenaSession) sessionJena).getDataset());
+//	Assert.assertNotNull(((JenaSession) sessionJena).getModel());
+//	Assert.assertNotNull(((JenaSession) sessionJena).getOntology());
+//	Assert.assertTrue(((JenaSession) sessionJena).getTripleList().size() != 0);
+//	logger.info(((JenaSession) sessionJena).getDataset().toString());
+//	for(String key:((JenaSession) sessionJena).getStat_meta_data().getInstance_by_class().keySet()){
+//	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInstance_by_class().get(key));
+//	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInformationContent(key));
+//	}
+//	for(String key:((JenaSession) sessionJena).getStat_meta_data().getTriple_by_property().keySet()){
+//	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getTriple_by_property().get(key));
+//	    logger.info(key+"-->"+((JenaSession) sessionJena).getStat_meta_data().getInformationContent(key));
+//	}
+//	 logger.info(((JenaSession) sessionJena).getStat_meta_data().getSize_instance());
+//	 logger.info(((JenaSession) sessionJena).getStat_meta_data().getSize_triple());
+//    }
+//
+//   // @Test
+//    public void testOntologyTDB() {
+//	Assert.assertNotNull(((JenaSession) sessionJena).getDataset());
+//	Assert.assertNotNull(((JenaSession) sessionJena).getModel());
+//	OntModel ontology_1 = ((JenaSession) sessionJena).getOntology();
+//	OntModel ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, ontology_1.getBaseModel());
+//	Assert.assertNotNull(ontology);
+//
+//	String rdf_prefix = "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ";
+//
+//	String instance_by_class_query = rdf_prefix
+//		+ " SELECT ?classe (COUNT(?instance) AS ?numberInstance)  "
+//		+ "WHERE {?instance rdf:type ?classe . }" + "GROUP BY ?classe "
+//		+ "ORDER BY ?numberInstance ";
+//
+//	String triple_by_property_query = rdf_prefix
+//		+ " SELECT ?property (COUNT(?property) AS ?numberProperty)  "
+//		+ "WHERE { ?s ?property ?o  .} " + "GROUP BY ?property "
+//		+ "ORDER BY ?numberProperty ";
+//
+//	QueryExecution qexec = QueryExecutionFactory.create(
+//		instance_by_class_query, ((JenaSession) sessionJena).getModel());
+//	ResultSet result = qexec.execSelect();
+//	while(result.hasNext()){
+//	    QuerySolution sol = result.next();
+//	    logger.info(sol.getResource("classe").getLocalName()+"--->"+sol.getLiteral("numberInstance").getInt());
+//	}
+//  
+//	int size_instance = ontology.listIndividuals().toList().size();
+//	logger.info("Number of Instances --->"+size_instance);
+//	
+//	qexec = QueryExecutionFactory.create(
+//		triple_by_property_query, ((JenaSession) sessionJena).getModel());
+//	result = qexec.execSelect();
+//	while(result.hasNext()){
+//	    QuerySolution sol = result.next();
+//	    logger.info(sol.getResource("property").getLocalName()+"--->"+sol.getLiteral("numberProperty").getInt());
+//	}
+//
+//	int size_triple = ontology.listStatements().toList().size();
+//	logger.info("Number of Triple --->"+size_triple);
+//    }
 }

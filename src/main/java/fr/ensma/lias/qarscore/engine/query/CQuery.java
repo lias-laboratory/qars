@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryFactory;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
@@ -129,7 +130,7 @@ public class CQuery implements Comparable<CQuery> {
 
 	for (int i = 0; i < this.getElementList().size(); i++) {
 	    tempvar.addAll(this.getElementList().get(i).getMentionnedVar());
-	    //tempvar.retainAll(varnodes);
+	    // tempvar.retainAll(varnodes);
 	    varnodes.removeAll(tempvar);
 	    varnodes.addAll(this.getElementList().get(i).getMentionnedVar());
 	    tempvar.clear();
@@ -151,7 +152,7 @@ public class CQuery implements Comparable<CQuery> {
 	for (int i = 0; i < this.getElementList().size(); i++) {
 	    tempvarnames.addAll(this.getElementList().get(i)
 		    .getMentionnedVarsNames());
-	    //tempvarnames.retainAll(varnames);
+	    // tempvarnames.retainAll(varnames);
 	    varnames.removeAll(tempvarnames);
 	    varnames.addAll(this.getElementList().get(i)
 		    .getMentionnedVarsNames());
@@ -205,17 +206,18 @@ public class CQuery implements Comparable<CQuery> {
 
 	return isValid;
     }
-    
+
     /**
      * Return true if the current query contains the element
+     * 
      * @param element
      * @return
      */
-    public boolean contain(CElement element){
-	
+    public boolean contain(CElement element) {
+
 	boolean found = false;
 	int i = 0;
-	while((!found)&&(i<this.elementList.size())) {
+	while ((!found) && (i < this.elementList.size())) {
 	    found = this.elementList.get(i).equals(element);
 	    i++;
 	}
@@ -245,10 +247,10 @@ public class CQuery implements Comparable<CQuery> {
 	if (selectedQueryVar.size() == 0) {
 	    tempQuery.setQueryResultStar(true);
 	} else {
-	    for(Node var:selectedQueryVar){
+	    for (Node var : selectedQueryVar) {
 		tempQuery.addResultVar(var);
 	    }
-	   // tempQuery.addProjectVars(selectedQueryVar);
+	    // tempQuery.addProjectVars(selectedQueryVar);
 	}
 	return tempQuery;
 
@@ -330,74 +332,79 @@ public class CQuery implements Comparable<CQuery> {
     public List<CQuery> getCartesianProduct() {
 
 	List<CQuery> connexesCQueries = new ArrayList<CQuery>();
-	
+
 	List<List<CElement>> connexesComposantSet = new ArrayList<List<CElement>>();
 	List<List<Node>> connexesComposantNodeSet = new ArrayList<List<Node>>();
-	
+
 	List<CElement> tempElementSet = new ArrayList<CElement>();
 	tempElementSet.addAll(elementList);
-	
-//	List<CElement> cartesianSet = new ArrayList<CElement>();
-//	List<Node> cartesianSetNode = new ArrayList<Node>();
-	
-//	connexesComposantSet.add(new ArrayList<CElement>());
-//	connexesComposantNodeSet.add(new ArrayList<Node>());
-	
-//	connexesComposantSet.get(0).add(tempElementSet.get(0));
-//	connexesComposantNodeSet.get(0).addAll(tempElementSet.get(0).getMentionnedVar());
-//	
-//	tempElementSet.remove(0);
+
+	// List<CElement> cartesianSet = new ArrayList<CElement>();
+	// List<Node> cartesianSetNode = new ArrayList<Node>();
+
+	// connexesComposantSet.add(new ArrayList<CElement>());
+	// connexesComposantNodeSet.add(new ArrayList<Node>());
+
+	// connexesComposantSet.get(0).add(tempElementSet.get(0));
+	// connexesComposantNodeSet.get(0).addAll(tempElementSet.get(0).getMentionnedVar());
+	//
+	// tempElementSet.remove(0);
 
 	List<List<CElement>> linkedComposantSet = new ArrayList<List<CElement>>();
 	List<List<Node>> linkedComposantNodeSet = new ArrayList<List<Node>>();
 	List<Node> linkedNodeCandidates = new ArrayList<Node>();
-	
-	for(CElement currentElt:tempElementSet){
-	    
+
+	for (CElement currentElt : tempElementSet) {
+
 	    linkedComposantSet.removeAll(linkedComposantSet);
 	    linkedComposantNodeSet.removeAll(linkedComposantNodeSet);
-	   
+
 	    List<Node> currentNodeSet = currentElt.getMentionnedVar();
 	    int k = 0;
-	    
-	    while(k<connexesComposantSet.size()){
-		
+
+	    while (k < connexesComposantSet.size()) {
+
 		boolean isLinked = false;
 		linkedNodeCandidates.removeAll(linkedNodeCandidates);
 		linkedNodeCandidates.addAll(connexesComposantNodeSet.get(k));
-		
-		for(Node linkedNode:linkedNodeCandidates){
-		    for(Node node:currentNodeSet){
-			if(linkedNode.sameValueAs(node)){
+
+		for (Node linkedNode : linkedNodeCandidates) {
+		    for (Node node : currentNodeSet) {
+			if (linkedNode.sameValueAs(node)) {
 			    linkedComposantSet.add(connexesComposantSet.get(k));
-			    linkedComposantNodeSet.add(connexesComposantNodeSet.get(k));
+			    linkedComposantNodeSet.add(connexesComposantNodeSet
+				    .get(k));
 			    connexesComposantNodeSet.remove(k);
 			    connexesComposantSet.remove(k);
 			    isLinked = true;
 			    break;
 			}
 		    }
-		    if(isLinked){
+		    if (isLinked) {
 			break;
 		    }
 		}
-		if(!isLinked){
-		    k++;   
+		if (!isLinked) {
+		    k++;
 		}
 	    }
-	    
-	    if(linkedComposantSet.size()==0){
+
+	    if (linkedComposantSet.size() == 0) {
 		connexesComposantSet.add(new ArrayList<CElement>());
 		connexesComposantNodeSet.add(new ArrayList<Node>());
-		
-		connexesComposantSet.get(connexesComposantSet.size()-1).add(currentElt);
-		connexesComposantNodeSet.get(connexesComposantSet.size()-1).addAll(currentElt.getMentionnedVar());
-	    }
-	    else {		
-		for (int index=1; index<linkedComposantSet.size(); index++){
-		    linkedComposantNodeSet.get(0).removeAll(linkedComposantNodeSet.get(index));
-		    linkedComposantNodeSet.get(0).addAll(linkedComposantNodeSet.get(index));
-		    linkedComposantSet.get(0).addAll(linkedComposantSet.get(index));
+
+		connexesComposantSet.get(connexesComposantSet.size() - 1).add(
+			currentElt);
+		connexesComposantNodeSet.get(connexesComposantSet.size() - 1)
+			.addAll(currentElt.getMentionnedVar());
+	    } else {
+		for (int index = 1; index < linkedComposantSet.size(); index++) {
+		    linkedComposantNodeSet.get(0).removeAll(
+			    linkedComposantNodeSet.get(index));
+		    linkedComposantNodeSet.get(0).addAll(
+			    linkedComposantNodeSet.get(index));
+		    linkedComposantSet.get(0).addAll(
+			    linkedComposantSet.get(index));
 		}
 		linkedComposantNodeSet.get(0).removeAll(currentNodeSet);
 		linkedComposantNodeSet.get(0).addAll(currentNodeSet);
@@ -406,11 +413,11 @@ public class CQuery implements Comparable<CQuery> {
 		connexesComposantNodeSet.add(linkedComposantNodeSet.get(0));
 	    }
 	}
-	
-	for(List<CElement> connexeComposant:connexesComposantSet){
+
+	for (List<CElement> connexeComposant : connexesComposantSet) {
 	    connexesCQueries.add(new CQuery(connexeComposant, null, null));
 	}
-	
+
 	return connexesCQueries;
     }
 
@@ -452,28 +459,29 @@ public class CQuery implements Comparable<CQuery> {
 
     /**
      * Replace if exist the CElement elt by the otherElt
+     * 
      * @param elt
      * @param otherElt
      * @return
      */
-    public boolean replace(CElement elt, CElement otherElt){
-	
+    public boolean replace(CElement elt, CElement otherElt) {
+
 	int index = 0;
 	boolean found = false;
-	while((index<this.getElementList().size())&&(!found)){
+	while ((index < this.getElementList().size()) && (!found)) {
 	    found = this.getElementList().get(index).equals(elt);
 	    index++;
 	}
-	if(!found){
+	if (!found) {
 	    return false;
 	}
-	index --;
+	index--;
 	this.getElementList().remove(index);
 	this.getElementList().add(index, otherElt);
-	
+
 	return true;
     }
-    
+
     /**
      * replace all the Node with value node by othernode
      * 
@@ -573,47 +581,89 @@ public class CQuery implements Comparable<CQuery> {
 
     @Override
     public int compareTo(CQuery otherQuery) {
-	
+
 	if (otherQuery == null)
 	    return -2;
 
 	if (this == otherQuery)
 	    return 0;
-	
-	if(this.equals(otherQuery))
+
+	if (this.equals(otherQuery))
 	    return 0;
-		
-	if(this.isSubQueryOf(otherQuery))
+
+	if (this.isSubQueryOf(otherQuery))
 	    return -1;
-	
-	if(this.isSuperQueryOf(otherQuery))
+
+	if (this.isSuperQueryOf(otherQuery))
 	    return 1;
 
 	return 2;
 
     }
-    
+
     /*
      * 
      */
-    public String getQueryLabel(){
-	
-	String label="";
-	for(CElement elt:this.elementList){
-	    label = label + elt.getLabel()+" ^ ";
+    public String getQueryLabel() {
+
+	String label = "";
+	for (CElement elt : this.elementList) {
+	    label = label + elt.getLabel() + " ^ ";
 	}
-	label = label.substring(0, label.length()-3);
-	
+	label = label.substring(0, label.length() - 3);
+
 	return label;
     }
-    
+
     @Override
     public int hashCode() {
 
 	int code = 0;
-	for(CElement elt:this.elementList){
-	    code = code*elt.hashCode();
-	}		
+	for (CElement elt : this.elementList) {
+	    code = code * elt.hashCode();
+	}
 	return code;
     }
+
+    /**
+     * Query for having super class of a node
+     * 
+     * @param classNode
+     * @return
+     */
+    public static CQuery getSuperClassQuery(Node classNode) {
+
+	String rdf_prefix = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
+	String subclassOf = rdf_prefix + "SELECT ?superclass  "
+		+ "WHERE {?subclass rdfs:subClassOf  ?superclass }";
+	CQuery subQuery = CQueryFactory.createCQuery(QueryFactory
+		.create(subclassOf));
+	CElement new_Element = subQuery.getElementList().get(0).replace_subject(classNode);
+	subQuery.getElementList().remove(0);
+	subQuery.getElementList().add(new_Element);
+	
+	return subQuery;
+    }
+    
+    /**
+     * Query for having super class of a node
+     * 
+     * @param classNode
+     * @return
+     */
+    public static CQuery getSubClassQuery(Node classNode) {
+
+	String rdf_prefix = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
+	String subclassOf = rdf_prefix + "SELECT ?subclass  "
+		+ "WHERE {?subClasses rdfs:subClassOf  ?superclass }";
+	CQuery subQuery = CQueryFactory.createCQuery(QueryFactory
+		.create(subclassOf));
+	CElement new_Element = subQuery.getElementList().get(0)
+		.replace_object(classNode);
+	subQuery.getElementList().remove(0);
+	subQuery.getElementList().add(new_Element);
+	
+	return subQuery;
+    }
+
 }

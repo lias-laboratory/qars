@@ -132,7 +132,7 @@ public class ServerStrategyRelaxationTest extends InitTest {
     public void testsaturationwithsession() {
 
 	QueryExecution query_exec = QueryExecutionFactory.create(QUERY,
-		((JenaSession) sessionJena).getModel());
+		((JenaSession) sessionJena).getDataset());
 
 	ResultSet result = query_exec.execSelect();
 	Logger.getRootLogger().info("Result with saturation");

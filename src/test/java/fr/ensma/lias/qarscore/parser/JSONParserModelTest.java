@@ -19,23 +19,18 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
 
 /**
  * @author Geraud FOKOU
  */
 public class JSONParserModelTest extends InitTest{
 
+    @SuppressWarnings("unused")
     private Logger logger;
 
     /**
@@ -55,39 +50,39 @@ public class JSONParserModelTest extends InitTest{
 	super.tearDown();
     }
 
-    @Test
-    public void TestGetListNodeJs(){
-	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology());
-	Assert.assertNotNull(parser);
-	List<NodeJSON> nodes = parser.getListNodeJs();
-	Assert.assertNotNull(nodes);
-	Assert.assertTrue(!nodes.isEmpty());
-	for(NodeJSON node:nodes){
-	    logger.info(node);
-	}
-    }
-    
-    @Test
-    public void testGetParser() {
-	
-	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology());
-	Assert.assertNotNull(parser.getListNodeJs());
-	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
-	Assert.assertTrue(!parser.getListEdgesSubclass().isEmpty());
-	logger.info(parser.getParser());
-    }
-
-    @Test
-    public void testGetParserExcludeClass() {
-	
-	List<String> exclude = new ArrayList<String>();
-	exclude.add("Director");
-	exclude.add("TeachingAssistant");
-	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology(), exclude);
-	Assert.assertNotNull(parser.getListNodeJs());
-	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
-	Assert.assertTrue(!parser.getListEdgesSubclass().isEmpty());
-	logger.info(parser.getParser());
-    }
+//    @Test
+//    public void TestGetListNodeJs(){
+//	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology());
+//	Assert.assertNotNull(parser);
+//	List<NodeJSON> nodes = parser.getListNodeJs();
+//	Assert.assertNotNull(nodes);
+//	Assert.assertTrue(!nodes.isEmpty());
+//	for(NodeJSON node:nodes){
+//	    logger.info(node);
+//	}
+//    }
+//    
+//    @Test
+//    public void testGetParser() {
+//	
+//	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology());
+//	Assert.assertNotNull(parser.getListNodeJs());
+//	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
+//	Assert.assertTrue(!parser.getListEdgesSubclass().isEmpty());
+//	logger.info(parser.getParser());
+//    }
+//
+//    @Test
+//    public void testGetParserExcludeClass() {
+//	
+//	List<String> exclude = new ArrayList<String>();
+//	exclude.add("Director");
+//	exclude.add("TeachingAssistant");
+//	JSONParserModel parser = new JSONParserModel(((JenaSession)sessionJena).getOntology(), exclude);
+//	Assert.assertNotNull(parser.getListNodeJs());
+//	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
+//	Assert.assertTrue(!parser.getListEdgesSubclass().isEmpty());
+//	logger.info(parser.getParser());
+//    }
 
 }

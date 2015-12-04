@@ -87,7 +87,7 @@ public class SaturationTest extends InitTest {
 	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
 
 	QueryExecution query_exec = QueryExecutionFactory.create(SPARQLQueriesSample.WWW_QUERY_3,
-		((JenaSession) sessionJena).getModel());
+		((JenaSession) sessionJena).getDataset());
 
 	ResultSet result = query_exec.execSelect();
 	Logger.getRootLogger().info("Result without saturation");
@@ -108,7 +108,7 @@ public class SaturationTest extends InitTest {
 	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
 
 	QueryExecution query_exec = QueryExecutionFactory.create(SPARQLQueriesSample.WWW_QUERY_3,
-		((JenaSession) sessionJena).getModel());
+		((JenaSession) sessionJena).getDataset());
 
 	ResultSet result = query_exec.execSelect();
 	Logger.getRootLogger().info(query_exec.getQuery());
@@ -136,7 +136,7 @@ public class SaturationTest extends InitTest {
 		Query query = QueryFactory.create(allQueries.get(key));
 		List<String> varNames = query.getResultVars();
 		QueryExecution qexec = QueryExecutionFactory.create(query,
-			((JenaSession) sessionJena).getModel());
+			((JenaSession) sessionJena).getDataset());
 		try {
 		    ResultSet results = qexec.execSelect();
 		    while (results.hasNext()) {
