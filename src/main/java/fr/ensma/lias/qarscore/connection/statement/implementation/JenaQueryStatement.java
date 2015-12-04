@@ -94,7 +94,7 @@ public class JenaQueryStatement implements QueryStatement {
 
 	try {
 	    qexec = QueryExecutionFactory.create(sparqlQuery,
-		    session.getModel());
+		    session.getDataset());
 	    try {
 		results = qexec.execSelect();
 	    } finally {
