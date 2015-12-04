@@ -28,13 +28,13 @@ SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://sw
 # XSS 3
 SELECT * WHERE { }
 
-# Test 3 (Query Q3TP-5)
+# Test 4 (Query QTP-5)
 SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y2 . ?S <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?X . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
 
-# MFS 3
+# MFS 4
 SELECT * WHERE { }
 
-# XSS 3
+# XSS 4
 SELECT * WHERE { }
 
 # Test 4 (Query Q4TP-6)

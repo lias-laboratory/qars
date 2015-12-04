@@ -59,7 +59,7 @@ public class SessionJenaSDB extends JenaSession {
 	store = StoreFactory.create(storeDesc, connectSDB);
 
 	dataset = SDBFactory.connectDataset(store);
-	set_model();
+	//set_model();
 	if(!load_stat_data(connectSDB.getLabel())){
 	    set_stat_data();
 	}

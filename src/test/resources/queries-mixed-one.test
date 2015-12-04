@@ -1,8 +1,8 @@
-# Test 4 (Query QTP-5)
-SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y2 . ?S <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?X . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
+# Test 1 (Query Q1TP-2)
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
 
-# MFS 4
-SELECT * WHERE { }
+# MFS 1
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
 
-# XSS 4
-SELECT * WHERE { }
+# XSS 1
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> }

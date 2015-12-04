@@ -43,7 +43,7 @@ public class SessionJenaTDB extends JenaSession {
     private SessionJenaTDB(String folderTDB) {
 
 	dataset = TDBFactory.createDataset(folderTDB);
-	set_model();
+	//set_model();
 	if(!load_stat_data(folderTDB)){
 	    set_stat_data();
 	}

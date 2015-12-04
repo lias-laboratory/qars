@@ -79,7 +79,9 @@ public class JenaQueryStatement implements QueryStatement {
 	
 	try {
 	    while ((results.hasNext())&&(size<limit)) {
-		results.nextSolution();
+//		QuerySolution sol1 = results.nextSolution();
+//		QuerySolution sol2 = results.nextSolution();
+//		ResultBinding.equals((ResultBinding)sol1, (ResultBinding)sol2);
 		size++;
 	    }
 	} finally {

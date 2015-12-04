@@ -148,7 +148,7 @@ public class INCFULLMFSRelaxationStrategy extends MFSUpdateRelaxationStrategy {
 		    .createCQuery(updated_mfs_query)).toString());
 	    number_check_queries = number_check_queries + 1;
 
-	    if (stm.getResultSetSize() == 0) {
+	    if (stm.getResultSetSize(1) == 0) {
 		mfs_subqueries.add(updated_mfs_query);
 		mfs_evolution_relaxation_degree.get(i).add(relax_degree);
 	    } else {

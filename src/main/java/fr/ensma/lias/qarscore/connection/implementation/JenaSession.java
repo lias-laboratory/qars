@@ -29,7 +29,6 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
@@ -37,16 +36,12 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.StmtIterator;
-import org.apache.jena.reasoner.ReasonerRegistry;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.metadata.JenaMetaDataSet;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatementFactory;
-import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
-import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
@@ -66,17 +61,17 @@ public abstract class JenaSession implements Session {
     /**
      * model of semantic data
      */
-    protected Model model;
+//    protected Model model;
 
     /**
      * Ontology of the data
      */
-    protected OntModel ontology;
+//    protected OntModel ontology;
 
     /**
      * Ontology of the data without reasoning
      */
-    protected OntModel baseontology;
+//    protected OntModel baseontology;
 
     /**
      * Statistics data
@@ -94,131 +89,131 @@ public abstract class JenaSession implements Session {
     /**
      * 
      */
-    protected void set_model() {
-
-	/**
-	 * Return a prebuilt standard configuration for the default RDFS
-	 * reasoner
-	 */
-	if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_RDFS_INF)) {
-	    model = ModelFactory.createInfModel(
-		    ReasonerRegistry.getRDFSReasoner(),
-		    dataset.getDefaultModel());
-	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_MEM_RDFS_INF, dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_MEM, ontology.getBaseModel());
-	}
-
-	/**
-	 * Return a prebuilt standard configuration for the default
-	 * subclass/subproperty transitive closure reasoner.
-	 */
-	else if (Properties.getModelMemSpec().equals(
-		OntModelSpec.OWL_MEM_TRANS_INF)) {
-	    model = ModelFactory.createInfModel(
-		    ReasonerRegistry.getTransitiveReasoner(),
-		    dataset.getDefaultModel());
-	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_MEM_TRANS_INF, dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_MEM, ontology.getBaseModel());
-	}
-
-	/**
-	 * Default model without inferred triple
-	 */
-	else if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM)) {
-	    model = dataset.getDefaultModel();
-	    ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM,
-		    dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_MEM, ontology.getBaseModel());
-	}
-	/**
-	 * Default model without inferred triple
-	 */
-	else if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_DL_MEM)) {
-	    model = dataset.getDefaultModel();
-	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_DL_MEM, dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_DL_MEM, ontology.getBaseModel());
-	}
-
-	/**
-	 * Prebuilt standard configuration for the default OWL reasoner.
-	 */
-	else if (Properties.getModelMemSpec().equals(
-		OntModelSpec.OWL_DL_MEM_RULE_INF)) {
-	    model = ModelFactory.createInfModel(
-		    ReasonerRegistry.getOWLReasoner(),
-		    dataset.getDefaultModel());
-	    ontology = ModelFactory
-		    .createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF,
-			    dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_DL_MEM, ontology.getBaseModel());
-	}
-
-	/**
-	 * Prebuilt standard configuration for the default OWL reasoner.
-	 */
-	else if (Properties.getModelMemSpec().equals(
-		OntModelSpec.OWL_DL_MEM_RDFS_INF)) {
-	    model = ModelFactory.createInfModel(
-		    ReasonerRegistry.getRDFSReasoner(),
-		    dataset.getDefaultModel());
-	    ontology = ModelFactory
-		    .createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF,
-			    dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.OWL_DL_MEM, ontology.getBaseModel());
-	}
-
-	else if (Properties.getModelMemSpec().equals(OntModelSpec.RDFS_MEM)) {
-	    model = dataset.getDefaultModel();
-	    ontology = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM,
-		    dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.RDFS_MEM, ontology.getBaseModel());
-	}
-	/**
-	 * Return a prebuilt standard configuration for the default RDFS
-	 * reasoner
-	 */
-	else if (Properties.getModelMemSpec().equals(
-		OntModelSpec.RDFS_MEM_RDFS_INF)) {
-	    model = ModelFactory.createInfModel(
-		    ReasonerRegistry.getRDFSReasoner(),
-		    dataset.getDefaultModel());
-	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.RDFS_MEM_RDFS_INF, dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.RDFS_MEM, ontology.getBaseModel());
-	}
-
-	/**
-	 * Return a prebuilt standard configuration for the default
-	 * subclass/subproperty transitive closure reasoner.
-	 */
-	else if (Properties.getModelMemSpec().equals(
-		OntModelSpec.RDFS_MEM_TRANS_INF)) {
-	    model = ModelFactory.createInfModel(
-		    ReasonerRegistry.getTransitiveReasoner(),
-		    dataset.getDefaultModel());
-	    ontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.RDFS_MEM_TRANS_INF, dataset.getDefaultModel());
-	    baseontology = ModelFactory.createOntologyModel(
-		    OntModelSpec.RDFS_MEM, ontology.getBaseModel());
-	}
-
-	else {
-	    throw new NotYetImplementedException(
-		    "unknow ontology specification");
-	}
-
-    }
+//    protected void set_model() {
+//
+//	/**
+//	 * Return a prebuilt standard configuration for the default RDFS
+//	 * reasoner
+//	 */
+//	if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_RDFS_INF)) {
+//	    model = ModelFactory.createInfModel(
+//		    ReasonerRegistry.getRDFSReasoner(),
+//		    dataset.getDefaultModel());
+//	    ontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_MEM_RDFS_INF, dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_MEM, ontology.getBaseModel());
+//	}
+//
+//	/**
+//	 * Return a prebuilt standard configuration for the default
+//	 * subclass/subproperty transitive closure reasoner.
+//	 */
+//	else if (Properties.getModelMemSpec().equals(
+//		OntModelSpec.OWL_MEM_TRANS_INF)) {
+//	    model = ModelFactory.createInfModel(
+//		    ReasonerRegistry.getTransitiveReasoner(),
+//		    dataset.getDefaultModel());
+//	    ontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_MEM_TRANS_INF, dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_MEM, ontology.getBaseModel());
+//	}
+//
+//	/**
+//	 * Default model without inferred triple
+//	 */
+//	else if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM)) {
+//	    model = dataset.getDefaultModel();
+//	    ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM,
+//		    dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_MEM, ontology.getBaseModel());
+//	}
+//	/**
+//	 * Default model without inferred triple
+//	 */
+//	else if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_DL_MEM)) {
+//	    model = dataset.getDefaultModel();
+//	    ontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_DL_MEM, dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_DL_MEM, ontology.getBaseModel());
+//	}
+//
+//	/**
+//	 * Prebuilt standard configuration for the default OWL reasoner.
+//	 */
+//	else if (Properties.getModelMemSpec().equals(
+//		OntModelSpec.OWL_DL_MEM_RULE_INF)) {
+//	    model = ModelFactory.createInfModel(
+//		    ReasonerRegistry.getOWLReasoner(),
+//		    dataset.getDefaultModel());
+//	    ontology = ModelFactory
+//		    .createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF,
+//			    dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_DL_MEM, ontology.getBaseModel());
+//	}
+//
+//	/**
+//	 * Prebuilt standard configuration for the default OWL reasoner.
+//	 */
+//	else if (Properties.getModelMemSpec().equals(
+//		OntModelSpec.OWL_DL_MEM_RDFS_INF)) {
+//	    model = ModelFactory.createInfModel(
+//		    ReasonerRegistry.getRDFSReasoner(),
+//		    dataset.getDefaultModel());
+//	    ontology = ModelFactory
+//		    .createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF,
+//			    dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.OWL_DL_MEM, ontology.getBaseModel());
+//	}
+//
+//	else if (Properties.getModelMemSpec().equals(OntModelSpec.RDFS_MEM)) {
+//	    model = dataset.getDefaultModel();
+//	    ontology = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM,
+//		    dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.RDFS_MEM, ontology.getBaseModel());
+//	}
+//	/**
+//	 * Return a prebuilt standard configuration for the default RDFS
+//	 * reasoner
+//	 */
+//	else if (Properties.getModelMemSpec().equals(
+//		OntModelSpec.RDFS_MEM_RDFS_INF)) {
+//	    model = ModelFactory.createInfModel(
+//		    ReasonerRegistry.getRDFSReasoner(),
+//		    dataset.getDefaultModel());
+//	    ontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.RDFS_MEM_RDFS_INF, dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.RDFS_MEM, ontology.getBaseModel());
+//	}
+//
+//	/**
+//	 * Return a prebuilt standard configuration for the default
+//	 * subclass/subproperty transitive closure reasoner.
+//	 */
+//	else if (Properties.getModelMemSpec().equals(
+//		OntModelSpec.RDFS_MEM_TRANS_INF)) {
+//	    model = ModelFactory.createInfModel(
+//		    ReasonerRegistry.getTransitiveReasoner(),
+//		    dataset.getDefaultModel());
+//	    ontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.RDFS_MEM_TRANS_INF, dataset.getDefaultModel());
+//	    baseontology = ModelFactory.createOntologyModel(
+//		    OntModelSpec.RDFS_MEM, ontology.getBaseModel());
+//	}
+//
+//	else {
+//	    throw new NotYetImplementedException(
+//		    "unknow ontology specification");
+//	}
+//
+//    }
 
     /**
      * 
@@ -228,7 +223,8 @@ public abstract class JenaSession implements Session {
 	Map<String, Integer> instance_by_class = new HashMap<String, Integer>();
 	Map<String, Integer> triple_by_property = new HashMap<String, Integer>();
 	String rdf_prefix = "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ";
-
+	int size_instance = 0;
+	
 	String instance_by_class_query = rdf_prefix
 		+ " SELECT ?classe (COUNT(?instance) AS ?numberInstance)  "
 		+ "WHERE {?instance rdf:type ?classe . }" + "GROUP BY ?classe "
@@ -245,9 +241,10 @@ public abstract class JenaSession implements Session {
 	while(result.hasNext()){
 	    QuerySolution sol = result.next();
 	    instance_by_class.put(sol.getResource("classe").getURI(), sol.getLiteral("numberInstance").getInt());
+	    size_instance = size_instance +  sol.getLiteral("numberInstance").getInt();
 	}
   
-	int size_instance = baseontology.listIndividuals().toList().size();
+//	int size_instance = baseontology.listIndividuals().toList().size();
 
 	qexec = QueryExecutionFactory.create(
 		triple_by_property_query, this.getModel());
@@ -257,7 +254,8 @@ public abstract class JenaSession implements Session {
 	    triple_by_property.put(sol.getResource("property").getURI(), sol.getLiteral("numberProperty").getInt());
 	}
 
-	int size_triple = ontology.listStatements().toList().size();
+	int size_triple = (int) dataset.asDatasetGraph().size();
+//	int size_triple = ontology.listStatements().toList().size();
 	stat_meta_data = new JenaMetaDataSet(instance_by_class,
 		triple_by_property, size_instance, size_triple);
     }
@@ -272,18 +270,21 @@ public abstract class JenaSession implements Session {
     }
 
     public Model getModel() {
-	return model;
+	return null;
+//	return model;
     }
 
     public OntModel getOntology() {
-	return ontology;
+	return null;
+//	return ontology;
     }
 
     /**
      * @return the baseontology
      */
     public OntModel getBaseontology() {
-        return baseontology;
+	return null;
+//      return baseontology;
     }
 
     /**
@@ -320,24 +321,27 @@ public abstract class JenaSession implements Session {
 
     @Override
     public void close() {
-	model.close();
-	ontology.close();
+//	model.close();
+//	ontology.close();
     }
 
     @Override
     public boolean isclose() {
-	return model.isClosed();
+	
+	return true;
+//	return model.isClosed();
     }
 
     @Override
     public void open() {
-	model.begin();
-	ontology.begin();
+//	model.begin();
+//	ontology.begin();
     }
 
     @Override
     public boolean isopen() {
-	return !model.isClosed();
+	return true;
+//	return !model.isClosed();
     }
 
     @Override
