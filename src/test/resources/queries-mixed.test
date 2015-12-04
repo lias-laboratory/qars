@@ -1,11 +1,11 @@
-# Test 0 (Query Q0TP-2)
+# Test 1 (Query Q1TP-2)
 SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
 
-# MFS 0
-SELECT * WHERE { }
+# MFS 1
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
 
-# XSS 0
-SELECT * WHERE { }
+# XSS 1
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> }
 
 # Test 1 (Query WWW1TP-3)
 SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> <http://www.University9.edu> . ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#GraduateStudent> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#takesCourse> <http://www.Department0.University0.edu/GraduateCourse65> }
