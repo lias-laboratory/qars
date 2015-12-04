@@ -687,7 +687,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @Test
+//    @Test
     public void testLUBM_Graph() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -717,7 +717,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-//    @Test
+    @Test
     public void testLUBM_MFS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
