@@ -1,8 +1,8 @@
-# Test 0 (Query Q0TP-2)
+# Test 1 (Query Q1TP-2)
 SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
 
-# MFS 0
+# MFS 1
 SELECT * WHERE { }
 
-# XSS 0
+# XSS 1
 SELECT * WHERE { }
