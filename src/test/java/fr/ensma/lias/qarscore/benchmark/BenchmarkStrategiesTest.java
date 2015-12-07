@@ -46,7 +46,6 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * set test parameter
      */
-    private final int TOP_K = 50;
     private int time_multiple = 1;
     private String time_value;
     /**

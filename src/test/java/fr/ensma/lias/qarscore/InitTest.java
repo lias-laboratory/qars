@@ -38,7 +38,7 @@ public class InitTest {
     public String tdb_path = "/home/lias/tdb100repository-saturated";
     public String tdb_alias = "tdb100";
     
-    public final int TOP_K = 10;
+    public final int TOP_K = 50;
     public String repository_path = "target/Sesame/NativeRepository/LUBM1";  
     
 
