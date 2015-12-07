@@ -46,7 +46,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * set test parameter
      */
-    private final int TOP_K = 10;
+    private final int TOP_K = 50;
     private int time_multiple = 1;
     private String time_value;
     /**
@@ -76,7 +76,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("one", "queries-mixed-one.test");
     }
 
-    private String current_query_set = "huang";
+    private String current_query_set = "one";
 
     /**
      * test tools
@@ -296,7 +296,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    while ((results.hasNext())&&(solutions.size()<TOP_K)) {
 		QuerySolution sol = results.nextSolution();
 		solutions.put(sol.toString(), sim);
-		logger.info(sol.toString());
+		logger.info(sol.toString()+"-------"+sim);
 	    }
 	} finally {
 	}
@@ -322,7 +322,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
-	    hasTopk = false;
+	    hasTopk = solutions.size() >= TOP_K;
 	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
@@ -681,7 +681,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-//    @Test
+    @Test
     public void testLUBM_Huang() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -741,7 +741,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @Test
+//    @Test
     public void testLUBM_MFS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
