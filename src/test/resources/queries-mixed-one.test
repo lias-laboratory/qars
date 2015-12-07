@@ -1,8 +1,9 @@
-# Test 4 (Query QTP-5)
-SELECT ?X WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y2 . ?S <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?X . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> 'Dr' }
+# Test 1 (Query WWW1TP-6)
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#VisitingProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department1.University1.edu> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#telephone> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 }
 
-# MFS 4
-SELECT * WHERE { }
+# MFS 1
+SELECT * WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#VisitingProfessor> }
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#memberOf> <http://www.Department1.University1.edu> }
 
-# XSS 4
-SELECT * WHERE { }
+# XSS 1
+SELECT * WHERE { ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#name> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#emailAddress> ?Y2 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#telephone> ?Y3 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#undergraduateDegreeFrom> ?Y4 }

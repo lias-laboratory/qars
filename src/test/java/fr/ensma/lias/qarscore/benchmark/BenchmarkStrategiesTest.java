@@ -76,7 +76,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("one", "queries-mixed-one.test");
     }
 
-    private String current_query_set = "huang";
+    private String current_query_set = "one";
 
     /**
      * test tools
@@ -296,6 +296,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    while ((results.hasNext())&&(solutions.size()<TOP_K)) {
 		QuerySolution sol = results.nextSolution();
 		solutions.put(sol.toString(), sim);
+		logger.info(sol.toString());
 	    }
 	} finally {
 	}
