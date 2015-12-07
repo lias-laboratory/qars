@@ -623,20 +623,21 @@ public class BenchmarkStrategiesTest extends InitTest {
 		duration = duration + ((float) (end - begin));
 		number_queries_mfs = ((AbstractLatticeStrategy) relaxed_query
 			.getMFSSearchEngine()).number_of_query_executed;
-		duration_mfs_search = duration_mfs_search + ((AbstractLatticeStrategy) relaxed_query
-			.getMFSSearchEngine()).duration_of_execution;
-
+		duration_mfs_search = duration_mfs_search
+			+ ((AbstractLatticeStrategy) relaxed_query
+				.getMFSSearchEngine()).duration_of_execution;
+		number_check_queries = relaxed_query.number_check_queries;
 		logger.info("*****" + (int) (i + 2) + "******"
-			+number_queries_mfs + " " + duration_mfs_search/(i+1)
-			+ " " + number_relaxed_queries + " " + duration/(i+1) + " "
-			+ solutions.size());
+			+ number_queries_mfs + " " + duration_mfs_search
+			/ (i + 1) + " " + number_relaxed_queries + " "
+			+ duration / (i + 1) + " " + solutions.size());
 	    }
 
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
 	    duration = duration / NB_EXEC;
-	    duration_mfs_search = duration_mfs_search / NB_EXEC ;
+	    duration_mfs_search = duration_mfs_search / NB_EXEC;
 	    number_check_queries = relaxed_query.number_check_queries;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
@@ -655,18 +656,22 @@ public class BenchmarkStrategiesTest extends InitTest {
 	double duration_mfs_search;
 
 	for (QueryExplain queryExplain : newTestResultPairList) {
-	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
-		    .getQuery());
 
 	    logger.info("**************************Begin QUERY "
 		    + queryExplain.description
 		    + "***********************************");
+
+	    solutions.clear();
+	    hasTopk = solutions.size() >= TOP_K;
+	    number_relaxed_queries = 0;
+
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
 	    begin = System.currentTimeMillis();
 	    MFSUpdateRelaxationStrategy relaxed_query = new MFSUpdateRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
-	    hasTopk = false;
-	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
@@ -695,13 +700,67 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    duration_mfs_search = ((AbstractLatticeStrategy) relaxed_query
 		    .getMFSSearchEngine()).duration_of_execution;
 	    number_check_queries = relaxed_query.number_check_queries;
-	    logger.info(number_check_queries + " " + number_queries_mfs + " "
-		    + duration_mfs_search + " " + number_relaxed_queries + " "
-		    + duration + " " + solutions.size());
+	    logger.info(number_queries_mfs + " " + duration_mfs_search + " "
+		    + number_relaxed_queries + " " + duration + " "
+		    + solutions.size());
+	    logger.info("**************************End First iteration "
+		    + "***********************************");
+
+	    duration = 0;
+	    duration_mfs_search = 0;
+	    for (int i = 0; i < NB_EXEC; i++) {
+
+		solutions.clear();
+		hasTopk = solutions.size() >= TOP_K;
+		number_relaxed_queries = 0;
+
+		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+			.getQuery());
+
+		begin = System.currentTimeMillis();
+		relaxed_query = new MFSUpdateRelaxationStrategy(
+			conjunctiveQuery, sessionJena);
+		relaxed_query.begin_relax_process();
+		while ((!hasTopk) && (relaxed_query.hasNext())) {
+
+		    begin_query = System.currentTimeMillis();
+		    QueryStatement stm = sessionJena
+			    .createStatement(relaxed_query.next().toString());
+		    int query_answers_size = solutions.size();
+		    this.addResult((ResultSet) stm.executeQuery(),
+			    relaxed_query.getCurrent_similarity());
+		    query_answers_size = solutions.size() - query_answers_size;
+		    end_query = System.currentTimeMillis();
+
+		    hasTopk = solutions.size() >= TOP_K;
+
+		    number_relaxed_queries = number_relaxed_queries + 1;
+		    logger.info("*****" + (int) (i + 2) + "******"
+			    + relaxed_query.getCurrent_similarity() + " "
+			    + query_answers_size + " "
+			    + ((float) (end_query - begin_query)));
+		}
+
+		end = System.currentTimeMillis();
+		duration = duration + ((float) (end - begin));
+		number_queries_mfs = ((AbstractLatticeStrategy) relaxed_query
+			.getMFSSearchEngine()).number_of_query_executed;
+		duration_mfs_search = duration_mfs_search
+			+ ((AbstractLatticeStrategy) relaxed_query
+				.getMFSSearchEngine()).duration_of_execution;
+		number_check_queries = relaxed_query.number_check_queries;
+		logger.info("*****" + (int) (i + 2) + "******"+duration / (i + 1) + " " + duration_mfs_search
+			/ (i + 1) + " " + number_relaxed_queries + " "
+			+ number_queries_mfs + " " + number_check_queries + " "
+			+ solutions.size());
+	    }
+
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
-
+	    duration = duration / NB_EXEC;
+	    duration_mfs_search = duration_mfs_search / NB_EXEC;
+	    number_check_queries = relaxed_query.number_check_queries;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
@@ -719,18 +778,22 @@ public class BenchmarkStrategiesTest extends InitTest {
 	double duration_mfs_search;
 
 	for (QueryExplain queryExplain : newTestResultPairList) {
-	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
-		    .getQuery());
 
 	    logger.info("**************************Begin QUERY "
 		    + queryExplain.description
 		    + "***********************************");
+
+	    solutions.clear();
+	    hasTopk = solutions.size() >= TOP_K;
+	    number_relaxed_queries = 0;
+
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
 	    begin = System.currentTimeMillis();
 	    INCFULLMFSRelaxationStrategy relaxed_query = new INCFULLMFSRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
-	    hasTopk = false;
-	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
@@ -747,6 +810,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
+			+ relaxed_query.getCurrent_level() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 	    }
@@ -758,20 +822,73 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    duration_mfs_search = ((AbstractLatticeStrategy) relaxed_query
 		    .getMFSSearchEngine()).duration_of_execution;
 	    number_check_queries = relaxed_query.number_check_queries;
-	    logger.info(number_check_queries + " " + number_queries_mfs + " "
-		    + duration_mfs_search + " " + number_relaxed_queries + " "
-		    + duration + " " + solutions.size());
+	    logger.info(number_queries_mfs + " " + duration_mfs_search + " "
+		    + number_relaxed_queries + " " + duration + " "
+		    + solutions.size());
+	    logger.info("**************************End First iteration "
+		    + "***********************************");
+
+	    duration = 0;
+	    duration_mfs_search = 0;
+	    for (int i = 0; i < NB_EXEC; i++) {
+
+		solutions.clear();
+		hasTopk = solutions.size() >= TOP_K;
+		number_relaxed_queries = 0;
+
+		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+			.getQuery());
+
+		begin = System.currentTimeMillis();
+		relaxed_query = new INCFULLMFSRelaxationStrategy(
+			conjunctiveQuery, sessionJena);
+		relaxed_query.begin_relax_process();
+		while ((!hasTopk) && (relaxed_query.hasNext())) {
+
+		    begin_query = System.currentTimeMillis();
+		    QueryStatement stm = sessionJena
+			    .createStatement(relaxed_query.next().toString());
+		    int query_answers_size = solutions.size();
+		    this.addResult((ResultSet) stm.executeQuery(),
+			    relaxed_query.getCurrent_similarity());
+		    query_answers_size = solutions.size() - query_answers_size;
+		    end_query = System.currentTimeMillis();
+
+		    hasTopk = solutions.size() >= TOP_K;
+
+		    number_relaxed_queries = number_relaxed_queries + 1;
+		    logger.info("*****" + (int) (i + 2) + "******"
+			    + relaxed_query.getCurrent_similarity() + " "
+			    + query_answers_size + " "
+			    + ((float) (end_query - begin_query)));
+		}
+
+		end = System.currentTimeMillis();
+		duration = duration + ((float) (end - begin));
+		number_queries_mfs = ((AbstractLatticeStrategy) relaxed_query
+			.getMFSSearchEngine()).number_of_query_executed;
+		duration_mfs_search = duration_mfs_search
+			+ ((AbstractLatticeStrategy) relaxed_query
+				.getMFSSearchEngine()).duration_of_execution;
+		number_check_queries = relaxed_query.number_check_queries;
+		logger.info("*****" + (int) (i + 2) + "******"+duration / (i + 1) + " " + duration_mfs_search
+			/ (i + 1) + " " + number_relaxed_queries + " "
+			+ number_queries_mfs + " " + number_check_queries + " "
+			+ solutions.size());
+	    }
+
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
-
+	    duration = duration / NB_EXEC;
+	    duration_mfs_search = duration_mfs_search / NB_EXEC;
+	    number_check_queries = relaxed_query.number_check_queries;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
 			    + number_relaxed_queries, number_queries_mfs
 			    + number_check_queries, number_relaxed_queries);
 	}
-
     }
 
     private void testRelaxationWithFullSysMFSStrategy() {
@@ -783,18 +900,22 @@ public class BenchmarkStrategiesTest extends InitTest {
 	double duration_mfs_search;
 
 	for (QueryExplain queryExplain : newTestResultPairList) {
-	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
-		    .getQuery());
 
 	    logger.info("**************************Begin QUERY "
 		    + queryExplain.description
 		    + "***********************************");
+
+	    solutions.clear();
+	    hasTopk = solutions.size() >= TOP_K;
+	    number_relaxed_queries = 0;
+
+	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		    .getQuery());
+
 	    begin = System.currentTimeMillis();
 	    SYSFULLMFSRelaxationStrategy relaxed_query = new SYSFULLMFSRelaxationStrategy(
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
-	    hasTopk = false;
-	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
@@ -804,7 +925,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 		this.addResult((ResultSet) stm.executeQuery(),
 			relaxed_query.getCurrent_similarity());
 		query_answers_size = solutions.size() - query_answers_size;
-
 		end_query = System.currentTimeMillis();
 
 		hasTopk = solutions.size() >= TOP_K;
@@ -812,6 +932,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
+			+ relaxed_query.getCurrent_level() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 	    }
@@ -823,14 +944,67 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    duration_mfs_search = ((AbstractLatticeStrategy) relaxed_query
 		    .getMFSSearchEngine()).duration_of_execution;
 	    number_check_queries = relaxed_query.number_check_queries;
+	    logger.info(number_queries_mfs + " " + duration_mfs_search + " "
+		    + number_relaxed_queries + " " + duration + " "
+		    + solutions.size());
+	    logger.info("**************************End First iteration "
+		    + "***********************************");
 
-	    logger.info(number_check_queries + " " + number_queries_mfs + " "
-		    + duration_mfs_search + " " + number_relaxed_queries + " "
-		    + duration + " " + solutions.size());
+	    duration = 0;
+	    duration_mfs_search = 0;
+	    for (int i = 0; i < NB_EXEC; i++) {
+
+		solutions.clear();
+		hasTopk = solutions.size() >= TOP_K;
+		number_relaxed_queries = 0;
+
+		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+			.getQuery());
+
+		begin = System.currentTimeMillis();
+		relaxed_query = new SYSFULLMFSRelaxationStrategy(
+			conjunctiveQuery, sessionJena);
+		relaxed_query.begin_relax_process();
+		while ((!hasTopk) && (relaxed_query.hasNext())) {
+
+		    begin_query = System.currentTimeMillis();
+		    QueryStatement stm = sessionJena
+			    .createStatement(relaxed_query.next().toString());
+		    int query_answers_size = solutions.size();
+		    this.addResult((ResultSet) stm.executeQuery(),
+			    relaxed_query.getCurrent_similarity());
+		    query_answers_size = solutions.size() - query_answers_size;
+		    end_query = System.currentTimeMillis();
+
+		    hasTopk = solutions.size() >= TOP_K;
+
+		    number_relaxed_queries = number_relaxed_queries + 1;
+		    logger.info("*****" + (int) (i + 2) + "******"
+			    + relaxed_query.getCurrent_similarity() + " "
+			    + query_answers_size + " "
+			    + ((float) (end_query - begin_query)));
+		}
+
+		end = System.currentTimeMillis();
+		duration = duration + ((float) (end - begin));
+		number_queries_mfs = ((AbstractLatticeStrategy) relaxed_query
+			.getMFSSearchEngine()).number_of_query_executed;
+		duration_mfs_search = duration_mfs_search
+			+ ((AbstractLatticeStrategy) relaxed_query
+				.getMFSSearchEngine()).duration_of_execution;
+		number_check_queries = relaxed_query.number_check_queries;
+		logger.info("*****" + (int) (i + 2) + "******"+duration / (i + 1) + " " + duration_mfs_search
+			/ (i + 1) + " " + number_relaxed_queries + " "
+			+ number_queries_mfs + " " + number_check_queries + " "
+			+ solutions.size());
+	    }
+
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
-
+	    duration = duration / NB_EXEC;
+	    duration_mfs_search = duration_mfs_search / NB_EXEC;
+	    number_check_queries = relaxed_query.number_check_queries;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs
