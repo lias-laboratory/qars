@@ -48,8 +48,8 @@ public class InitTest {
      */
     @Before
     public void setUp(){
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);		
-//	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
+//	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);		
+	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
 	Properties.setOntoLang("OWL");
 	sessionJena = SessionFactory.getTDBSession(tdb_path);
     }

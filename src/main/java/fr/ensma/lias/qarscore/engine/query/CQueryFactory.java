@@ -182,4 +182,16 @@ public class CQueryFactory {
 	return CQuery.createCQuery(elements, null, null);
     }
 
+    /**
+     * creates a start query with a list of elements
+     * with a precise list of selected var
+     * 
+     * @param elements
+     * @return
+     */
+    public static CQuery createCQuery(List<CElement> elements, List<Node> selectedQueryVars) {
+
+	return CQuery.createCQuery(elements, null, selectedQueryVars);
+    }
+
 }

@@ -117,7 +117,7 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	    this.insert(current_graph.getChild_elt()[j]);
 	}
 
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query);
+	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
 	boolean has_mfs = check_mfs(current_relax_query);
 
 	if (!has_mfs) {

@@ -103,7 +103,7 @@ public class HuangRelaxationStrategy {
 			    .getRelaxation_level();
 	}
 
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query);
+	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
 	
 	for (int j = 0; j < current_graph.getChild_elt().length; j++) {
 	    if (!alreadyRelaxed(current_graph.getChild_elt()[j])) {

@@ -8,11 +8,14 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -68,15 +71,17 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("chain", "queries-chain.test");
 	QUERIES_TYPE_FILE.put("composite", "queries-composite.test");
 	QUERIES_TYPE_FILE.put("huang", "queries-huang.test");
-	QUERIES_TYPE_FILE.put("mixed", "queries-mixed.test");
+	QUERIES_TYPE_FILE.put("mixed", "queries-mixed-II.test");
+	QUERIES_TYPE_FILE.put("mixed_II", "queries-mixed.test");
 	QUERIES_TYPE_FILE.put("one", "queries-mixed-one.test");
     }
 
-    private String current_query_set = "one";
+    private String current_query_set = "huang";
 
     /**
      * test tools
      */
+    private LinkedHashMap<String, Double> solutions = new LinkedHashMap<String, Double>(TOP_K);
     private List<QueryExplain> newTestResultPairList = null;
     private ResultStrategyExplain newResultExplain = null;
     String fileCSV = "exp-relaxation-strategy-Jena-lubm-tdb_alias.csv";
@@ -281,11 +286,27 @@ public class BenchmarkStrategiesTest extends InitTest {
 	}
     }
 
+    private void addResult(ResultSet results, double sim){
+	
+	if (results == null) {
+	    return ;
+	}
+	
+	try {
+	    while ((results.hasNext())&&(solutions.size()<TOP_K)) {
+		QuerySolution sol = results.nextSolution();
+		solutions.put(sol.toString(), sim);
+	    }
+	} finally {
+	}
+
+    }
+    
     private void testRelaxationWithHuangStrategy() {
 
 	long begin_query, begin, end_query, end;
 	boolean hasTopk;
-	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	int number_relaxed_queries, number_queries_mfs, number_check_queries;
 	float duration;
 	double duration_mfs_search;
 
@@ -301,18 +322,18 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
 	    hasTopk = false;
-	    number_answers = 0;
 	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize(TOP_K);
+		int query_answers_size = solutions.size();
+		this.addResult((ResultSet) stm.executeQuery(), relaxed_query.getCurrent_similarity());
+		query_answers_size = solutions.size() - query_answers_size;
 		end_query = System.currentTimeMillis();
-
-		number_answers = number_answers + query_answers_size;
-		hasTopk = number_answers >= TOP_K;
+		
+		hasTopk = solutions.size() >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
@@ -324,7 +345,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    end = System.currentTimeMillis();
 	    duration = ((float) (end - begin));
 	    logger.info(number_relaxed_queries + " " + duration + " "
-		    + number_answers);
+		    + solutions.size());
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
@@ -344,7 +365,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	long begin_query, begin, end_query, end;
 	boolean hasTopk;
-	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	int number_relaxed_queries, number_queries_mfs, number_check_queries;
 	float duration;
 	double duration_mfs_search;
 
@@ -360,18 +381,18 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
 	    hasTopk = false;
-	    number_answers = 0;
 	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize(TOP_K);
+		int query_answers_size = solutions.size();
+		this.addResult((ResultSet) stm.executeQuery(), relaxed_query.getCurrent_similarity());
+		query_answers_size = solutions.size() - query_answers_size;
 		end_query = System.currentTimeMillis();
 
-		number_answers = number_answers + query_answers_size;
-		hasTopk = number_answers >= TOP_K;
+		hasTopk = solutions.size() >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
@@ -384,7 +405,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    end = System.currentTimeMillis();
 	    duration = ((float) (end - begin));
 	    logger.info(number_relaxed_queries + " " + duration + " "
-		    + number_answers);
+		    + solutions.size());
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
@@ -405,7 +426,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	long begin_query, begin, end_query, end;
 	boolean hasTopk;
-	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	int number_relaxed_queries, number_queries_mfs, number_check_queries;
 	float duration;
 	double duration_mfs_search;
 
@@ -421,18 +442,19 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
 	    hasTopk = false;
-	    number_answers = 0;
 	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize(TOP_K);
+		int query_answers_size = solutions.size();
+		this.addResult((ResultSet) stm.executeQuery(), relaxed_query.getCurrent_similarity());
+		query_answers_size = solutions.size() - query_answers_size;
+
 		end_query = System.currentTimeMillis();
 
-		number_answers = number_answers + query_answers_size;
-		hasTopk = number_answers >= TOP_K;
+		hasTopk = solutions.size() >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
@@ -450,7 +472,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    .getMFSSearchEngine()).duration_of_execution;
 	    logger.info(number_queries_mfs + " " + duration_mfs_search + " "
 		    + number_relaxed_queries + " " + duration + " "
-		    + number_answers);
+		    + solutions.size());
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
@@ -468,7 +490,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	long begin_query, begin, end_query, end;
 	boolean hasTopk;
-	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	int number_relaxed_queries, number_queries_mfs, number_check_queries;
 	float duration;
 	double duration_mfs_search;
 
@@ -484,18 +506,18 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
 	    hasTopk = false;
-	    number_answers = 0;
 	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize(TOP_K);
+		int query_answers_size = solutions.size();
+		this.addResult((ResultSet) stm.executeQuery(), relaxed_query.getCurrent_similarity());
+		query_answers_size = solutions.size() - query_answers_size;
 		end_query = System.currentTimeMillis();
 
-		number_answers = number_answers + query_answers_size;
-		hasTopk = number_answers >= TOP_K;
+		hasTopk = solutions.size() >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
@@ -514,7 +536,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    number_check_queries = relaxed_query.number_check_queries;
 	    logger.info(number_check_queries + " " + number_queries_mfs + " "
 		    + duration_mfs_search + " " + number_relaxed_queries + " "
-		    + duration + " " + number_answers);
+		    + duration + " " + solutions.size());
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
@@ -531,7 +553,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	long begin_query, begin, end_query, end;
 	boolean hasTopk;
-	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	int number_relaxed_queries, number_queries_mfs, number_check_queries;
 	float duration;
 	double duration_mfs_search;
 
@@ -547,18 +569,18 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
 	    hasTopk = false;
-	    number_answers = 0;
 	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());
-		int query_answers_size = stm.getResultSetSize(TOP_K);
+		int query_answers_size = solutions.size();
+		this.addResult((ResultSet) stm.executeQuery(), relaxed_query.getCurrent_similarity());
+		query_answers_size = solutions.size() - query_answers_size;
 		end_query = System.currentTimeMillis();
 
-		number_answers = number_answers + query_answers_size;
-		hasTopk = number_answers >= TOP_K;
+		hasTopk = solutions.size() >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
@@ -576,7 +598,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    number_check_queries = relaxed_query.number_check_queries;
 	    logger.info(number_check_queries + " " + number_queries_mfs + " "
 		    + duration_mfs_search + " " + number_relaxed_queries + " "
-		    + duration + " " + number_answers);
+		    + duration + " " + solutions.size());
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
@@ -594,7 +616,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	long begin_query, begin, end_query, end;
 	boolean hasTopk;
-	int number_answers, number_relaxed_queries, number_queries_mfs, number_check_queries;
+	int number_relaxed_queries, number_queries_mfs, number_check_queries;
 	float duration;
 	double duration_mfs_search;
 
@@ -610,18 +632,19 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    conjunctiveQuery, sessionJena);
 	    relaxed_query.begin_relax_process();
 	    hasTopk = false;
-	    number_answers = 0;
 	    number_relaxed_queries = 0;
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 
 		begin_query = System.currentTimeMillis();
 		QueryStatement stm = sessionJena.createStatement(relaxed_query
 			.next().toString());		
-		int query_answers_size = stm.getResultSetSize(TOP_K);
+		int query_answers_size = solutions.size();
+		this.addResult((ResultSet) stm.executeQuery(), relaxed_query.getCurrent_similarity());
+		query_answers_size = solutions.size() - query_answers_size;
+
 		end_query = System.currentTimeMillis();
 
-		number_answers = number_answers + query_answers_size;
-		hasTopk = number_answers >= TOP_K;
+		hasTopk = solutions.size() >= TOP_K;
 
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
@@ -640,7 +663,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    logger.info(number_check_queries + " " + number_queries_mfs + " "
 		    + duration_mfs_search + " " + number_relaxed_queries + " "
-		    + duration + " " + number_answers);
+		    + duration + " " + solutions.size());
 	    logger.info("**************************End QUERY "
 		    + queryExplain.description
 		    + "***********************************");
