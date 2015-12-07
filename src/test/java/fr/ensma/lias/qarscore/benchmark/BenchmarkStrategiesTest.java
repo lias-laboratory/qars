@@ -395,7 +395,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		duration = duration + ((float) (end - begin));
 		logger.info("*****" + (int) (i + 2) + "******"
 			+ number_relaxed_queries + " "
-			+ ((float) (end - begin)) / i + 1 + " "
+			+ ((float) (end - begin)) / (i + 1) + " "
 			+ solutions.size());
 	    }
 
@@ -1017,7 +1017,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-//    @Test
+    @Test
     public void testLUBM_Huang() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -1077,7 +1077,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @Test
+//    @Test
     public void testLUBM_MFS() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
