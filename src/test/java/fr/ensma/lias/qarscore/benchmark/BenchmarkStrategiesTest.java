@@ -345,7 +345,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
+			+ relaxed_query.getCurrent_level().toString() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 	    }
@@ -455,7 +455,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
+			+ relaxed_query.getCurrent_level().toString() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 	    }
@@ -566,7 +566,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
+			+ relaxed_query.getCurrent_level().toString() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 	    }
@@ -688,7 +688,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
+			+ relaxed_query.getCurrent_level().toString() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 	    }
@@ -810,7 +810,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
+			+ relaxed_query.getCurrent_level().toString() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 	    }
@@ -932,7 +932,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		number_relaxed_queries = number_relaxed_queries + 1;
 		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
 			+ " " + relaxed_query.getCurrent_similarity() + " "
-			+ relaxed_query.getCurrent_level() + " "
+			+ relaxed_query.getCurrent_level().toString() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 	    }
