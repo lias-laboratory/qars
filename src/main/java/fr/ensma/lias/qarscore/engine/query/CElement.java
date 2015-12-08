@@ -38,7 +38,7 @@ import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 public class CElement {
 
     private final int ELEMENT_INDEX;
-    
+
     /**
      * give the number of triple clause make.
      */
@@ -65,16 +65,15 @@ public class CElement {
     private CElement(Element currentElement) {
 
 	super();
-	TriplePath currentClause;
 	ELEMENT_INDEX = CElement.numberClause++;
-	
+
 	if (currentElement instanceof ElementPathBlock) {
 
 	    this.element = currentElement;
 
-	    currentClause = ((ElementPathBlock) element).getPattern().getList()
-		    .get(0);
-	    
+	    TriplePath currentClause = ((ElementPathBlock) element)
+		    .getPattern().getList().get(0);
+
 	    label = "t" + Integer.toString(ELEMENT_INDEX);
 
 	    if (currentClause.getSubject().isVariable()) {
@@ -85,8 +84,10 @@ public class CElement {
 		    mentionnedVar.add(currentClause.getPredicate());
 		}
 	    }
-	    if (currentClause.getObject().isVariable()) {
-		mentionnedVar.add(currentClause.getObject());
+	    if (currentClause.getObject() != null) {
+		if (currentClause.getObject().isVariable()) {
+		    mentionnedVar.add(currentClause.getObject());
+		}
 	    }
 	} else if (currentElement instanceof ElementFilter) {
 	    label = "F" + Integer.toString(CElement.numberClause++);
@@ -231,80 +232,80 @@ public class CElement {
 
     /**
      * replace the subject of an element by another node
+     * 
      * @param otherNode
      * @return
      */
-    public CElement replace_subject(Node otherNode){
-	
+    public CElement replace_subject(Node otherNode) {
+
 	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
 		.getList().get(0);
 
-	TriplePath new_pattern ;
-	
+	TriplePath new_pattern;
+
 	if (currentClause.getPredicate() != null) {
-	    new_pattern = new TriplePath(new Triple(otherNode, currentClause.getPredicate(),
-		    currentClause.getObject()));
-	}
-	else {
+	    new_pattern = new TriplePath(new Triple(otherNode,
+		    currentClause.getPredicate(), currentClause.getObject()));
+	} else {
 	    new_pattern = new TriplePath(otherNode, currentClause.getPath(),
 		    currentClause.getObject());
 	}
-	
-	 ElementPathBlock newPathBlock = new ElementPathBlock();
-	 newPathBlock.addTriple(new_pattern);
-	    
+
+	ElementPathBlock newPathBlock = new ElementPathBlock();
+	newPathBlock.addTriple(new_pattern);
+
 	return new CElement(newPathBlock);
     }
-    
+
     /**
      * replace the predicate of an element by another node
+     * 
      * @param otherNode
      * @return
      */
-    public CElement replace_predicat(Node otherNode){
-	
+    public CElement replace_predicat(Node otherNode) {
+
 	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
 		.getList().get(0);
 
-	TriplePath new_pattern ;
+	TriplePath new_pattern;
 
-	new_pattern = new TriplePath(new Triple(currentClause.getSubject(), otherNode,
-		    currentClause.getObject()));
-	
+	new_pattern = new TriplePath(new Triple(currentClause.getSubject(),
+		otherNode, currentClause.getObject()));
+
 	ElementPathBlock newPathBlock = new ElementPathBlock();
 	newPathBlock.addTriple(new_pattern);
-	    
+
 	return new CElement(newPathBlock);
     }
 
     /**
      * replace the object of an element by another node
+     * 
      * @param otherNode
      * @return
      */
-    public CElement replace_object(Node otherNode){
-	
+    public CElement replace_object(Node otherNode) {
+
 	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
 		.getList().get(0);
 
-	TriplePath new_pattern ;
-	
+	TriplePath new_pattern;
+
 	if (currentClause.getPredicate() != null) {
-	    new_pattern = new TriplePath(new Triple(currentClause.getSubject(), currentClause.getPredicate(),
-		    otherNode));
+	    new_pattern = new TriplePath(new Triple(currentClause.getSubject(),
+		    currentClause.getPredicate(), otherNode));
+	} else {
+	    new_pattern = new TriplePath(currentClause.getSubject(),
+		    currentClause.getPath(), otherNode);
 	}
-	else {
-	    new_pattern = new TriplePath(currentClause.getSubject(), currentClause.getPath(),
-		    otherNode);
-	}
-	
-	 ElementPathBlock newPathBlock = new ElementPathBlock();
-	 newPathBlock.addTriple(new_pattern);
-	    
+
+	ElementPathBlock newPathBlock = new ElementPathBlock();
+	newPathBlock.addTriple(new_pattern);
+
 	return new CElement(newPathBlock);
     }
 
-    
     /*
      * (non-Javadoc)
      * 
@@ -351,9 +352,9 @@ public class CElement {
 	}
 	return false;
     }
-    
+
     @Override
     public int hashCode() {
-	return ELEMENT_INDEX*Integer.hashCode(ELEMENT_INDEX);
+	return ELEMENT_INDEX * Integer.hashCode(ELEMENT_INDEX);
     }
 }
