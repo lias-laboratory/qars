@@ -213,11 +213,7 @@ public class NodeRelaxed {
 		levels[2] = n_3.getRelaxation_level()[2];
 	    }
 	}
-
 	
-	
-	
-	levels[3] = n_3.getRelaxation_level()[0];
 	return new NodeRelaxed(node_s, node_p, node_o, n_1.getSimilarity()
 		+ n_2.getSimilarity() + n_3.getSimilarity(),
 		levels);
