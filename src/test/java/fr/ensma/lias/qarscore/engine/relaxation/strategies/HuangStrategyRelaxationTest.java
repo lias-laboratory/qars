@@ -71,7 +71,7 @@ public class HuangStrategyRelaxationTest extends InitTest {
 	    hasTopk = number_answers >= TOP_K;
 	    
 	    number_relaxed_queries = number_relaxed_queries + 1;
-	    Logger.getRootLogger().info(relaxed_query.getCurrent_relaxed_query().toString()+" "+relaxed_query.getCurrent_similarity()+" "+relaxed_query.getCurrent_level()+" "+query_answers_size);
+	    Logger.getRootLogger().info(relaxed_query.getCurrent_relaxed_query().toString()+" "+relaxed_query.getCurrent_similarity()+" "+relaxed_query.getCurrent_level().toString()+" "+query_answers_size);
 	    
 	}
 	long end = System.currentTimeMillis();

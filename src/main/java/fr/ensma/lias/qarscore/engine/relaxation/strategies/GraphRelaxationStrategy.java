@@ -58,7 +58,7 @@ public class GraphRelaxationStrategy extends HuangRelaxationStrategy {
 	}
 	GraphRelaxationIndex current_graph = relaxed_queries.remove(0);
 	this.current_similarity = 1.0;
-	this.current_level = 0;
+	this.current_level = new ArrayList<int[]>();
 
 	for (int i = 0; i < current_graph.getElement_index().length; i++) {
 
@@ -67,9 +67,8 @@ public class GraphRelaxationStrategy extends HuangRelaxationStrategy {
 	    this.current_similarity = this.current_similarity
 		    * relaxation_of_element[i][current_graph.getElement_index()[i]]
 			    .getSimilarity();
-	    this.current_level = this.current_level
-		    + relaxation_of_element[i][current_graph.getElement_index()[i]]
-			    .getRelaxation_level();
+	    this.current_level.add(relaxation_of_element[i][current_graph.getElement_index()[i]]
+		    .getRelaxation_level());
 	}
 
 	for (int j = 0; j < current_graph.getChild_elt().length; j++) {

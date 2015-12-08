@@ -49,7 +49,7 @@ public class NodeRelaxed {
     /**
      * the level of the relaxation for the node
      */
-    private int relaxation_level;
+    private int[] relaxation_level;
 
     /**
      * 
@@ -59,14 +59,26 @@ public class NodeRelaxed {
      * @param similarity
      * @param relaxation_level
      */
-    public NodeRelaxed(Node node_s, Node node_p, Node node_o,
-	    double similarity, int relaxation_level) {
+//    public NodeRelaxed(Node node_s, Node node_p, Node node_o,
+//	    double similarity, int relaxation_level) {
+//
+//	this.node_1 = node_s;
+//	this.node_2 = node_p;
+//	this.node_3 = node_o;
+//	this.similarity = similarity;
+//	this.relaxation_level = new int[3];
+//	this.relaxation_level [0] = relaxation_level;
+//    }
 
+
+    public NodeRelaxed(Node node_s, Node node_p, Node node_o,
+	    double similarity2, int[] levels) {
+	
 	this.node_1 = node_s;
 	this.node_2 = node_p;
 	this.node_3 = node_o;
-	this.similarity = similarity;
-	this.relaxation_level = relaxation_level;
+	this.similarity = similarity2;
+	this.relaxation_level = levels;
     }
 
     public NodeRelaxed(NodeRelaxed n_1) {
@@ -89,15 +101,18 @@ public class NodeRelaxed {
 	Node node_s;
 	Node node_p;
 	Node node_o;
-
+	int [] levels = new int[3];
+	
 	if (n_1.getNode_1() != null) {
 	    if (n_2.getNode_1() != null) {
 		throw new IllegalArgumentException("Incompatibles nodes");
 	    } else {
 		node_s = n_1.getNode_1();
+		levels[0] = n_1.getRelaxation_level()[0];
 	    }
 	} else {
 	    node_s = n_2.getNode_1();
+	    levels[0] = n_2.getRelaxation_level()[0];
 	}
 
 	if (n_1.getNode_2() != null) {
@@ -105,9 +120,11 @@ public class NodeRelaxed {
 		throw new IllegalArgumentException("Incompatibles nodes");
 	    } else {
 		node_p = n_1.getNode_2();
+		levels[1] = n_1.getRelaxation_level()[1];
 	    }
 	} else {
 	    node_p = n_2.getNode_2();
+	    levels[1] = n_2.getRelaxation_level()[1];
 	}
 
 	if (n_1.getNode_3() != null) {
@@ -115,14 +132,15 @@ public class NodeRelaxed {
 		throw new IllegalArgumentException("Incompatibles nodes");
 	    } else {
 		node_o = n_1.getNode_3();
+		levels[2] = n_1.getRelaxation_level()[2];
 	    }
 	} else {
 	    node_o = n_2.getNode_3();
+	    levels[2] = n_2.getRelaxation_level()[2];
 	}
 
 	return new NodeRelaxed(node_s, node_p, node_o, n_1.getSimilarity()
-		+ n_2.getSimilarity(), n_1.getRelaxation_level()
-		+ n_2.getRelaxation_level());
+		+ n_2.getSimilarity(), levels);
     }
 
     public static NodeRelaxed merge(NodeRelaxed n_1, NodeRelaxed n_2,
@@ -131,12 +149,14 @@ public class NodeRelaxed {
 	Node node_s;
 	Node node_p;
 	Node node_o;
-
+	int [] levels = new int[3];
+	
 	if (n_1.getNode_1() != null) {
 	    if ((n_2.getNode_1() != null) || (n_3.getNode_1() != null)) {
 		throw new IllegalArgumentException("Incompatibles nodes");
 	    } else {
 		node_s = n_1.getNode_1();
+		levels[0] = n_1.getRelaxation_level()[0];
 	    }
 	} else {
 	    if (n_2.getNode_1() != null) {
@@ -144,9 +164,11 @@ public class NodeRelaxed {
 		    throw new IllegalArgumentException("Incompatibles nodes");
 		} else {
 		    node_s = n_2.getNode_1();
+		    levels[0] = n_2.getRelaxation_level()[0];
 		}
 	    } else {
 		node_s = n_3.getNode_1();
+		levels[0] = n_3.getRelaxation_level()[0];
 	    }
 	}
 
@@ -155,6 +177,7 @@ public class NodeRelaxed {
 		throw new IllegalArgumentException("Incompatibles nodes");
 	    } else {
 		node_p = n_1.getNode_2();
+		levels[1] = n_1.getRelaxation_level()[1];
 	    }
 	} else {
 	    if (n_2.getNode_2() != null) {
@@ -162,9 +185,11 @@ public class NodeRelaxed {
 		    throw new IllegalArgumentException("Incompatibles nodes");
 		} else {
 		    node_p = n_2.getNode_2();
+		    levels[1] = n_2.getRelaxation_level()[1];
 		}
 	    } else {
 		node_p = n_3.getNode_2();
+		levels[1] = n_3.getRelaxation_level()[1];
 	    }
 	}
 
@@ -173,6 +198,7 @@ public class NodeRelaxed {
 		throw new IllegalArgumentException("Incompatibles nodes");
 	    } else {
 		node_o = n_1.getNode_3();
+		levels[2] = n_1.getRelaxation_level()[2];
 	    }
 	} else {
 	    if (n_2.getNode_3() != null) {
@@ -180,16 +206,21 @@ public class NodeRelaxed {
 		    throw new IllegalArgumentException("Incompatibles nodes");
 		} else {
 		    node_o = n_2.getNode_3();
+		    levels[2] = n_2.getRelaxation_level()[2];
 		}
 	    } else {
 		node_o = n_3.getNode_3();
+		levels[2] = n_3.getRelaxation_level()[2];
 	    }
 	}
 
+	
+	
+	
+	levels[3] = n_3.getRelaxation_level()[0];
 	return new NodeRelaxed(node_s, node_p, node_o, n_1.getSimilarity()
 		+ n_2.getSimilarity() + n_3.getSimilarity(),
-		n_1.getRelaxation_level() + n_2.getRelaxation_level()
-			+ n_3.getRelaxation_level());
+		levels);
 
     }
 
@@ -224,7 +255,7 @@ public class NodeRelaxed {
     /**
      * @return the relaxation_level
      */
-    public int getRelaxation_level() {
+    public int[] getRelaxation_level() {
 	return relaxation_level;
     }
 

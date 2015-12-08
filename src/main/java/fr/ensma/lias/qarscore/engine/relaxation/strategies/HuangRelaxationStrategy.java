@@ -44,7 +44,7 @@ public class HuangRelaxationStrategy {
     private List<GraphRelaxationIndex> already_relaxed_queries;
     protected CQuery current_relaxed_query;
     protected double current_similarity;
-    protected int current_level;
+    protected List<int[]> current_level;
 
     public HuangRelaxationStrategy(CQuery query, Session s) {
 	query_to_relax = query;
@@ -89,7 +89,7 @@ public class HuangRelaxationStrategy {
 	already_relaxed_queries.add(current_graph);
 	
 	this.current_similarity = 1.0;
-	this.current_level = 0;
+	this.current_level = new ArrayList<int[]>();
 
 	for (int i = 0; i < current_graph.getElement_index().length; i++) {
 
@@ -98,9 +98,8 @@ public class HuangRelaxationStrategy {
 	    this.current_similarity = this.current_similarity
 		    * relaxation_of_element[i][current_graph.getElement_index()[i]]
 			    .getSimilarity();
-	    this.current_level = this.current_level
-		    + relaxation_of_element[i][current_graph.getElement_index()[i]]
-			    .getRelaxation_level();
+	    this.current_level.add(relaxation_of_element[i][current_graph.getElement_index()[i]]
+		    .getRelaxation_level());
 	}
 
 	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
@@ -167,9 +166,9 @@ public class HuangRelaxationStrategy {
 	    // relaxation_of_element[i][child.getElement_index()[i]].getRelaxation_level();
 	}
 	int pos = 0;
-	int index = 0;
+	int index = this.relaxed_queries.size()-1;
 	boolean found_pos = false;
-	while ((!found_pos) && (index < this.relaxed_queries.size())) {
+	while ((!found_pos) && (0 <= index)) {
 	    double index_sim = 1.0;
 	    GraphRelaxationIndex elt_index = relaxed_queries.get(index);
 	    for (int i = 0; i < elt_index.getElement_index().length; i++) {
@@ -177,14 +176,14 @@ public class HuangRelaxationStrategy {
 			* relaxation_of_element[i][elt_index.getElement_index()[i]]
 				.getSimilarity();
 	    }
-	    found_pos = index_sim <= current_child_similarity;
-	    pos = index;
-	    index = index + 1;
+	    found_pos = current_child_similarity  <= index_sim ;
+	    pos = index + 1;
+	    index = index -1;
 	}
 	if (found_pos) {
 	    relaxed_queries.add(pos, child);
 	} else {
-	    relaxed_queries.add(child);
+	    relaxed_queries.add(0, child);
 	}
     }
 
@@ -220,7 +219,7 @@ public class HuangRelaxationStrategy {
     /**
      * @return the current_level
      */
-    public int getCurrent_level() {
+    public List<int[]> getCurrent_level() {
 	return current_level;
     }
 

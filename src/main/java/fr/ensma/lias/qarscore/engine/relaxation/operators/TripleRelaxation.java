@@ -49,7 +49,7 @@ public class TripleRelaxation {
 
     public static int HYBRID_ORDER = 2;
 
-    public static int MAX_NODE_LEVEL = 1;
+    public static int SUPRESS_NODE_LEVEL = -1;
 
     private static int num_resource_release = 0;
 
@@ -120,25 +120,26 @@ public class TripleRelaxation {
 	Map<Node, Integer> relaxed_node = new HashMap<Node, Integer>();
 
 	if (original_node.isURI()) {
-	    relaxed_node = model_statement.getSuperClasses(original_node);
+	    relaxed_node.put(original_node, 0);
+	    relaxed_node.putAll(model_statement.getSuperClasses(original_node));
 	    Node var_node = NodeFactory.createVariable("R"
 		    + num_resource_release++);
-	    relaxed_node.put(var_node, MAX_NODE_LEVEL);
-	    relaxed_node.put(original_node, 0);
+	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	} else if (original_node.isLiteral()) {
-	    // predicat relaxation
+	    relaxed_node.put(original_node, 0);
+	    // predicat relaxation levensteing or Hausdorff
 	    Node var_node = NodeFactory.createVariable("R"
 		    + num_resource_release++);
-	    relaxed_node.put(var_node, MAX_NODE_LEVEL);
-	    relaxed_node.put(original_node, 0);
+	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	}
 
 	else if (original_node.isConcrete()) {
+	    relaxed_node.put(original_node, 0);
 	    // release relaxation
 	    Node var_node = NodeFactory.createVariable("R"
 		    + num_resource_release++);
-	    relaxed_node.put(var_node, MAX_NODE_LEVEL);
-	    relaxed_node.put(original_node, 0);
+	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
+
 	} else {
 	    // variables relaxation (join)
 	}
@@ -158,25 +159,26 @@ public class TripleRelaxation {
 	Map<Node, Integer> relaxed_node = new HashMap<Node, Integer>();
 
 	if (original_node.isURI()) {
-	    relaxed_node = model_statement.getSuperProperty(original_node);
+	    relaxed_node.put(original_node, 0);
+	    relaxed_node
+		    .putAll(model_statement.getSuperProperty(original_node));
 	    Node var_node = NodeFactory
 		    .createVariable("P" + num_pred_release++);
-	    relaxed_node.put(var_node, MAX_NODE_LEVEL);
-	    relaxed_node.put(original_node, 0);
+	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	} else if (original_node.isLiteral()) {
+	    relaxed_node.put(original_node, 0);
 	    // predicat relaxation
 	    Node var_node = NodeFactory
 		    .createVariable("P" + num_pred_release++);
-	    relaxed_node.put(var_node, MAX_NODE_LEVEL);
-	    relaxed_node.put(original_node, 0);
+	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	}
 
 	else if (original_node.isConcrete()) {
+	    relaxed_node.put(original_node, 0);
 	    // release relaxation
 	    Node var_node = NodeFactory
 		    .createVariable("P" + num_pred_release++);
-	    relaxed_node.put(var_node, MAX_NODE_LEVEL);
-	    relaxed_node.put(original_node, 0);
+	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	} else {
 	    // variables relaxation (join)
 	}
@@ -213,7 +215,8 @@ public class TripleRelaxation {
 		double sim = session.similarityMeasureClass(
 			clause.getSubject(), relaxed_node) / 3.0;
 		relaxed_subject.add(new NodeRelaxed(relaxed_node, null, null,
-			sim, subject_relaxation.get(relaxed_node)));
+			sim, new int[] { subject_relaxation.get(relaxed_node),
+				-2, -2 }));
 	    }
 	} else {
 	    // join relaxation
@@ -229,7 +232,8 @@ public class TripleRelaxation {
 		double sim = session.similarityMeasureClass(clause.getObject(),
 			relaxed_node) / 3.0;
 		relaxed_object.add(new NodeRelaxed(null, null, relaxed_node,
-			sim, object_relaxation.get(relaxed_node)));
+			sim, new int[] { -2, -2,
+				object_relaxation.get(relaxed_node) }));
 	    }
 	} else {
 	    // join relaxation
@@ -245,10 +249,13 @@ public class TripleRelaxation {
 		for (Node relaxed_node : predicat_relaxation.keySet()) {
 		    double sim = session.similarityMeasureProperty(
 			    clause.getPredicate(), relaxed_node) / 3.0;
-		    relaxed_predicat.add(new NodeRelaxed(null, relaxed_node,
-			    null, sim, predicat_relaxation.get(relaxed_node)));
+		    relaxed_predicat
+			    .add(new NodeRelaxed(null, relaxed_node, null, sim,
+				    new int[] {
+					    -2,
+					    predicat_relaxation
+						    .get(relaxed_node), -2 }));
 		}
-
 	    } else {
 		// join relaxation
 		predicat_var = clause.getPredicate();
@@ -272,7 +279,7 @@ public class TripleRelaxation {
 	if (this.relaxed_subject != null) {
 	    if (this.relaxed_predicat != null) {
 		NodeRelaxed object = new NodeRelaxed(null, null, object_var,
-			1.0 / 3, 0);
+			1.0 / 3, new int[] { -2, -2, 0 });
 		for (NodeRelaxed relax_s : relaxed_subject) {
 		    for (NodeRelaxed relax_p : relaxed_predicat) {
 			this.add_node_relaxation(NodeRelaxed.merge(relax_s,
@@ -285,7 +292,7 @@ public class TripleRelaxation {
 	    } else {
 		if (this.relaxed_object != null) {
 		    NodeRelaxed predicat = new NodeRelaxed(null, predicat_var,
-			    null, 1.0 / 3, 0);
+			    null, 1.0 / 3, new int[] { -2, 0, -2 });
 		    for (NodeRelaxed relax_s : relaxed_subject) {
 			for (NodeRelaxed relax_o : relaxed_object) {
 			    this.add_node_relaxation(NodeRelaxed.merge(relax_s,
@@ -296,9 +303,9 @@ public class TripleRelaxation {
 		    }
 		} else {
 		    NodeRelaxed object = new NodeRelaxed(null, null,
-			    object_var, 1.0 / 3, 0);
+			    object_var, 1.0 / 3, new int[] { -2, -2, 0 });
 		    NodeRelaxed predicat = new NodeRelaxed(null, predicat_var,
-			    null, 1.0 / 3, 0);
+			    null, 1.0 / 3, new int[] { -2, 0, -2 });
 		    for (NodeRelaxed relax_s : relaxed_subject) {
 			this.add_node_relaxation(NodeRelaxed.merge(relax_s,
 				predicat, object));
@@ -310,7 +317,7 @@ public class TripleRelaxation {
 	    }
 	} else {
 	    NodeRelaxed subject = new NodeRelaxed(subject_var, null, null,
-		    1.0 / 3, 0);
+		    1.0 / 3, new int[] { 0, -2, -2 });
 	    if (this.relaxed_predicat != null) {
 		if (this.relaxed_object != null) {
 		    for (NodeRelaxed relax_p : relaxed_predicat) {
@@ -323,7 +330,7 @@ public class TripleRelaxation {
 		    }
 		} else {
 		    NodeRelaxed object = new NodeRelaxed(null, null,
-			    object_var, 1.0 / 3, 0);
+			    object_var, 1.0 / 3, new int[] { -2, -2, 0 });
 		    for (NodeRelaxed relax_p : relaxed_predicat) {
 			this.add_node_relaxation(NodeRelaxed.merge(subject,
 				relax_p, object));
@@ -334,7 +341,7 @@ public class TripleRelaxation {
 		}
 	    } else {
 		NodeRelaxed predicat = new NodeRelaxed(null, predicat_var,
-			null, 1.0 / 3, 0);
+			null, 1.0 / 3, new int[] { -2, 0, -2 });
 		if (this.relaxed_object != null) {
 		    for (NodeRelaxed relax_o : relaxed_object) {
 			this.add_node_relaxation(NodeRelaxed.merge(subject,
@@ -396,37 +403,39 @@ public class TripleRelaxation {
 
 	if (this.relaxation_order == TripleRelaxation.LEVEL_ORDER) {
 	    while ((i < this.relaxed_triple.size()) && (!inserted)) {
-		if (relaxed_triple.get(i).getRelaxation_level() <= node
-			.getRelaxation_level()) {
-		    i = i + 1;
-		} else {
-		    relaxed_triple.add(i, node);
-		    inserted = true;
-		}
+		// if (relaxed_triple.get(i).getRelaxation_level() <= node
+		// .getRelaxation_level()) {
+		// i = i + 1;
+		// } else {
+		// relaxed_triple.add(i, node);
+		// inserted = true;
+		// }
 	    }
 	    if (!inserted) {
 		relaxed_triple.add(node);
 	    }
 	} else if (this.relaxation_order == TripleRelaxation.SIM_ORDER) {
-	    while ((i < this.relaxed_triple.size()) && (!inserted)) {
-		if (relaxed_triple.get(i).getSimilarity() > node
+	    i = this.relaxed_triple.size() - 1;
+	    while ((0 <= i) && (!inserted)) {
+		if (relaxed_triple.get(i).getSimilarity() < node
 			.getSimilarity()) {
-		    i = i + 1;
+		    i = i - 1;
 		} else {
-		    relaxed_triple.add(i, node);
+		    relaxed_triple.add(i+1, node);
 		    inserted = true;
 		}
 	    }
 	    if (!inserted) {
-		relaxed_triple.add(node);
+		relaxed_triple.add(0,node);
 	    }
 	} else if (this.relaxation_order == TripleRelaxation.HYBRID_ORDER) {
 
 	    while ((i < this.relaxed_triple.size()) && (!inserted)) {
-		if (relaxed_triple.get(i).getRelaxation_level() < node
-			.getRelaxation_level()) {
-		    i = i + 1;
-		} else if (relaxed_triple.get(i).getRelaxation_level() == node
+		/*
+		 * if (relaxed_triple.get(i).getRelaxation_level() < node
+		 * .getRelaxation_level()) { i = i + 1; } else
+		 */
+		if (relaxed_triple.get(i).getRelaxation_level() == node
 			.getRelaxation_level()) {
 		    while ((i < this.relaxed_triple.size()) && (!inserted)) {
 			if (relaxed_triple.get(i).getSimilarity() >= node
@@ -604,13 +613,13 @@ public class TripleRelaxation {
 	}
 	return current_elt;
     }
-    
+
     public CElement[] get_relaxed_elt_list() {
 
 	CElement[] current_elt = new CElement[this.relaxed_triple.size()];
 
 	for (int i = 0; i < this.relaxed_triple.size(); i++) {
-	    
+
 	    CElement relax_element = CElement.createCTriple(this.current_clause
 		    .getElement());
 	    relax_element = relax_element.replace_subject(relaxed_triple.get(i)
