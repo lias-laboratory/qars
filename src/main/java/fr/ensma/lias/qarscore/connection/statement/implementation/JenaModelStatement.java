@@ -20,7 +20,7 @@
 package fr.ensma.lias.qarscore.connection.statement.implementation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +62,7 @@ public class JenaModelStatement implements ModelStatement {
     @Override
     public Map<Node, Integer> getSuperClasses(Node classeNode) {
 
-	Map<Node, Integer> superNodes = new HashMap<Node, Integer>();
+	Map<Node, Integer> superNodes = new LinkedHashMap<Node, Integer>();
 	List<String> toFindSuperClass = new ArrayList<String>();
 	List<String> alreadyInserted = new ArrayList<String>();
 	if (classeNode.isURI()) {
@@ -90,7 +90,7 @@ public class JenaModelStatement implements ModelStatement {
     @Override
     public Map<Node, Integer> getSuperProperty(Node property) {
 
-	Map<Node, Integer> superPropertiesNodes = new HashMap<Node, Integer>();
+	Map<Node, Integer> superPropertiesNodes = new LinkedHashMap<Node, Integer>();
 	List<String> toFindSuperProperties = new ArrayList<String>();
 	List<String> alreadyInserted = new ArrayList<String>();
 	if (property.isURI()) {

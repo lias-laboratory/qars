@@ -20,7 +20,7 @@
 package fr.ensma.lias.qarscore.engine.relaxation.operators;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,7 +117,7 @@ public class TripleRelaxation {
 
 	ModelStatement model_statement = ModelStatementFactory
 		.createQueryStatement(session);
-	Map<Node, Integer> relaxed_node = new HashMap<Node, Integer>();
+	Map<Node, Integer> relaxed_node = new LinkedHashMap<Node, Integer>();
 
 	if (original_node.isURI()) {
 	    relaxed_node.put(original_node, 0);
@@ -156,7 +156,7 @@ public class TripleRelaxation {
 
 	ModelStatement model_statement = ModelStatementFactory
 		.createQueryStatement(session);
-	Map<Node, Integer> relaxed_node = new HashMap<Node, Integer>();
+	Map<Node, Integer> relaxed_node = new LinkedHashMap<Node, Integer>();
 
 	if (original_node.isURI()) {
 	    relaxed_node.put(original_node, 0);
