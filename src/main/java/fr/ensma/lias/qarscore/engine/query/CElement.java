@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Node_Variable;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.core.Var;
@@ -84,11 +85,14 @@ public class CElement {
 		    mentionnedVar.add(currentClause.getPredicate());
 		}
 	    }
-	    if (currentClause.getObject() != null) {
-		if (currentClause.getObject().isVariable()) {
-		    mentionnedVar.add(currentClause.getObject());
-		}
+	    if(currentClause.getObject() instanceof Node_Variable){
+		 mentionnedVar.add(currentClause.getObject());
 	    }
+//	    if (currentClause.getObject() != null) {
+//		if (currentClause.getObject().isVariable()) {
+//		    mentionnedVar.add(currentClause.getObject());
+//		}
+//	    }
 	} else if (currentElement instanceof ElementFilter) {
 	    label = "F" + Integer.toString(CElement.numberClause++);
 	    element = currentElement;
