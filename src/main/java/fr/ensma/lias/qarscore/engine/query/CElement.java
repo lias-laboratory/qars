@@ -53,7 +53,7 @@ public class CElement {
     /**
      * Pattern of clause
      */
-    private Element element = null;
+    private Element element ;
 
     /**
      * list of variables in clause pattern
@@ -77,14 +77,23 @@ public class CElement {
 
 	    label = "t" + Integer.toString(ELEMENT_INDEX);
 
-	    if (currentClause.getSubject().isVariable()) {
-		mentionnedVar.add(currentClause.getSubject());
+	    if(currentClause.getSubject() instanceof Node_Variable){
+		 mentionnedVar.add(currentClause.getSubject());
 	    }
-	    if (currentClause.getPredicate() != null) {
-		if (currentClause.getPredicate().isVariable()) {
-		    mentionnedVar.add(currentClause.getPredicate());
-		}
+	    
+//	    if (currentClause.getSubject().isVariable()) {
+//		mentionnedVar.add(currentClause.getSubject());
+//	    }
+	    
+	    if(currentClause.getPredicate() instanceof Node_Variable){
+		 mentionnedVar.add(currentClause.getPredicate());
 	    }
+
+//	    if (currentClause.getPredicate() != null) {
+//		if (currentClause.getPredicate().isVariable()) {
+//		    mentionnedVar.add(currentClause.getPredicate());
+//		}
+//	    }
 	    if(currentClause.getObject() instanceof Node_Variable){
 		 mentionnedVar.add(currentClause.getObject());
 	    }
