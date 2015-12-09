@@ -1011,7 +1011,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      * Experiments for LUBM *
      ************************/
 
-    @Test
+//    @Test
     public void testLUBM_Huang() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
