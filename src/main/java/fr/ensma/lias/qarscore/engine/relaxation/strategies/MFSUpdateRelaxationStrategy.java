@@ -22,11 +22,14 @@ package fr.ensma.lias.qarscore.engine.relaxation.strategies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.roaringbitmap.RoaringBitmap;
+
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.operators.TripleRelaxation;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 
 /**
@@ -34,40 +37,18 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
  */
 public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 
-    protected List<int[]>[] mfs_relaxation_degree;
-
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
     public MFSUpdateRelaxationStrategy(CQuery query, Session s) {
 	super(query, s);
-	mfs_relaxation_degree = new List[MFS_QUERY.length];
-	for (int i = 0; i < mfs_relaxation_degree.length; i++) {
-	    mfs_relaxation_degree[i] = new ArrayList<int[]>();
-	    int[] relax_degree = new int[MFS_QUERY[i].getCardinality()];
-	    for (int j = 0; j < relax_degree.length; j++) {
-		relax_degree[j] = 0;
-	    }
-	    mfs_relaxation_degree[i].add(relax_degree);
-	}
     }
 
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
     public MFSUpdateRelaxationStrategy(CQuery query, Session s, boolean index) {
 	super(query, s, index);
-	mfs_relaxation_degree = new List[MFS_QUERY.length];
-	for (int i = 0; i < mfs_relaxation_degree.length; i++) {
-	    mfs_relaxation_degree[i] = new ArrayList<int[]>();
-	    int[] relax_degree = new int[MFS_QUERY[i].getCardinality()];
-	    for (int j = 0; j < relax_degree.length; j++) {
-		relax_degree[j] = 0;
-	    }
-	    mfs_relaxation_degree[i].add(relax_degree);
-	}
     }
 
     public CQuery next() {
@@ -78,7 +59,6 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 	}
 
 	GraphRelaxationIndex current_graph = relaxed_queries.remove(0);
-	int[] current_relax_query = current_graph.getElement_index();
 
 	this.current_similarity = 1.0;
 	this.current_level = new ArrayList<int[]>();
@@ -90,70 +70,125 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 	    this.current_similarity = this.current_similarity
 		    * relaxation_of_element[i][current_graph.getElement_index()[i]]
 			    .getSimilarity();
-	    this.current_level.add(relaxation_of_element[i][current_graph.getElement_index()[i]]
-		    .getRelaxation_level());
+	    this.current_level.add(relaxation_of_element[i][current_graph
+		    .getElement_index()[i]].getRelaxation_level());
 	}
 
 	for (int j = 0; j < current_graph.getChild_elt().length; j++) {
 	    this.insert(current_graph.getChild_elt()[j]);
 	}
-	
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
-	boolean has_mfs = check_mfs(current_relax_query);
-	
+
+	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query,
+		query_to_relax.getSelectedQueryVar());
+	boolean has_mfs = check_mfs(current_graph);
+
 	if (!has_mfs) {
-	    if (!update_mfs(current_relax_query)) {
-		return current_relaxed_query;
-	    }
-	    // Some mfs hasn't been repaired
-	    else {
-		return this.next();
-	    }
+	    return current_relaxed_query;
 	} else {
 	    return this.next();
 	}
     }
 
-    protected boolean check_mfs(int[] current_relax_query) {
-	int i = 0;
-	boolean has_mfs = false;
-	while ((i < MFS_QUERY.length) && (!has_mfs)) {
-	    int k = mfs_relaxation_degree[i].size() - 1;
-	    while ((k >= 0) && (!has_mfs)) {
-		has_mfs = true;
+    protected boolean check_mfs(GraphRelaxationIndex relax_graph_node) {
+
+	GraphRelaxationIndex least_relaxed_ancestor = getLeastRelaxedAncestor(
+		already_relaxed_queries, relax_graph_node);
+	List<RoaringBitmap> potential_mfs = mfs_relaxed_queries
+		.get(least_relaxed_ancestor);
+	int[] current_relax_query = relax_graph_node.getElement_index();
+	List<RoaringBitmap> mfs_current_query = new ArrayList<RoaringBitmap>();
+
+	if (potential_mfs == null) {
+	    int i = 0;
+	    while (i < MFS_QUERY.length) {
+		boolean is_mfs = true;
 		for (int j = 0; j < MFS_QUERY[i].getCardinality(); j++) {
-		    has_mfs = has_mfs
-			    && current_relax_query[MFS_QUERY[i].select(j)] <= mfs_relaxation_degree[i]
-				    .get(k)[j];
+		    is_mfs = is_mfs
+			    && current_relax_query[MFS_QUERY[i].select(j)] == 0;
 		}
-		k = k - 1;
+		if (is_mfs) {
+		    mfs_current_query.add(MFS_QUERY[i]);
+		} else {
+		    List<CElement> updated_mfs_query = get_element_list(
+			    current_relax_query, MFS_QUERY[i]);
+
+		    number_check_queries = number_check_queries + 1;
+		    QueryStatement stm = session.createStatement((CQueryFactory
+			    .createCQuery(updated_mfs_query)).toString());
+
+		    if (stm.getResultSetSize(1) == 0) {
+			mfs_current_query.add(MFS_QUERY[i]);
+			is_mfs = true;
+		    }
+		}
+		i = i + 1;
+	    }
+	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    return !mfs_current_query.isEmpty();
+	}
+
+	int i = 0;
+	while (i < potential_mfs.size()) {
+	    boolean is_mfs = true;
+	    for (int j = 0; j < potential_mfs.get(i).getCardinality(); j++) {
+		is_mfs = is_mfs
+			&& current_relax_query[potential_mfs.get(i).select(j)] == least_relaxed_ancestor
+				.getElement_index()[potential_mfs.get(i)
+				.select(j)];
+	    }
+	    if (is_mfs) {
+		mfs_current_query.add(potential_mfs.get(i));
+	    } else {
+		List<CElement> updated_mfs_query = get_element_list(
+			current_relax_query, potential_mfs.get(i));
+
+		number_check_queries = number_check_queries + 1;
+		QueryStatement stm = session.createStatement((CQueryFactory
+			.createCQuery(updated_mfs_query)).toString());
+		if (stm.getResultSetSize(1) == 0) {
+		    mfs_current_query.add(potential_mfs.get(i));
+		    is_mfs = true;
+		}
 	    }
 	    i = i + 1;
 	}
-	return has_mfs;
+	mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	return !mfs_current_query.isEmpty();
     }
 
-    protected boolean update_mfs(int[] current_relax_query) {
+    protected List<CElement> get_element_list(int[] current_relax_query,
+	    RoaringBitmap current_mfs_index) {
 
-	boolean has_new_mfs = false;
-	for (int i = 0; i < MFS_QUERY.length; i++) {
-	    List<CElement> updated_mfs_query = new ArrayList<CElement>();
-	    int[] relax_degree = new int[MFS_QUERY[i].getCardinality()];
-	    for (int j = 0; j < relax_degree.length; j++) {
-		relax_degree[j] = current_relax_query[MFS_QUERY[i].select(j)];
-		updated_mfs_query.add(this.getRelaxedElement(
-			MFS_QUERY[i].select(j), relax_degree[j]));
-	    }
-
-	    number_check_queries = number_check_queries + 1;
-	    QueryStatement stm = session.createStatement((CQueryFactory
-		    .createCQuery(updated_mfs_query)).toString());
-
-	    if (stm.getResultSetSize(1) == 0) {
-		mfs_relaxation_degree[i].add(relax_degree);
-		has_new_mfs = true;
-	    }
+	List<CElement> elt_form = new ArrayList<CElement>();
+	for (int i = 0; i < current_mfs_index.getCardinality(); i++) {
+	    elt_form.add(this.getRelaxedElement(current_mfs_index.select(i),
+		    current_relax_query[current_mfs_index.select(i)]));
 	}
-	return has_new_mfs;
+	return elt_form;
+    }
+
+    protected GraphRelaxationIndex getLeastRelaxedAncestor(
+	    List<GraphRelaxationIndex> already_relaxed_queries,
+	    GraphRelaxationIndex relax_graph_node) {
+
+	int i = already_relaxed_queries.size() - 1;
+	boolean is_relaxation = false;
+	while ((0 <= i) && (!is_relaxation)) {
+	    is_relaxation = true;
+	    int j = 0;
+	    while ((j < relax_graph_node.getElement_index().length)
+		    && (is_relaxation)) {
+		CElement relax_elt = getRelaxedElement(j,
+			relax_graph_node.getElement_index()[j]);
+		CElement father_elt = getRelaxedElement(j,
+			already_relaxed_queries.get(i).getElement_index()[j]);
+		is_relaxation = is_relaxation
+			&& TripleRelaxation.is_relaxation(relax_elt, father_elt, session);
+		j = j + 1;
+	    }
+	    i = i - 1;
+	}
+
+	return already_relaxed_queries.get(i + 1);
     }
 }

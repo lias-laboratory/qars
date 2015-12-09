@@ -57,6 +57,7 @@ public class GraphRelaxationStrategy extends HuangRelaxationStrategy {
 	    return null;
 	}
 	GraphRelaxationIndex current_graph = relaxed_queries.remove(0);
+	
 	this.current_similarity = 1.0;
 	this.current_level = new ArrayList<int[]>();
 
@@ -75,6 +76,7 @@ public class GraphRelaxationStrategy extends HuangRelaxationStrategy {
 	    this.insert(current_graph.getChild_elt()[j]);
 	}
 
+	already_relaxed_queries.add(current_graph);
 	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
 
 	return current_relaxed_query;

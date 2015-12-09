@@ -365,7 +365,7 @@ public class CElement {
 	}
 	return false;
     }
-
+    
     @Override
     public int hashCode() {
 	return ELEMENT_INDEX * Integer.hashCode(ELEMENT_INDEX);

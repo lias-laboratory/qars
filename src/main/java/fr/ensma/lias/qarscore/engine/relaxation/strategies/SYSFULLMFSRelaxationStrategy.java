@@ -20,7 +20,9 @@
 package fr.ensma.lias.qarscore.engine.relaxation.strategies;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.roaringbitmap.RoaringBitmap;
 
@@ -29,101 +31,144 @@ import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 
 /**
  * @author Geraud FOKOU
  */
 public class SYSFULLMFSRelaxationStrategy extends INCFULLMFSRelaxationStrategy {
 
+    protected Map<GraphRelaxationIndex, List<RoaringBitmap>> mfs_repaired_queries;
+
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
     public SYSFULLMFSRelaxationStrategy(CQuery query, Session s) {
 	super(query, s);
-	mfs_relaxation_degree = new List[MFS_QUERY.length];
-	for (int i = 0; i < mfs_relaxation_degree.length; i++) {
-	    mfs_relaxation_degree[i] = new ArrayList<int[]>();
-	    int[] relax_degree = new int[MFS_QUERY[i].getCardinality()];
-	    for (int j = 0; j < relax_degree.length; j++) {
-		relax_degree[j] = 0;
-	    }
-	    mfs_relaxation_degree[i].add(relax_degree);
-	}
-	mfs_evolution = new ArrayList<RoaringBitmap>();
-	mfs_evolution_relaxation_degree = new ArrayList<List<int[]>>();
+	mfs_repaired_queries = new LinkedHashMap<GraphRelaxationIndex, List<RoaringBitmap>>();
     }
 
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
     public SYSFULLMFSRelaxationStrategy(CQuery query, Session s, boolean index) {
 	super(query, s, index);
-	mfs_relaxation_degree = new List[MFS_QUERY.length];
-	for (int i = 0; i < mfs_relaxation_degree.length; i++) {
-	    mfs_relaxation_degree[i] = new ArrayList<int[]>();
-	    int[] relax_degree = new int[MFS_QUERY[i].getCardinality()];
-	    for (int j = 0; j < relax_degree.length; j++) {
-		relax_degree[j] = 0;
-	    }
-	    mfs_relaxation_degree[i].add(relax_degree);
-	}
+	mfs_repaired_queries = new LinkedHashMap<GraphRelaxationIndex, List<RoaringBitmap>>();
     }
 
-    protected boolean update_mfs(int[] current_relax_query) {
+    protected boolean check_mfs(GraphRelaxationIndex relax_graph_node) {
 
-	List<List<CElement>> mfs_subqueries = new ArrayList<List<CElement>>();
-	List<List<CElement>> subqueries_of_mfs = new ArrayList<List<CElement>>();
-	for (int i = 0; i < MFS_QUERY.length; i++) {
-	    List<CElement> updated_mfs_query = new ArrayList<CElement>();
-	    int[] relax_degree = new int[MFS_QUERY[i].getCardinality()];
-	    for (int j = 0; j < relax_degree.length; j++) {
-		relax_degree[j] = current_relax_query[MFS_QUERY[i].select(j)];
-		updated_mfs_query.add(this.getRelaxedElement(
-			MFS_QUERY[i].select(j), relax_degree[j]));
+	GraphRelaxationIndex least_relaxed_ancestor = getLeastRelaxedAncestor(
+		already_relaxed_queries, relax_graph_node);
+	List<RoaringBitmap> potential_mfs = mfs_relaxed_queries
+		.get(least_relaxed_ancestor);
+	List<RoaringBitmap> potential_repaired_mfs = mfs_repaired_queries
+		.get(least_relaxed_ancestor);
+
+	int[] current_relax_query = relax_graph_node.getElement_index();
+	List<RoaringBitmap> mfs_current_query = new ArrayList<RoaringBitmap>();
+	List<RoaringBitmap> mfs_repaired_current_query = new ArrayList<RoaringBitmap>();
+
+	if (potential_mfs == null) {
+	    int i = 0;
+	    while (i < MFS_QUERY.length) {
+		boolean is_mfs = true;
+		for (int j = 0; j < MFS_QUERY[i].getCardinality(); j++) {
+		    is_mfs = is_mfs
+			    && current_relax_query[MFS_QUERY[i].select(j)] == 0;
+		}
+		if (is_mfs) {
+		    mfs_current_query.add(MFS_QUERY[i]);
+		} else {
+		    List<CElement> updated_mfs_query = get_element_list(
+			    current_relax_query, MFS_QUERY[i]);
+
+		    number_check_queries = number_check_queries + 1;
+		    QueryStatement stm = session.createStatement((CQueryFactory
+			    .createCQuery(updated_mfs_query)).toString());
+
+		    if (stm.getResultSetSize(1) == 0) {
+			mfs_current_query.add(MFS_QUERY[i]);
+			is_mfs = true;
+		    } else {
+			mfs_repaired_current_query.add(MFS_QUERY[i]);
+		    }
+		}
+		i = i + 1;
 	    }
-
-	    QueryStatement stm = session.createStatement((CQueryFactory
-		    .createCQuery(updated_mfs_query)).toString());
-	    number_check_queries = number_check_queries + 1;
-
-	    if (stm.getResultSetSize(1) == 0) {
-		mfs_subqueries.add(updated_mfs_query);
-		mfs_relaxation_degree[i].add(relax_degree);
-	    } else {
-		subqueries_of_mfs.add(updated_mfs_query);
+	    if (!mfs_current_query.isEmpty()) {
+		mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+		mfs_repaired_current_query.addAll(potential_repaired_mfs);
+		mfs_repaired_queries.put(relax_graph_node,
+			mfs_repaired_current_query);
+		return true;
 	    }
+	    mfs_repaired_current_query.addAll(potential_repaired_mfs);
+
+	    List<RoaringBitmap> new_mfs_founded = full_update_mfs(
+		    current_relax_query, mfs_current_query,
+		    mfs_repaired_current_query);
+	    mfs_current_query.addAll(new_mfs_founded);
+
+	    if (!mfs_current_query.isEmpty()) {
+		mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+		mfs_repaired_queries.put(relax_graph_node,
+			mfs_repaired_current_query);
+		return true;
+	    }
+	    return false;
 	}
 
-	for (int i = 0; i < mfs_evolution.size(); i++) {
-	    List<CElement> updated_mfs_query = new ArrayList<CElement>();
-	    int[] relax_degree = new int[mfs_evolution.get(i).getCardinality()];
-	    for (int j = 0; j < relax_degree.length; j++) {
-		relax_degree[j] = current_relax_query[mfs_evolution.get(i)
-			.select(j)];
-		updated_mfs_query.add(this.getRelaxedElement(
-			mfs_evolution.get(i).select(j), relax_degree[j]));
+	int i = 0;
+	while (i < potential_mfs.size()) {
+	    boolean is_mfs = true;
+	    for (int j = 0; j < potential_mfs.get(i).getCardinality(); j++) {
+		is_mfs = is_mfs
+			&& current_relax_query[potential_mfs.get(i).select(j)] == least_relaxed_ancestor
+				.getElement_index()[potential_mfs.get(i)
+				.select(j)];
 	    }
-
-	    QueryStatement stm = session.createStatement((CQueryFactory
-		    .createCQuery(updated_mfs_query)).toString());
-	    number_check_queries = number_check_queries + 1;
-
-	    if (stm.getResultSetSize(1) == 0) {
-		mfs_subqueries.add(updated_mfs_query);
-		mfs_evolution_relaxation_degree.get(i).add(relax_degree);
+	    if (is_mfs) {
+		mfs_current_query.add(potential_mfs.get(i));
 	    } else {
-		subqueries_of_mfs.add(updated_mfs_query);
-	    }
-	}
+		List<CElement> updated_mfs_query = get_element_list(
+			current_relax_query, potential_mfs.get(i));
 
-	if(!mfs_subqueries.isEmpty()){
+		number_check_queries = number_check_queries + 1;
+		QueryStatement stm = session.createStatement((CQueryFactory
+			.createCQuery(updated_mfs_query)).toString());
+
+		if (stm.getResultSetSize(1) == 0) {
+		    mfs_current_query.add(potential_mfs.get(i));
+		    is_mfs = true;
+		} else {
+		    mfs_repaired_current_query.add(potential_mfs.get(i));
+		}
+	    }
+	    i = i + 1;
+	}
+	if (!mfs_current_query.isEmpty()) {
+	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    mfs_repaired_current_query.addAll(potential_repaired_mfs);
+	    mfs_repaired_queries.put(relax_graph_node,
+		    mfs_repaired_current_query);
 	    return true;
 	}
-	else {
-	    return full_update_mfs(current_relax_query, mfs_subqueries,
-				subqueries_of_mfs);
+
+	mfs_repaired_current_query.addAll(potential_repaired_mfs);
+
+	List<RoaringBitmap> new_mfs_founded = full_update_mfs(
+		current_relax_query, mfs_current_query,
+		mfs_repaired_current_query);
+	mfs_current_query.addAll(new_mfs_founded);
+
+	if (!mfs_current_query.isEmpty()) {
+	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    mfs_repaired_queries.put(relax_graph_node,
+		    mfs_repaired_current_query);
+	    return true;
 	}
+	return false;
     }
+
 }

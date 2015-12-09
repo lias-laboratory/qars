@@ -634,4 +634,86 @@ public class TripleRelaxation {
 	return current_elt;
     }
 
+    public static boolean is_relaxation(CElement relax_elt, CElement father_elt, Session s) {
+
+	TriplePath relax_clause = ((ElementPathBlock) relax_elt.getElement())
+		.getPattern().getList().get(0);
+
+	TriplePath father_clause = ((ElementPathBlock) father_elt.getElement())
+		.getPattern().getList().get(0);
+
+	if (!is_relaxation(relax_clause.getSubject(),
+		father_clause.getSubject(), s, 1)) {
+	    return false;
+	}
+	if ((father_clause.getPredicate() != null)
+		&& (relax_clause.getPredicate() != null)) {
+	    if (!is_relaxation(relax_clause.getPredicate(),
+		    father_clause.getPredicate(), s, 2)) {
+		return false;
+	    }
+	    return is_relaxation(relax_clause.getObject(),
+		    father_clause.getObject(), s, 1);
+	}
+	
+	if (father_clause.getPath() != null) {
+	    if (father_clause.getPath().equals(relax_clause.getPath())) {
+		return is_relaxation(relax_clause.getObject(),
+			father_clause.getObject(), s, 1);
+	    } else {
+		// Relaxation of SPARQL Path queries
+		return false;
+	    }
+	}
+
+	return false;
+    }
+
+    public static boolean is_relaxation(Node subject, Node subject2, Session s , int type) {
+
+	if(subject2.isVariable()){
+	    if(subject.isVariable()){
+		return true;
+	    }
+	    else {
+		return false ;
+	    }
+	}
+	
+	ModelStatement model_statement = ModelStatementFactory
+		.createQueryStatement(s);
+	
+	//  Classe type
+	if(type == 1){
+	    Map<Node, Integer> relaxed_node = model_statement.getSuperClasses(subject2);
+	    if(relaxed_node.get(subject)!=null){
+		return true ;
+	    }
+	    else {
+		if(subject.isVariable()){
+		    return true;
+		}
+		else {
+		    return false;
+		}
+	    }
+	}
+	// Property type
+	if(type == 2) {
+	    Map<Node, Integer> relaxed_node = model_statement.getSubProperies(subject2);
+	    if(relaxed_node.get(subject)!=null){
+		return true ;
+	    }
+	    else {
+		if(subject.isVariable()){
+		    return true;
+		}
+		else {
+		    return false;
+		}
+	    }
+	}
+	return false;
+    }
+
 }

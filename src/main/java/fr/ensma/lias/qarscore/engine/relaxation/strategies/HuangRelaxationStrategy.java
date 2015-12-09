@@ -41,7 +41,7 @@ public class HuangRelaxationStrategy {
     protected NodeRelaxed[][] relaxation_of_element;
     protected GraphRelaxationIndex relaxed_graph;
     protected List<GraphRelaxationIndex> relaxed_queries;
-    private List<GraphRelaxationIndex> already_relaxed_queries;
+    protected List<GraphRelaxationIndex> already_relaxed_queries;
     protected CQuery current_relaxed_query;
     protected double current_similarity;
     protected List<int[]> current_level;
@@ -86,7 +86,6 @@ public class HuangRelaxationStrategy {
 	    return null;
 	}
 	GraphRelaxationIndex current_graph = relaxed_queries.remove(0);
-	already_relaxed_queries.add(current_graph);
 	
 	this.current_similarity = 1.0;
 	this.current_level = new ArrayList<int[]>();
@@ -101,15 +100,14 @@ public class HuangRelaxationStrategy {
 	    this.current_level.add(relaxation_of_element[i][current_graph.getElement_index()[i]]
 		    .getRelaxation_level());
 	}
-
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
 	
 	for (int j = 0; j < current_graph.getChild_elt().length; j++) {
 	    if (!alreadyRelaxed(current_graph.getChild_elt()[j])) {
 		this.insert(current_graph.getChild_elt()[j]);
 	    }
 	}
-
+	already_relaxed_queries.add(current_graph);
+	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
 	return current_relaxed_query;
     }
 
@@ -178,7 +176,7 @@ public class HuangRelaxationStrategy {
 	    }
 	    found_pos = current_child_similarity  <= index_sim ;
 	    pos = index + 1;
-	    index = index -1;
+	    index = index - 1;
 	}
 	if (found_pos) {
 	    relaxed_queries.add(pos, child);

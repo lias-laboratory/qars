@@ -123,4 +123,29 @@ public class GraphRelaxationIndex {
 	    return generate_distinct_child();
 	}
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+	
+	if(!(obj instanceof GraphRelaxationIndex)){
+	    return false;
+	}
+	GraphRelaxationIndex other = (GraphRelaxationIndex)obj;
+	
+	if(this == obj){
+	    return true;
+	}
+	if(this.element_index.length != other.element_index.length){
+	    return false;
+	}
+	for (int i=0; i<this.element_index.length; i++){
+	    if(element_index[i]!=other.element_index[i]){
+		return false;
+	    }
+	}
+	return true;
+    }
 }
