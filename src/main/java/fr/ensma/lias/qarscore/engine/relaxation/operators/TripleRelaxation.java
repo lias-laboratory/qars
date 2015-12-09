@@ -421,12 +421,12 @@ public class TripleRelaxation {
 			.getSimilarity()) {
 		    i = i - 1;
 		} else {
-		    relaxed_triple.add(i+1, node);
+		    relaxed_triple.add(i + 1, node);
 		    inserted = true;
 		}
 	    }
 	    if (!inserted) {
-		relaxed_triple.add(0,node);
+		relaxed_triple.add(0, node);
 	    }
 	} else if (this.relaxation_order == TripleRelaxation.HYBRID_ORDER) {
 
@@ -634,7 +634,8 @@ public class TripleRelaxation {
 	return current_elt;
     }
 
-    public static boolean is_relaxation(CElement relax_elt, CElement father_elt, Session s) {
+    public static boolean is_relaxation(CElement relax_elt,
+	    CElement father_elt, Session s) {
 
 	TriplePath relax_clause = ((ElementPathBlock) relax_elt.getElement())
 		.getPattern().getList().get(0);
@@ -655,7 +656,7 @@ public class TripleRelaxation {
 	    return is_relaxation(relax_clause.getObject(),
 		    father_clause.getObject(), s, 1);
 	}
-	
+
 	if (father_clause.getPath() != null) {
 	    if (father_clause.getPath().equals(relax_clause.getPath())) {
 		return is_relaxation(relax_clause.getObject(),
@@ -669,46 +670,48 @@ public class TripleRelaxation {
 	return false;
     }
 
-    public static boolean is_relaxation(Node subject, Node subject2, Session s , int type) {
+    public static boolean is_relaxation(Node subject, Node subject2, Session s,
+	    int type) {
 
-	if(subject2.isVariable()){
-	    if(subject.isVariable()){
+	if (subject2.isVariable()) {
+	    if (subject.isVariable()) {
 		return true;
-	    }
-	    else {
-		return false ;
+	    } else {
+		return false;
 	    }
 	}
-	
+
+	if (!subject.isURI()) {
+	    return false;
+	}
+
 	ModelStatement model_statement = ModelStatementFactory
 		.createQueryStatement(s);
-	
-	//  Classe type
-	if(type == 1){
-	    Map<Node, Integer> relaxed_node = model_statement.getSuperClasses(subject2);
-	    if(relaxed_node.get(subject)!=null){
-		return true ;
-	    }
-	    else {
-		if(subject.isVariable()){
+
+	// Classe type
+	if (type == 1) {
+	    Map<String, Integer> relaxed_node = model_statement
+		    .getURISuperClasses(subject2);
+	    if (relaxed_node.get(subject.getURI()) != null) {
+		return true;
+	    } else {
+		if (subject.isVariable()) {
 		    return true;
-		}
-		else {
+		} else {
 		    return false;
 		}
 	    }
 	}
 	// Property type
-	if(type == 2) {
-	    Map<Node, Integer> relaxed_node = model_statement.getSubProperies(subject2);
-	    if(relaxed_node.get(subject)!=null){
-		return true ;
-	    }
-	    else {
-		if(subject.isVariable()){
+	if (type == 2) {
+	    Map<String, Integer> relaxed_node = model_statement
+		    .getURISuperProperty(subject2);
+	    if (relaxed_node.get(subject.getURI()) != null) {
+		return true;
+	    } else {
+		if (subject.isVariable()) {
 		    return true;
-		}
-		else {
+		} else {
 		    return false;
 		}
 	    }

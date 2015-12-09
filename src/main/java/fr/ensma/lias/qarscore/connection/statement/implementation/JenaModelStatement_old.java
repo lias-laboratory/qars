@@ -199,6 +199,18 @@ public class JenaModelStatement_old implements ModelStatement {
 	return superPropertiesNodes;
     }
 
+    @Override
+    public Map<String, Integer> getURISuperProperty(Node property) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public Map<String, Integer> getURISuperClasses(Node classeNode) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
     /*
      * @Override public Map<Node, Integer> getSuperProperty(Node property) {
      * 

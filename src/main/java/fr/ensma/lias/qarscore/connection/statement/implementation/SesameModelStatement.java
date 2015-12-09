@@ -182,4 +182,16 @@ public class SesameModelStatement implements ModelStatement {
 
     }
 
+    @Override
+    public Map<String, Integer> getURISuperProperty(Node property) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public Map<String, Integer> getURISuperClasses(Node classeNode) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
 }

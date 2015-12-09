@@ -32,4 +32,6 @@ public interface ModelStatement {
     Map<Node, Integer> getSubProperies(Node property);
     Map<Node, Integer> getSuperClasses(Node classe);
     Map<Node, Integer> getSuperProperty(Node property);
+    Map<String, Integer> getURISuperProperty(Node property);
+    Map<String, Integer> getURISuperClasses(Node classeNode);
 }

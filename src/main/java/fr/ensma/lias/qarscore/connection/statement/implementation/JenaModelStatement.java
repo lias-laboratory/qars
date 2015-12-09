@@ -88,6 +88,33 @@ public class JenaModelStatement implements ModelStatement {
     }
 
     @Override
+    public Map<String, Integer> getURISuperClasses(Node classeNode) {
+
+ 	Map<String, Integer> superNodes = new LinkedHashMap<String, Integer>();
+ 	List<String> toFindSuperClass = new ArrayList<String>();
+ 	List<String> alreadyInserted = new ArrayList<String>();
+ 	if (classeNode.isURI()) {
+ 	    toFindSuperClass.add(classeNode.getURI());
+ 	}
+ 	int level = 0;
+
+ 	while (!toFindSuperClass.isEmpty()) {
+ 	    String currentURI = toFindSuperClass.remove(0);
+ 	    String supClasses = session.getStat_Lubm_data().getSuperClass(
+ 		    currentURI);
+ 	    level = level + 1;
+ 	    if (supClasses != null) {
+ 		if (!alreadyInserted.contains(supClasses)) {
+ 		    superNodes.put(supClasses, level);
+ 		    alreadyInserted.add(supClasses);
+ 		    toFindSuperClass.add(supClasses);
+ 		}
+ 	    }
+ 	}
+ 	return superNodes;
+     }
+
+    @Override
     public Map<Node, Integer> getSuperProperty(Node property) {
 
 	Map<Node, Integer> superPropertiesNodes = new LinkedHashMap<Node, Integer>();
@@ -118,4 +145,35 @@ public class JenaModelStatement implements ModelStatement {
 	}
 	return superPropertiesNodes;
     }
+    
+    @Override
+    public Map<String, Integer> getURISuperProperty(Node property) {
+
+	Map<String, Integer> superPropertiesNodes = new LinkedHashMap<String, Integer>();
+	List<String> toFindSuperProperties = new ArrayList<String>();
+	List<String> alreadyInserted = new ArrayList<String>();
+	if (property.isURI()) {
+	    toFindSuperProperties.add(property.getURI());
+	    alreadyInserted.add(property.getURI());
+	}
+
+	int level = 0;
+
+	while (!toFindSuperProperties.isEmpty()) {
+	    String currentPropertyURI = toFindSuperProperties.remove(0);
+	    String superProperties = session.getStat_Lubm_data()
+		    .getSuperProperty(currentPropertyURI);
+
+	    level = level + 1;
+	    if (superProperties != null) {
+		if (!alreadyInserted.contains(superProperties)) {
+		    superPropertiesNodes.put(superProperties, level);
+		    alreadyInserted.add(superProperties);
+		    toFindSuperProperties.add(superProperties);
+		}
+	    }
+	}
+	return superPropertiesNodes;
+    }
+
 }
