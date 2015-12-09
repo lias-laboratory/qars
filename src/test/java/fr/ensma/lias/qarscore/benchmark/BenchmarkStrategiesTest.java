@@ -403,7 +403,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    + "***********************************");
 	    duration = duration / NB_EXEC;
 	    duration_mfs_search = 0.0;
-	    number_check_queries = relaxed_query.number_check_queries;
+	    number_check_queries = 0;
 	    number_queries_mfs = 0;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
@@ -512,7 +512,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    + "***********************************");
 	    duration = duration / NB_EXEC;
 	    duration_mfs_search = 0.0;
-	    number_check_queries = relaxed_query.number_check_queries;
+	    number_check_queries = 0;
 	    number_queries_mfs = 0;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
@@ -623,7 +623,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 		duration_mfs_search = duration_mfs_search
 			+ ((AbstractLatticeStrategy) relaxed_query
 				.getMFSSearchEngine()).duration_of_execution;
-		number_check_queries = relaxed_query.number_check_queries;
 		logger.info("*****" + (int) (i + 2) + "******"
 			+ number_queries_mfs + " " + duration_mfs_search
 			/ (i + 1) + " " + number_relaxed_queries + " "
@@ -635,7 +634,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    + "***********************************");
 	    duration = duration / NB_EXEC;
 	    duration_mfs_search = duration_mfs_search / NB_EXEC;
-	    number_check_queries = relaxed_query.number_check_queries;
+	    number_check_queries = 0;
 	    newResultExplain.add(queryExplain.getDescription(), duration,
 		    duration_mfs_search, duration - duration_mfs_search,
 		    number_check_queries + number_queries_mfs

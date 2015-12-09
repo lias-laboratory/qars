@@ -35,7 +35,6 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.NodeRelaxed;
  */
 public class HuangRelaxationStrategy {
     
-    public int number_check_queries = 0;
     protected Session session;
     protected CQuery query_to_relax;
     protected NodeRelaxed[][] relaxation_of_element;

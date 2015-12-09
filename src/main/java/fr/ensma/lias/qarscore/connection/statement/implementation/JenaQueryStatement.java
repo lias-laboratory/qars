@@ -128,4 +128,9 @@ public class JenaQueryStatement implements QueryStatement {
 	    results = null;
 	}
     }
+
+    @Override
+    public String getQuery() {
+	return sparqlQuery;
+    }
 }

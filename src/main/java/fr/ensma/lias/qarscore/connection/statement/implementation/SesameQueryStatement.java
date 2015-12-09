@@ -136,4 +136,9 @@ public class SesameQueryStatement implements QueryStatement {
 	    results = null;
 	}
     }
+
+    @Override
+    public String getQuery() {
+	return sparqlQuery;
+    }
 }

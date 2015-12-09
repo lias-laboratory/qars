@@ -22,6 +22,7 @@ package fr.ensma.lias.qarscore.engine.relaxation.strategies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.roaringbitmap.RoaringBitmap;
 
 import fr.ensma.lias.qarscore.connection.Session;
@@ -37,6 +38,8 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
  */
 public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 
+    public int number_check_queries = 0;
+    
     /**
      * 
      */
@@ -119,7 +122,8 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 		    number_check_queries = number_check_queries + 1;
 		    QueryStatement stm = session.createStatement((CQueryFactory
 			    .createCQuery(updated_mfs_query)).toString());
-
+		    Logger.getRootLogger().info(" With original MFS"+stm.getQuery());
+		    
 		    if (stm.getResultSetSize(1) == 0) {
 			mfs_current_query.add(MFS_QUERY[i]);
 			is_mfs = true;
@@ -152,6 +156,7 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 		number_check_queries = number_check_queries + 1;
 		QueryStatement stm = session.createStatement((CQueryFactory
 			.createCQuery(updated_mfs_query)).toString());
+		Logger.getRootLogger().info("With MFS of relaxed ancestor "+stm.getQuery());
 		if (stm.getResultSetSize(1) == 0) {
 		    mfs_current_query.add(potential_mfs.get(i));
 		    is_mfs = true;

@@ -31,6 +31,7 @@ public interface QueryStatement {
     void close();
     int getResultSetSize();
     int getResultSetSize(int limit);
+    String getQuery();
     Object executeQuery();
     Map<ResultSet, Double> relaxedQuery(Map<String, String> relax_operator);
     Map<ResultSet, Double> relaxedQuery();
