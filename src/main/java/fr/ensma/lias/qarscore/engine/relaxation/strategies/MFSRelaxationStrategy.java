@@ -41,6 +41,7 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 
     protected MFSSearch mfs_finders;
     protected Map<GraphRelaxationIndex, List<RoaringBitmap>> mfs_relaxed_queries;
+    protected List<GraphRelaxationIndex> failed_relaxed_queries;
     protected final RoaringBitmap[] MFS_QUERY;
     protected final RoaringBitmap QUERY;
 
@@ -52,7 +53,8 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	QUERY = new RoaringBitmap();
 	QUERY.add(0, query.getElementList().size() - 1);
 	mfs_relaxed_queries = new LinkedHashMap<GraphRelaxationIndex, List<RoaringBitmap>>();
-	
+	failed_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
+
 	mfs_finders = StrategyFactory.getLatticeStrategy(s, query, 1);
 	List<CQuery> all_mfs = mfs_finders.getAllMFS();
 	MFS_QUERY = new RoaringBitmap[all_mfs.size()];
@@ -77,7 +79,8 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	QUERY = new RoaringBitmap();
 	QUERY.add(0, query.getElementList().size() - 1);
 	mfs_relaxed_queries = new LinkedHashMap<GraphRelaxationIndex, List<RoaringBitmap>>();
-	
+	failed_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
+
 	MFSSearch mfs_finders = StrategyFactory.getLatticeStrategy(s, query, 1,
 		index);
 	List<CQuery> all_mfs = mfs_finders.getAllMFS();
@@ -112,20 +115,22 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 		    relax_graph_node.getElement_index()[i]));
 
 	    this.current_similarity = this.current_similarity
-		    * relaxation_of_element[i][relax_graph_node.getElement_index()[i]]
-			    .getSimilarity();
-	    this.current_level.add(relaxation_of_element[i][relax_graph_node.getElement_index()[i]]
-		    .getRelaxation_level());
+		    * relaxation_of_element[i][relax_graph_node
+			    .getElement_index()[i]].getSimilarity();
+	    this.current_level.add(relaxation_of_element[i][relax_graph_node
+		    .getElement_index()[i]].getRelaxation_level());
 	}
 
 	for (int j = 0; j < relax_graph_node.getChild_elt().length; j++) {
 	    this.insert(relax_graph_node.getChild_elt()[j]);
 	}
-	already_relaxed_queries.add(relax_graph_node);
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
+
+	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query,
+		query_to_relax.getSelectedQueryVar());
 	boolean has_mfs = check_mfs(relax_graph_node);
 
 	if (!has_mfs) {
+	    already_relaxed_queries.add(relax_graph_node);
 	    return current_relaxed_query;
 	} else {
 	    return this.next();
@@ -133,12 +138,12 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
     }
 
     protected boolean check_mfs(GraphRelaxationIndex relax_graph_node) {
-	
+
 	int i = 0;
 	boolean has_mfs = false;
 	List<RoaringBitmap> mfs_current_query = new ArrayList<RoaringBitmap>();
 	int[] current_relax_query = relax_graph_node.getElement_index();
-	
+
 	while ((i < MFS_QUERY.length) && (!has_mfs)) {
 	    has_mfs = true;
 	    for (int j = 0; j < MFS_QUERY[i].getCardinality(); j++) {
@@ -147,9 +152,10 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	    }
 	    i = i + 1;
 	}
-	
-	if(has_mfs){
-	    mfs_current_query.add(MFS_QUERY[i-1]);
+
+	if (has_mfs) {
+	    mfs_current_query.add(MFS_QUERY[i - 1]);
+	    failed_relaxed_queries.add(relax_graph_node);
 	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	}
 	return has_mfs;

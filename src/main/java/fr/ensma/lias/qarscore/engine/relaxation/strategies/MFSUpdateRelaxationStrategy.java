@@ -83,6 +83,7 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 	boolean has_mfs = check_mfs(current_graph);
 
 	if (!has_mfs) {
+	    already_relaxed_queries.add(current_graph);
 	    return current_relaxed_query;
 	} else {
 	    return this.next();
@@ -126,7 +127,10 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 		}
 		i = i + 1;
 	    }
-	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    if (!mfs_current_query.isEmpty()) {
+		mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+		failed_relaxed_queries.add(relax_graph_node);
+	    }
 	    return !mfs_current_query.isEmpty();
 	}
 
@@ -155,7 +159,10 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 	    }
 	    i = i + 1;
 	}
-	mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	if (!mfs_current_query.isEmpty()) {
+	    failed_relaxed_queries.add(relax_graph_node);
+	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	}
 	return !mfs_current_query.isEmpty();
     }
 
