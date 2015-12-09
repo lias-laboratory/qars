@@ -50,6 +50,7 @@ public class HuangRelaxationStrategy {
 	query_to_relax = query;
 	session = s;
 	relaxed_queries = new ArrayList<GraphRelaxationIndex>();
+	already_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
     }
 
     protected void triple_relaxation(int[] relaxation_limit_index, int[] relaxation_index) {
@@ -70,8 +71,6 @@ public class HuangRelaxationStrategy {
 	int[] relaxation_limit_index = new int[query_to_relax.getElementList()
 		.size()];
 	int[] relaxation_index = new int[query_to_relax.getElementList().size()];
-
-	already_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
 	triple_relaxation(relaxation_limit_index, relaxation_index);
 	relaxed_graph = new GraphRelaxationIndex(relaxation_index,
 		relaxation_limit_index, true);
