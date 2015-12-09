@@ -93,8 +93,11 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 
 	GraphRelaxationIndex least_relaxed_ancestor = getLeastRelaxedAncestor(
 		already_relaxed_queries, relax_graph_node);
-	List<RoaringBitmap> potential_mfs = mfs_relaxed_queries
-		.get(least_relaxed_ancestor);
+	List<RoaringBitmap> potential_mfs = null;
+	if (least_relaxed_ancestor != null) {
+	    potential_mfs = mfs_relaxed_queries.get(least_relaxed_ancestor);
+	}
+
 	int[] current_relax_query = relax_graph_node.getElement_index();
 	List<RoaringBitmap> mfs_current_query = new ArrayList<RoaringBitmap>();
 
@@ -171,6 +174,9 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 	    List<GraphRelaxationIndex> already_relaxed_queries,
 	    GraphRelaxationIndex relax_graph_node) {
 
+	if (already_relaxed_queries.size() == 0) {
+	    return null;
+	}
 	int i = already_relaxed_queries.size() - 1;
 	boolean is_relaxation = false;
 	while ((0 <= i) && (!is_relaxation)) {
@@ -183,7 +189,8 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 		CElement father_elt = getRelaxedElement(j,
 			already_relaxed_queries.get(i).getElement_index()[j]);
 		is_relaxation = is_relaxation
-			&& TripleRelaxation.is_relaxation(relax_elt, father_elt, session);
+			&& TripleRelaxation.is_relaxation(relax_elt,
+				father_elt, session);
 		j = j + 1;
 	    }
 	    i = i - 1;
