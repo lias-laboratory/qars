@@ -40,9 +40,10 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 
     protected MFSSearch mfs_finders;
-    protected Map<GraphRelaxationIndex, List<RoaringBitmap>> mfs_relaxed_queries;
+    protected Map<GraphRelaxationIndex, List<Integer>> mfs_relaxed_queries;
     protected List<GraphRelaxationIndex> failed_relaxed_queries;
-    protected final RoaringBitmap[] MFS_QUERY;
+    protected List<List<int[]>> mfs_degree_by_index;
+    protected List<RoaringBitmap> mfs_elt_index;
     protected final RoaringBitmap QUERY;
 
     /**
@@ -52,20 +53,27 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	super(query, s);
 	QUERY = new RoaringBitmap();
 	QUERY.add(0, query.getElementList().size() - 1);
-	mfs_relaxed_queries = new LinkedHashMap<GraphRelaxationIndex, List<RoaringBitmap>>();
+	mfs_relaxed_queries = new LinkedHashMap<GraphRelaxationIndex, List<Integer>>();
 	failed_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
 
 	mfs_finders = StrategyFactory.getLatticeStrategy(s, query, 1);
 	List<CQuery> all_mfs = mfs_finders.getAllMFS();
-	MFS_QUERY = new RoaringBitmap[all_mfs.size()];
+	mfs_elt_index = new ArrayList<RoaringBitmap>();
+	mfs_degree_by_index = new ArrayList<List<int[]>>();
 	for (int i = 0; i < all_mfs.size(); i++) {
-	    MFS_QUERY[i] = new RoaringBitmap();
+	    mfs_elt_index.add(i, new RoaringBitmap());
+	    mfs_degree_by_index.add(i, new ArrayList<int[]>());
+	    int [] relax_degree = new int[all_mfs.get(i).getElementList().size()];
+	    for( int j = 0; j<relax_degree.length; j++){
+		relax_degree[j] = 0;
+	    }
+	    mfs_degree_by_index.get(i).add(relax_degree);
 	}
 	for (int i = 0; i < query_to_relax.getElementList().size(); i++) {
 	    for (int j = 0; j < all_mfs.size(); j++) {
 		if (all_mfs.get(j).contain(
 			query_to_relax.getElementList().get(i))) {
-		    MFS_QUERY[j].add(i);
+		    mfs_elt_index.get(j).add(i);
 		}
 	    }
 	}
@@ -78,21 +86,27 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	super(query, s);
 	QUERY = new RoaringBitmap();
 	QUERY.add(0, query.getElementList().size() - 1);
-	mfs_relaxed_queries = new LinkedHashMap<GraphRelaxationIndex, List<RoaringBitmap>>();
+	mfs_relaxed_queries = new LinkedHashMap<GraphRelaxationIndex, List<Integer>>();
 	failed_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
 
 	MFSSearch mfs_finders = StrategyFactory.getLatticeStrategy(s, query, 1,
 		index);
 	List<CQuery> all_mfs = mfs_finders.getAllMFS();
-	MFS_QUERY = new RoaringBitmap[all_mfs.size()];
+	mfs_elt_index = new ArrayList<RoaringBitmap>();
 	for (int i = 0; i < all_mfs.size(); i++) {
-	    MFS_QUERY[i] = new RoaringBitmap();
+	    mfs_elt_index.add(i,  new RoaringBitmap());
+	    mfs_degree_by_index.add(i, new ArrayList<int[]>());
+	    int [] relax_degree = new int[all_mfs.get(i).getElementList().size()];
+	    for( int j = 0; j<relax_degree.length; j++){
+		relax_degree[j] = 0;
+	    }
+	    mfs_degree_by_index.get(i).add(relax_degree);
 	}
 	for (int i = 0; i < query_to_relax.getElementList().size(); i++) {
 	    for (int j = 0; j < all_mfs.size(); j++) {
 		if (all_mfs.get(j).contain(
 			query_to_relax.getElementList().get(i))) {
-		    MFS_QUERY[j].add(i);
+		    mfs_elt_index.get(j).add(i);
 		}
 	    }
 	}
@@ -141,20 +155,20 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 
 	int i = 0;
 	boolean has_mfs = false;
-	List<RoaringBitmap> mfs_current_query = new ArrayList<RoaringBitmap>();
+	List<Integer> mfs_current_query = new ArrayList<Integer>();
 	int[] current_relax_query = relax_graph_node.getElement_index();
 
-	while ((i < MFS_QUERY.length) && (!has_mfs)) {
+	while ((i < mfs_elt_index.size()) && (!has_mfs)) {
 	    has_mfs = true;
-	    for (int j = 0; j < MFS_QUERY[i].getCardinality(); j++) {
+	    for (int j = 0; j < mfs_elt_index.get(i).getCardinality(); j++) {
 		has_mfs = has_mfs
-			&& current_relax_query[MFS_QUERY[i].select(j)] == 0;
+			&& current_relax_query[mfs_elt_index.get(i).select(j)] == 0;
 	    }
 	    i = i + 1;
 	}
 
 	if (has_mfs) {
-	    mfs_current_query.add(MFS_QUERY[i - 1]);
+	    mfs_current_query.add(i-1);
 	    failed_relaxed_queries.add(relax_graph_node);
 	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	}

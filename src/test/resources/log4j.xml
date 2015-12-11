@@ -45,6 +45,11 @@
 <!-- 		<appender-ref ref="file" /> -->
 	</logger>
 
+	<logger name="fr.ensma.lias.qarscore.engine.relaxation.strategies.MFSUpdateRelaxationStrategy">
+		<level value="debug" />
+<!-- 		<appender-ref ref="file" /> -->
+	</logger>
+
 	<logger name="fr.ensma.lias.qarscore.connection.SessionTDBTest">
 		<level value="debug" />
 		<appender-ref ref="fileR" />

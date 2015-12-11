@@ -19,9 +19,13 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.strategies;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.roaringbitmap.RoaringBitmap;
 
 import fr.ensma.lias.qarscore.connection.Session;
@@ -38,7 +42,8 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 
     public int number_check_queries = 0;
-    
+    protected Logger logger = Logger.getLogger(MFSRelaxationStrategy.class);
+
     /**
      * 
      */
@@ -96,77 +101,151 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 
 	GraphRelaxationIndex least_relaxed_ancestor = getLeastRelaxedAncestor(
 		failed_relaxed_queries, relax_graph_node);
-	List<RoaringBitmap> potential_mfs = null;
+
+	List<Integer> mfs_current_query = new ArrayList<Integer>();
+
 	if (least_relaxed_ancestor != null) {
-	    potential_mfs = mfs_relaxed_queries.get(least_relaxed_ancestor);
+	    if (mfs_relaxed_queries.get(least_relaxed_ancestor) != null) {
+		return check_on_mfs_relaxed(relax_graph_node,
+			least_relaxed_ancestor, mfs_current_query);
+	    } else {
+		return check_on_allmfs(relax_graph_node, mfs_current_query);
+	    }
+	} else {
+	    return check_on_allmfs(relax_graph_node, mfs_current_query);
 	}
+    }
+
+    protected boolean check_on_allmfs(GraphRelaxationIndex relax_graph_node,
+	    List<Integer> mfs_current_query) {
 
 	int[] current_relax_query = relax_graph_node.getElement_index();
-	List<RoaringBitmap> mfs_current_query = new ArrayList<RoaringBitmap>();
-
-	if (potential_mfs == null) {
-	    int i = 0;
-	    while (i < MFS_QUERY.length) {
-		boolean is_mfs = true;
-		for (int j = 0; j < MFS_QUERY[i].getCardinality(); j++) {
-		    is_mfs = is_mfs
-			    && current_relax_query[MFS_QUERY[i].select(j)] == 0;
-		}
-		if (is_mfs) {
-		    mfs_current_query.add(MFS_QUERY[i]);
-		} else {
-		    List<CElement> updated_mfs_query = get_element_list(
-			    current_relax_query, MFS_QUERY[i]);
-
-		    number_check_queries = number_check_queries + 1;
-		    QueryStatement stm = session.createStatement((CQueryFactory
-			    .createCQuery(updated_mfs_query)).toString());
-		    
-		    if (stm.getResultSetSize(1) == 0) {
-			mfs_current_query.add(MFS_QUERY[i]);
-			is_mfs = true;
-		    }
-		}
-		i = i + 1;
-	    }
-	    if (!mfs_current_query.isEmpty()) {
-		mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
-		failed_relaxed_queries.add(relax_graph_node);
-	    }
-	    return !mfs_current_query.isEmpty();
-	}
-
+	List<Integer> current_mfs_relaxed = new ArrayList<Integer>();
+	List<int[]> degree_mfs_relaxed = new ArrayList<int[]>();
 	int i = 0;
-	while (i < potential_mfs.size()) {
-	    boolean is_mfs = true;
-	    for (int j = 0; j < potential_mfs.get(i).getCardinality(); j++) {
-		is_mfs = is_mfs
-			&& current_relax_query[potential_mfs.get(i).select(j)] == least_relaxed_ancestor
-				.getElement_index()[potential_mfs.get(i)
-				.select(j)];
+	while (i < mfs_elt_index.size()) {
+	    int[] current_mfs_degree = new int[mfs_elt_index.get(i)
+		    .getCardinality()];
+	    for (int j = 0; j < mfs_elt_index.get(i).getCardinality(); j++) {
+		current_mfs_degree[j] = current_relax_query[mfs_elt_index
+			.get(i).select(j)];
 	    }
+	    boolean is_mfs = is_in_mfs_degree(i, current_mfs_degree);
 	    if (is_mfs) {
-		mfs_current_query.add(potential_mfs.get(i));
+		mfs_current_query.add(i);
 	    } else {
-		List<CElement> updated_mfs_query = get_element_list(
-			current_relax_query, potential_mfs.get(i));
-
-		number_check_queries = number_check_queries + 1;
-		QueryStatement stm = session.createStatement((CQueryFactory
-			.createCQuery(updated_mfs_query)).toString());
-		
-		if (stm.getResultSetSize(1) == 0) {
-		    mfs_current_query.add(potential_mfs.get(i));
-		    is_mfs = true;
-		}
+		current_mfs_relaxed.add(i);
+		degree_mfs_relaxed.add(current_mfs_degree);
 	    }
 	    i = i + 1;
 	}
 	if (!mfs_current_query.isEmpty()) {
+	    // mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	    failed_relaxed_queries.add(relax_graph_node);
-	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    return true;
 	}
-	return !mfs_current_query.isEmpty();
+
+	List<Integer> repair_mfs = add_relaxed_mfs(relax_graph_node,
+		current_mfs_relaxed, degree_mfs_relaxed);
+
+	return repair_mfs.size() != current_mfs_relaxed.size();
+    }
+
+    protected boolean check_on_mfs_relaxed(
+	    GraphRelaxationIndex relax_graph_node,
+	    GraphRelaxationIndex least_relaxed_ancestor,
+	    List<Integer> mfs_current_query) {
+
+	int[] current_relax_query = relax_graph_node.getElement_index();
+	List<Integer> current_mfs_relaxed = new ArrayList<Integer>();
+	List<int[]> degree_mfs_relaxed = new ArrayList<int[]>();
+	List<Integer> potential_mfs = mfs_relaxed_queries
+		.get(least_relaxed_ancestor);
+	int i = 0;
+	while (i < potential_mfs.size()) {
+	    int[] current_mfs_degree = new int[mfs_elt_index.get(
+		    potential_mfs.get(i)).getCardinality()];
+	    for (int j = 0; j < mfs_elt_index.get(potential_mfs.get(i))
+		    .getCardinality(); j++) {
+		current_mfs_degree[j] = current_relax_query[mfs_elt_index.get(
+			potential_mfs.get(i)).select(j)];
+	    }
+	    boolean is_mfs = is_in_mfs_degree(potential_mfs.get(i),
+		    current_mfs_degree);
+	    if (is_mfs) {
+		mfs_current_query.add(potential_mfs.get(i));
+	    } else {
+		current_mfs_relaxed.add(i);
+		degree_mfs_relaxed.add(current_mfs_degree);
+	    }
+	    i = i + 1;
+	}
+	List<Integer> repair_mfs = add_relaxed_mfs(relax_graph_node,
+		current_mfs_relaxed, degree_mfs_relaxed);
+	
+	if (mfs_current_query.isEmpty()) {
+	    return repair_mfs.size() != current_mfs_relaxed.size();
+	} else {
+	    failed_relaxed_queries.add(relax_graph_node);
+	    if (mfs_current_query.size() == potential_mfs.size()) {
+		mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    }
+	    return true;
+	}
+    }
+
+    protected List<Integer> add_relaxed_mfs(
+	    GraphRelaxationIndex relax_graph_node,
+	    List<Integer> current_mfs_relaxed, List<int[]> degree_mfs_relaxed) {
+
+	int[] current_relax_query = relax_graph_node.getElement_index();
+	List<Integer> mfs_current_query = new ArrayList<Integer>();
+	List<Integer> repair_current_query = new ArrayList<Integer>();
+
+	for (int i = 0; i < current_mfs_relaxed.size(); i++) {
+	    List<CElement> updated_mfs_query = get_element_list(
+		    current_relax_query,
+		    mfs_elt_index.get(current_mfs_relaxed.get(i)));
+
+	    number_check_queries = number_check_queries + 1;
+	    QueryStatement stm = session.createStatement((CQueryFactory
+		    .createCQuery(updated_mfs_query)).toString());
+
+	    if (stm.getResultSetSize(1) == 0) {
+		mfs_current_query.add(current_mfs_relaxed.get(i));
+		mfs_degree_by_index.get(current_mfs_relaxed.get(i)).add(
+			degree_mfs_relaxed.get(i));
+	    } else {
+		repair_current_query.add(current_mfs_relaxed.get(i));
+	    }
+	}
+	if (!mfs_current_query.isEmpty()) {
+	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    failed_relaxed_queries.add(relax_graph_node);
+	}
+	return repair_current_query;
+    }
+
+    protected boolean is_in_mfs_degree(int i, int[] mfs_degree) {
+
+	if (mfs_degree.length != mfs_degree_by_index.get(i).get(0).length) {
+	    return false;
+	}
+	int j = mfs_degree_by_index.get(i).size() - 1;
+	while (0 <= j) {
+	    boolean is_in = true;
+	    int k = 0;
+	    while ((k < mfs_degree.length) && (is_in)) {
+		is_in = is_in
+			&& (mfs_degree_by_index.get(i).get(j)[k] == mfs_degree[k]);
+		k = k + 1;
+	    }
+	    if (is_in) {
+		return true;
+	    }
+	    j = j - 1;
+	}
+	return false;
     }
 
     protected List<CElement> get_element_list(int[] current_relax_query,
@@ -197,7 +276,8 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 		CElement relax_elt = getRelaxedElement(j,
 			relax_graph_node.getElement_index()[j]);
 		CElement father_elt = getRelaxedElement(j,
-			already_failed_relaxed_queries.get(i).getElement_index()[j]);
+			already_failed_relaxed_queries.get(i)
+				.getElement_index()[j]);
 		is_relaxation = is_relaxation
 			&& TripleRelaxation.is_relaxation(relax_elt,
 				father_elt, session);
@@ -208,4 +288,25 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 
 	return already_failed_relaxed_queries.get(i + 1);
     }
+
+    protected void logger_init() {
+
+	LocalDateTime time = LocalDateTime.now();
+	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
+		+ time.getHour() + time.getMinute() + time.getSecond();
+
+	String logfile = "UpdateMFS-Process" + "-" + time_value + ".log";
+
+	PatternLayout layout = new PatternLayout();
+	String conversionPattern = "%-5p [%C{1}]: %m%n";
+	layout.setConversionPattern(conversionPattern);
+
+	FileAppender fileAppender = new FileAppender();
+	fileAppender.setFile(logfile);
+	fileAppender.setLayout(layout);
+	fileAppender.activateOptions();
+	logger.removeAllAppenders();
+	logger.addAppender(fileAppender);
+    }
+
 }
