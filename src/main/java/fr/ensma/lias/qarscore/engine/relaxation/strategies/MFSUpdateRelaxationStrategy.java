@@ -140,7 +140,7 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 	    i = i + 1;
 	}
 	if (!mfs_current_query.isEmpty()) {
-	    // mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	    failed_relaxed_queries.add(relax_graph_node);
 	    return true;
 	}
@@ -180,18 +180,19 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 	    }
 	    i = i + 1;
 	}
-	List<Integer> repair_mfs = add_relaxed_mfs(relax_graph_node,
-		current_mfs_relaxed, degree_mfs_relaxed);
-	
-	if (mfs_current_query.isEmpty()) {
-	    return repair_mfs.size() != current_mfs_relaxed.size();
-	} else {
+	if (!mfs_current_query.isEmpty()) {
+	    // mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	    failed_relaxed_queries.add(relax_graph_node);
 	    if (mfs_current_query.size() == potential_mfs.size()) {
 		mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	    }
 	    return true;
 	}
+
+	List<Integer> repair_mfs = add_relaxed_mfs(relax_graph_node,
+		current_mfs_relaxed, degree_mfs_relaxed);
+	
+	 return repair_mfs.size() != current_mfs_relaxed.size();
     }
 
     protected List<Integer> add_relaxed_mfs(

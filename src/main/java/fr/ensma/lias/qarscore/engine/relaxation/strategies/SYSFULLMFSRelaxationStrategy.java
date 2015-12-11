@@ -101,7 +101,7 @@ public class SYSFULLMFSRelaxationStrategy extends INCFULLMFSRelaxationStrategy {
 	}
 
 	if (!mfs_current_query.isEmpty()) {
-	    // mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
+	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	    failed_relaxed_queries.add(relax_graph_node);
 	    return true;
 	}
@@ -110,6 +110,7 @@ public class SYSFULLMFSRelaxationStrategy extends INCFULLMFSRelaxationStrategy {
 		relax_graph_node, current_mfs_relaxed, degree_mfs_relaxed);
 
 	if (mfs_repaired_current_query.size() != current_mfs_relaxed.size()) {
+	    mfs_repaired_queries.put(relax_graph_node, mfs_repaired_current_query);
 	    return true;
 	}
 
@@ -153,27 +154,32 @@ public class SYSFULLMFSRelaxationStrategy extends INCFULLMFSRelaxationStrategy {
 	    }
 	    i = i + 1;
 	}
-	List<Integer> mfs_repaired_current_query = add_relaxed_mfs(
-		relax_graph_node, current_mfs_relaxed, degree_mfs_relaxed);
-
-	if (mfs_repaired_queries.get(least_relaxed_ancestor) != null) {
-	    mfs_repaired_current_query.addAll(mfs_repaired_queries
-		    .get(least_relaxed_ancestor));
-	}
-
-	if (mfs_current_query.isEmpty()) {
-	    if (mfs_repaired_current_query.size() != current_mfs_relaxed.size()) {
-		return true;
-	    } else {
-		return add_new_mfs(relax_graph_node, mfs_repaired_current_query);
-	    }
-	} else {
+	
+	if (!mfs_current_query.isEmpty()) {
+	    //mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	    failed_relaxed_queries.add(relax_graph_node);
 	    if (mfs_current_query.size() == potential_mfs.size()) {
 		mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	    }
 	    return true;
 	}
+
+	List<Integer> mfs_repaired_current_query = add_relaxed_mfs(
+		relax_graph_node, current_mfs_relaxed, degree_mfs_relaxed);
+
+	if (mfs_repaired_current_query.size() != current_mfs_relaxed.size()) {
+	    mfs_repaired_queries.put(relax_graph_node, mfs_repaired_current_query);
+	    return true;
+	}
+
+	if (least_relaxed_ancestor != null) {
+	    if (mfs_repaired_queries.get(least_relaxed_ancestor) != null) {
+		mfs_repaired_current_query.addAll(mfs_repaired_queries
+			.get(least_relaxed_ancestor));
+	    }
+	}
+
+	return add_new_mfs(relax_graph_node, mfs_repaired_current_query);
     }
 
     protected boolean add_new_mfs(GraphRelaxationIndex relax_graph_node,
