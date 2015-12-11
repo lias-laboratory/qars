@@ -34,8 +34,8 @@ public class InitTest {
 
     public Session sessionJena;
     public Session sessionSesame;
-//    public static String tdb_path = "C:/TDB/UBA";
-    public String tdb_path = "/home/lias/tdb100repository-saturated";
+    public static String tdb_path = "C:/TDB/UBA";
+//    public String tdb_path = "/home/lias/tdb100repository-saturated";
     public String tdb_alias = "tdb100";
     
     public final int TOP_K = 50;

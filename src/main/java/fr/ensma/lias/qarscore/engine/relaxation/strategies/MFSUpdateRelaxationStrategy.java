@@ -60,6 +60,8 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 
     public CQuery next() {
 
+	while (true){
+	    
 	List<CElement> elt_relaxed_query = new ArrayList<CElement>();
 	if (this.relaxed_queries.isEmpty()) {
 	    return null;
@@ -93,8 +95,9 @@ public class MFSUpdateRelaxationStrategy extends MFSRelaxationStrategy {
 	    already_relaxed_queries.add(current_graph);
 	    return current_relaxed_query;
 	} else {
-	    return this.next();
+	   // return this.next();
 	}
+      }
     }
 
     protected boolean check_mfs(GraphRelaxationIndex relax_graph_node) {
