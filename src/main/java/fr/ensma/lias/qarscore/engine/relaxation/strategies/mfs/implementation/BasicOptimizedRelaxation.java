@@ -39,6 +39,7 @@ public class BasicOptimizedRelaxation extends AbstractRelaxationStrategy {
 
     @Override
     public CQuery next() {
+	
 	if (this.relaxed_queries.isEmpty()) {
 	    return null;
 	}

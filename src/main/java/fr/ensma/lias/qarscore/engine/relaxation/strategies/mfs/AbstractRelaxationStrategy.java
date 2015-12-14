@@ -115,9 +115,8 @@ public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
 	    relaxation_index[i] = 0;
 	}
 	relaxed_graph = new GraphRelaxationIndex(relaxation_index,
-		relaxation_limit_index, optimization);
+		relaxation_limit_index, !optimization);
 	relaxed_queries.add(relaxed_graph);
-
     }
 
     /**
