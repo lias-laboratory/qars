@@ -99,10 +99,10 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 	    List<Integer> repaired_mfs = add_relaxed_mfs(relax_graph_node,
 		    relaxed_mfs, degree_relaxed_mfs);
 	    relaxed_mfs.removeAll(repaired_mfs);
-
+	    List<RoaringBitmap> new_mfs = add_new_mfs(relax_graph_node, relaxed_mfs,
+		    repaired_mfs);
 	    return (!relaxed_mfs.isEmpty())
-		    || (!add_new_mfs(relax_graph_node, relaxed_mfs,
-			    repaired_mfs).isEmpty());
+		    || (!new_mfs.isEmpty());
 	}
     }
 
