@@ -231,9 +231,9 @@ public class CQuery implements Comparable<CQuery> {
      */
     public Query getSPARQLQuery() {
 
-	if (!isValidQuery()) {
-	    return null;
-	}
+//	if (!isValidQuery()) {
+//	    return null;
+//	}
 
 	Query tempQuery = new Query();
 	ElementGroup elementGroup = new ElementGroup();
