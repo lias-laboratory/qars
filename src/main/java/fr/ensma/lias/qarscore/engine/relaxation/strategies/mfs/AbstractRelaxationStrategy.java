@@ -70,6 +70,7 @@ public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
      */
     public AbstractRelaxationStrategy(CQuery query, Session s) {
 	
+	this.logger_init();
 	query_to_relax = query;
 	session = s;
 	relaxed_queries = new ArrayList<GraphRelaxationIndex>();
@@ -96,6 +97,7 @@ public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
      */
     protected AbstractRelaxationStrategy(CQuery query, Session s, boolean optimization) {
 	
+	this.logger_init();
 	query_to_relax = query;
 	session = s;
 	relaxed_queries = new ArrayList<GraphRelaxationIndex>();
