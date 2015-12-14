@@ -113,7 +113,7 @@ public class MFSBaseOptimizedRelaxationStrategy extends
 		current_mfs_degree[j] = current_relax_query[mfs_elt_index
 			.get(i).select(j)];
 	    }
-	    
+	    logger.info("for "+i+" number of relaxed degree "+ mfs_degree_by_index.get(i).size());
 	    boolean is_mfs = is_in_mfs_degree(mfs_degree_by_index.get(i), current_mfs_degree);
 	    
 	    if((!is_mfs)&&(!is_in_mfs_degree(repaire_mfs_degree_by_index.get(i), current_mfs_degree))){
