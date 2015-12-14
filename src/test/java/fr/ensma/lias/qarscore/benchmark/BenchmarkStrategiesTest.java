@@ -513,8 +513,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		solutions.clear();
 		hasTopk = solutions.size() >= TOP_K;
-		number_relaxed_queries = 0;
-
+		
 		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 			.getQuery());
 
@@ -653,7 +652,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		solutions.clear();
 		hasTopk = solutions.size() >= TOP_K;
-		number_relaxed_queries = 0;
 
 		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 			.getQuery());
@@ -793,7 +791,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		solutions.clear();
 		hasTopk = solutions.size() >= TOP_K;
-		number_relaxed_queries = 0;
 
 		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 			.getQuery());
@@ -934,7 +931,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		solutions.clear();
 		hasTopk = solutions.size() >= TOP_K;
-		number_relaxed_queries = 0;
 
 		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 			.getQuery());
@@ -1074,7 +1070,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		solutions.clear();
 		hasTopk = solutions.size() >= TOP_K;
-		number_relaxed_queries = 0;
 
 		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 			.getQuery());
@@ -1237,7 +1232,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    @Test
+//    @Test
     public void testLUBM_MFSUpdate() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
@@ -1265,7 +1260,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	newResultExplain.generateReport();
     }
 
-    // @Test
+    @Test
     public void testLUBM_MFSFULLINC() throws Exception {
 
 	newTestResultPairList = this.newTestResultPairList("/"
