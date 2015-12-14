@@ -32,7 +32,6 @@ import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
-import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.StrategyFactory;
 
 /**
@@ -66,7 +65,7 @@ public class LatticeStrategyTest extends InitTest{
     
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy#getOneMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy#getOneMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
      * .
      */
 //    @Test
@@ -89,7 +88,7 @@ public class LatticeStrategyTest extends InitTest{
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy#getAllMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy#getAllMFS(fr.ensma.lias.qarscore.engine.query.CQuery)}
      * .
      */
     @Test
@@ -123,7 +122,7 @@ public class LatticeStrategyTest extends InitTest{
 
     /**
      * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy#getAllXSS()}
+     * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy#getAllXSS()}
      * .
      */
 //    @Test

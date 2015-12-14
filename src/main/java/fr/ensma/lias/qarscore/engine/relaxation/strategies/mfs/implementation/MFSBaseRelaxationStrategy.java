@@ -17,58 +17,61 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation.strategies;
+package fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.roaringbitmap.RoaringBitmap;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
-import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
+import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.StrategyFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractMFSRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 
 /**
  * @author Geraud FOKOU
  */
-public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
+public class MFSBaseRelaxationStrategy extends AbstractMFSRelaxationStrategy {
 
     protected MFSSearch mfs_finders;
-    protected Map<GraphRelaxationIndex, List<Integer>> mfs_relaxed_queries;
     protected List<GraphRelaxationIndex> failed_relaxed_queries;
     protected List<List<int[]>> mfs_degree_by_index;
     protected List<RoaringBitmap> mfs_elt_index;
-    protected final RoaringBitmap QUERY;
+    protected RoaringBitmap query_index;
 
     /**
-     * 
+     * @param query
+     * @param s
      */
-    public MFSRelaxationStrategy(CQuery query, Session s) {
-	super(query, s);
-	QUERY = new RoaringBitmap();
-	QUERY.add(0, query.getElementList().size() - 1);
-	mfs_relaxed_queries = new LinkedHashMap<GraphRelaxationIndex, List<Integer>>();
+    public MFSBaseRelaxationStrategy(CQuery query, Session s) {
+	super(query, s, true);
+
+	query_index = new RoaringBitmap();
+	query_index.add(0, query.getElementList().size() - 1);
 	failed_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
 
 	mfs_finders = StrategyFactory.getLatticeStrategy(s, query, 1);
 	List<CQuery> all_mfs = mfs_finders.getAllMFS();
+	this.number_mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).number_of_query_executed;
+	this.duration__mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).duration_of_execution;
+	
 	mfs_elt_index = new ArrayList<RoaringBitmap>();
 	mfs_degree_by_index = new ArrayList<List<int[]>>();
 	for (int i = 0; i < all_mfs.size(); i++) {
 	    mfs_elt_index.add(i, new RoaringBitmap());
 	    mfs_degree_by_index.add(i, new ArrayList<int[]>());
-	    int [] relax_degree = new int[all_mfs.get(i).getElementList().size()];
-	    for( int j = 0; j<relax_degree.length; j++){
+	    int[] relax_degree = new int[all_mfs.get(i).getElementList().size()];
+	    for (int j = 0; j < relax_degree.length; j++) {
 		relax_degree[j] = 0;
 	    }
 	    mfs_degree_by_index.get(i).add(relax_degree);
 	}
+
 	for (int i = 0; i < query_to_relax.getElementList().size(); i++) {
 	    for (int j = 0; j < all_mfs.size(); j++) {
 		if (all_mfs.get(j).contain(
@@ -80,28 +83,36 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
     }
 
     /**
-     * 
+     * @param query
+     * @param s
+     * @param optimization
      */
-    public MFSRelaxationStrategy(CQuery query, Session s, boolean index) {
-	super(query, s);
-	QUERY = new RoaringBitmap();
-	QUERY.add(0, query.getElementList().size() - 1);
-	mfs_relaxed_queries = new LinkedHashMap<GraphRelaxationIndex, List<Integer>>();
+    public MFSBaseRelaxationStrategy(CQuery query, Session s,
+	    boolean optimization) {
+	super(query, s, true);
+
+	query_index = new RoaringBitmap();
+	query_index.add(0, query.getElementList().size() - 1);
 	failed_relaxed_queries = new ArrayList<GraphRelaxationIndex>();
 
-	MFSSearch mfs_finders = StrategyFactory.getLatticeStrategy(s, query, 1,
-		index);
+	mfs_finders = StrategyFactory.getLatticeStrategy(s, query, 1,
+		optimization);
 	List<CQuery> all_mfs = mfs_finders.getAllMFS();
+	this.number_mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).number_of_query_executed;
+	this.duration__mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).duration_of_execution;
+	
 	mfs_elt_index = new ArrayList<RoaringBitmap>();
+	mfs_degree_by_index = new ArrayList<List<int[]>>();
 	for (int i = 0; i < all_mfs.size(); i++) {
-	    mfs_elt_index.add(i,  new RoaringBitmap());
+	    mfs_elt_index.add(i, new RoaringBitmap());
 	    mfs_degree_by_index.add(i, new ArrayList<int[]>());
-	    int [] relax_degree = new int[all_mfs.get(i).getElementList().size()];
-	    for( int j = 0; j<relax_degree.length; j++){
+	    int[] relax_degree = new int[all_mfs.get(i).getElementList().size()];
+	    for (int j = 0; j < relax_degree.length; j++) {
 		relax_degree[j] = 0;
 	    }
 	    mfs_degree_by_index.get(i).add(relax_degree);
 	}
+
 	for (int i = 0; i < query_to_relax.getElementList().size(); i++) {
 	    for (int j = 0; j < all_mfs.size(); j++) {
 		if (all_mfs.get(j).contain(
@@ -112,50 +123,42 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	}
     }
 
+    @Override
     public CQuery next() {
 
-	List<CElement> elt_relaxed_query = new ArrayList<CElement>();
-	if (this.relaxed_queries.isEmpty()) {
-	    return null;
-	}
+	while (true) {
 
-	GraphRelaxationIndex relax_graph_node = relaxed_queries.remove(0);
+	    if (this.relaxed_queries.isEmpty()) {
+		return null;
+	    }
 
-	this.current_similarity = 1.0;
-	this.current_level = new ArrayList<int[]>();
-	for (int i = 0; i < relax_graph_node.getElement_index().length; i++) {
+	    GraphRelaxationIndex relax_graph_node = relaxed_queries.remove(0);
+	    
+	    for (int j = 0; j < relax_graph_node.getChild_elt().length; j++) {
+		this.insert_relaxation_graph_node(relax_graph_node
+			.getChild_elt()[j]);
+	    }
 
-	    elt_relaxed_query.add(getRelaxedElement(i,
-		    relax_graph_node.getElement_index()[i]));
+	    boolean has_mfs = check_mfs(relax_graph_node);
 
-	    this.current_similarity = this.current_similarity
-		    * relaxation_of_element[i][relax_graph_node
-			    .getElement_index()[i]].getSimilarity();
-	    this.current_level.add(relaxation_of_element[i][relax_graph_node
-		    .getElement_index()[i]].getRelaxation_level());
-	}
-
-	for (int j = 0; j < relax_graph_node.getChild_elt().length; j++) {
-	    this.insert(relax_graph_node.getChild_elt()[j]);
-	}
-
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query,
-		query_to_relax.getSelectedQueryVar());
-	boolean has_mfs = check_mfs(relax_graph_node);
-
-	if (!has_mfs) {
-	    already_relaxed_queries.add(relax_graph_node);
-	    return current_relaxed_query;
-	} else {
-	    return this.next();
+	    if (!has_mfs) {
+		already_relaxed_queries.add(relax_graph_node);
+		current_relaxed_query = this.getQuery(relax_graph_node);
+		return current_relaxed_query;
+	    }
 	}
     }
 
+    /**
+     * Check if a relax query include or not an MFS
+     * 
+     * @param relax_graph_node
+     * @return
+     */
     protected boolean check_mfs(GraphRelaxationIndex relax_graph_node) {
 
 	int i = 0;
 	boolean has_mfs = false;
-	List<Integer> mfs_current_query = new ArrayList<Integer>();
 	int[] current_relax_query = relax_graph_node.getElement_index();
 
 	while ((i < mfs_elt_index.size()) && (!has_mfs)) {
@@ -168,14 +171,35 @@ public class MFSRelaxationStrategy extends GraphRelaxationStrategy {
 	}
 
 	if (has_mfs) {
-	    mfs_current_query.add(i-1);
 	    failed_relaxed_queries.add(relax_graph_node);
-	    mfs_relaxed_queries.put(relax_graph_node, mfs_current_query);
 	}
 	return has_mfs;
     }
 
+    /**
+     * Get the MFS search engine uses for finding MFS
+     * 
+     * @return
+     */
     public MFSSearch getMFSSearchEngine() {
 	return mfs_finders;
     }
+
+    /**
+     * Get the relaxed element of the MFS of a relaxed query
+     * @param current_relax_query
+     * @param current_mfs_index
+     * @return
+     */
+    protected List<CElement> get_element_list(int[] current_relax_query,
+	    RoaringBitmap current_mfs_index) {
+
+	List<CElement> elt_form = new ArrayList<CElement>();
+	for (int i = 0; i < current_mfs_index.getCardinality(); i++) {
+	    elt_form.add(this.getRelaxedElement(current_mfs_index.select(i),
+		    current_relax_query[current_mfs_index.select(i)]));
+	}
+	return elt_form;
+    }
+
 }

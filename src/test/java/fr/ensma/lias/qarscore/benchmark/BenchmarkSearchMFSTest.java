@@ -28,11 +28,12 @@ import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
-import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategies.GraphRelaxationStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategies.HuangRelaxationStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategies.MFSRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.RelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation.BasicOptimizedRelaxation;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation.BasicRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation.MFSBaseRelaxationStrategy;
 import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
@@ -313,7 +314,7 @@ public class BenchmarkSearchMFSTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
-	    HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(
+	    RelaxationStrategy relaxed_query = new BasicRelaxationStrategy(
 		    conjunctiveQuery, session);
 
 	    boolean hasTopk = false;
@@ -353,8 +354,7 @@ public class BenchmarkSearchMFSTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
-	    GraphRelaxationStrategy relaxed_query = new GraphRelaxationStrategy(
-		    conjunctiveQuery, session);
+	    RelaxationStrategy relaxed_query = new BasicOptimizedRelaxation(conjunctiveQuery, session);
 
 	    boolean hasTopk = false;
 	    int number_answers = 0;
@@ -393,7 +393,7 @@ public class BenchmarkSearchMFSTest {
 	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
-	    MFSRelaxationStrategy relaxed_query = new MFSRelaxationStrategy(
+	    RelaxationStrategy relaxed_query = new MFSBaseRelaxationStrategy(
 		    conjunctiveQuery, session);
 
 	    boolean hasTopk = false;

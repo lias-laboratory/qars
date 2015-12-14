@@ -29,13 +29,13 @@ import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.strategies.HuangRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation.BasicOptimizedRelaxation;
 
 /**
  * @author Geraud FOKOU
  */
-public class HuangStrategyRelaxationTest extends InitTest {
-    
+public class BasicOptimizedRelaxationTest extends InitTest {
+
     /* (non-Javadoc)
      * @see fr.ensma.lias.qarscore.InitTest#setUp()
      */
@@ -51,16 +51,15 @@ public class HuangStrategyRelaxationTest extends InitTest {
     public void tearDown() throws Exception {
 	super.tearDown();
     }
-    
+        
     @Test
-    public void testRelaxationWithHuangStrategy(){
+    public void testRelaxationWithGraphStrategy(){
 	
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.WWW_QUERY_3);
+		.createCQuery(SPARQLQueriesSample.WWW_QUERY_6);
 	
 	long begin = System.currentTimeMillis();
-	HuangRelaxationStrategy relaxed_query = new HuangRelaxationStrategy(conjunctiveQuery, sessionJena);
-	relaxed_query.begin_relax_process();
+	RelaxationStrategy relaxed_query = new BasicOptimizedRelaxation(conjunctiveQuery, sessionJena);
 	boolean hasTopk =false;
 	int number_answers = 0;
 	int number_relaxed_queries = 0;
@@ -72,8 +71,8 @@ public class HuangStrategyRelaxationTest extends InitTest {
 	    
 	    number_relaxed_queries = number_relaxed_queries + 1;
 	    Logger.getRootLogger().info(relaxed_query.getCurrent_relaxed_query().toString()+" "+relaxed_query.getCurrent_similarity()+" "+relaxed_query.getCurrent_level().toString()+" "+query_answers_size);
-	    
 	}
+	
 	long end = System.currentTimeMillis();
 	long duration = end - begin ;
 	Logger.getRootLogger().info(number_relaxed_queries+" "+duration+" "+number_answers);

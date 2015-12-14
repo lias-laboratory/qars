@@ -29,14 +29,13 @@ import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategies.MFSRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation.BasicRelaxationStrategy;
 
 /**
  * @author Geraud FOKOU
  */
-public class MFSStrategyRelaxationTest extends InitTest {
-
+public class BasicRelaxationStrategyTest extends InitTest {
+    
     /* (non-Javadoc)
      * @see fr.ensma.lias.qarscore.InitTest#setUp()
      */
@@ -54,14 +53,13 @@ public class MFSStrategyRelaxationTest extends InitTest {
     }
     
     @Test
-    public void testRelaxationWithMFSStrategy(){
+    public void testRelaxationWithHuangStrategy(){
 	
 	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.WWW_QUERY_7);
+		.createCQuery(SPARQLQueriesSample.WWW_QUERY_3);
 	
 	long begin = System.currentTimeMillis();
-	MFSRelaxationStrategy relaxed_query = new MFSRelaxationStrategy(conjunctiveQuery, sessionJena);
-	relaxed_query.begin_relax_process();
+	RelaxationStrategy relaxed_query = new BasicRelaxationStrategy(conjunctiveQuery, sessionJena);
 	boolean hasTopk =false;
 	int number_answers = 0;
 	int number_relaxed_queries = 0;
@@ -73,12 +71,10 @@ public class MFSStrategyRelaxationTest extends InitTest {
 	    
 	    number_relaxed_queries = number_relaxed_queries + 1;
 	    Logger.getRootLogger().info(relaxed_query.getCurrent_relaxed_query().toString()+" "+relaxed_query.getCurrent_similarity()+" "+relaxed_query.getCurrent_level().toString()+" "+query_answers_size);
+	    
 	}
-	
 	long end = System.currentTimeMillis();
 	long duration = end - begin ;
-	int number_queries_mfs = ((AbstractLatticeStrategy)relaxed_query.getMFSSearchEngine()).number_of_query_executed;
-	long duration_mfs_search = ((AbstractLatticeStrategy)relaxed_query.getMFSSearchEngine()).duration_of_execution;
-	Logger.getRootLogger().info(number_queries_mfs+" "+duration_mfs_search+" "+number_relaxed_queries+" "+duration+" "+number_answers);
+	Logger.getRootLogger().info(number_relaxed_queries+" "+duration+" "+number_answers);
     }
 }

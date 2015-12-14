@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation.strategies;
+package fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,60 +26,39 @@ import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractMFSRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 
 /**
  * @author Geraud FOKOU
  */
-public class GraphRelaxationStrategy extends HuangRelaxationStrategy {
+public class BasicOptimizedRelaxation extends AbstractMFSRelaxationStrategy {
 
-    public GraphRelaxationStrategy(CQuery query, Session s) {
-	super(query, s);
+    /**
+     * @param query
+     * @param s
+     */
+    public BasicOptimizedRelaxation(CQuery query, Session s) {
+	super(query, s, true);
     }
 
-    public void begin_relax_process() {
-	
-	int[] relaxation_limit_index = new int[query_to_relax.getElementList()
-		.size()];
-	int[] relaxation_index = new int[query_to_relax.getElementList().size()];
-
-	triple_relaxation(relaxation_limit_index, relaxation_index);
-	relaxed_graph = new GraphRelaxationIndex(relaxation_index,
-		relaxation_limit_index);
-	relaxed_queries.add(relaxed_graph);
-
-    }
-
+    @Override
     public CQuery next() {
-
 	List<CElement> elt_relaxed_query = new ArrayList<CElement>();
 	if (this.relaxed_queries.isEmpty()) {
 	    return null;
 	}
-	GraphRelaxationIndex current_graph = relaxed_queries.remove(0);
-	
-	this.current_similarity = 1.0;
-	this.current_level = new ArrayList<int[]>();
+	GraphRelaxationIndex relax_graph_node = relaxed_queries.remove(0);
+	this.getQuery(relax_graph_node);
 
-	for (int i = 0; i < current_graph.getElement_index().length; i++) {
-
-	    elt_relaxed_query.add(getRelaxedElement(i,
-		    current_graph.getElement_index()[i]));
-	    this.current_similarity = this.current_similarity
-		    * relaxation_of_element[i][current_graph.getElement_index()[i]]
-			    .getSimilarity();
-	    this.current_level.add(relaxation_of_element[i][current_graph.getElement_index()[i]]
-		    .getRelaxation_level());
+	for (int j = 0; j < relax_graph_node.getChild_elt().length; j++) {
+	    this.insert_relaxation_graph_node(relax_graph_node.getChild_elt()[j]);
 	}
 
-	for (int j = 0; j < current_graph.getChild_elt().length; j++) {
-	    this.insert(current_graph.getChild_elt()[j]);
-	}
-
-	already_relaxed_queries.add(current_graph);
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query, query_to_relax.getSelectedQueryVar());
+	already_relaxed_queries.add(relax_graph_node);
+	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query,
+		query_to_relax.getSelectedQueryVar());
 
 	return current_relaxed_query;
     }
-
 }

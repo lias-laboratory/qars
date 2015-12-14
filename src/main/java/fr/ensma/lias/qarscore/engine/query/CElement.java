@@ -337,6 +337,9 @@ public class CElement {
 
 	if (otherCElement.element == this.element)
 	    return true;
+	if(this.getLabel().equals(otherCElement.getLabel())){
+	    return true;
+	}
 	if (this.element instanceof ElementPathBlock) {
 	    List<TriplePath> currentTriple = ((ElementPathBlock) element)
 		    .getPattern().getList();

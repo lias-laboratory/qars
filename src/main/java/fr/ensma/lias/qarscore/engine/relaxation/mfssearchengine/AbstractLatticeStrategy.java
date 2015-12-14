@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with QARS.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************************/
-package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation;
+package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,7 +30,6 @@ import org.apache.log4j.PatternLayout;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
 
 /**
  * @author Geraud FOKOU
@@ -43,9 +42,7 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
     public long duration_of_execution = 0;
 
     protected Logger logger = Logger.getLogger(AbstractLatticeStrategy.class);
-    protected CQuery CURRENT_CONJUNCTIVE_QUERY;
-    protected List<CQuery> MFS_CURRENT_QUERY;
-    protected List<CQuery> XSS_CURRENT_QUERY;
+    
     protected CQuery actualQuery;
     protected List<CQuery> failingCauses;
     protected List<CQuery> maximalSubqueries;
@@ -174,31 +171,31 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
     @Override
     public boolean hasLeastKAnswers() {
 
-	return this.hasLeastKAnswers(CURRENT_CONJUNCTIVE_QUERY);
+	return this.hasLeastKAnswers(actualQuery);
     }
 
     @Override
     public boolean isMFS() {
 
-	return this.isMFS(CURRENT_CONJUNCTIVE_QUERY);
+	return this.isMFS(actualQuery);
     }
 
     @Override
     public CQuery getOneMFS() {
 
-	return MFS_CURRENT_QUERY.get(0);
+	return failingCauses.get(0);
     }
 
     @Override
     public List<CQuery> getAllMFS() {
 
-	return MFS_CURRENT_QUERY;
+	return failingCauses;
     }
 
     @Override
     public List<CQuery> getAllXSS() {
 
-	return XSS_CURRENT_QUERY;
+	return maximalSubqueries;
     }
 
     @Override
@@ -325,15 +322,19 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 
     @Override
     public List<CQuery> getAllMFS(CQuery query) {
-	this.actualQuery = query;
-	number_of_query_executed = 0;
-	number_of_query_reexecuted = 0;
-	size_of_cartesian_product = 0;
-	duration_of_execution = System.currentTimeMillis();
-	this.computeMFS(query);
-	duration_of_execution = System.currentTimeMillis()
-		- duration_of_execution;
-	return failingCauses;
+	if (this.actualQuery == query) {
+	    return maximalSubqueries;
+	} else {
+	    this.actualQuery = query;
+	    number_of_query_executed = 0;
+	    number_of_query_reexecuted = 0;
+	    size_of_cartesian_product = 0;
+	    duration_of_execution = System.currentTimeMillis();
+	    this.computeMFS(query);
+	    duration_of_execution = System.currentTimeMillis()
+		    - duration_of_execution;
+	    return failingCauses;
+	}
     }
 
     @Override
@@ -343,9 +344,299 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	    return maximalSubqueries;
 	} else {
 	    this.actualQuery = query;
+	    number_of_query_executed = 0;
+	    number_of_query_reexecuted = 0;
+	    size_of_cartesian_product = 0;
+	    duration_of_execution = System.currentTimeMillis();
 	    this.computeMFS(query);
+	    duration_of_execution = System.currentTimeMillis()
+		    - duration_of_execution;
 	    return maximalSubqueries;
 	}
+    }
+
+    /**
+     * Find if exist the rest of the MFS in the query
+     * 
+     * @param query
+     * @param part_mfs
+     * @return
+     */
+    @Override
+    public List<CQuery> getOtherMFS(CQuery query, List<CQuery> part_mfs) {
+
+	this.actualQuery = query;
+	number_of_query_executed = 0;
+	number_of_query_reexecuted = 0;
+	size_of_cartesian_product = 0;
+	duration_of_execution = System.currentTimeMillis();
+
+	List<CQuery> other_failing_causes = new ArrayList<CQuery>();
+	List<CQuery> other_sucess_subqueries = new ArrayList<CQuery>();
+	List<CQuery> potentialsMaximalSubqueries = new ArrayList<CQuery>();
+	potentialsMaximalSubqueries.add(query);
+
+	for (CQuery mfs : part_mfs) {
+	    List<CQuery> new_pxss = new ArrayList<CQuery>();
+	    for (CQuery xss : potentialsMaximalSubqueries) {
+		for (CElement elt : mfs.getElementList()) {
+		    CQuery new_xss = CQueryFactory.cloneCQuery(xss);
+		    new_xss.getElementList().remove(elt);
+		    new_pxss.add(new_xss);
+		}
+	    }
+	    potentialsMaximalSubqueries.clear();
+	    potentialsMaximalSubqueries.addAll(new_pxss);
+	}
+
+	while (potentialsMaximalSubqueries.size() != 0) {
+
+	    CQuery tempquery = potentialsMaximalSubqueries.get(0);
+
+	    if (!tempquery.isValidQuery()) {
+		potentialsMaximalSubqueries.remove(0);
+		continue;
+	    }
+
+	    CQuery anCause = getOneMFS(tempquery);
+
+	    if (anCause.getElementList().isEmpty()) {
+		List<CQuery> oldMaximalSubqueries = potentialsMaximalSubqueries;
+		potentialsMaximalSubqueries = new ArrayList<CQuery>();
+		potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
+		for (CQuery pxss : oldMaximalSubqueries) {
+		    if (pxss.isSubQueryOf(tempquery)) {
+			potentialsMaximalSubqueries.remove(pxss);
+		    }
+		}
+		boolean isContained = false;
+		for (CQuery xss : other_sucess_subqueries) {
+		    if (tempquery.isSubQueryOf(xss)) {
+			isContained = true;
+			break;
+		    }
+		}
+		if (!isContained) {
+		    other_sucess_subqueries.add(CQueryFactory
+			    .cloneCQuery(tempquery));
+		}
+		continue;
+	    }
+
+	    other_failing_causes.add(anCause);
+	    ArrayList<CQuery> newMaximalSubqueries = new ArrayList<CQuery>();
+	    ArrayList<CQuery> oldMaximalSubqueries = new ArrayList<CQuery>();
+
+	    for (CQuery pxss : potentialsMaximalSubqueries) {
+		if (pxss.getElementList().containsAll(
+			other_failing_causes.get(
+				other_failing_causes.size() - 1)
+				.getElementList())) {
+		    for (CElement elt : other_failing_causes.get(
+			    other_failing_causes.size() - 1).getElementList()) {
+			CQuery temp = CQueryFactory.cloneCQuery(pxss);
+			temp.getElementList().remove(elt);
+			newMaximalSubqueries.add(temp);
+		    }
+		} else {
+		    oldMaximalSubqueries.add(pxss);
+		}
+	    }
+	    // Ancienne PXSS avant les nouvelles
+	    potentialsMaximalSubqueries = oldMaximalSubqueries;
+	    potentialsMaximalSubqueries.addAll(newMaximalSubqueries);
+
+	}
+
+	duration_of_execution = System.currentTimeMillis()
+		- duration_of_execution;
+	return other_failing_causes;
+    }
+
+    /**
+     * Find if exist the other part of the MFS which are super queries of one of
+     * sub_mfs_part
+     * 
+     * @param query
+     * @param part_mfs
+     * @param sub_mfs_part
+     * @return
+     */
+    @Override
+    public List<CQuery> getOtherMFS(CQuery query, List<CQuery> part_mfs,
+	    List<CQuery> sub_mfs_part) {
+
+	this.actualQuery = query;
+	number_of_query_executed = 0;
+	number_of_query_reexecuted = 0;
+	size_of_cartesian_product = 0;
+	duration_of_execution = System.currentTimeMillis();
+
+	List<CQuery> other_failing_causes = new ArrayList<CQuery>();
+	List<CQuery> other_sucess_subqueries = new ArrayList<CQuery>();
+	List<CQuery> potentialsMaximalSubqueries = new ArrayList<CQuery>();
+	potentialsMaximalSubqueries.add(query);
+
+	for (CQuery mfs : part_mfs) {
+	    List<CQuery> new_pxss = new ArrayList<CQuery>();
+	    for (CQuery xss : potentialsMaximalSubqueries) {
+		for (CElement elt : mfs.getElementList()) {
+		    CQuery new_xss = CQueryFactory.cloneCQuery(xss);
+		    new_xss.getElementList().remove(elt);
+		    new_pxss.add(new_xss);
+		}
+	    }
+	    potentialsMaximalSubqueries.clear();
+	    potentialsMaximalSubqueries.addAll(new_pxss);
+	}
+
+	while (potentialsMaximalSubqueries.size() != 0) {
+
+	    CQuery tempquery = potentialsMaximalSubqueries.get(0);
+	    int i = 0;
+	    boolean find_sub_part = false;
+	    while ((i < sub_mfs_part.size()) && (!find_sub_part)) {
+		find_sub_part = tempquery.isSuperQueryOf(sub_mfs_part.get(i));
+		i = i + 1;
+	    }
+
+	    if (!find_sub_part) {
+
+		List<CQuery> oldMaximalSubqueries = potentialsMaximalSubqueries;
+		potentialsMaximalSubqueries = new ArrayList<CQuery>();
+		potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
+		for (CQuery pxss : oldMaximalSubqueries) {
+		    if (pxss.isSubQueryOf(tempquery)) {
+			potentialsMaximalSubqueries.remove(pxss);
+		    }
+		}
+		boolean isContained = false;
+		for (CQuery xss : other_sucess_subqueries) {
+		    if (tempquery.isSubQueryOf(xss)) {
+			isContained = true;
+			break;
+		    }
+		}
+		if (!isContained) {
+		    other_sucess_subqueries.add(CQueryFactory
+			    .cloneCQuery(tempquery));
+		}
+		continue;
+	    }
+
+	    List<CElement> one_cause = get_mfs_containing(tempquery,
+		    sub_mfs_part.get(i - 1));
+	    if (one_cause.isEmpty()) {
+		List<CQuery> oldMaximalSubqueries = potentialsMaximalSubqueries;
+		potentialsMaximalSubqueries = new ArrayList<CQuery>();
+		potentialsMaximalSubqueries.addAll(oldMaximalSubqueries);
+		for (CQuery pxss : oldMaximalSubqueries) {
+		    if (pxss.isSubQueryOf(tempquery)) {
+			potentialsMaximalSubqueries.remove(pxss);
+		    }
+		}
+		boolean isContained = false;
+		for (CQuery xss : other_sucess_subqueries) {
+		    if (tempquery.isSubQueryOf(xss)) {
+			isContained = true;
+			break;
+		    }
+		}
+		if (!isContained) {
+		    other_sucess_subqueries.add(CQueryFactory
+			    .cloneCQuery(tempquery));
+		}
+		continue;
+	    }
+	    other_failing_causes.add(CQueryFactory.createCQuery(one_cause));
+	    ArrayList<CQuery> newMaximalSubqueries = new ArrayList<CQuery>();
+	    ArrayList<CQuery> oldMaximalSubqueries = new ArrayList<CQuery>();
+
+	    for (CQuery pxss : potentialsMaximalSubqueries) {
+		if (pxss.getElementList().containsAll(
+			other_failing_causes.get(
+				other_failing_causes.size() - 1)
+				.getElementList())) {
+		    for (CElement elt : other_failing_causes.get(
+			    other_failing_causes.size() - 1).getElementList()) {
+			CQuery temp = CQueryFactory.cloneCQuery(pxss);
+			temp.getElementList().remove(elt);
+			newMaximalSubqueries.add(temp);
+		    }
+		} else {
+		    oldMaximalSubqueries.add(pxss);
+		}
+	    }
+	    // Ancienne PXSS avant les nouvelles
+	    potentialsMaximalSubqueries = oldMaximalSubqueries;
+	    potentialsMaximalSubqueries.addAll(newMaximalSubqueries);
+	}
+
+	duration_of_execution = System.currentTimeMillis()
+		- duration_of_execution;
+	return other_failing_causes;
+
+    }
+
+    /**
+     * Return an MFS which include sub_mfs as a subquery.
+     * 
+     * @param current_pxss
+     * @param sub_mfs
+     * @return
+     */
+    private List<CElement> get_mfs_containing(CQuery current_pxss,
+	    CQuery sub_mfs) {
+
+	List<CElement> mfs_elt = new ArrayList<CElement>();
+	CQuery query = CQueryFactory.cloneCQuery(current_pxss);
+
+	if (!query.isSuperQueryOf(sub_mfs)) {
+	    return mfs_elt;
+	}
+
+	if (this.hasLeastKAnswers(query)) {
+	    return mfs_elt;
+	}
+
+	if (query.getElementList().size() == sub_mfs.getElementList().size() + 1) {
+	    mfs_elt.addAll(query.getElementList());
+	    return mfs_elt;
+	}
+
+	for (CElement elt : sub_mfs.getElementList()) {
+	    query.getElementList().remove(elt);
+	}
+
+	List<CElement> causes = new ArrayList<CElement>();
+	causes.addAll(sub_mfs.getElementList());
+	CQuery tempQuery = CQueryFactory.cloneCQuery(query);
+
+	for (int i = 0; i < query.getElementList().size() - 1; i++) {
+	    CElement elt = query.getElementList().get(i);
+	    tempQuery.getElementList().remove(elt);
+	    CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
+	    temp.getElementList().addAll(causes);
+	    if (temp.isValidQuery()) {
+		if (hasLeastKAnswers(temp)) {
+		    causes.add(elt);
+		}
+	    }
+	}
+
+	CElement elt = query.getElementList().get(
+		query.getElementList().size() - 1);
+
+	tempQuery.getElementList().remove(elt);
+	CQuery temp = CQueryFactory.cloneCQuery(tempQuery);
+	temp.getElementList().addAll(causes);
+	if (temp.isValidQuery()) {
+	    if (hasLeastKAnswers(temp)) {
+		causes.add(elt);
+	    }
+	}
+
+	return causes;
     }
 
     protected void logger_init() {

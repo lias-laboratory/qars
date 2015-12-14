@@ -37,7 +37,7 @@ public class GraphRelaxationIndex {
 	element_index = index;
 	element_index_limit = index_limit;
 	start_index = 0;
-	with_redundance = false;
+	with_redundance = true;
     }
 
     public GraphRelaxationIndex(int[] index, int[] index_limit,

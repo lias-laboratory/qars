@@ -106,4 +106,21 @@ public interface MFSSearch {
      * @return
      */
     List<CQuery> getAllXSS(CQuery query);
+    
+    /**
+     * Find if exist the rest of the MFS in the query
+     * @param query
+     * @param part_mfs
+     * @return
+     */
+    List<CQuery> getOtherMFS(CQuery query, List<CQuery> part_mfs);
+    
+    /**
+     * Find if exist the other part of the MFS which are super queries of one of sub_mfs_part
+     * @param query
+     * @param part_mfs
+     * @param sub_mfs_part
+     * @return
+     */
+    List<CQuery> getOtherMFS(CQuery query, List<CQuery> part_mfs, List<CQuery> sub_mfs_part);
 }

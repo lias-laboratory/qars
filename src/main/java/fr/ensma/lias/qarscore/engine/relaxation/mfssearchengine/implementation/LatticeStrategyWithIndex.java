@@ -23,6 +23,7 @@ import java.util.List;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
+import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.optimization.CQueryIndexMap;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.optimization.CQueryTreeMap;
 
@@ -78,17 +79,13 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 
 	NUMBER_OF_EXPECTED_ANSWERS = answers;
 	SESSION = s;
-	CURRENT_CONJUNCTIVE_QUERY = query;
+	actualQuery = query;
 	
 	indexCQuery = new CQueryTreeMap(); // Tree index we can also use HaspMap Index
 	
 	duration_of_execution = System.currentTimeMillis();
-	this.computeMFS(CURRENT_CONJUNCTIVE_QUERY);
+	this.computeMFS(actualQuery);
 	duration_of_execution = System.currentTimeMillis() - duration_of_execution;
-	
-	actualQuery = CURRENT_CONJUNCTIVE_QUERY;
-	MFS_CURRENT_QUERY = failingCauses;
-	XSS_CURRENT_QUERY = maximalSubqueries;
     }
   
     @Override

@@ -23,6 +23,7 @@ import java.util.List;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
+import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy;
 
 /**
  * @author Geraud FOKOU
@@ -72,20 +73,17 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
 	
 	NUMBER_OF_EXPECTED_ANSWERS = answers;
 	SESSION = s;
-	CURRENT_CONJUNCTIVE_QUERY = query;
+	actualQuery = query;
 	duration_of_execution = System.currentTimeMillis();
-	this.computeMFS(CURRENT_CONJUNCTIVE_QUERY);
+	this.computeMFS(actualQuery);
 	duration_of_execution = System.currentTimeMillis()
 		- duration_of_execution;
-	actualQuery = CURRENT_CONJUNCTIVE_QUERY;
-	MFS_CURRENT_QUERY = failingCauses;
-	XSS_CURRENT_QUERY = maximalSubqueries;
     }
   
     @Override
     public boolean hasLeastKAnswers(CQuery query) {
 	
-/*	//use the following code for execution without cartesian product
+/**	use the following code for execution without cartesian product
  
 	List<CQuery> queries = new ArrayList<CQuery>();
 	queries.add(query);

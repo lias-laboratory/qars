@@ -429,4 +429,30 @@ public abstract class MatrixStrategy implements MFSSearch {
 	}
 	return maximalSubqueries;
     }
+    
+    /**
+     * Find if exist the rest of the MFS in the query
+     * @param query
+     * @param part_mfs
+     * @return
+     */
+    @Override
+    public List<CQuery> getOtherMFS(CQuery query, List<CQuery> part_mfs){
+	
+	
+	return null;
+    }
+    
+    /**
+     * Find if exist the other part of the MFS which are super queries of one of sub_mfs_part
+     * @param query
+     * @param part_mfs
+     * @param sub_mfs_part
+     * @return
+     */
+    @Override
+    public List<CQuery> getOtherMFS(CQuery query, List<CQuery> part_mfs, List<CQuery> sub_mfs_part) {
+	
+	return null;
+    }
 }

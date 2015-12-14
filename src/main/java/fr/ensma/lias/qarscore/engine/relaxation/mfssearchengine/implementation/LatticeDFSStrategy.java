@@ -26,6 +26,7 @@ import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy;
 
 /**
  * @author Geraud FOKOU
@@ -60,14 +61,11 @@ public class LatticeDFSStrategy extends AbstractLatticeStrategy {
 
 	NUMBER_OF_EXPECTED_ANSWERS = answers;
 	SESSION = s;
-	CURRENT_CONJUNCTIVE_QUERY = query;
+	actualQuery = query;
 	duration_of_execution = System.currentTimeMillis();
-	this.computeMFS(CURRENT_CONJUNCTIVE_QUERY);
+	this.computeMFS(actualQuery);
 	duration_of_execution = System.currentTimeMillis()
 		- duration_of_execution;
-	actualQuery = CURRENT_CONJUNCTIVE_QUERY;
-	MFS_CURRENT_QUERY = failingCauses;
-	XSS_CURRENT_QUERY = maximalSubqueries;
     }
 
     /**
