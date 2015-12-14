@@ -412,8 +412,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
-		number_relaxed_queries = number_relaxed_queries
-			+ number_relaxed_queries;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -550,8 +548,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
-		number_relaxed_queries = number_relaxed_queries
-			+ number_relaxed_queries;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -689,8 +685,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
-		number_relaxed_queries = number_relaxed_queries
-			+ number_relaxed_queries;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -829,8 +823,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
-		number_relaxed_queries = number_relaxed_queries
-			+ number_relaxed_queries;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -968,8 +960,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
-		number_relaxed_queries = number_relaxed_queries
-			+ number_relaxed_queries;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -1108,9 +1098,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
 			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
-		number_relaxed_queries = number_relaxed_queries
-			+ number_relaxed_queries;
-
+		
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
 			+ duration_mfs_check_search / (i + 1) + " "
