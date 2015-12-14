@@ -140,12 +140,13 @@ public class MFSBaseRelaxationStrategy extends AbstractMFSRelaxationStrategy {
 	    }
 
 	    boolean has_mfs = check_mfs(relax_graph_node);
-
+	    current_relaxed_query = this.getQuery(relax_graph_node);
+	    
 	    if (!has_mfs) {
 		already_relaxed_queries.add(relax_graph_node);
-		current_relaxed_query = this.getQuery(relax_graph_node);
 		return current_relaxed_query;
 	    }
+	    logger.info("Failed Query "+current_relaxed_query.toString());
 	}
     }
 
