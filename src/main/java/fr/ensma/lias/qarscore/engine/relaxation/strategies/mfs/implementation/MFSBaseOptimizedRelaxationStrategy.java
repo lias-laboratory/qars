@@ -109,11 +109,10 @@ public class MFSBaseOptimizedRelaxationStrategy extends
 
 	while ((i < mfs_elt_index.size()) && (!has_mfs)) {
 
-	    int[] current_mfs_degree = new int[mfs_elt_index.get(i)
-		    .getCardinality()];
-	    for (int j = 0; j < mfs_elt_index.get(i).getCardinality(); j++) {
+	    int[] current_mfs_degree = new int[mfs_elt_index.get(i).length];
+	    for (int j = 0; j < mfs_elt_index.get(i).length; j++) {
 		current_mfs_degree[j] = current_relax_query[mfs_elt_index
-			.get(i).select(j)];
+			.get(i)[j]];
 	    }
 
 	    boolean is_mfs = is_in_mfs_degree(mfs_degree_by_index.get(i),

@@ -22,8 +22,6 @@ package fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.roaringbitmap.RoaringBitmap;
-
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
@@ -72,11 +70,10 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 
 	while ((i < mfs_elt_index.size()) && (!has_mfs)) {
 
-	    int[] current_mfs_degree = new int[mfs_elt_index.get(i)
-		    .getCardinality()];
-	    for (int j = 0; j < mfs_elt_index.get(i).getCardinality(); j++) {
+	    int[] current_mfs_degree = new int[mfs_elt_index.get(i).length];
+	    for (int j = 0; j < mfs_elt_index.get(i).length; j++) {
 		current_mfs_degree[j] = current_relax_query[mfs_elt_index
-			.get(i).select(j)];
+			.get(i)[j]];
 	    }
 
 	    boolean is_mfs = is_in_mfs_degree(mfs_degree_by_index.get(i),
@@ -99,19 +96,18 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 	    List<Integer> repaired_mfs = add_relaxed_mfs(relax_graph_node,
 		    relaxed_mfs, degree_relaxed_mfs);
 	    relaxed_mfs.removeAll(repaired_mfs);
-	    List<RoaringBitmap> new_mfs = add_new_mfs(relax_graph_node, relaxed_mfs,
+	    List<int[]> new_mfs = add_new_mfs(relax_graph_node, relaxed_mfs,
 		    repaired_mfs);
-	    return (!relaxed_mfs.isEmpty())
-		    || (!new_mfs.isEmpty());
+	    return (!relaxed_mfs.isEmpty()) || (!new_mfs.isEmpty());
 	}
     }
 
-    protected List<RoaringBitmap> add_new_mfs(
+    protected List<int[]> add_new_mfs(
 	    GraphRelaxationIndex relax_graph_node,
 	    List<Integer> mfs_current_query,
 	    List<Integer> mfs_repaired_current_query) {
 
-	List<RoaringBitmap> new_mfs_founded = new ArrayList<RoaringBitmap>();
+	List<int[]> new_mfs_founded = new ArrayList<int[]>();
 	int[] current_relax_query = relax_graph_node.getElement_index();
 
 	if (mfs_repaired_current_query.isEmpty()) {
@@ -121,14 +117,14 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 	List<CQuery> mfs_subqueries = new ArrayList<CQuery>();
 	List<CQuery> elt_mfs_subqueries = new ArrayList<CQuery>();
 	for (int j = 0; j < mfs_current_query.size(); j++) {
-	    RoaringBitmap current_mfs_index = mfs_elt_index
+	     int[] current_mfs_index = mfs_elt_index
 		    .get(mfs_current_query.get(j));
 	    mfs_subqueries.add(CQueryFactory.createCQuery(get_element_list(
 		    current_relax_query, current_mfs_index)));
 	}
 
 	for (int j = 0; j < mfs_repaired_current_query.size(); j++) {
-	    RoaringBitmap current_sub_mfs_index = mfs_elt_index
+	     int[] current_sub_mfs_index = mfs_elt_index
 		    .get(mfs_repaired_current_query.get(j));
 	    elt_mfs_subqueries.add(CQueryFactory.createCQuery(get_element_list(
 		    current_relax_query, current_sub_mfs_index)));
@@ -147,7 +143,7 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 	
 	for (int j = 0; j < mfs_list.size(); j++) {
 	    
-	    new_mfs_founded.add(j, new RoaringBitmap());
+	    new_mfs_founded.add(j, new int[mfs_list.get(j).getElementList().size()]);
 	    List<int[]> degree_new_mfs_founded = new ArrayList<int[]>();
 	    degree_new_mfs_founded.add(new int[mfs_list.get(j).getElementList()
 		    .size()]);
@@ -155,7 +151,7 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 		CElement elt = this.getRelaxedElement(i, current_relax_query[i]);
 		int k = 0;
 		if (mfs_list.get(j).contain(elt)) {
-		    new_mfs_founded.get(j).add(i);
+		    new_mfs_founded.get(j)[k] = i;
 		    degree_new_mfs_founded.get(0)[k] = current_relax_query[i];
 		}
 	    }
