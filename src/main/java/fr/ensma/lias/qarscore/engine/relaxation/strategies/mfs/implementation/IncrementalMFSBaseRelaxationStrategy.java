@@ -141,11 +141,11 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 	long begin = System.currentTimeMillis();
 	List<CQuery> mfs_list = this.mfs_finders.getOtherMFS(
 		current_relaxed_query, mfs_subqueries, elt_mfs_subqueries);
+	logger.info("Finding Big MFS "+ mfs_list.size() + " "+((AbstractLatticeStrategy)this.mfs_finders).number_of_query_executed);
 	this.duration__mfs_check_query_executed = this.duration__mfs_check_query_executed + (System.currentTimeMillis()-begin);
 	this.number_mfs_check_query_executed = this.number_mfs_check_query_executed +  ((AbstractLatticeStrategy)this.mfs_finders).number_of_query_executed;
 	
 	for (int j = 0; j < mfs_list.size(); j++) {
-	    logger.info("New Big MFS "+mfs_list.get(j).toString());
 	    
 	    new_mfs_founded.add(j, new RoaringBitmap());
 	    List<int[]> degree_new_mfs_founded = new ArrayList<int[]>();

@@ -902,7 +902,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
 	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
-	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_check_query_executed;
+	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_check_query_executed;
 
 	    logger.info(duration + " " + duration_mfs_search + " "
