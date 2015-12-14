@@ -70,7 +70,6 @@ public class MFSBaseRelaxationStrategy extends AbstractMFSRelaxationStrategy {
 		relax_degree[j] = 0;
 	    }
 	    mfs_degree_by_index.get(i).add(relax_degree);
-	    logger.info("for "+i+" number of relaxed degree "+ mfs_degree_by_index.get(i).size());
 	}
 
 	for (int i = 0; i < query_to_relax.getElementList().size(); i++) {
