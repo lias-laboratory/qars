@@ -19,13 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
-import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 
@@ -45,13 +40,11 @@ public class BasicRelaxationStrategy extends AbstractRelaxationStrategy {
     @Override
     public CQuery next() {
 
-	List<CElement> elt_relaxed_query = new ArrayList<CElement>();
 	if (this.relaxed_queries.isEmpty()) {
 	    return null;
 	}
 	
 	GraphRelaxationIndex relax_graph_node = relaxed_queries.remove(0);
-	this.getQuery(relax_graph_node);
 
 	for (int j = 0; j < relax_graph_node.getChild_elt().length; j++) {
 	    if (!alreadyRelaxed(relax_graph_node.getChild_elt()[j])) {
@@ -59,8 +52,7 @@ public class BasicRelaxationStrategy extends AbstractRelaxationStrategy {
 	    }
 	}
 	already_relaxed_queries.add(relax_graph_node);
-	current_relaxed_query = CQueryFactory.createCQuery(elt_relaxed_query,
-		query_to_relax.getSelectedQueryVar());
+	current_relaxed_query = this.getQuery(relax_graph_node);
 	return current_relaxed_query;
 
     }
