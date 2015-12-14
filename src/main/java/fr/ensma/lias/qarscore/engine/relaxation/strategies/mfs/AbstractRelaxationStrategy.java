@@ -329,7 +329,7 @@ public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
 	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
 		+ time.getHour() + time.getMinute() + time.getSecond();
 
-	String logfile = this.getClass().getCanonicalName()+"-Process" + "-" + time_value + ".log";
+	String logfile = this.getClass().getSimpleName()+"-Process" + "-" + time_value + ".log";
 
 	PatternLayout layout = new PatternLayout();
 	String conversionPattern = "%-5p [%C{1}]: %m%n";

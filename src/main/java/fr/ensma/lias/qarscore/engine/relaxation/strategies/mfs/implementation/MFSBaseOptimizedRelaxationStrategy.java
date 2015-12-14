@@ -240,6 +240,7 @@ public class MFSBaseOptimizedRelaxationStrategy extends
 		repaired_mfs.add(current_mfs_relaxed.get(i));
 		repaire_mfs_degree_by_index.get(current_mfs_relaxed.get(i))
 			.add(degree_mfs_relaxed.get(i));
+		logger.info("New repaired MFS " + mfs_query.toString());
 	    }
 	    this.duration__mfs_check_query_executed = this.duration__mfs_check_query_executed
 		    + (System.currentTimeMillis() - begin);

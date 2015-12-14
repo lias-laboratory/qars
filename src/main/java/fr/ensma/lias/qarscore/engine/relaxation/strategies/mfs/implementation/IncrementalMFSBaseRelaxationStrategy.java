@@ -145,7 +145,7 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 	this.number_mfs_check_query_executed = this.number_mfs_check_query_executed +  ((AbstractLatticeStrategy)this.mfs_finders).number_of_query_executed;
 	
 	for (int j = 0; j < mfs_list.size(); j++) {
-	    logger.info("New MFS "+mfs_list.get(j).toString());
+	    logger.info("New Big MFS "+mfs_list.get(j).toString());
 	    
 	    new_mfs_founded.add(j, new RoaringBitmap());
 	    List<int[]> degree_new_mfs_founded = new ArrayList<int[]>();
