@@ -26,13 +26,13 @@ import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractMFSRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 
 /**
  * @author Geraud FOKOU
  */
-public class BasicRelaxationStrategy extends AbstractMFSRelaxationStrategy {
+public class BasicRelaxationStrategy extends AbstractRelaxationStrategy {
 
     /**
      * @param query

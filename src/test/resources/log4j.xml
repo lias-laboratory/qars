@@ -40,12 +40,12 @@
 		<appender-ref ref="console" />
 	</logger>
 
-	<logger name="fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.AbstractLatticeStrategy">
+	<logger name="fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy">
 		<level value="debug" />
 <!-- 		<appender-ref ref="file" /> -->
 	</logger>
 
-	<logger name="fr.ensma.lias.qarscore.engine.relaxation.strategies.MFSUpdateRelaxationStrategy">
+	<logger name="fr.ensma.lias.qarscore.engine.relaxation.strategies.AbstractRelaxationStrategy">
 		<level value="debug" />
 <!-- 		<appender-ref ref="file" /> -->
 	</logger>

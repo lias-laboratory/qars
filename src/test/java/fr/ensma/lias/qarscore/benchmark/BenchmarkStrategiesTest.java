@@ -30,7 +30,7 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
 import fr.ensma.lias.qarscore.engine.relaxation.strategies.RelaxationStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractMFSRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation.BasicOptimizedRelaxation;
 import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation.BasicRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.implementation.DiscretionalMFSBasedRelaxationStrategy;
@@ -350,11 +350,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    end = System.currentTimeMillis();
 	    duration = duration + ((float) (end - begin));
-	    duration_mfs_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
-	    duration_mfs_check_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
-	    number_queries_mfs = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-	    number_check_queries = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 
 	    logger.info(duration + " " + duration_mfs_search + " "
 		    + duration_mfs_check_search + " " + number_relaxed_queries
@@ -405,13 +405,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 		end = System.currentTimeMillis();
 		duration = duration + ((float) (end - begin));
 		number_queries_mfs = number_queries_mfs
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_search = duration_mfs_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
 		number_check_queries = number_check_queries
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -487,11 +487,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    end = System.currentTimeMillis();
 	    duration = duration + ((float) (end - begin));
-	    duration_mfs_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
-	    duration_mfs_check_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
-	    number_queries_mfs = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-	    number_check_queries = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 
 	    logger.info(duration + " " + duration_mfs_search + " "
 		    + duration_mfs_check_search + " " + number_relaxed_queries
@@ -541,13 +541,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 		end = System.currentTimeMillis();
 		duration = duration + ((float) (end - begin));
 		number_queries_mfs = number_queries_mfs
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_search = duration_mfs_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
 		number_check_queries = number_check_queries
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -624,11 +624,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    end = System.currentTimeMillis();
 	    duration = duration + ((float) (end - begin));
-	    duration_mfs_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
-	    duration_mfs_check_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
-	    number_queries_mfs = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-	    number_check_queries = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 
 	    logger.info(duration + " " + duration_mfs_search + " "
 		    + duration_mfs_check_search + " " + number_relaxed_queries
@@ -678,13 +678,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 		end = System.currentTimeMillis();
 		duration = duration + ((float) (end - begin));
 		number_queries_mfs = number_queries_mfs
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_search = duration_mfs_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
 		number_check_queries = number_check_queries
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -761,11 +761,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    end = System.currentTimeMillis();
 	    duration = duration + ((float) (end - begin));
-	    duration_mfs_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
-	    duration_mfs_check_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
-	    number_queries_mfs = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-	    number_check_queries = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 
 	    logger.info(duration + " " + duration_mfs_search + " "
 		    + duration_mfs_check_search + " " + number_relaxed_queries
@@ -816,13 +816,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 		end = System.currentTimeMillis();
 		duration = duration + ((float) (end - begin));
 		number_queries_mfs = number_queries_mfs
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_search = duration_mfs_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
 		number_check_queries = number_check_queries
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -899,11 +899,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    end = System.currentTimeMillis();
 	    duration = duration + ((float) (end - begin));
-	    duration_mfs_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
-	    duration_mfs_check_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
-	    number_queries_mfs = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-	    number_check_queries = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 
 	    logger.info(duration + " " + duration_mfs_search + " "
 		    + duration_mfs_check_search + " " + number_relaxed_queries
@@ -953,13 +953,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 		end = System.currentTimeMillis();
 		duration = duration + ((float) (end - begin));
 		number_queries_mfs = number_queries_mfs
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_search = duration_mfs_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
 		number_check_queries = number_check_queries
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
@@ -1036,11 +1036,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    end = System.currentTimeMillis();
 	    duration = duration + ((float) (end - begin));
-	    duration_mfs_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
-	    duration_mfs_check_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 
-	    number_queries_mfs = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-	    number_check_queries = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 
 	    logger.info(duration + " " + duration_mfs_search + " "
 		    + duration_mfs_check_search + " " + number_relaxed_queries
@@ -1091,13 +1091,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 		end = System.currentTimeMillis();
 		duration = duration + ((float) (end - begin));
 		number_queries_mfs = number_queries_mfs
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_search = duration_mfs_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
 		number_check_queries = number_check_queries
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 		duration_mfs_check_search = duration_mfs_check_search
-			+ ((AbstractMFSRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
+			+ ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
 		
 		logger.info("*****" + (int) (i + 2) + "******" + duration
 			/ (i + 1) + " " + duration_mfs_search / (i + 1) + " "
