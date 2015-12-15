@@ -28,13 +28,13 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.StrategyFactory;
-import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractRelaxationStrategy;
+import fr.ensma.lias.qarscore.engine.relaxation.strategies.mfs.AbstractMFSRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 
 /**
  * @author Geraud FOKOU
  */
-public class MFSBaseRelaxationStrategy extends AbstractRelaxationStrategy {
+public class MFSBaseRelaxationStrategy extends AbstractMFSRelaxationStrategy {
 
     protected MFSSearch mfs_finders;
     protected List<GraphRelaxationIndex> failed_relaxed_queries;

@@ -39,14 +39,14 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.NodeRelaxed;
 /**
  * @author Geraud FOKOU
  */
-public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
+public abstract class AbstractMFSRelaxationStrategy implements RelaxationStrategy {
 
     public int number_mfs_query_executed =0;
     public int number_mfs_check_query_executed =0;
     public long duration__mfs_query_executed =0;
     public long duration__mfs_check_query_executed =0;
     
-    protected Logger logger = Logger.getLogger(AbstractRelaxationStrategy.class);
+    protected Logger logger = Logger.getLogger(AbstractMFSRelaxationStrategy.class);
     
     /**
      * Field for initialization of the relaxation process
@@ -68,7 +68,7 @@ public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
     /**
      * Abstract constructor
      */
-    public AbstractRelaxationStrategy(CQuery query, Session s) {
+    public AbstractMFSRelaxationStrategy(CQuery query, Session s) {
 	
 	this.logger_init();
 	query_to_relax = query;
@@ -95,7 +95,7 @@ public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
     /**
      * Abstract constructor
      */
-    protected AbstractRelaxationStrategy(CQuery query, Session s, boolean optimization) {
+    protected AbstractMFSRelaxationStrategy(CQuery query, Session s, boolean optimization) {
 	
 	this.logger_init();
 	query_to_relax = query;
