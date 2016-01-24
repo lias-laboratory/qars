@@ -24,10 +24,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.apache.jena.ontology.OntModelSpec;
+
+import fr.ensma.lias.qarscore.configuration.OutputFormat;
+import fr.ensma.lias.qarscore.connection.implementation.EndPointSession;
+import fr.ensma.lias.qarscore.connection.implementation.JenaSDBSession;
+import fr.ensma.lias.qarscore.connection.implementation.JenaTDBSession;
+import fr.ensma.lias.qarscore.connection.implementation.ModelSession;
 import fr.ensma.lias.qarscore.connection.implementation.SesameSession;
-import fr.ensma.lias.qarscore.connection.implementation.SessionJenaSDB;
-import fr.ensma.lias.qarscore.connection.implementation.SessionJenaTDB;
-import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
@@ -43,12 +47,12 @@ public class SessionFactory {
      * @param nameDB
      * @return
      */
-    public static Session getSDBSession(String url, String login,
+    public static Session getJenaSDBSession(String url, String login,
 	    String password, String nameDB) {
 	Connection connect = null;
 
 	try {
-	    Class.forName(Properties.getSDBDriverJDBC());
+	    Class.forName("org.postgresql.Driver");
 	    connect = DriverManager.getConnection(url + nameDB.toLowerCase(),
 		    login, password);
 	} catch (SQLException e) {
@@ -60,7 +64,7 @@ public class SessionFactory {
 	if (connect == null)
 	    return null;
 
-	return SessionJenaSDB.getSessionSDB(connect);
+	return JenaSDBSession.getSDBSession(connect);
     }
 
     /**
@@ -69,8 +73,8 @@ public class SessionFactory {
      * @param folder
      * @return
      */
-    public static Session getTDBSession(String folder) {
-	return SessionJenaTDB.getSessionTDB(folder);
+    public static Session getJenaTDBSession(String folder) {
+	return JenaTDBSession.getTDBSession(folder);
     }
     
     public static Session getNativeSesameSession(String folder){
@@ -78,13 +82,20 @@ public class SessionFactory {
     }
 
     public static Session getInMemorySesameSession(File[] datafiles,
-	    String baseURI, String lang) {
-	return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang);
+	    String baseURI, String lang, OntModelSpec spec) {
+	return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang, spec);
     }
     
     public static Session getInMemorySesameSession(File[] datafiles,
-	    String baseURI, String lang, boolean persist) {
-	return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang, persist);
+	    String baseURI, String lang, OntModelSpec spec, boolean persist) {
+	return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang, spec, persist);
     }
 
+    public static Session getEndpointSession(String url){
+	return new EndPointSession.Builder().url(url).outputFormat(OutputFormat.JSON).build();
+    }
+    
+    public static Session getModelSession(String data){
+	return new ModelSession(data);
+    }
 }

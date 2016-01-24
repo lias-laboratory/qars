@@ -32,8 +32,6 @@ import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
 
 import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.connection.statement.ModelStatement;
-import fr.ensma.lias.qarscore.connection.statement.ModelStatementFactory;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.NodeRelaxed;
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
@@ -103,6 +101,16 @@ public class TripleRelaxation {
     private CElement current_clause = null;
 
     /**
+     * Relaxation operators
+     */
+    private RelaxationOperators model_operators ;
+    
+    /**
+     * Similarity measure for compute distance between semantics concepts
+     */
+    private Similarity sim_measure;
+    
+    /**
      * index of the current triple relaxed
      */
     private int current_elt = -1;
@@ -114,14 +122,12 @@ public class TripleRelaxation {
      * @return
      */
     private Map<Node, Integer> relax_node(Node original_node) {
-
-	ModelStatement model_statement = ModelStatementFactory
-		.createQueryStatement(session);
+	
 	Map<Node, Integer> relaxed_node = new LinkedHashMap<Node, Integer>();
 
 	if (original_node.isURI()) {
 	    relaxed_node.put(original_node, 0);
-	    relaxed_node.putAll(model_statement.getSuperClasses(original_node));
+	    relaxed_node.putAll(model_operators.getSuperClasses(original_node));
 	    Node var_node = NodeFactory.createVariable("R"
 		    + num_resource_release++);
 	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
@@ -154,14 +160,12 @@ public class TripleRelaxation {
      */
     private Map<Node, Integer> relax_predicat(Node original_node) {
 
-	ModelStatement model_statement = ModelStatementFactory
-		.createQueryStatement(session);
 	Map<Node, Integer> relaxed_node = new LinkedHashMap<Node, Integer>();
 
 	if (original_node.isURI()) {
 	    relaxed_node.put(original_node, 0);
 	    relaxed_node
-		    .putAll(model_statement.getSuperProperty(original_node));
+		    .putAll(model_operators.getSuperProperty(original_node));
 	    Node var_node = NodeFactory
 		    .createVariable("P" + num_pred_release++);
 	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
@@ -198,7 +202,6 @@ public class TripleRelaxation {
 
     private void filterRelaxation(Expr expr) {
 	// TODO Auto-generated method stub
-
     }
 
     /**
@@ -212,7 +215,7 @@ public class TripleRelaxation {
 	    Map<Node, Integer> subject_relaxation = this.relax_node(clause
 		    .getSubject());
 	    for (Node relaxed_node : subject_relaxation.keySet()) {
-		double sim = session.similarityMeasureClass(
+		double sim = sim_measure.similarityMeasureClass(
 			clause.getSubject(), relaxed_node) / 3.0;
 		relaxed_subject.add(new NodeRelaxed(relaxed_node, null, null,
 			sim, new int[] { subject_relaxation.get(relaxed_node),
@@ -229,7 +232,7 @@ public class TripleRelaxation {
 	    Map<Node, Integer> object_relaxation = this.relax_node(clause
 		    .getObject());
 	    for (Node relaxed_node : object_relaxation.keySet()) {
-		double sim = session.similarityMeasureClass(clause.getObject(),
+		double sim = sim_measure.similarityMeasureClass(clause.getObject(),
 			relaxed_node) / 3.0;
 		relaxed_object.add(new NodeRelaxed(null, null, relaxed_node,
 			sim, new int[] { -2, -2,
@@ -247,7 +250,7 @@ public class TripleRelaxation {
 		Map<Node, Integer> predicat_relaxation = this
 			.relax_predicat(clause.getPredicate());
 		for (Node relaxed_node : predicat_relaxation.keySet()) {
-		    double sim = session.similarityMeasureProperty(
+		    double sim = sim_measure.similarityMeasureProperty(
 			    clause.getPredicate(), relaxed_node) / 3.0;
 		    relaxed_predicat
 			    .add(new NodeRelaxed(null, relaxed_node, null, sim,
@@ -365,6 +368,8 @@ public class TripleRelaxation {
 
 	session = s;
 	this.current_clause = clause;
+	this.model_operators = new RelaxationOperators(session);
+	sim_measure =  new Similarity(session);
 	this.set_relaxation_order(1);
 
 	if (clause.getLabel().startsWith("t")) {
@@ -384,6 +389,8 @@ public class TripleRelaxation {
 
 	session = s;
 	this.current_clause = clause;
+	this.model_operators = new RelaxationOperators(session);
+	sim_measure =  new Similarity(session);
 	this.set_relaxation_order(order);
 
 	if (clause.getLabel().startsWith("t")) {
@@ -685,12 +692,11 @@ public class TripleRelaxation {
 	    return false;
 	}
 
-	ModelStatement model_statement = ModelStatementFactory
-		.createQueryStatement(s);
+	RelaxationOperators temp_model_operator = new RelaxationOperators(s);
 
 	// Classe type
 	if (type == 1) {
-	    Map<String, Integer> relaxed_node = model_statement
+	    Map<String, Integer> relaxed_node = temp_model_operator
 		    .getURISuperClasses(subject2);
 	    if (relaxed_node.get(subject.getURI()) != null) {
 		return true;
@@ -704,7 +710,7 @@ public class TripleRelaxation {
 	}
 	// Property type
 	if (type == 2) {
-	    Map<String, Integer> relaxed_node = model_statement
+	    Map<String, Integer> relaxed_node = temp_model_operator
 		    .getURISuperProperty(subject2);
 	    if (relaxed_node.get(subject.getURI()) != null) {
 		return true;
@@ -719,4 +725,23 @@ public class TripleRelaxation {
 	return false;
     }
 
+    /**
+     * Get Node Relaxed corresponding to the CElement only and without super classes
+     * @param elt
+     * @return
+     */
+    public static NodeRelaxed[] getNodeRelaxed(CElement elt){
+	
+	if (elt.getLabel().startsWith("t")) {
+	    TriplePath currentClause = ((ElementPathBlock) elt.getElement())
+		    .getPattern().getList().get(0);
+	    NodeRelaxed[] tripleRelaxed = new NodeRelaxed[1];
+	    tripleRelaxed[0] = new NodeRelaxed(currentClause.getSubject(), currentClause.getPredicate(), currentClause.getObject(),
+			1.0, new int[] { 0, 0, 0 });
+	   return tripleRelaxed;
+	} else {
+	    return null;
+	}
+
+    }
 }

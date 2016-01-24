@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.jena.rdf.model.RDFNode;
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
@@ -55,7 +54,7 @@ public abstract class MatrixStrategy implements MFSSearch {
     /**
      * Dictionary of answer for the current query
      */
-    protected Map<RDFNode, Integer> dictionary;
+    protected Map<String, Integer> dictionary;
 
     /**
      * Size of the dictionary
@@ -87,7 +86,7 @@ public abstract class MatrixStrategy implements MFSSearch {
 	    int expected_answers_number) {
 
 	NUMBER_OF_EXPECTED_ANSWERS = expected_answers_number;
-	dictionary = new HashMap<RDFNode, Integer>();
+	dictionary = new HashMap<String, Integer>();
 	dictionary_size = 0;
 	actualQuery = conjunctiveQuery;
 

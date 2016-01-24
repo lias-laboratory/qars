@@ -24,14 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.RDFNode;
 import org.roaringbitmap.RoaringBitmap;
 
 import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
+import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
@@ -119,19 +115,20 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 	    elements.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i - 1));
 	    CQuery current_query = CQueryFactory.createCQuery(elements);
 
-	    ResultSet result_set = QueryExecutionFactory.create(current_query.toString(), ((JenaSession)SESSION).getDataset())
-			.execSelect();
+	    JSONResultSet result_set = JSONResultSet.getJSONResultSet(SESSION.executeSelectQuery(current_query.toString()));
+//	    ResultSet result_set = QueryExecutionFactory.create(current_query.toString(), ((JenaTDBSession)SESSION).getDataset())
+//			.execSelect();
 
 	    while (result_set.hasNext()) {
 
-		QuerySolution result = result_set.next();
+		result_set.next();
 
 		int[] listMapping = new int[CURRENT_CONJUNCTIVE_QUERY
 			.getMentionedQueryVarNames().size()];
 
 		for (int j = 1; j <= CURRENT_CONJUNCTIVE_QUERY
 			.getMentionedQueryVarNames().size(); j++) {
-		    RDFNode val = result.get(CURRENT_CONJUNCTIVE_QUERY
+		    String val = result_set.getString(CURRENT_CONJUNCTIVE_QUERY
 			    .getMentionedQueryVarNames().get(j - 1));
 		    Integer intVal = null;
 		    if (val == null)

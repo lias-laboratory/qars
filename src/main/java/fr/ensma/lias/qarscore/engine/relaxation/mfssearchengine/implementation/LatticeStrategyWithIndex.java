@@ -21,6 +21,8 @@ package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation;
 
 import java.util.List;
 
+import org.apache.jena.query.Query;
+
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy;
@@ -33,9 +35,6 @@ import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.optimization.CQu
  */
 public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
     
-    private final int NUMBER_OF_EXPECTED_ANSWERS ;
-    private final Session SESSION;
-
     public CQueryIndexMap indexCQuery ;
 
     /**
@@ -56,14 +55,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
     }
     
     protected LatticeStrategyWithIndex(Session s) {
-	super();
-	number_of_query_executed = 0;
-	number_of_query_reexecuted = 0;
-	size_of_cartesian_product = 0;
-	duration_of_execution = 0;
-	
-	NUMBER_OF_EXPECTED_ANSWERS = 1;
-	SESSION = s;	
+	super(s, null, 1);
 	indexCQuery = new CQueryTreeMap(); // Tree index we can also use HaspMap Index
     }    
     
@@ -71,16 +63,7 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
      * private constructor
      */
     protected LatticeStrategyWithIndex(Session s, CQuery query, int answers) {
-	super();
-	number_of_query_executed = 0;
-	number_of_query_reexecuted = 0;
-	size_of_cartesian_product = 0;
-	duration_of_execution = 0;
-
-	NUMBER_OF_EXPECTED_ANSWERS = answers;
-	SESSION = s;
-	actualQuery = query;
-	
+	super(s, query, answers);	
 	indexCQuery = new CQueryTreeMap(); // Tree index we can also use HaspMap Index
 	
 	duration_of_execution = System.currentTimeMillis();
@@ -116,8 +99,9 @@ public class LatticeStrategyWithIndex extends AbstractLatticeStrategy {
 		}
 		continue;
 	    }
-
-	    int nbSolution = SESSION.createStatement(a_connex_query.toString()).getResultSetSize(NUMBER_OF_EXPECTED_ANSWERS);	    
+	    Query temp_query = a_connex_query.getSPARQLQuery();
+	    temp_query.setLimit(NUMBER_OF_EXPECTED_ANSWERS);
+	    int nbSolution = SESSION.getResultSize(temp_query.toString());   
 	    indexCQuery.put(a_connex_query, nbSolution);
 	    number_of_query_executed ++;
 

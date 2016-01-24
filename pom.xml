@@ -66,11 +66,11 @@
 			<artifactId>combinatoricslib</artifactId>
 			<version>2.1</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.github.jsonld-java</groupId> -->
-<!-- 			<artifactId>jsonld-java-jena</artifactId> -->
-<!-- 			<version>0.4.1</version> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20151123</version>
+		</dependency>
 		<dependency>
 			<groupId>org.roaringbitmap</groupId>
 			<artifactId>RoaringBitmap</artifactId>
@@ -89,6 +89,11 @@
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository-sail</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-queryresultio-sparqljson</artifactId>
 			<version>4.0.0</version>
 		</dependency>
 	</dependencies>

@@ -25,7 +25,9 @@ public class ResultStrategyExplain {
 
 	List<Double> relaxation_process_time = new ArrayList<Double>();
 
-	List<Double> MFS_process_time = new ArrayList<Double>();
+	List<Double> mfs_process_time = new ArrayList<Double>();
+
+	List<Double> view_process_time = new ArrayList<Double>();
 
 	List<Integer> size_all_executed_queries = new ArrayList<Integer>();
 
@@ -82,7 +84,14 @@ public class ResultStrategyExplain {
 	 * @return the mFS_process_time
 	 */
 	public double getMFS_process_time() {
-	    return getQueryTimeAverage(MFS_process_time);
+	    return getQueryTimeAverage(mfs_process_time);
+	}
+
+	/**
+	 * @return the view_process_time
+	 */
+	public double getView_process_time() {
+	    return getQueryTimeAverage(view_process_time);
 	}
 
 	/**
@@ -129,13 +138,12 @@ public class ResultStrategyExplain {
      * @param queryExecution
      */
     public void add(String name, double all_process, double mfs_process,
-	    double relaxation_process, int all_queries, int mfs_queries,
-	    int relaxation_queries) {
+	    double relaxation_process, double view_process, int all_queries,
+	    int mfs_queries, int relaxation_queries) {
 
-	//String substring = name.substring(6, name.length() - 4);
+	// String substring = name.substring(6, name.length() - 4);
 	String substring = name.substring(6, name.length());
 
-	
 	QueryReport newQueryReport = null;
 	if (!result.containsKey(substring)) {
 	    newQueryReport = new QueryReport();
@@ -146,8 +154,9 @@ public class ResultStrategyExplain {
 
 	newQueryReport.name = substring;
 	newQueryReport.all_process_time.add(all_process);
-	newQueryReport.MFS_process_time.add(mfs_process);
+	newQueryReport.mfs_process_time.add(mfs_process);
 	newQueryReport.relaxation_process_time.add(relaxation_process);
+	newQueryReport.view_process_time.add(view_process);
 	newQueryReport.size_all_executed_queries.add(all_queries);
 	newQueryReport.size_mfs_executed_queries.add(mfs_queries);
 	newQueryReport.size_relaxation_executed_queries.add(relaxation_queries);
@@ -161,8 +170,12 @@ public class ResultStrategyExplain {
 		    .getAll_process_time() / multiple);
 	    Double queryMFSProcessTimeAverage = (entry.getValue()
 		    .getMFS_process_time() / multiple);
+	    
 	    Double queryRelaxationProcessTimeAverage = (entry.getValue()
 		    .getRelaxation_process_time() / multiple);
+
+	    Double queryViewProcessTimeAverage = (entry.getValue()
+		    .getView_process_time() / multiple);
 
 	    Integer sizeAllQuery = entry.getValue()
 		    .getSize_all_executed_queries();
@@ -178,7 +191,9 @@ public class ResultStrategyExplain {
 		    + queryMFSProcessTimeAverage.toString().replace('.', ',')
 		    + "\t"
 		    + queryRelaxationProcessTimeAverage.toString().replace('.',
-			    ',') + "\t" + sizeAllQuery.toString() + "\t"
+			    ',') + "\t"
+		    + queryViewProcessTimeAverage.toString().replace('.', ',')
+		    + "\t" + sizeAllQuery.toString() + "\t"
 		    + sizeMFSQuery.toString() + "\t"
 		    + sizeRelaxationQuery.toString() + "\n");
 	}

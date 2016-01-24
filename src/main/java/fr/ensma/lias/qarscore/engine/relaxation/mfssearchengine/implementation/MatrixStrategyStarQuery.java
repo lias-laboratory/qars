@@ -22,14 +22,10 @@ package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.RDFNode;
 import org.roaringbitmap.RoaringBitmap;
 
 import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
+import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
@@ -96,13 +92,14 @@ public class MatrixStrategyStarQuery extends MatrixStrategy {
 	    elements.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i));
 	    CQuery current_query = CQueryFactory.createCQuery(elements);
 
-	    ResultSet result_set = QueryExecutionFactory.create(current_query.toString(), ((JenaSession)SESSION).getDataset())
-		.execSelect();
+	    JSONResultSet result_set = JSONResultSet.getJSONResultSet(SESSION.executeSelectQuery(current_query.toString()));
+//	    ResultSet result_set = QueryExecutionFactory.create(current_query.toString(), ((JenaTDBSession)SESSION).getDataset())
+//		.execSelect();
 
 	    while (result_set.hasNext()) {
-		QuerySolution result = result_set.next();
+		result_set.next();
 
-		RDFNode val = result.get(result_set.getResultVars().get(0));
+		String val = result_set.getString(result_set.getVar(0));
 		Integer intVal = dictionary.get(val);
 
 		if (intVal == null) {

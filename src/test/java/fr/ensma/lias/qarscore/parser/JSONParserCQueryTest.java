@@ -26,9 +26,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
+import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
 
 /**
  * @author Geraud FOKOU

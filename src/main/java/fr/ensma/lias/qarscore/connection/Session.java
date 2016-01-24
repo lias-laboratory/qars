@@ -19,9 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection;
 
-import org.apache.jena.graph.Node;
+import fr.ensma.lias.qarscore.connection.metadata.DatasetOntologyMetaData;
 
-import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
 
 
 /**
@@ -29,11 +28,9 @@ import fr.ensma.lias.qarscore.connection.statement.QueryStatement;
  */
 public interface Session {
     
-    void close() throws Exception;
-    void open();
-    boolean isopen();
-    boolean isclose();
-    QueryStatement createStatement(String query);
-    double similarityMeasureClass(Node original_node, Node relaxed_node);
-    double similarityMeasureProperty(Node original_node, Node relaxed_node);
+    String getNameSession();
+    String executeSelectQuery(String query);
+    int getResultSize(String query);
+    DatasetOntologyMetaData getOntology();
+    String executeConstructQuery(String query);
 }

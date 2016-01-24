@@ -28,11 +28,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.StrategyFactory;
+import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
 
 /**
  * @author Geraud FOKOU
@@ -76,7 +76,7 @@ public class LatticeStrategyWithIndexTest extends InitTest {
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_5);
 	
-	relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
 	
 	show_indicator();
@@ -106,7 +106,7 @@ public class LatticeStrategyWithIndexTest extends InitTest {
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_7);
 	
-	relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
 	
 	show_indicator();
@@ -141,7 +141,7 @@ public class LatticeStrategyWithIndexTest extends InitTest {
 
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_6);
-	relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
 	
 	Assert.assertTrue(!relaxationStrategy.hasLeastKAnswers());
@@ -173,7 +173,7 @@ public class LatticeStrategyWithIndexTest extends InitTest {
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_17);
 	
-	relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
 	
 	Assert.assertTrue(relaxationStrategy.hasLeastKAnswers(conjunctiveQuery));
@@ -186,7 +186,7 @@ public class LatticeStrategyWithIndexTest extends InitTest {
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_6);
 	
-	relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
 
 	show_indicator();
@@ -198,7 +198,7 @@ public class LatticeStrategyWithIndexTest extends InitTest {
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_4);
 	
-	relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getLatticeStrategy(session,
 		conjunctiveQuery, true);
 	
 	long entire_duration = 0;
@@ -206,7 +206,7 @@ public class LatticeStrategyWithIndexTest extends InitTest {
 	    conjunctiveQuery = CQueryFactory
 		    .createCQuery(SPARQLQueriesSample.QUERY_4);
 	    
-	    relaxationStrategy = StrategyFactory.getLatticeStrategy(sessionJena,
+	    relaxationStrategy = StrategyFactory.getLatticeStrategy(session,
 		    conjunctiveQuery, true);
 	    
 	    entire_duration = entire_duration + ((AbstractLatticeStrategy)relaxationStrategy).duration_of_execution;

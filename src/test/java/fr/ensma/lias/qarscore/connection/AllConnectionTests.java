@@ -27,7 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Mickael BARON
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { SessionTDBTest.class })
+@SuiteClasses(value = {})
 public class AllConnectionTests {
 
 }

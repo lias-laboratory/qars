@@ -22,21 +22,17 @@ package fr.ensma.lias.qarscore.loader;
 import java.io.File;
 
 import org.apache.jena.ontology.OntModelSpec;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.URI;
 
 import fr.ensma.lias.qarscore.connection.SessionFactory;
 import fr.ensma.lias.qarscore.connection.implementation.SesameSession;
-import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
  */
-@SuppressWarnings("deprecation")
 public class SesameBulkLoaderTest {
 
     private SesameSession session;
@@ -71,8 +67,6 @@ public class SesameBulkLoaderTest {
 	    deleteDirectory(folderTDB);
 	}
 	folderTDB.mkdirs();
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM);
-	Properties.setOntoLang("OWL");
     }
 
     /**
@@ -82,12 +76,6 @@ public class SesameBulkLoaderTest {
     public void tearDown() throws Exception {
 
 	Assert.assertNotNull(session.getRepository());
-	try {
-	    Assert.assertNotNull(session.getModel());
-	    Assert.assertNotNull(session.getRepositoryConnection());
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
     }
 
     /**
@@ -104,28 +92,9 @@ public class SesameBulkLoaderTest {
 		+ "/src/test/resources/LUBM1/lubm1.owl");
 	
 	session = (SesameSession) SessionFactory.getInMemorySesameSession(
-		datafiles, baseURI, Properties.getOntoLang(), true);
+		datafiles, baseURI, "RDF/XML", OntModelSpec.OWL_DL_MEM, true);
 	
 	Assert.assertNotNull(session.getRepository());
-	try {
-	    Assert.assertNotNull(session.getModel());
-	    Assert.assertNotNull(session
-		    .getRepositoryConnection());
-	    for (URI classe : session
-		    .getInformation_content().keySet()) {
-		Logger.getRootLogger().info(
-			classe.stringValue()
-				+ " has information content "
-				+ session
-					.getInformation_content().get(classe));
-	    }
-	    
-	 //   session.close();
-
-	} catch (Exception e) {
-	    Assert.fail();
-	    e.printStackTrace();
-	}
     }
 
     /**
@@ -141,27 +110,8 @@ public class SesameBulkLoaderTest {
 	datafiles[0] = new File(System.getProperty("user.dir")
 		+ "/src/test/resources/LUBM1/lubm1.owl");
 	session = (SesameSession) SessionFactory.getInMemorySesameSession(
-		datafiles, baseURI, Properties.getOntoLang());
-	Assert.assertNotNull(session.getRepository());
-	try {
-	    Assert.assertNotNull(session.getModel());
-	    Assert.assertNotNull(session
-		    .getRepositoryConnection());
-	    for (URI classe : session
-		    .getInformation_content().keySet()) {
-		Logger.getRootLogger().info(
-			classe.stringValue()
-				+ " has information content "
-				+ session
-					.getInformation_content().get(classe));
-	    }
-	    
-	 //   session.close();
-
-	} catch (Exception e) {
-	    Assert.fail();
-	    e.printStackTrace();
-	}	
+		datafiles, baseURI, "RDF/XML", OntModelSpec.OWL_DL_MEM);
+	Assert.assertNotNull(session.getRepository());	
     }
 
     /**
@@ -178,7 +128,7 @@ public class SesameBulkLoaderTest {
 		+ "/src/test/resources/LUBM1/lubm1.owl");
 
 	SesameBulkLoader.loaderNativeStore("target/Sesame/NativeRepository/LUBM1",
-		datafiles, baseURI, Properties.getOntoLang());
+		datafiles, baseURI, "RDF/XML", OntModelSpec.OWL_MEM);
 	session = (SesameSession) SessionFactory
 		.getNativeSesameSession("target/Sesame/NativeRepository/LUBM1");
     }
@@ -193,7 +143,7 @@ public class SesameBulkLoaderTest {
 
 	String[] args = new String[4];
 	args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
-	args[1] = "OWL";
+	args[1] = "RDF/XML";
 	args[2] = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
 	args[3] = "target/Sesame/NativeRepository/LUBM1";
 	SesameBulkLoader.main(args);

@@ -26,11 +26,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.operators.TripleRelaxation;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.NodeRelaxed;
+import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
 
 /**
  * @author Geraud FOKOU
@@ -66,7 +66,7 @@ public class TripleRelaxationTest extends InitTest {
 		.createCQuery(SPARQLQueriesSample.QUERY_1);
 
 	TripleRelaxation relax_triple = new TripleRelaxation(conjunctiveQuery
-		.getElementList().get(0), sessionJena);
+		.getElementList().get(0), session);
 
 	Assert.assertEquals(1, TripleRelaxation.getNum_pred_release());
 	Assert.assertEquals(1, TripleRelaxation.getNum_resource_release());
@@ -95,7 +95,7 @@ public class TripleRelaxationTest extends InitTest {
 		.createCQuery(SPARQLQueriesSample.QUERY_1);
 
 	TripleRelaxation relax_triple = new TripleRelaxation(conjunctiveQuery
-		.getElementList().get(0), sessionSesame, 1);
+		.getElementList().get(0), session, 1);
 
 	Assert.assertEquals(1, TripleRelaxation.getNum_pred_release());
 	Assert.assertEquals(1, TripleRelaxation.getNum_resource_release());

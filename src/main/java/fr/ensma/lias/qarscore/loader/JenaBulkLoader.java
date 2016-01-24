@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -36,11 +37,12 @@ import org.apache.jena.sdb.SDBFactory;
 import org.apache.jena.sdb.Store;
 import org.apache.jena.sdb.StoreDesc;
 import org.apache.jena.sdb.sql.SDBConnection;
+import org.apache.jena.sdb.store.DatabaseType;
+import org.apache.jena.sdb.store.LayoutType;
 import org.apache.jena.sdb.store.StoreFactory;
 import org.apache.jena.tdb.TDBFactory;
 
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
-import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
@@ -52,7 +54,7 @@ public class JenaBulkLoader {
 
 	Connection connect = null;
 
-	Class.forName(Properties.getSDBDriverJDBC());
+	Class.forName("org.postgresql.Driver");
 	connect = DriverManager.getConnection(url, login, password);
 
 	Statement stmt = connect.createStatement();
@@ -90,7 +92,7 @@ public class JenaBulkLoader {
 	}
 
 	try {
-	    Class.forName(Properties.getSDBDriverJDBC());
+	    Class.forName("org.postgresql.Driver");
 	    connect = DriverManager.getConnection(url + nameDB.toLowerCase(),
 		    login, password);
 	} catch (SQLException e) {
@@ -100,17 +102,16 @@ public class JenaBulkLoader {
 	}
 
 	SDBConnection connectSDB = SDBFactory.createConnection(connect);
-	StoreDesc storeDesc = new StoreDesc(Properties.getSdbLayout(),
-		Properties.getSdbSupportType());
+	StoreDesc storeDesc = new StoreDesc(LayoutType.LayoutTripleNodesHash,
+		DatabaseType.PostgreSQL);
 	Store store = StoreFactory.create(storeDesc, connectSDB);
 	store.getTableFormatter().create();
 	store.getTableFormatter().truncate();
 	Model dataModel = SDBFactory.connectDefaultModel(store);
 
 	OntModel ontoModel = ModelFactory.createOntologyModel(
-		Properties.getModelMemSpec(), dataModel);
+		OntModelSpec.OWL_DL_MEM, dataModel);
 
-	Properties.setOntoLang(lang);
 
 	for (File dataFile : dataFiles) {
 
@@ -118,7 +119,7 @@ public class JenaBulkLoader {
 	    String currentUrl = null;
 	    try {
 		currentUrl = currentUri.toURL().toString();
-		ontoModel.read(currentUrl, Properties.getOntoLang());
+		ontoModel.read(currentUrl, lang);
 	    } catch (MalformedURLException e) {
 		e.printStackTrace();
 	    }
@@ -141,9 +142,7 @@ public class JenaBulkLoader {
 	Model dataModel = dataset.getDefaultModel();
 
 	OntModel ontoModel = ModelFactory.createOntologyModel(
-		Properties.getModelMemSpec(), dataModel);
-
-	Properties.setOntoLang(lang);
+		OntModelSpec.OWL_DL_MEM, dataModel);
 
 	for (File dataFile : dataFiles) {
 
@@ -151,7 +150,7 @@ public class JenaBulkLoader {
 	    String currentUrl = null;
 	    try {
 		currentUrl = currentUri.toURL().toString();
-		ontoModel.read(currentUrl, Properties.getOntoLang());
+		ontoModel.read(currentUrl, lang);
 	    } catch (MalformedURLException e) {
 		e.printStackTrace();
 	    }

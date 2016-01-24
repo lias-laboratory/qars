@@ -21,15 +21,19 @@ package fr.ensma.lias.qarscore.engine.query;
 
 import java.util.List;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
+import org.apache.jena.sparql.syntax.Template;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.ensma.lias.qarscore.SPARQLQueriesSample;
+import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
 
 /**
  * @author Geraud FOKOU
@@ -410,4 +414,19 @@ public class CQueryTest {
 
     }
 
+    @Test
+    public void testConstructQuery(){
+	Query query = QueryFactory.create(SPARQLQueriesSample.EDBT_QUERY_1);
+	CQuery conjunctiveQuery14 = CQueryFactory
+		.createCQuery(SPARQLQueriesSample.EDBT_QUERY_1);
+	Assert.assertTrue(query.isSelectType());
+	query.setQueryConstructType();
+	query.setConstructTemplate(new Template(new BasicPattern()));
+	System.out.println(query.getConstructTemplate().getBGP());
+	query.getConstructTemplate().getBGP().add(conjunctiveQuery14.getElementList().get(0).getTriple());
+	query.getConstructTemplate().getBGP().add(conjunctiveQuery14.getElementList().get(1).getTriple());
+	System.out.println(query.getConstructTemplate().getBGP());
+	System.out.println(query.getQueryPattern().toString());
+	System.out.println(query.toString());
+    }
 }
