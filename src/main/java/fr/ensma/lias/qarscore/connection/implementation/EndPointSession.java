@@ -22,6 +22,7 @@ package fr.ensma.lias.qarscore.connection.implementation;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -191,10 +192,10 @@ public class EndPointSession implements Session {
     }
 
     @Override
-    public String executeSelectQuery(String query) {
+    public JSONResultSet executeSelectQuery(String query) {
 
 	try {
-	    return this.query(query);
+	    return JSONResultSet.getJSONResultSet(this.query(query));
 	} catch (IOException e) {
 	    e.printStackTrace();
 	    return null;
@@ -204,9 +205,8 @@ public class EndPointSession implements Session {
     @Override
     public int getResultSize(String query) {
 
-	JSONResultSet result = JSONResultSet.getJSONResultSet(this
-		.executeSelectQuery(query));
-	return result.getBindings().length();
+	JSONResultSet result = this.executeSelectQuery(query);
+	return result.getBindings().size();
     }
 
     @Override
@@ -215,11 +215,11 @@ public class EndPointSession implements Session {
     }
 
     @Override
-    public String executeConstructQuery(String query) {
+    public InputStream executeConstructQuery(String query) {
 
 	OutputFormat refOutputFormat = OutputFormat.N_TRIPLES;
 	HttpURLConnection connection;
-	
+
 	try {
 	    connection = (HttpURLConnection) this.getBaseURL().openConnection();
 	    connection.setDoOutput(true);
@@ -245,8 +245,8 @@ public class EndPointSession implements Session {
 	    ps.flush();
 	    ps.close();
 
-	    return readResponse(connection);
-
+	    return connection.getInputStream();
+	    
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}

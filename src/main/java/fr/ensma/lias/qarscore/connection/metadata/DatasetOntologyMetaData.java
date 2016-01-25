@@ -85,7 +85,7 @@ public class DatasetOntologyMetaData {
 	triples = new HashMap<String, Integer>();
 	try {
 	    if (!loadfiles(session.getNameSession())) {
-	        this.setOntologyMetaData(session);
+		this.setOntologyMetaData(session);
 	    }
 	} catch (IOException e) {
 	    e.printStackTrace();
@@ -176,8 +176,8 @@ public class DatasetOntologyMetaData {
 	File statfolder = new File(FOLDER_STAT + session.getNameSession());
 	statfolder.mkdirs();
 
-	JSONResultSet resultJson = JSONResultSet.getJSONResultSet(session
-		.executeSelectQuery(QueryConfig.LIST_SUPER_CLASSES));
+	JSONResultSet resultJson = session
+		.executeSelectQuery(QueryConfig.LIST_SUPER_CLASSES);
 	while (resultJson.next()) {
 	    String classe = resultJson.getString("classe");
 	    String directsuperclasses = resultJson
@@ -195,8 +195,8 @@ public class DatasetOntologyMetaData {
 	    e.printStackTrace();
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(session
-		.executeSelectQuery(QueryConfig.NUMBER_INSTANCE_CLASS));
+	resultJson = session
+		.executeSelectQuery(QueryConfig.NUMBER_INSTANCE_CLASS);
 	while (resultJson.next()) {
 	    String classe = resultJson.getString("classe");
 	    this.addInstances(classe, resultJson.getInt("numberInstance"));
@@ -212,8 +212,8 @@ public class DatasetOntologyMetaData {
 	    e.printStackTrace();
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(session
-		.executeSelectQuery(QueryConfig.LIST_SUPER_PROPERTIES));
+	resultJson = session
+		.executeSelectQuery(QueryConfig.LIST_SUPER_PROPERTIES);
 	while (resultJson.next()) {
 	    String property = resultJson.getString("property");
 	    String directsuperproperty = resultJson
@@ -231,8 +231,8 @@ public class DatasetOntologyMetaData {
 	    e.printStackTrace();
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(session
-		.executeSelectQuery(QueryConfig.NUMBER_TRIPLET_PROPERTY));
+	resultJson = session
+		.executeSelectQuery(QueryConfig.NUMBER_TRIPLET_PROPERTY);
 	while (resultJson.next()) {
 	    String property = resultJson.getString("property");
 	    this.addTriples(property, resultJson.getInt("numberProperty"));
@@ -248,8 +248,7 @@ public class DatasetOntologyMetaData {
 	    e.printStackTrace();
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(session
-		.executeSelectQuery(QueryConfig.NUMBER_TRIPLET));
+	resultJson = session.executeSelectQuery(QueryConfig.NUMBER_TRIPLET);
 	while (resultJson.next()) {
 	    this.setNbTriples(resultJson.getInt("numberTriplet"));
 	}
@@ -263,8 +262,7 @@ public class DatasetOntologyMetaData {
 	    e.printStackTrace();
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(session
-		.executeSelectQuery(QueryConfig.NUMBER_INSTANCE));
+	resultJson = session.executeSelectQuery(QueryConfig.NUMBER_INSTANCE);
 	while (resultJson.next()) {
 	    this.setNbInstances(resultJson.getInt("numberInstance"));
 	}
@@ -284,11 +282,11 @@ public class DatasetOntologyMetaData {
      * 
      * @param foldername
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private boolean loadfiles(String foldername) throws IOException {
 
-	if(foldername==null){
+	if (foldername == null) {
 	    return false;
 	}
 	File statfolder = new File(FOLDER_STAT);
@@ -313,8 +311,9 @@ public class DatasetOntologyMetaData {
 	    return false;
 	}
 
-	
-	JSONResultSet resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder.getCanonicalPath()+ "/LIST_SUPER_CLASSES.properties"));
+	JSONResultSet resultJson = JSONResultSet.getJSONResultSet(this
+		.readfile(statfolder.getCanonicalPath()
+			+ "/LIST_SUPER_CLASSES.properties"));
 	while (resultJson.next()) {
 	    String classe = resultJson.getString("classe");
 	    String directsuperclasses = resultJson
@@ -322,13 +321,15 @@ public class DatasetOntologyMetaData {
 	    this.addSuperClass(classe, directsuperclasses);
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder.getCanonicalPath()+ "/NUMBER_INSTANCE_CLASS.properties"));
+	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
+		.getCanonicalPath() + "/NUMBER_INSTANCE_CLASS.properties"));
 	while (resultJson.next()) {
 	    String classe = resultJson.getString("classe");
 	    this.addInstances(classe, resultJson.getInt("numberInstance"));
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder.getCanonicalPath()+ "/LIST_SUPER_PROPERTIES.properties"));
+	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
+		.getCanonicalPath() + "/LIST_SUPER_PROPERTIES.properties"));
 	while (resultJson.next()) {
 	    String property = resultJson.getString("property");
 	    String directsuperproperty = resultJson
@@ -336,18 +337,21 @@ public class DatasetOntologyMetaData {
 	    this.addSuperProperty(property, directsuperproperty);
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder.getCanonicalPath()+ "/NUMBER_TRIPLET_PROPERTY.properties"));
+	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
+		.getCanonicalPath() + "/NUMBER_TRIPLET_PROPERTY.properties"));
 	while (resultJson.next()) {
 	    String property = resultJson.getString("property");
 	    this.addTriples(property, resultJson.getInt("numberProperty"));
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder.getCanonicalPath()+ "/NUMBER_TRIPLET.properties"));
+	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
+		.getCanonicalPath() + "/NUMBER_TRIPLET.properties"));
 	while (resultJson.next()) {
 	    this.setNbTriples(resultJson.getInt("numberTriplet"));
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder.getCanonicalPath()+ "/NUMBER_INSTANCE.properties"));
+	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
+		.getCanonicalPath() + "/NUMBER_INSTANCE.properties"));
 	while (resultJson.next()) {
 	    this.setNbInstances(resultJson.getInt("numberInstance"));
 	}
@@ -357,6 +361,7 @@ public class DatasetOntologyMetaData {
 
     /**
      * Read a file
+     * 
      * @param pathname
      * @return
      * @throws IOException
@@ -365,7 +370,7 @@ public class DatasetOntologyMetaData {
 
 	BufferedReader br = new BufferedReader(new FileReader(pathname));
 	String everything;
-	
+
 	try {
 	    StringBuilder sb = new StringBuilder();
 	    String line = br.readLine();

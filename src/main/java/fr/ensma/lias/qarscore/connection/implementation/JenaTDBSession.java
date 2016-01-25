@@ -19,8 +19,9 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection.implementation;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.StringWriter;
+import java.io.InputStream;
 
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
@@ -54,7 +55,7 @@ public class JenaTDBSession implements Session {
      * Url of the dataset
      */
     protected String url;
-    
+
     /**
      * Dataset use for querying
      */
@@ -76,7 +77,8 @@ public class JenaTDBSession implements Session {
 	JenaTDBSession sessionJena = new JenaTDBSession();
 	sessionJena.dataset = TDBFactory.createDataset(folder);
 	sessionJena.url = folder;
-	sessionJena.ontologyStat = DatasetOntologyMetaData.getInstance(sessionJena);
+	sessionJena.ontologyStat = DatasetOntologyMetaData
+		.getInstance(sessionJena);
 	session = sessionJena;
 	return sessionJena;
     }
@@ -86,26 +88,30 @@ public class JenaTDBSession implements Session {
 
     @Override
     public String getNameSession() {
-	return url.substring(url.indexOf("/")+1);
+	return url.substring(url.indexOf("/") + 1);
     }
 
     @Override
-    public String executeSelectQuery(String query) {
-	
-	QueryExecution qexec = QueryExecutionFactory.create(
-		query, this.dataset);
+    public JSONResultSet executeSelectQuery(String query) {
+
+	QueryExecution qexec = QueryExecutionFactory
+		.create(query, this.dataset);
 
 	ResultSet results = qexec.execSelect();
 	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	ResultSetFormatter.output(outputStream, results, ResultsFormat.FMT_RS_JSON);
-	return outputStream.toString();
+	ResultSetFormatter.output(outputStream, results,
+		ResultsFormat.FMT_RS_JSON);
+	ByteArrayInputStream input = new ByteArrayInputStream(
+		outputStream.toByteArray());
+
+	return JSONResultSet.getJSONResultSet(input);
     }
 
     @Override
     public int getResultSize(String query) {
-	
-	JSONResultSet result = JSONResultSet.getJSONResultSet(this.executeSelectQuery(query));
-	return result.getBindings().length();
+
+	JSONResultSet result = this.executeSelectQuery(query);
+	return result.getBindings().size();
     }
 
     @Override
@@ -114,17 +120,18 @@ public class JenaTDBSession implements Session {
     }
 
     @Override
-    public String executeConstructQuery(String query) {
-			
-	QueryExecution qexec = QueryExecutionFactory.create(query, this.dataset);
+    public InputStream executeConstructQuery(String query) {
+
+	QueryExecution qexec = QueryExecutionFactory
+		.create(query, this.dataset);
 	Model results = qexec.execConstruct();
-	StringWriter out = new StringWriter();
-	
+	ByteArrayOutputStream out = new ByteArrayOutputStream();
 	RDFDataMgr.write(out, results, Lang.NTRIPLES);
-	
-//	String syntax = "N-TRIPLE"; // also try "RDF/XML-ABBREV" , "N-TRIPLE" and "TURTLE"
-//	results.write(out, syntax);
-	
-	return out.toString();
+
+	// String syntax = "N-TRIPLE"; // also try "RDF/XML-ABBREV" , "N-TRIPLE"
+	// and "TURTLE"
+	// results.write(out, syntax);
+
+	return new ByteArrayInputStream(out.toByteArray());
     }
 }

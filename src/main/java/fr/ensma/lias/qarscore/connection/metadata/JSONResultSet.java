@@ -19,51 +19,55 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.connection.metadata;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.io.InputStream;
+
+import org.apache.jena.atlas.json.JSON;
+import org.apache.jena.atlas.json.JsonArray;
+import org.apache.jena.atlas.json.JsonObject;
+import org.apache.jena.atlas.json.JsonValue;
+
+
 
 /**
  * @author Geraud FOKOU
  */
 public class JSONResultSet {
 
-    private String resultset ;
-    private JSONObject head;
-    private JSONObject results;
-    private JSONArray vars;
-    private JSONArray bindings;
-    private JSONObject current_result;
+    private JsonObject jsonObj;
+    private JsonObject head;
+    private JsonObject results;
+    private JsonArray vars;
+    private JsonArray bindings;
+    private JsonObject current_result;
     private int result_index = 0;
 
     public static JSONResultSet getJSONResultSet(String resultset) {
 
 	JSONResultSet currentResultSet = new JSONResultSet();
-	currentResultSet.resultset = resultset;
-	JSONObject jsonObj = new JSONObject(resultset);
-	if (jsonObj.has("head")) {
-	    currentResultSet.head = jsonObj.getJSONObject("head");
+	JsonObject current_jsonObj = JSON.parse(resultset);
+	currentResultSet.jsonObj = current_jsonObj;
+	if (current_jsonObj.hasKey("head")) {
+	    currentResultSet.head = current_jsonObj.get("head").getAsObject();
 	} else {
 	    return null;
 	}
-	if (jsonObj.has("results")) {
-	    currentResultSet.results = jsonObj.getJSONObject("results");
+	if (current_jsonObj.hasKey("results")) {
+	    currentResultSet.results = current_jsonObj.get("results").getAsObject();
 	} else {
 	    return null;
 	}
-	if (currentResultSet.head.has("vars")) {
-	    if (currentResultSet.head.get("vars") instanceof JSONArray) {
-		currentResultSet.vars = currentResultSet.head
-			.getJSONArray("vars");
+	if (currentResultSet.head.hasKey("vars")) {
+	    if (currentResultSet.head.get("vars").isArray()) {
+		currentResultSet.vars = currentResultSet.head.get("vars").getAsArray();
 	    } else {
 		return null;
 	    }
 	} else {
 	    return null;
 	}
-	if (currentResultSet.results.has("bindings")) {
-	    if (currentResultSet.results.get("bindings") instanceof JSONArray) {
-		currentResultSet.bindings = currentResultSet.results
-			.getJSONArray("bindings");
+	if (currentResultSet.results.hasKey("bindings")) {
+	    if (currentResultSet.results.get("bindings").isArray()) {
+		currentResultSet.bindings = currentResultSet.results.get("bindings").getAsArray();
 	    } else {
 		return null;
 	    }
@@ -74,6 +78,43 @@ public class JSONResultSet {
 	return currentResultSet;
     }
 
+    public static JSONResultSet getJSONResultSet(InputStream resultset) {
+	
+	JSONResultSet currentResultSet = new JSONResultSet();
+	JsonObject current_jsonObj = JSON.parse(resultset);
+	currentResultSet.jsonObj = current_jsonObj;
+	if (current_jsonObj.hasKey("head")) {
+	    currentResultSet.head = current_jsonObj.get("head").getAsObject();
+	} else {
+	    return null;
+	}
+	if (current_jsonObj.hasKey("results")) {
+	    currentResultSet.results = current_jsonObj.get("results").getAsObject();
+	} else {
+	    return null;
+	}
+	if (currentResultSet.head.hasKey("vars")) {
+	    if (currentResultSet.head.get("vars").isArray()) {
+		currentResultSet.vars = currentResultSet.head.get("vars").getAsArray();
+	    } else {
+		return null;
+	    }
+	} else {
+	    return null;
+	}
+	if (currentResultSet.results.hasKey("bindings")) {
+	    if (currentResultSet.results.get("bindings").isArray()) {
+		currentResultSet.bindings = currentResultSet.results.get("bindings").getAsArray();
+	    } else {
+		return null;
+	    }
+	} else {
+	    return null;
+	}
+	
+	return currentResultSet;
+    }
+    
     /**
      * 
      */
@@ -85,36 +126,36 @@ public class JSONResultSet {
     /**
      * @return the head
      */
-    public JSONObject getHead() {
+    public JsonObject getHead() {
 	return head;
     }
 
     /**
      * @return the result
      */
-    public JSONObject getResult() {
+    public JsonObject getResult() {
 	return results;
     }
 
     /**
      * @return the vars
      */
-    public JSONArray getVars() {
+    public JsonArray getVars() {
 	return vars;
     }
 
     public String getVar(int i){
 	
-	if(i>= vars.length()){
+	if(i>= vars.size()){
 	    return null;
 	}
-	return vars.getString(i);
+	return vars.get(i).getAsString().value();
     }
     
     /**
      * @return the bindings
      */
-    public JSONArray getBindings() {
+    public JsonArray getBindings() {
 	return bindings;
     }
 
@@ -129,8 +170,8 @@ public class JSONResultSet {
 	if (current_result == null) {
 	    throw new NullPointerException("End Result set");
 	}
-	if (current_result.has(name)) {
-	    return current_result.getJSONObject(name).getString("value");
+	if (current_result.hasKey(name)) {
+	    return current_result.get(name).getAsObject().get("value").toString();
 	}
 
 	return null;
@@ -146,7 +187,9 @@ public class JSONResultSet {
 	if (current_result == null) {
 	    throw new NullPointerException("End Result set");
 	}
-	return current_result.getJSONObject(name).getInt("value");
+	JsonValue value = current_result.get(name).getAsObject().get("value");
+	int length = value.toString().length();
+	return Integer.parseInt(value.toString().substring(1, length-1));
     }
     
     /**
@@ -159,7 +202,9 @@ public class JSONResultSet {
 	if (current_result == null) {
 	    throw new NullPointerException("End Result set");
 	}
-	return current_result.getJSONObject(name).getBoolean("value");
+	JsonValue value = current_result.get(name).getAsObject().get("value");
+	int length = value.toString().length();
+	return Boolean.parseBoolean(value.toString().substring(1, length-1));
     }
     
     /**
@@ -172,7 +217,9 @@ public class JSONResultSet {
 	if (current_result == null) {
 	    throw new NullPointerException("End Result set");
 	}
-	return current_result.getJSONObject(name).getDouble("value");
+	JsonValue value = current_result.get(name).getAsObject().get("value");
+	int length = value.toString().length();
+	return Double.parseDouble(value.toString().substring(1, length-1));
     }
 
     /**
@@ -180,7 +227,7 @@ public class JSONResultSet {
      * @return
      */
     public boolean hasNext(){
-	return result_index<bindings.length() - 1;
+	return result_index<bindings.size() - 1;
     }
     
     /**
@@ -190,8 +237,8 @@ public class JSONResultSet {
     public boolean next(){
 	
 	result_index = result_index + 1;
-	if(result_index<bindings.length()){
-	    current_result = bindings.getJSONObject(result_index);
+	if(result_index<bindings.size()){
+	    current_result = bindings.get(result_index).getAsObject();
 	    return true;
 	}
 	return false;
@@ -202,14 +249,14 @@ public class JSONResultSet {
      * @return
      */
     public int getSize(){
-	return bindings.length();
+	return bindings.size();
     }
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-	return this.resultset;
+	return jsonObj.toString();
     }
     
     /**
@@ -218,13 +265,13 @@ public class JSONResultSet {
      * @param binding
      * @return
      */
-    public static boolean bindingsInclude(JSONArray bindings2,
-	    JSONObject binding) {
+    public static boolean bindingsInclude(JsonArray bindings2,
+	    JsonObject binding) {
 	
 	int i = 0;
 	boolean found = false;
-	while((i<bindings2.length())&&(!found)){
-	    found = bindingsInclude(bindings2.getJSONObject(i), binding);
+	while((i<bindings2.size())&&(!found)){
+	    found = bindingsInclude(bindings2.get(i).getAsObject(), binding);
 	    i = i +1;
 	}
 	return found;
@@ -236,11 +283,11 @@ public class JSONResultSet {
      * @param binding
      * @return
      */
-    public static boolean bindingsInclude(JSONObject jsonObject,
-	    JSONObject binding) {
+    public static boolean bindingsInclude(JsonObject jsonObject,
+	    JsonObject binding) {
 	for(String key:jsonObject.keySet()){
 	    if(binding.keySet().contains(key)){
-		if(!jsonObject.getJSONObject(key).getString("value").equals(binding.getJSONObject(key).getString("value"))){
+		if(!jsonObject.get(key).getAsObject().get("value").toString().equals(binding.get(key).getAsObject().get("value").toString())){
 		    return false;
 		}
 	    }

@@ -115,9 +115,12 @@ public class MatrixStrategyAllQuery extends MatrixStrategy {
 	    elements.add(CURRENT_CONJUNCTIVE_QUERY.getElementList().get(i - 1));
 	    CQuery current_query = CQueryFactory.createCQuery(elements);
 
-	    JSONResultSet result_set = JSONResultSet.getJSONResultSet(SESSION.executeSelectQuery(current_query.toString()));
-//	    ResultSet result_set = QueryExecutionFactory.create(current_query.toString(), ((JenaTDBSession)SESSION).getDataset())
-//			.execSelect();
+	    JSONResultSet result_set = SESSION.executeSelectQuery(current_query
+		    .toString());
+	    // ResultSet result_set =
+	    // QueryExecutionFactory.create(current_query.toString(),
+	    // ((JenaTDBSession)SESSION).getDataset())
+	    // .execSelect();
 
 	    while (result_set.hasNext()) {
 

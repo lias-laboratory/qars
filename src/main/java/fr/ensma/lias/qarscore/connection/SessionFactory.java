@@ -20,6 +20,7 @@
 package fr.ensma.lias.qarscore.connection;
 
 import java.io.File;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -95,7 +96,7 @@ public class SessionFactory {
 	return new EndPointSession.Builder().url(url).outputFormat(OutputFormat.JSON).build();
     }
     
-    public static Session getModelSession(String data){
+    public static Session getModelSession(InputStream data){
 	return new ModelSession(data);
     }
 }

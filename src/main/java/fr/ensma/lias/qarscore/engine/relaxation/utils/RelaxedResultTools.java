@@ -21,7 +21,7 @@ package fr.ensma.lias.qarscore.engine.relaxation.utils;
 
 import java.util.LinkedHashMap;
 
-import org.json.JSONObject;
+import org.apache.jena.atlas.json.JsonObject;
 
 import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
 
@@ -45,9 +45,9 @@ public class RelaxedResultTools {
 
 	try {
 	    int i = 0;
-	    while ((i < newresult.getBindings().length())
+	    while ((i < newresult.getBindings().size())
 		    && (result.size() < limit)) {
-		JSONObject sol = newresult.getBindings().getJSONObject(i);
+		 JsonObject sol = newresult.getBindings().get(i).getAsObject();
 		String newsol = sol.toString();
 		if(!result.containsKey(newsol)){
 		    result.put(sol.toString(), Double.valueOf(sim));

@@ -20,6 +20,7 @@
 package fr.ensma.lias.qarscore.connection;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
@@ -81,12 +82,12 @@ public class EndPointSessionTest {
 //	conjunctiveQuery.getElementList().remove(0);
 	System.out.println(conjunctiveQuery.toString());
 //	JSONResultSet result = JSONResultSet.getJSONResultSet(session.executeSelectQuery(conjunctiveQuery.toString()));
-	JSONResultSet result = JSONResultSet.getJSONResultSet(session.executeSelectQuery(SPARQLQueriesSample.QUERY_14));
+	JSONResultSet result = session.executeSelectQuery(SPARQLQueriesSample.QUERY_14);
 	int j = 0;
 	while(result.next()){
 	    j++;
 	    System.out.println("*********************************************************************");
-	    for (int i=0; i<result.getVars().length(); i++){
+	    for (int i=0; i<result.getVars().size(); i++){
 		System.out.println(result.getString(result.getVar(i)));
 	    }
 	    System.out.println("*********************************************************************");
@@ -108,7 +109,7 @@ public class EndPointSessionTest {
 	System.out.println(query.getConstructTemplate().getBGP());
 	System.out.println(query.getQueryPattern().toString());
 
-	String result = session.executeConstructQuery(query.toString());
-	System.out.println(result);
+	InputStream result = session.executeConstructQuery(query.toString());
+	System.out.println(result.toString());
     }
 }

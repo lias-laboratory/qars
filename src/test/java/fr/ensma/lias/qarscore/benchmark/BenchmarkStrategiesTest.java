@@ -87,7 +87,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Algorithm execution parameter
      */
-    private String current_query_set = "mixed_II";
+    private String current_query_set = "mixed_I";
     private String algorithm = "huang";
     private LinkedHashMap<String, Double> solutions;
     private LinkedHashMap<String, Double> solutions_rsat;
@@ -414,8 +414,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 		begin_query = System.currentTimeMillis();
 		CQuery next_query = relaxed_query.next();
 		Session session = relaxed_query.getCurrentView();
-		JSONResultSet result = JSONResultSet.getJSONResultSet(session
-			.executeSelectQuery(next_query.toString()));
+		JSONResultSet result = session.executeSelectQuery(next_query
+			.toString());
 
 		RelaxedResultTools.addResult(solutions, result,
 			relaxed_query.getCurrent_similarity(), TOP_K);
@@ -479,9 +479,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		    CQuery next_query = relaxed_query.next();
 		    Session session = relaxed_query.getCurrentView();
-		    JSONResultSet result = JSONResultSet
-			    .getJSONResultSet(session
-				    .executeSelectQuery(next_query.toString()));
+		    JSONResultSet result = session
+			    .executeSelectQuery(next_query.toString());
 
 		    RelaxedResultTools.addResult(solutions, result,
 			    relaxed_query.getCurrent_similarity(), TOP_K);

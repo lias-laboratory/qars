@@ -65,8 +65,8 @@ public class BasicOptimizedRelaxationTest extends InitTest {
 	int number_answers = 0;
 	int number_relaxed_queries = 0;
 	while ((!hasTopk)&&(relaxed_query.hasNext())){
-	    JSONResultSet result = JSONResultSet.getJSONResultSet(session.executeSelectQuery(relaxed_query.next().toString()));
-	    int query_answers_size = result.getBindings().length();
+	    JSONResultSet result = session.executeSelectQuery(relaxed_query.next().toString());
+	    int query_answers_size = result.getBindings().size();
 	    number_answers = number_answers + query_answers_size;
 	    hasTopk = number_answers >= TOP_K;
 	    

@@ -1,7 +1,9 @@
 package fr.ensma.lias.qarscore.connection.implementation;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 
 import org.apache.jena.ontology.OntModelSpec;
 import org.openrdf.query.GraphQuery;
@@ -116,7 +118,7 @@ public class SesameSession implements Session {
     }
 
     @Override
-    public String executeSelectQuery(String query) {
+    public JSONResultSet executeSelectQuery(String query) {
 
 	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	TupleQueryResultHandler writer = new SPARQLResultsJSONWriter(
@@ -125,15 +127,17 @@ public class SesameSession implements Session {
 		.prepareTupleQuery(query);
 	sesameQuery.evaluate(writer);
 
-	return writer.toString();
+	ByteArrayInputStream input = new ByteArrayInputStream(
+		outputStream.toByteArray());
+
+	return JSONResultSet.getJSONResultSet(input);
     }
 
     @Override
     public int getResultSize(String query) {
 
-	JSONResultSet result = JSONResultSet.getJSONResultSet(this
-		.executeSelectQuery(query));
-	return result.getBindings().length();
+	JSONResultSet result = this.executeSelectQuery(query);
+	return result.getBindings().size();
     }
 
     @Override
@@ -142,7 +146,7 @@ public class SesameSession implements Session {
     }
 
     @Override
-    public String executeConstructQuery(String query) {
+    public InputStream executeConstructQuery(String query) {
 
 	GraphQuery sesamequery = this.repository.getConnection()
 		.prepareGraphQuery(query);
@@ -150,6 +154,6 @@ public class SesameSession implements Session {
 	RDFWriter writer = Rio.createWriter(RDFFormat.NTRIPLES, outputStream);
 	sesamequery.evaluate(writer);
 
-	return writer.toString();
+	return new ByteArrayInputStream(outputStream.toByteArray());
     }
 }

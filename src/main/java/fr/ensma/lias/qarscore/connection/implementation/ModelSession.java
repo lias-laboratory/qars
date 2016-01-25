@@ -21,7 +21,7 @@ package fr.ensma.lias.qarscore.connection.implementation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.StringWriter;
+import java.io.InputStream;
 
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -48,13 +48,12 @@ public class ModelSession implements Session {
     /**
      * 
      */
-    public ModelSession(String data) {
+    public ModelSession(InputStream data) {
 	Model model = ModelFactory.createDefaultModel();
 	// String syntax = "N-TRIPLE";
 	// MODEL.read(new ByteArrayInputStream(data.getBytes()), syntax);
-	RDFDataMgr.read(model, Properties.DATA_SCHEMA_FILE,
-		Lang.NTRIPLES);
-	RDFDataMgr.read(model, new ByteArrayInputStream(data.getBytes()),
+	RDFDataMgr.read(model, Properties.DATA_SCHEMA_FILE, Lang.NTRIPLES);
+	RDFDataMgr.read(model, data,
 		Lang.NTRIPLES);
 	MODEL = ModelFactory.createRDFSModel(model);
     }
@@ -65,22 +64,23 @@ public class ModelSession implements Session {
     }
 
     @Override
-    public String executeSelectQuery(String query) {
+    public JSONResultSet executeSelectQuery(String query) {
 	QueryExecution qexec = QueryExecutionFactory.create(query, MODEL);
 
 	ResultSet results = qexec.execSelect();
 	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	ResultSetFormatter.output(outputStream, results,
 		ResultsFormat.FMT_RS_JSON);
+	ByteArrayInputStream input = new ByteArrayInputStream(
+		outputStream.toByteArray());
 
-	return outputStream.toString();
+	return JSONResultSet.getJSONResultSet(input);
     }
 
     @Override
     public int getResultSize(String query) {
-	JSONResultSet result = JSONResultSet.getJSONResultSet(this
-		.executeSelectQuery(query));
-	return result.getBindings().length();
+	JSONResultSet result = this.executeSelectQuery(query);
+	return result.getBindings().size();
     }
 
     @Override
@@ -89,11 +89,11 @@ public class ModelSession implements Session {
     }
 
     @Override
-    public String executeConstructQuery(String query) {
+    public InputStream executeConstructQuery(String query) {
 
 	QueryExecution qexec = QueryExecutionFactory.create(query, MODEL);
 	Model results = qexec.execConstruct();
-	StringWriter out = new StringWriter();
+	ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 	RDFDataMgr.write(out, results, Lang.NTRIPLES);
 
@@ -101,7 +101,7 @@ public class ModelSession implements Session {
 	// and "TURTLE"
 	// results.write(out, syntax);
 
-	return out.toString();
+	return new ByteArrayInputStream(out.toByteArray());
 
     }
 
