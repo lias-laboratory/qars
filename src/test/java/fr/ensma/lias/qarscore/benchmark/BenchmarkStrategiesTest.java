@@ -93,6 +93,8 @@ public class BenchmarkStrategiesTest extends InitTest {
     private LinkedHashMap<String, Double> solutions_rsat;
     private List<QueryExplain> newTestResultPairList = null;
     private ResultStrategyExplain newResultExplain = null;
+    private BufferedWriter fichierAnswers = null;
+    private BufferedWriter fichierSimilarity = null;
 
     class QueryExplain {
 
@@ -356,6 +358,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 	try {
 	    newTestResultPairList = this.newTestResultPairList("/"
 		    + QUERIES_TYPE_FILE.get(current_query_set));
+	    fichierAnswers = new BufferedWriter(new FileWriter(
+		    answersEvaluationCSV.toString()));
+	    fichierSimilarity = new BufferedWriter(new FileWriter(
+		    simEvaluationCSV.toString()));
+
 	} catch (IOException e) {
 	    e.printStackTrace();
 	    Assert.fail();
@@ -370,6 +377,8 @@ public class BenchmarkStrategiesTest extends InitTest {
     @After
     public void tearDown() throws Exception {
 	newResultExplain.generateReport();
+	fichierAnswers.close();
+	fichierSimilarity.close();
     }
 
     @Test
@@ -512,12 +521,10 @@ public class BenchmarkStrategiesTest extends InitTest {
 			number_queries_mfs + number_check_queries,
 			number_relaxed_queries);
 
-		logger.info("*****" + (int) (i + 2) + "******" + duration
-			+ " " + duration_mfs_search + " "
-			+ duration_mfs_check_search + " "
-			+ number_relaxed_queries + " "
-			+ number_queries_mfs + " "
-			+ number_check_queries + " "
+		logger.info("*****" + (int) (i + 2) + "******" + duration + " "
+			+ duration_mfs_search + " " + duration_mfs_check_search
+			+ " " + number_relaxed_queries + " "
+			+ number_queries_mfs + " " + number_check_queries + " "
 			+ solutions.size());
 	    }
 	    logger.info("**************************End QUERY "
@@ -571,10 +578,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    }
 	}
-	BufferedWriter fichier = new BufferedWriter(new FileWriter(
-		answersEvaluationCSV.toString()));
-	fichier.write(buffer.toString());
-	fichier.close();
+	fichierAnswers.write(buffer.toString());
     }
 
     private void load_similarity(String description, Map<Double, Double> all_sim)
@@ -593,9 +597,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    + satisfiability.toString().replace('.', ',') + "\n");
 
 	}
-	BufferedWriter fichier = new BufferedWriter(new FileWriter(
-		simEvaluationCSV.toString()));
-	fichier.write(buffer.toString());
-	fichier.close();
+	fichierSimilarity.write(buffer.toString());
     }
 }

@@ -98,7 +98,6 @@ public class JenaTDBSession implements Session {
 	ResultSet results = qexec.execSelect();
 	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	ResultSetFormatter.output(outputStream, results, ResultsFormat.FMT_RS_JSON);
-
 	return outputStream.toString();
     }
 
