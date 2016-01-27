@@ -96,7 +96,7 @@ public class JenaTDBSession implements Session {
 		.create(query, this.dataset);
 
 //	ResultSet results = qexec.execSelect();
-	ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024*1024);
+	ByteArrayOutputStream outputStream = new ByteArrayOutputStream(4*1024*1024);
 	ResultSetFormatter.output(outputStream, qexec.execSelect(),
 		ResultsFormat.FMT_RS_JSON);
 	ByteArrayInputStream input = new ByteArrayInputStream(
