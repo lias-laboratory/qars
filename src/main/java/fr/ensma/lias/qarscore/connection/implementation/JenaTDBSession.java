@@ -112,7 +112,8 @@ public class JenaTDBSession implements Session {
 	    outputStream = new FileOutputStream(tempfile);
 	    ResultSetFormatter.output(outputStream, qexec.execSelect(),
 		    ResultsFormat.FMT_RS_JSON);
-	    InputStream input = new FileInputStream(outputStream.getFD());
+	    outputStream.flush();
+	    InputStream input = new FileInputStream(tempfile);
 
 	    return JSONResultSet.getJSONResultSet(input);
 
