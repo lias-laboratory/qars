@@ -25,7 +25,19 @@ package fr.ensma.lias.qarscore.configuration;
  */
 public class Properties {
     
-    public static String DATA_SCHEMA_FILE = "src/test/resources/univ-bench.nt";
+    public static final String SUPER_CLASS_FILE = "LIST_SUPER_CLASSES.properties";
+    
+    public static final String INSTANCE_CLASS_SIZE_FILE = "NUMBER_INSTANCE_CLASS.properties";
+    
+    public static final String SUPER_PROPERTY_FILE = "LIST_SUPER_PROPERTIES.properties";
+    
+    public static final String TRIPLET_PROPERTY_SIZE_FILE = "NUMBER_TRIPLET_PROPERTY.properties";
+    
+    public static final String TRIPLET_SIZE_FILE = "NUMBER_TRIPLET.properties";
+    
+    public static final String INSTANCE_SIZE_FILE = "NUMBER_INSTANCE.properties";
+    
+    public static final String DATA_SCHEMA_FILE = "src/test/resources/univ-bench.nt";
     
     private static String RELAXATION_STRATEGY = "AUTO";
     

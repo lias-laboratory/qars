@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.ensma.lias.qarscore.configuration.Properties;
 import fr.ensma.lias.qarscore.configuration.QueryConfig;
 import fr.ensma.lias.qarscore.connection.Session;
 
@@ -296,24 +297,10 @@ public class DatasetOntologyMetaData {
 	if (!statfolder.isDirectory()) {
 	    return false;
 	}
-//	File[] child = statfolder.listFiles();
-//	boolean found = false;
-//	int i = 0;
-//	while ((i < child.length) && (!found)) {
-//	    found = child[i].getName().equals(foldername);
-//	    i = i + 1;
-//	}
-//	if (!found) {
-//	    return false;
-//	}
-//	statfolder = child[i - 1];
-//	if (!statfolder.isDirectory()) {
-//	    return false;
-//	}
-
+	
 	JSONResultSet resultJson = JSONResultSet.getJSONResultSet(this
 		.readfile(statfolder.getCanonicalPath()
-			+ "/LIST_SUPER_CLASSES.properties"));
+			+ "/"+Properties.SUPER_CLASS_FILE));
 	while (resultJson.next()) {
 	    String classe = resultJson.getString("classe");
 	    String directsuperclasses = resultJson
@@ -322,14 +309,14 @@ public class DatasetOntologyMetaData {
 	}
 
 	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath() + "/NUMBER_INSTANCE_CLASS.properties"));
+		.getCanonicalPath() + "/"+ Properties.INSTANCE_CLASS_SIZE_FILE));
 	while (resultJson.next()) {
 	    String classe = resultJson.getString("classe");
 	    this.addInstances(classe, resultJson.getInt("numberInstance"));
 	}
 
 	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath() + "/LIST_SUPER_PROPERTIES.properties"));
+		.getCanonicalPath() + "/"+Properties.SUPER_PROPERTY_FILE));
 	while (resultJson.next()) {
 	    String property = resultJson.getString("property");
 	    String directsuperproperty = resultJson
@@ -338,20 +325,20 @@ public class DatasetOntologyMetaData {
 	}
 
 	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath() + "/NUMBER_TRIPLET_PROPERTY.properties"));
+		.getCanonicalPath() + "/"+Properties.TRIPLET_PROPERTY_SIZE_FILE));
 	while (resultJson.next()) {
 	    String property = resultJson.getString("property");
 	    this.addTriples(property, resultJson.getInt("numberProperty"));
 	}
 
 	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath() + "/NUMBER_TRIPLET.properties"));
+		.getCanonicalPath() + "/"+Properties.TRIPLET_SIZE_FILE));
 	while (resultJson.next()) {
 	    this.setNbTriples(resultJson.getInt("numberTriplet"));
 	}
 
 	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath() + "/NUMBER_INSTANCE.properties"));
+		.getCanonicalPath() + "/"+Properties.INSTANCE_SIZE_FILE));
 	while (resultJson.next()) {
 	    this.setNbInstances(resultJson.getInt("numberInstance"));
 	}
