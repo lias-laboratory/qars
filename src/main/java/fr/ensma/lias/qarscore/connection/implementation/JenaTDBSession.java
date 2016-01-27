@@ -109,8 +109,7 @@ public class JenaTDBSession implements Session {
 	try {
 	    tempfile.createNewFile();
 	    FileOutputStream outputStream;
-	    outputStream = new FileOutputStream("tempfile"
-		    + System.currentTimeMillis());
+	    outputStream = new FileOutputStream(tempfile);
 	    ResultSetFormatter.output(outputStream, qexec.execSelect(),
 		    ResultsFormat.FMT_RS_JSON);
 	    InputStream input = new FileInputStream(outputStream.getFD());
