@@ -289,27 +289,27 @@ public class DatasetOntologyMetaData {
 	if (foldername == null) {
 	    return false;
 	}
-	File statfolder = new File(FOLDER_STAT);
+	File statfolder = new File(FOLDER_STAT + foldername);
 	if (!statfolder.exists()) {
 	    return false;
 	}
 	if (!statfolder.isDirectory()) {
 	    return false;
 	}
-	File[] child = statfolder.listFiles();
-	boolean found = false;
-	int i = 0;
-	while ((i < child.length) && (!found)) {
-	    found = child[i].getName().equals(foldername);
-	    i = i + 1;
-	}
-	if (!found) {
-	    return false;
-	}
-	statfolder = child[i - 1];
-	if (!statfolder.isDirectory()) {
-	    return false;
-	}
+//	File[] child = statfolder.listFiles();
+//	boolean found = false;
+//	int i = 0;
+//	while ((i < child.length) && (!found)) {
+//	    found = child[i].getName().equals(foldername);
+//	    i = i + 1;
+//	}
+//	if (!found) {
+//	    return false;
+//	}
+//	statfolder = child[i - 1];
+//	if (!statfolder.isDirectory()) {
+//	    return false;
+//	}
 
 	JSONResultSet resultJson = JSONResultSet.getJSONResultSet(this
 		.readfile(statfolder.getCanonicalPath()

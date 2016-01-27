@@ -28,9 +28,7 @@ import java.sql.SQLException;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.sdb.SDBFactory;
@@ -122,9 +120,9 @@ public class JenaSDBSession implements Session {
 	QueryExecution qexec = QueryExecutionFactory
 		.create(query, this.dataset);
 
-	ResultSet results = qexec.execSelect();
+//	ResultSet results = qexec.execSelect();
 	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	ResultSetFormatter.output(outputStream, results,
+	ResultSetFormatter.output(outputStream, qexec.execSelect(),
 		ResultsFormat.FMT_RS_JSON);
 	ByteArrayInputStream input = new ByteArrayInputStream(
 		outputStream.toByteArray());
@@ -150,10 +148,10 @@ public class JenaSDBSession implements Session {
 
 	QueryExecution qexec = QueryExecutionFactory
 		.create(query, this.dataset);
-	Model results = qexec.execConstruct();
+//	Model results = qexec.execConstruct();
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-	RDFDataMgr.write(out, results, Lang.NTRIPLES);
+	RDFDataMgr.write(out, qexec.execConstruct(), Lang.NTRIPLES);
 
 	// String syntax = "N-TRIPLE"; // also try "RDF/XML-ABBREV" , "N-TRIPLE"
 	// and "TURTLE"
