@@ -21,6 +21,11 @@ package fr.ensma.lias.qarscore.connection.implementation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.jena.query.Dataset;
@@ -95,14 +100,29 @@ public class JenaTDBSession implements Session {
 	QueryExecution qexec = QueryExecutionFactory
 		.create(query, this.dataset);
 
-//	ResultSet results = qexec.execSelect();
-	ByteArrayOutputStream outputStream = new ByteArrayOutputStream(8*1024*1024);
-	ResultSetFormatter.output(outputStream, qexec.execSelect(),
-		ResultsFormat.FMT_RS_JSON);
-	ByteArrayInputStream input = new ByteArrayInputStream(
-		outputStream.toByteArray());
+	// ResultSet results = qexec.execSelect();
+	// ByteArrayOutputStream outputStream = new
+	// ByteArrayOutputStream(8*1024*1024);
+	File tempfile = new File("tempfile" + System.currentTimeMillis()
+		+ ".tmp");
 
-	return JSONResultSet.getJSONResultSet(input);
+	try {
+	    tempfile.createNewFile();
+	    FileOutputStream outputStream;
+	    outputStream = new FileOutputStream("tempfile"
+		    + System.currentTimeMillis());
+	    ResultSetFormatter.output(outputStream, qexec.execSelect(),
+		    ResultsFormat.FMT_RS_JSON);
+	    InputStream input = new FileInputStream(outputStream.getFD());
+
+	    return JSONResultSet.getJSONResultSet(input);
+
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
     }
 
     @Override
@@ -122,7 +142,7 @@ public class JenaTDBSession implements Session {
 
 	QueryExecution qexec = QueryExecutionFactory
 		.create(query, this.dataset);
-//	Model results = qexec.execConstruct();
+	// Model results = qexec.execConstruct();
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
 	RDFDataMgr.write(out, qexec.execConstruct(), Lang.NTRIPLES);
 
