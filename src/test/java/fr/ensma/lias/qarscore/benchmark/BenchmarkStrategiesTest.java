@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.jena.query.Query;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -413,8 +414,10 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		begin_query = System.currentTimeMillis();
 		CQuery next_query = relaxed_query.next();
+		Query temp_query = next_query.getSPARQLQuery();
+		temp_query.setLimit(TOP_K);
 		Session session = relaxed_query.getCurrentView();
-		JSONResultSet result = session.executeSelectQuery(next_query
+		JSONResultSet result = session.executeSelectQuery(temp_query
 			.toString());
 
 		RelaxedResultTools.addResult(solutions, result,
@@ -478,9 +481,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    begin_query = System.currentTimeMillis();
 
 		    CQuery next_query = relaxed_query.next();
+		    Query temp_query = next_query.getSPARQLQuery();
+		    temp_query.setLimit(TOP_K);
 		    Session session = relaxed_query.getCurrentView();
 		    JSONResultSet result = session
-			    .executeSelectQuery(next_query.toString());
+			    .executeSelectQuery(temp_query.toString());
 
 		    RelaxedResultTools.addResult(solutions, result,
 			    relaxed_query.getCurrent_similarity(), TOP_K);
