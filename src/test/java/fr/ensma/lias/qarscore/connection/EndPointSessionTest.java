@@ -22,11 +22,12 @@ package fr.ensma.lias.qarscore.connection;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.jena.atlas.json.JSON;
+import org.apache.jena.atlas.json.JsonObject;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.syntax.Template;
-import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -61,11 +62,11 @@ public class EndPointSessionTest {
     public void testEndPointSession() {
 	try {
 	    String result = session.query(QueryConfig.LIST_SUPER_CLASSES);
-	    JSONObject jsonObj = new JSONObject(result);
+	    JsonObject jsonObj = JSON.parse(result);
 	    for(String key: jsonObj.keySet()){
-		JSONObject newJson = jsonObj.getJSONObject(key);
+		JsonObject newJson = jsonObj.get(key).getAsObject();
 		for(String key2: newJson.keySet()){
-		    System.out.println(key2+"--->"+newJson.get(key2)+"--->"+newJson.getJSONArray(key2));
+		    System.out.println(key2+"--->"+newJson.get(key2)+"--->"+newJson.get(key2).getAsObject());
 		}
 		System.out.println(key+"--->"+jsonObj.get(key));
 	    }
