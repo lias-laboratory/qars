@@ -87,7 +87,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Algorithm execution parameter
      */
-    private String current_query_set = "mixed_I";
+    private String current_query_set = "one";
     private String algorithm = "huang";
     private LinkedHashMap<String, Double> solutions;
     private LinkedHashMap<String, Double> solutions_rsat;
