@@ -57,6 +57,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     static {
 	QUERIES_TYPE_FILE = new HashMap<String, String>();
 	QUERIES_TYPE_FILE.put("huang", "queries-huang.test");
+	QUERIES_TYPE_FILE.put("mixed_III", "queries-mixed-III.test");
 	QUERIES_TYPE_FILE.put("mixed_II", "queries-mixed-II.test");
 	QUERIES_TYPE_FILE.put("mixed_I", "queries-mixed-I.test");
 	QUERIES_TYPE_FILE.put("one", "queries-one.test");
@@ -88,7 +89,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Algorithm execution parameter
      */
-    private String current_query_set = "one";
+    private String current_query_set = "mixed_III";
     private String algorithm = "huang-opt";
     private LinkedHashMap<String, Double> solutions;
     private LinkedHashMap<String, Double> solutions_rsat;
