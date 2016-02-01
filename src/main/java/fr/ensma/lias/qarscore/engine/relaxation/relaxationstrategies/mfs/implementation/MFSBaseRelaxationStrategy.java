@@ -58,7 +58,7 @@ public class MFSBaseRelaxationStrategy extends AbstractMFSRelaxationStrategy {
 	mfs_finders = StrategyFactory.getLatticeStrategy(s, query, MFS_LIMIT_ANSWERS);
 	List<CQuery> all_mfs = mfs_finders.getAllMFS();
 	this.number_mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).number_of_query_executed;
-	this.duration__mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).duration_of_execution;
+	this.duration_mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).duration_of_execution;
 	
 	mfs_elt_index = new ArrayList<int[]>();
 	mfs_degree_by_index = new ArrayList<List<int[]>>();
@@ -104,7 +104,7 @@ public class MFSBaseRelaxationStrategy extends AbstractMFSRelaxationStrategy {
 		optimization);
 	List<CQuery> all_mfs = mfs_finders.getAllMFS();
 	this.number_mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).number_of_query_executed;
-	this.duration__mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).duration_of_execution;
+	this.duration_mfs_query_executed = ((AbstractLatticeStrategy)mfs_finders).duration_of_execution;
 	
 	mfs_elt_index = new ArrayList<int[]>();
 	mfs_degree_by_index = new ArrayList<List<int[]>>();

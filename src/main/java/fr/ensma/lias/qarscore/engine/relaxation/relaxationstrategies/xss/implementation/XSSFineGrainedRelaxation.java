@@ -33,7 +33,7 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 /**
  * @author Geraud FOKOU
  */
-public class XSSIncrementaleRelaxation extends AbstractXSSRelaxationStrategy {
+public class XSSFineGrainedRelaxation extends AbstractXSSRelaxationStrategy {
 
     /**
      * XSS Similarity and XSS complement index
@@ -125,7 +125,7 @@ public class XSSIncrementaleRelaxation extends AbstractXSSRelaxationStrategy {
      * @param query
      * @param s
      */
-    public XSSIncrementaleRelaxation(CQuery query, Session s) {
+    public XSSFineGrainedRelaxation(CQuery query, Session s) {
 	super(query, s);
 	initilizationXSSComp(query, s, true);
     }
@@ -135,7 +135,7 @@ public class XSSIncrementaleRelaxation extends AbstractXSSRelaxationStrategy {
      * @param s
      * @param optimization
      */
-    public XSSIncrementaleRelaxation(CQuery query, Session s,
+    public XSSFineGrainedRelaxation(CQuery query, Session s,
 	    boolean optimization) {
 	super(query, s, optimization);
 	initilizationXSSComp(query, s, true);
@@ -157,7 +157,7 @@ public class XSSIncrementaleRelaxation extends AbstractXSSRelaxationStrategy {
 	    }
 	    already_relaxed_xss[pos].add(relaxed_comp_node);
 	    current_relaxed_query = this.getCompQuery(relaxed_comp_node, pos);
-
+	    
 	} else {
 	    GraphRelaxationIndex relax_graph_node = relaxed_queries[pos]
 		    .remove(0);
@@ -251,7 +251,8 @@ public class XSSIncrementaleRelaxation extends AbstractXSSRelaxationStrategy {
 
 	// logger.info(current_similarity+"      "+current_satisfactory);
 	sim_sat.put(current_similarity, current_satisfactory);
-
+	number_fine_grained_query_executed ++;
+	
 	return CQueryFactory.createCQuery(elt_relaxed_query,
 		query_to_relax.getSelectedQueryVar());
     }

@@ -27,7 +27,7 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 /**
  * @author Geraud FOKOU
  */
-public class XSSOptIncrementaleRelaxation extends XSSIncrementaleRelaxation {
+public class XSSOptFineGrainedRelaxation extends XSSFineGrainedRelaxation {
 
     /**
      * Relaxation session for each complement
@@ -40,16 +40,16 @@ public class XSSOptIncrementaleRelaxation extends XSSIncrementaleRelaxation {
      * @param query
      * @param s
      */
-    public XSSOptIncrementaleRelaxation(CQuery query, Session s) {
+    public XSSOptFineGrainedRelaxation(CQuery query, Session s) {
 	super(query, s);
 	comp_session = new Session[xss_to_relax_queries.length];
-	duration__computation_view = System.currentTimeMillis();
+	duration_computation_view = System.currentTimeMillis();
 	for (int i = 0; i < xss_to_relax_queries.length; i++) {
 	    comp_session[i] = SessionFactory.getModelSession(session
 		    .executeConstructQuery(xss_to_relax_queries[i]
 			    .toConstructQuery()));
 	}
-	duration__computation_view = System.currentTimeMillis() - duration__computation_view;
+	duration_computation_view = System.currentTimeMillis() - duration_computation_view;
     }
 
     /**
@@ -57,17 +57,17 @@ public class XSSOptIncrementaleRelaxation extends XSSIncrementaleRelaxation {
      * @param s
      * @param optimization
      */
-    public XSSOptIncrementaleRelaxation(CQuery query, Session s,
+    public XSSOptFineGrainedRelaxation(CQuery query, Session s,
 	    boolean optimization) {
 	super(query, s, optimization);
 	comp_session = new Session[xss_to_relax_queries.length];
-	duration__computation_view = System.currentTimeMillis();
+	duration_computation_view = System.currentTimeMillis();
 	for (int i = 0; i < xss_to_relax_queries.length; i++) {
 	    comp_session[i] = SessionFactory
 		    .getModelSession(session
 			    .executeConstructQuery(xss_to_relax_queries[i].toConstructQuery()));
 	}
-	duration__computation_view = System.currentTimeMillis() - duration__computation_view;
+	duration_computation_view = System.currentTimeMillis() - duration_computation_view;
     }
 
     @Override

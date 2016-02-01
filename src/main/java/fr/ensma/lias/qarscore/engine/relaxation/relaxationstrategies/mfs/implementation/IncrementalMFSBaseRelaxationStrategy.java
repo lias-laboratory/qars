@@ -138,7 +138,7 @@ public class IncrementalMFSBaseRelaxationStrategy extends
 	List<CQuery> mfs_list = this.mfs_finders.getOtherMFS(
 		current_relaxed_query, mfs_subqueries, elt_mfs_subqueries);
 	logger.info("Finding Big MFS "+ mfs_list.size() + " "+((AbstractLatticeStrategy)this.mfs_finders).number_of_query_executed);
-	this.duration__mfs_check_query_executed = this.duration__mfs_check_query_executed + (System.currentTimeMillis()-begin);
+	this.duration_mfs_check_query_executed = this.duration_mfs_check_query_executed + (System.currentTimeMillis()-begin);
 	this.number_mfs_check_query_executed = this.number_mfs_check_query_executed +  ((AbstractLatticeStrategy)this.mfs_finders).number_of_query_executed;
 	
 	for (int j = 0; j < mfs_list.size(); j++) {

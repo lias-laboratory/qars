@@ -1,20 +1,13 @@
 package fr.ensma.lias.qarscore.benchmark;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.jena.query.Query;
 import org.apache.log4j.FileAppender;
@@ -24,6 +17,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.benchmark.result.ResultStrategyExplain;
@@ -39,8 +36,8 @@ import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.mfs.impleme
 import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.mfs.implementation.IncrementalMFSBaseRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.mfs.implementation.MFSBaseOptimizedRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.mfs.implementation.MFSBaseRelaxationStrategy;
-import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss.implementation.XSSIncrementaleRelaxation;
-import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss.implementation.XSSOptIncrementaleRelaxation;
+import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss.implementation.XSSFineGrainedRelaxation;
+import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss.implementation.XSSOptFineGrainedRelaxation;
 import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss.implementation.XSSRelaxationStrategy;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.RelaxedResultTools;
 
@@ -48,7 +45,13 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.RelaxedResultTools;
  * @author Mickael BARON
  * @author Geraud FOKOU
  */
+@RunWith(Parameterized.class)
 public class BenchmarkStrategiesTest extends InitTest {
+
+    /**
+     * Algorithm
+     */
+    private final static String ALGO = "huang-opt";
 
     /**
      * Set queries files
@@ -63,6 +66,33 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("one", "queries-one.test");
     }
 
+    private static String current_query_set = "mixed_III";
+
+    @Parameters
+    public static Object[][] initialize_queries() {
+
+	List<QueryExplain> queryList = new ArrayList<QueryExplain>();
+	try {
+	    queryList = QueryExplain.newTestResultPairList("/"
+		    + QUERIES_TYPE_FILE.get(current_query_set));
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    return null;
+	}
+	Object[][] parameter = new Object[queryList.size()][2];
+	for (int i = 0; i < queryList.size(); i++) {
+	    parameter[i][0] = ALGO;
+	    parameter[i][1] = queryList.get(i);
+	}
+	return parameter;
+    }
+
+    @Parameter(0)
+    private String algorithm;
+
+    @Parameter(1)
+    private QueryExplain current_query;
+
     /**
      * looger tools
      */
@@ -75,7 +105,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      */
     private static final int NB_EXEC = 5;
     private int time_multiple = 1000;
-    private String time_value;
+    // private String time_value;
     private String timeEvaluationCSV;
     private String answersEvaluationCSV;
     private String simEvaluationCSV;
@@ -89,193 +119,12 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Algorithm execution parameter
      */
-    private String current_query_set = "mixed_III";
-    private String algorithm = "huang-opt";
+    // private List<QueryExplain> newTestResultPairList = null;
     private LinkedHashMap<String, Double> solutions;
     private LinkedHashMap<String, Double> solutions_rsat;
-    private List<QueryExplain> newTestResultPairList = null;
     private ResultStrategyExplain newResultExplain = null;
     private BufferedWriter fichierAnswers = null;
     private BufferedWriter fichierSimilarity = null;
-
-    class QueryExplain {
-
-	protected int index;
-
-	protected String description;
-
-	protected String query;
-
-	protected List<String> mfs;
-
-	protected List<String> xss;
-
-	public String getDescription() {
-	    return description;
-	}
-
-	public void setDescription(String description) {
-	    this.description = description;
-	}
-
-	public List<String> getMfs() {
-	    return mfs;
-	}
-
-	public List<String> getXss() {
-	    return xss;
-	}
-
-	public QueryExplain() {
-	    this.mfs = new ArrayList<String>();
-	    this.xss = new ArrayList<String>();
-	}
-
-	public String getQuery() {
-	    return query;
-	}
-
-	public void setQuery(String pQuery) {
-	    this.query = pQuery;
-	}
-
-	public void addMFS(String mfs) {
-	    this.mfs.add(mfs);
-	}
-
-	public void addXSS(String xss) {
-	    this.xss.add(xss);
-	}
-
-	public void setIndex(int pIndex) {
-	    this.index = pIndex;
-	}
-
-	public int getIndex() {
-	    return this.index;
-	}
-    }
-
-    protected List<QueryExplain> newTestResultPairList(final String filename)
-	    throws IOException {
-	final List<QueryExplain> queries = new ArrayList<QueryExplain>();
-	final URL fileUrl = BenchmarkStrategiesTest.class.getResource(filename);
-	final FileReader file = new FileReader(fileUrl.getFile());
-	BufferedReader in = null;
-	try {
-	    in = new BufferedReader(file);
-	    StringBuffer test = null;
-	    StringBuffer mfsresult = null;
-	    StringBuffer xssresult = null;
-
-	    final Pattern pTest = Pattern.compile("# Test (\\w+) \\((.*)\\)");
-	    final Pattern pMFS = Pattern.compile("# MFS (\\w+)");
-	    final Pattern pXSS = Pattern.compile("# XSS (\\w+)");
-
-	    String line;
-	    int lineNumber = 0;
-
-	    String testNumber = null;
-	    String testName = null;
-	    StringBuffer curbuf = null;
-
-	    while ((line = in.readLine()) != null) {
-		lineNumber++;
-		final Matcher mTest = pTest.matcher(line);
-		final Matcher mMFS = pMFS.matcher(line);
-		final Matcher mXSS = pXSS.matcher(line);
-
-		if (mTest.matches()) { // # Test
-		    addTestResultPair(queries, test, mfsresult, xssresult,
-			    testNumber, testName);
-
-		    testNumber = mTest.group(1);
-		    testName = mTest.group(2);
-
-		    test = new StringBuffer();
-		    mfsresult = new StringBuffer();
-		    xssresult = new StringBuffer();
-
-		    curbuf = test;
-		} else if (mMFS.matches()) { // # Result
-		    if (testNumber == null) {
-			throw new RuntimeException(
-				"Test file has result without a test (line "
-					+ lineNumber + ")");
-		    }
-		    final String resultNumber = mMFS.group(1);
-		    if (!testNumber.equals(resultNumber)) {
-			throw new RuntimeException("Result " + resultNumber
-				+ " test " + testNumber + " (line "
-				+ lineNumber + ")");
-		    }
-
-		    curbuf = mfsresult;
-		} else if (mXSS.matches()) {
-		    if (testNumber == null) {
-			throw new RuntimeException(
-				"Test file has result without a test (line "
-					+ lineNumber + ")");
-		    }
-		    final String resultNumber = mXSS.group(1);
-		    if (!testNumber.equals(resultNumber)) {
-			throw new RuntimeException("Result " + resultNumber
-				+ " test " + testNumber + " (line "
-				+ lineNumber + ")");
-		    }
-
-		    curbuf = xssresult;
-		} else {
-		    line = line.trim();
-		    if (!line.isEmpty()) {
-			curbuf.append(line);
-			curbuf.append("\n");
-		    }
-		}
-	    }
-
-	    addTestResultPair(queries, test, mfsresult, xssresult, testNumber,
-		    testName);
-
-	} finally {
-	    if (in != null) {
-		try {
-		    in.close();
-		} catch (final IOException e) {
-		}
-	    }
-	}
-
-	return queries;
-    }
-
-    private void addTestResultPair(List<QueryExplain> queries,
-	    StringBuffer query, StringBuffer mfsResult, StringBuffer xssResult,
-	    String number, String description) throws IOException {
-	if (query == null || mfsResult == null || xssResult == null) {
-	    return;
-	}
-
-	QueryExplain currentQuery = new QueryExplain();
-	currentQuery.setQuery(query.toString().trim());
-	currentQuery.setIndex(Integer.valueOf(number));
-	currentQuery.setDescription(description.trim());
-
-	BufferedReader bufReader = new BufferedReader(new StringReader(
-		mfsResult.toString()));
-	String line = null;
-	while ((line = bufReader.readLine()) != null) {
-	    currentQuery.addMFS(line.trim());
-	}
-
-	bufReader = new BufferedReader(new StringReader(xssResult.toString()));
-	line = null;
-	while ((line = bufReader.readLine()) != null) {
-	    currentQuery.addXSS(line.trim());
-	}
-
-	queries.add(currentQuery);
-    }
 
     /**
      * Set algorithm
@@ -312,11 +161,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    relaxed_query = new XSSRelaxationStrategy(conjunctiveQuery, session);
 	    break;
 	case "xss-relax-comp":
-	    relaxed_query = new XSSIncrementaleRelaxation(conjunctiveQuery,
+	    relaxed_query = new XSSFineGrainedRelaxation(conjunctiveQuery,
 		    session);
 	    break;
 	case "xss-relax-opt":
-	    relaxed_query = new XSSOptIncrementaleRelaxation(conjunctiveQuery,
+	    relaxed_query = new XSSOptFineGrainedRelaxation(conjunctiveQuery,
 		    session);
 	    break;
 	default:
@@ -327,17 +176,19 @@ public class BenchmarkStrategiesTest extends InitTest {
 
     @Before
     public void setUp() {
+
 	super.setUp();
 	layout = new PatternLayout();
-	LocalDateTime time = LocalDateTime.now();
+	// LocalDateTime time = LocalDateTime.now();
 	String conversionPattern = "%-5p [%C{1}]: %m%n";
 	// String conversionPattern = "%-7p %d [%t] %c %x - %m%n";
 	layout.setConversionPattern(conversionPattern);
-	time_value = "" + time.getDayOfMonth() + time.getMonthValue()
-		+ time.getHour() + time.getMinute() + time.getSecond();
+
+	// time_value = "" + time.getDayOfMonth() + time.getMonthValue()
+	// + time.getHour() + time.getMinute() + time.getSecond();
 
 	logfile = "exp-" + algorithm + "-" + "lubm" + TDB_ALIAS + "-"
-		+ time_value + ".log";
+		+ current_query.description + ".log";
 
 	fileAppender = new FileAppender();
 	fileAppender.setFile(logfile);
@@ -345,26 +196,22 @@ public class BenchmarkStrategiesTest extends InitTest {
 	fileAppender.activateOptions();
 	logger.addAppender(fileAppender);
 
-	timeEvaluationCSV = "exp-time" + current_query_set + "-" + algorithm
-		+ "-strategy-Jena-lubm-" + TDB_ALIAS + "-" + time_value
-		+ ".csv";
+	timeEvaluationCSV = "exp-time" + current_query.description + "-"
+		+ algorithm + "-strategy-Jena-lubm-" + TDB_ALIAS + ".csv";
 
-	answersEvaluationCSV = "exp-answers" + current_query_set + "-"
-		+ algorithm + "-strategy-Jena-lubm-" + TDB_ALIAS + "-"
-		+ time_value + ".csv";
+	answersEvaluationCSV = "exp-answers" + current_query.description + "-"
+		+ algorithm + "-strategy-Jena-lubm-" + TDB_ALIAS + ".csv";
 
-	simEvaluationCSV = "exp-sim" + current_query_set + "-" + algorithm
-		+ "-strategy-Jena-lubm-" + TDB_ALIAS + "-" + time_value
-		+ ".csv";
+	simEvaluationCSV = "exp-sim" + current_query.description + "-"
+		+ algorithm + "-strategy-Jena-lubm-" + TDB_ALIAS + ".csv";
 
 	try {
-	    newTestResultPairList = this.newTestResultPairList("/"
-		    + QUERIES_TYPE_FILE.get(current_query_set));
+	    // newTestResultPairList = this.newTestResultPairList("/"
+	    // + QUERIES_TYPE_FILE.get(current_query_set));
 	    fichierAnswers = new BufferedWriter(new FileWriter(
 		    answersEvaluationCSV.toString()));
 	    fichierSimilarity = new BufferedWriter(new FileWriter(
 		    simEvaluationCSV.toString()));
-
 	} catch (IOException e) {
 	    e.printStackTrace();
 	    Assert.fail();
@@ -392,28 +239,99 @@ public class BenchmarkStrategiesTest extends InitTest {
 	float duration, duration_mfs_search, duration_mfs_check_search, view_computation_duration;
 	Map<Double, Double> all_sim;
 
-	for (QueryExplain queryExplain : newTestResultPairList) {
+	QueryExplain queryExplain = current_query;
 
-	    logger.info("**************************Begin QUERY "
-		    + queryExplain.description
-		    + "***********************************");
+	// for (QueryExplain queryExplain : newTestResultPairList) {
+
+	logger.info("**************************Begin QUERY "
+		+ queryExplain.description
+		+ "***********************************");
+
+	solutions.clear();
+	solutions_rsat.clear();
+	hasTopk = solutions.size() >= TOP_K;
+	number_relaxed_queries = 0;
+
+	CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+		.getQuery());
+
+	begin = System.currentTimeMillis();
+	set_relaxation(conjunctiveQuery);
+	duration = (float) (System.currentTimeMillis() - begin);
+
+	while ((!hasTopk) && (relaxed_query.hasNext())) {
+	    int query_answers_size = solutions.size();
+
+	    begin_query = System.currentTimeMillis();
+	    CQuery next_query = relaxed_query.next();
+	    Query temp_query = next_query.getSPARQLQuery();
+	    temp_query.setLimit(TOP_K);
+	    Session session = relaxed_query.getCurrentView();
+	    JSONResultSet result = session.executeSelectQuery(temp_query
+		    .toString());
+
+	    RelaxedResultTools.addResult(solutions, result,
+		    relaxed_query.getCurrent_similarity(), TOP_K);
+
+	    end_query = System.currentTimeMillis();
+	    duration = duration + (float) (end_query - begin_query);
+
+	    number_relaxed_queries = number_relaxed_queries + 1;
+	    query_answers_size = solutions.size() - query_answers_size;
+
+	    logger.info(relaxed_query.getCurrent_relaxed_query().toString()
+		    + " " + relaxed_query.getCurrent_similarity() + " "
+		    + query_answers_size + " "
+		    + ((float) (end_query - begin_query)));
+
+	    RelaxedResultTools.addResult(solutions_rsat, result,
+		    relaxed_query.getRelativeSatisfactory(), TOP_K);
+
+	    hasTopk = solutions.size() >= TOP_K;
+	}
+
+	duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration_mfs_query_executed;
+	duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration_mfs_check_query_executed;
+
+	number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+	// number_check_queries = ((AbstractRelaxationStrategy)
+	// relaxed_query).number_mfs_check_query_executed;
+	number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_fine_grained_query_executed;
+
+	all_sim = ((AbstractRelaxationStrategy) relaxed_query).sim_sat;
+
+	logger.info(duration + " " + duration_mfs_search + " "
+		+ duration_mfs_check_search + " " + number_relaxed_queries
+		+ " " + number_queries_mfs + " " + number_check_queries + " "
+		+ solutions.size());
+	logger.info("**************************End First iteration "
+		+ "***********************************");
+
+	duration = 0;
+	duration_mfs_search = 0;
+	duration_mfs_check_search = 0;
+	number_queries_mfs = 0;
+	number_check_queries = 0;
+	number_relaxed_queries = 0;
+
+	for (int i = 0; i < NB_EXEC; i++) {
 
 	    solutions.clear();
 	    solutions_rsat.clear();
-	    hasTopk = solutions.size() >= TOP_K;
-	    number_relaxed_queries = 0;
 
-	    CQuery conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
+	    hasTopk = solutions.size() >= TOP_K;
+
+	    conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
 
 	    begin = System.currentTimeMillis();
 	    set_relaxation(conjunctiveQuery);
 	    duration = (float) (System.currentTimeMillis() - begin);
-
 	    while ((!hasTopk) && (relaxed_query.hasNext())) {
 		int query_answers_size = solutions.size();
 
 		begin_query = System.currentTimeMillis();
+
 		CQuery next_query = relaxed_query.next();
 		Query temp_query = next_query.getSPARQLQuery();
 		temp_query.setLimit(TOP_K);
@@ -427,11 +345,11 @@ public class BenchmarkStrategiesTest extends InitTest {
 		end_query = System.currentTimeMillis();
 		duration = duration + (float) (end_query - begin_query);
 
-		number_relaxed_queries = number_relaxed_queries + 1;
 		query_answers_size = solutions.size() - query_answers_size;
+		number_relaxed_queries = number_relaxed_queries + 1;
 
-		logger.info(relaxed_query.getCurrent_relaxed_query().toString()
-			+ " " + relaxed_query.getCurrent_similarity() + " "
+		logger.info("*****" + (int) (i + 2) + "******"
+			+ relaxed_query.getCurrent_similarity() + " "
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 
@@ -441,107 +359,38 @@ public class BenchmarkStrategiesTest extends InitTest {
 		hasTopk = solutions.size() >= TOP_K;
 	    }
 
-	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
-	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
-
 	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_check_query_executed;
-
+	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration_mfs_query_executed;
+	    // number_check_queries = ((AbstractRelaxationStrategy)
+	    // relaxed_query).number_mfs_check_query_executed;
+	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_fine_grained_query_executed;
+	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration_mfs_check_query_executed;
 	    all_sim = ((AbstractRelaxationStrategy) relaxed_query).sim_sat;
 
-	    logger.info(duration + " " + duration_mfs_search + " "
-		    + duration_mfs_check_search + " " + number_relaxed_queries
-		    + " " + number_queries_mfs + " " + number_check_queries
-		    + " " + solutions.size());
-	    logger.info("**************************End First iteration "
-		    + "***********************************");
+	    view_computation_duration = ((AbstractRelaxationStrategy) relaxed_query).duration_computation_view;
 
-	    duration = 0;
-	    duration_mfs_search = 0;
-	    duration_mfs_check_search = 0;
-	    number_queries_mfs = 0;
-	    number_check_queries = 0;
-	    number_relaxed_queries = 0;
+	    newResultExplain.add(queryExplain.getDescription(), duration,
+		    duration_mfs_search + duration_mfs_check_search, duration
+			    - duration_mfs_search - duration_mfs_check_search
+			    - view_computation_duration,
+		    view_computation_duration, number_relaxed_queries,
+		    number_queries_mfs, number_check_queries);
 
-	    for (int i = 0; i < NB_EXEC; i++) {
-
-		solutions.clear();
-		solutions_rsat.clear();
-
-		hasTopk = solutions.size() >= TOP_K;
-
-		conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
-			.getQuery());
-
-		begin = System.currentTimeMillis();
-		set_relaxation(conjunctiveQuery);
-		duration = (float) (System.currentTimeMillis() - begin);
-		while ((!hasTopk) && (relaxed_query.hasNext())) {
-		    int query_answers_size = solutions.size();
-
-		    begin_query = System.currentTimeMillis();
-
-		    CQuery next_query = relaxed_query.next();
-		    Query temp_query = next_query.getSPARQLQuery();
-		    temp_query.setLimit(TOP_K);
-		    Session session = relaxed_query.getCurrentView();
-		    JSONResultSet result = session
-			    .executeSelectQuery(temp_query.toString());
-
-		    RelaxedResultTools.addResult(solutions, result,
-			    relaxed_query.getCurrent_similarity(), TOP_K);
-
-		    end_query = System.currentTimeMillis();
-		    duration = duration + (float) (end_query - begin_query);
-
-		    query_answers_size = solutions.size() - query_answers_size;
-		    number_relaxed_queries = number_relaxed_queries + 1;
-
-		    logger.info("*****" + (int) (i + 2) + "******"
-			    + relaxed_query.getCurrent_similarity() + " "
-			    + query_answers_size + " "
-			    + ((float) (end_query - begin_query)));
-
-		    RelaxedResultTools.addResult(solutions_rsat, result,
-			    relaxed_query.getRelativeSatisfactory(), TOP_K);
-
-		    hasTopk = solutions.size() >= TOP_K;
-		}
-
-		number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-		duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_query_executed;
-		number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_check_query_executed;
-		duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration__mfs_check_query_executed;
-		all_sim = ((AbstractRelaxationStrategy) relaxed_query).sim_sat;
-
-		view_computation_duration = ((AbstractRelaxationStrategy) relaxed_query).duration__computation_view;
-
-		newResultExplain.add(queryExplain.getDescription(), duration,
-			duration_mfs_search + duration_mfs_check_search,
-			duration - duration_mfs_search
-				- duration_mfs_check_search
-				- view_computation_duration,
-			view_computation_duration, number_check_queries
-				+ number_queries_mfs + number_relaxed_queries,
-			number_queries_mfs + number_check_queries,
-			number_relaxed_queries);
-
-		logger.info("*****" + (int) (i + 2) + "******" + duration + " "
-			+ duration_mfs_search + " " + duration_mfs_check_search
-			+ " " + number_relaxed_queries + " "
-			+ number_queries_mfs + " " + number_check_queries + " "
-			+ solutions.size());
-	    }
-	    logger.info("**************************End QUERY "
-		    + queryExplain.description
-		    + "***********************************");
-	    try {
-		load_similarity(queryExplain.getDescription(), all_sim);
-		load_answersQuality(queryExplain.getDescription());
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
+	    logger.info("*****" + (int) (i + 2) + "******" + duration + " "
+		    + duration_mfs_search + " " + duration_mfs_check_search
+		    + " " + number_relaxed_queries + " " + number_queries_mfs
+		    + " " + number_check_queries + " " + solutions.size());
 	}
+	logger.info("**************************End QUERY "
+		+ queryExplain.description
+		+ "***********************************");
+	try {
+	    load_similarity(queryExplain.getDescription(), all_sim);
+	    load_answersQuality(queryExplain.getDescription());
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	// }
     }
 
     private void load_answersQuality(String description) throws IOException {

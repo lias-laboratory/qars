@@ -78,7 +78,7 @@ public class MFSBaseRelaxationStrategyTest extends InitTest {
 	long end = System.currentTimeMillis();
 	long duration = end - begin ;
 	int number_queries_mfs = ((AbstractMFSRelaxationStrategy)relaxed_query).number_mfs_query_executed;
-	long duration_mfs_search = ((AbstractMFSRelaxationStrategy)relaxed_query).duration__mfs_query_executed;
+	long duration_mfs_search = ((AbstractMFSRelaxationStrategy)relaxed_query).duration_mfs_query_executed;
 	Logger.getRootLogger().info(number_queries_mfs+" "+duration_mfs_search+" "+number_relaxed_queries+" "+duration+" "+number_answers);
     }
 }

@@ -29,9 +29,10 @@ public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
 
     public int number_mfs_query_executed =0;
     public int number_mfs_check_query_executed =0;
-    public long duration__mfs_query_executed =0;
-    public long duration__mfs_check_query_executed =0;
-    public long duration__computation_view =0;
+    public int number_fine_grained_query_executed =0;
+    public long duration_mfs_query_executed =0;
+    public long duration_mfs_check_query_executed =0;
+    public long duration_computation_view =0;
     public Map<Double, Double> sim_sat =  new LinkedHashMap<Double, Double>();
 
 }

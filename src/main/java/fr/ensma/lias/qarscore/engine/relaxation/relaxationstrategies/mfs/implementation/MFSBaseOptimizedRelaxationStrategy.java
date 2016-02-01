@@ -243,7 +243,7 @@ public class MFSBaseOptimizedRelaxationStrategy extends
 			.add(degree_mfs_relaxed.get(i));
 		logger.info("New repaired MFS " + mfs_query.toString());
 	    }
-	    this.duration__mfs_check_query_executed = this.duration__mfs_check_query_executed
+	    this.duration_mfs_check_query_executed = this.duration_mfs_check_query_executed
 		    + (System.currentTimeMillis() - begin);
 	}
 	if (has_mfs) {

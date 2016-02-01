@@ -156,7 +156,7 @@ public abstract class AbstractXSSRelaxationStrategy extends
 	}
 
 	this.number_mfs_query_executed = ((AbstractLatticeStrategy) xss_finders).number_of_query_executed;
-	this.duration__mfs_query_executed = ((AbstractLatticeStrategy) xss_finders).duration_of_execution;
+	this.duration_mfs_query_executed = ((AbstractLatticeStrategy) xss_finders).duration_of_execution;
     }
 
     /**
