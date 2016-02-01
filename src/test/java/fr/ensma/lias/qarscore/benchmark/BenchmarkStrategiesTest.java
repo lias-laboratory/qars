@@ -88,10 +88,10 @@ public class BenchmarkStrategiesTest extends InitTest {
     }
 
     @Parameter(0)
-    private String algorithm;
+    public String algorithm;
 
     @Parameter(1)
-    private QueryExplain current_query;
+    public QueryExplain current_query;
 
     /**
      * looger tools
