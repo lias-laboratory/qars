@@ -51,7 +51,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Algorithm
      */
-    private final static String ALGO = "huang-opt";
+    private final static String ALGO = "huang";
 
     /**
      * Set queries files
@@ -66,7 +66,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("one", "queries-one.test");
     }
 
-    public static String current_query_set = "mixed_III";
+    public static String current_query_set = "one";
 
     @Parameters
     public static Object[][] initialize_queries() {
@@ -307,15 +307,14 @@ public class BenchmarkStrategiesTest extends InitTest {
 	logger.info("**************************End First iteration "
 		+ "***********************************");
 
-	duration = 0;
-	duration_mfs_search = 0;
-	duration_mfs_check_search = 0;
-	number_queries_mfs = 0;
-	number_check_queries = 0;
-	number_relaxed_queries = 0;
-
 	for (int i = 0; i < NB_EXEC; i++) {
 
+	    duration = 0;
+	    duration_mfs_search = 0;
+	    duration_mfs_check_search = 0;
+	    number_queries_mfs = 0;
+	    number_check_queries = 0;
+	    number_relaxed_queries = 0;
 	    solutions.clear();
 	    solutions_rsat.clear();
 
@@ -323,7 +322,6 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    conjunctiveQuery = CQueryFactory.createCQuery(queryExplain
 		    .getQuery());
-
 	    begin = System.currentTimeMillis();
 	    set_relaxation(conjunctiveQuery);
 	    duration = (float) (System.currentTimeMillis() - begin);

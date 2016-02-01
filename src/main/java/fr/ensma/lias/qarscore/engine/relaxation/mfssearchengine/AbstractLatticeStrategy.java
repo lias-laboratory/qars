@@ -19,7 +19,6 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -649,11 +648,11 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 
     protected void logger_init() {
 
-	LocalDateTime time = LocalDateTime.now();
-	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
-		+ time.getHour() + time.getMinute() + time.getSecond();
+//	LocalDateTime time = LocalDateTime.now();
+//	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
+//		+ time.getHour() + time.getMinute() + time.getSecond();
 
-	String logfile = "mfsSearch-Process" + "-" + time_value + ".log";
+	String logfile = "mfsSearch-Process" + "-" + ".log";
 
 	PatternLayout layout = new PatternLayout();
 	String conversionPattern = "%-5p [%C{1}]: %m%n";

@@ -19,13 +19,8 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
@@ -43,9 +38,6 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.NodeRelaxed;
  */
 public abstract class AbstractXSSRelaxationStrategy extends
 	AbstractRelaxationStrategy {
-
-    protected Logger logger = Logger
-	    .getLogger(AbstractXSSRelaxationStrategy.class);
 
     public static final int MFS_LIMIT_ANSWERS = 1;
 
@@ -369,26 +361,5 @@ public abstract class AbstractXSSRelaxationStrategy extends
 	}
 
 	return relaxed_queries;
-    }
-
-    protected void logger_init() {
-
-	LocalDateTime time = LocalDateTime.now();
-	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
-		+ time.getHour() + time.getMinute() + time.getSecond();
-
-	String logfile = this.getClass().getSimpleName() + "-Process" + "-"
-		+ time_value + ".log";
-
-	PatternLayout layout = new PatternLayout();
-	String conversionPattern = "%-5p [%C{1}]: %m%n";
-	layout.setConversionPattern(conversionPattern);
-
-	FileAppender fileAppender = new FileAppender();
-	fileAppender.setFile(logfile);
-	fileAppender.setLayout(layout);
-	fileAppender.activateOptions();
-	logger.removeAllAppenders();
-	logger.addAppender(fileAppender);
     }
 }
