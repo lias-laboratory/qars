@@ -1,2 +1,2 @@
-# Test 4 (Query Q-5TP-4MFS-COMPOSITE)
-SELECT ?X ?Y1 ?Y2 ?S ?Y4 WHERE { ?X <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#FullProfessor> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#publicationAuthor> ?Y1 . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#worksFor> ?Y2 . ?S <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?X . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#title> ?Y4 }
+# Test 5 (Query Q-5TP-XMFS-COMPOSITE)
+SELECT ?Z ?X WHERE { ?Z <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://swat.cse.lehigh.edu/onto/univ-bench.owl#GraduateCourse> . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#advisor> ?Y . ?Y <http://swat.cse.lehigh.edu/onto/univ-bench.owl#teacherOf> ?Z . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#takesCourse> ?Z . ?X <http://swat.cse.lehigh.edu/onto/univ-bench.owl#takesCourse> <http://www.Department0.University0.edu/GraduateCourse0> }
