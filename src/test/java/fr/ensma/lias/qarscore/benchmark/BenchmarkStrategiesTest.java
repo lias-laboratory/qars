@@ -56,7 +56,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Set queries files
      */
-    private final static Map<String, String> QUERIES_TYPE_FILE;
+    public final static Map<String, String> QUERIES_TYPE_FILE;
     static {
 	QUERIES_TYPE_FILE = new HashMap<String, String>();
 	QUERIES_TYPE_FILE.put("huang", "queries-huang.test");
@@ -66,7 +66,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("one", "queries-one.test");
     }
 
-    private static String current_query_set = "mixed_III";
+    public static String current_query_set = "mixed_III";
 
     @Parameters
     public static Object[][] initialize_queries() {
