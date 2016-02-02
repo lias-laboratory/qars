@@ -37,11 +37,11 @@ public class InitTest {
     public final static String PATH_SATURATED = "c:/resources/UBA/univ1_saturated.nt";
 //    public final static String TDB_PATH = "c:/TDB/UBA";
 //    public final static String TDB_PATH_SAT= "c:/TDB/UBA_saturated";
-    public final static String TDB_ALIAS = "tdb100";
+    public final static String TDB_ALIAS = "tdb500";
     public final static int TOP_K = 50;
     
-    final static String TDB_PATH = "/home/lias/tdb100repository";
-    final static String TDB_PATH_SAT= "/home/lias/tdb100repository-saturated";
+    final static String TDB_PATH = "/home/lias/tdb500repository";
+    final static String TDB_PATH_SAT= "/home/lias/tdb500repository-saturated";
     
     public final static String LUBM_PREFIX = "PREFIX base: <http://swat.cse.lehigh.edu/onto/univ-bench.owl> "
 	    + "PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> "
