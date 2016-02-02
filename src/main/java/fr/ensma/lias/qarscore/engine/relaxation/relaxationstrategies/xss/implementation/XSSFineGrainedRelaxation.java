@@ -315,12 +315,15 @@ public class XSSFineGrainedRelaxation extends AbstractXSSRelaxationStrategy {
 	    double index_sim = 1.0;
 	    GraphRelaxationIndex elt_index = relaxed_comp_queries[comp_xss_index]
 		    .get(index);
-	    for (int i = 0; i < elt_index.getElement_index().length; i++) {
-		int index_in_query = this.comp_xss_query_index[comp_xss_index][i];
-		index_sim = index_sim
-			* relaxation_of_element[index_in_query][elt_index
-				.getElement_index()[i]].getSimilarity();
-	    }
+	    index_sim = this.similarity_comp_graph_index(
+		    elt_index, comp_xss_index);
+	    
+//	    for (int i = 0; i < elt_index.getElement_index().length; i++) {
+//		int index_in_query = this.comp_xss_query_index[comp_xss_index][i];
+//		index_sim = index_sim
+//			* relaxation_of_element[index_in_query][elt_index
+//				.getElement_index()[i]].getSimilarity();
+//	    }
 	    found_pos = current_child_similarity <= index_sim;
 	    pos = index + 1;
 	    index = index - 1;

@@ -327,12 +327,14 @@ public abstract class AbstractXSSRelaxationStrategy extends
 	    double index_sim = 1.0;
 	    GraphRelaxationIndex elt_index = relaxed_queries[xss_index]
 		    .get(index);
-	    for (int i = 0; i < elt_index.getElement_index().length; i++) {
-		int index_in_query = this.xss_query_index[xss_index][i];
-		index_sim = index_sim
-			* relaxation_of_element[index_in_query][elt_index
-				.getElement_index()[i]].getSimilarity();
-	    }
+	    index_sim = this.similarity_graph_index(elt_index, xss_index);
+	    
+//	    for (int i = 0; i < elt_index.getElement_index().length; i++) {
+//		int index_in_query = this.xss_query_index[xss_index][i];
+//		index_sim = index_sim
+//			* relaxation_of_element[index_in_query][elt_index
+//				.getElement_index()[i]].getSimilarity();
+//	    }
 	    found_pos = current_child_similarity <= index_sim;
 	    pos = index + 1;
 	    index = index - 1;
