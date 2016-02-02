@@ -69,25 +69,29 @@ public class XSSFineGrainedRelaxation extends AbstractXSSRelaxationStrategy {
 	similarity_comp_xss = new double[xss_to_relax_queries.length];
 	relaxed_comp_queries = new List[xss_to_relax_queries.length];
 
-	if (xss_to_relax_queries.length == 1) {
-	    if (xss_to_relax_queries[0].getElementList().size() == query_to_relax
-		    .getElementList().size()) {
-		xss_complement_queries[0] = query
-			.difference(xss_to_relax_queries[0]);
-		relaxed_comp_xss[0] = null;
-		comp_xss_query_index[0] = null;
-		relaxed_comp_queries[0] = new ArrayList<GraphRelaxationIndex>();
-		similarity_comp_xss[0] = 1.0;
-		return;
-	    }
-	}
+//	if (xss_to_relax_queries.length == 1) {
+//	    if (xss_to_relax_queries[0].getElementList().size() == query_to_relax
+//		    .getElementList().size()) {
+//		xss_complement_queries[0] = query
+//			.difference(xss_to_relax_queries[0]);
+//		relaxed_comp_xss[0] = null;
+//		comp_xss_query_index[0] = null;
+//		relaxed_comp_queries[0] = new ArrayList<GraphRelaxationIndex>();
+//		similarity_comp_xss[0] = 1.0;
+//		return;
+//	    }
+//	}
 	for (int i = 0; i < xss_to_relax_queries.length; i++) {
 	    xss_complement_queries[i] = query
 		    .difference(xss_to_relax_queries[i]);
+	    similarity_comp_xss[i] = 1.0;
+	    relaxed_comp_queries[i] = new ArrayList<GraphRelaxationIndex>();
+	    if(xss_complement_queries[i]==null){
+		relaxed_comp_xss[i] = null;
+		continue;
+	    }
 	    comp_xss_query_index[i] = new int[xss_complement_queries[i]
 		    .getElementList().size()];
-	    relaxed_comp_queries[i] = new ArrayList<GraphRelaxationIndex>();
-	    similarity_comp_xss[i] = 1.0;
 	    int[] relaxation_index_comp_xss = new int[xss_complement_queries[i]
 		    .getElementList().size()];
 	    int[] relaxation_limit_comp_xss = new int[xss_complement_queries[i]

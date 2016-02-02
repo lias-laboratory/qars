@@ -51,19 +51,25 @@ public class XSSRelaxationStrategy extends AbstractXSSRelaxationStrategy {
 	Similarity sim_measure = new Similarity(s);
 	relaxed_comp_xss = new CQuery[xss_to_relax_queries.length];
 	similarity_comp_xss = new double[xss_to_relax_queries.length];
-	if (xss_to_relax_queries.length == 1) {
-	    if (xss_to_relax_queries[0].getElementList().size() == query_to_relax
-		    .getElementList().size()) {
-		similarity_comp_xss[0] = 1.0;
-		relaxed_comp_xss[0] = null;
-		return;
-	    }
-	}
+	
+//	if (xss_to_relax_queries.length == 1) {
+//	    if (xss_to_relax_queries[0].getElementList().size() == query_to_relax
+//		    .getElementList().size()) {
+//		similarity_comp_xss[0] = 1.0;
+//		relaxed_comp_xss[0] = null;
+//		return;
+//	    }
+//	}
 	for (int i = 0; i < xss_to_relax_queries.length; i++) {
 	    List<CElement> elt_relaxed_query = new ArrayList<CElement>();
 	    CQuery comp_xss = query_to_relax
 		    .difference(xss_to_relax_queries[i]);
 	    similarity_comp_xss[i] = 1.0;
+	    
+	    if(comp_xss==null){
+		relaxed_comp_xss[i] = null;
+		continue;
+	    }
 	    for (int j = 0; j < comp_xss.getElementList().size(); j++) {
 		elt_relaxed_query.add(comp_xss.getElementList().get(j)
 			.supress_all_concrete());
@@ -88,19 +94,24 @@ public class XSSRelaxationStrategy extends AbstractXSSRelaxationStrategy {
 	relaxed_comp_xss = new CQuery[xss_to_relax_queries.length];
 	similarity_comp_xss = new double[xss_to_relax_queries.length];
 
-	if (xss_to_relax_queries.length == 1) {
-	    if (xss_to_relax_queries[0].getElementList().size() == query_to_relax
-		    .getElementList().size()) {
-		similarity_comp_xss[0] = 1.0;
-		relaxed_comp_xss[0] = null;
-		return;
-	    }
-	}
+//	if (xss_to_relax_queries.length == 1) {
+//	    if (xss_to_relax_queries[0].getElementList().size() == query_to_relax
+//		    .getElementList().size()) {
+//		similarity_comp_xss[0] = 1.0;
+//		relaxed_comp_xss[0] = null;
+//		return;
+//	    }
+//	}
 	for (int i = 0; i < xss_to_relax_queries.length; i++) {
 	    List<CElement> elt_relaxed_query = new ArrayList<CElement>();
 	    CQuery comp_xss = query_to_relax
 		    .difference(xss_to_relax_queries[i]);
 	    similarity_comp_xss[i] = 1.0;
+	    
+	    if(comp_xss==null){
+		relaxed_comp_xss[i] = null;
+		continue;
+	    }
 	    for (int j = 0; j < comp_xss.getElementList().size(); j++) {
 		elt_relaxed_query.add(comp_xss.getElementList().get(j)
 			.supress_all_concrete());

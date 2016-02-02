@@ -264,6 +264,9 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    begin_query = System.currentTimeMillis();
 	    CQuery next_query = relaxed_query.next();
+	    
+	    logger.info(relaxed_query.getCurrent_relaxed_query().toString());
+
 	    Query temp_query = next_query.getSPARQLQuery();
 	    temp_query.setLimit(TOP_K);
 	    Session session = relaxed_query.getCurrentView();
@@ -279,8 +282,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    number_relaxed_queries = number_relaxed_queries + 1;
 	    query_answers_size = solutions.size() - query_answers_size;
 
-	    logger.info(relaxed_query.getCurrent_relaxed_query().toString()
-		    + " " + relaxed_query.getCurrent_similarity() + " "
+	    logger.info(relaxed_query.getCurrent_similarity() + " "
 		    + query_answers_size + " "
 		    + ((float) (end_query - begin_query)));
 

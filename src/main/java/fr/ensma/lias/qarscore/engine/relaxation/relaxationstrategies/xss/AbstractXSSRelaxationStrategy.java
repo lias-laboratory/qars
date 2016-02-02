@@ -99,28 +99,28 @@ public abstract class AbstractXSSRelaxationStrategy extends
 	xss_query_index = new int[xss_queries.size()][];
 	xss_to_relax_queries = new CQuery[xss_queries.size()];
 
-	if (xss_queries.get(0).getElementList().size() == query
-		.getElementList().size()) {
-	    xss_to_relax_queries[0] = xss_queries.get(0);
-	    already_relaxed_xss[0] = new ArrayList<GraphRelaxationIndex>();
-	    relaxed_queries[0] = new ArrayList<GraphRelaxationIndex>();
-	    xss_query_index[0] = new int[xss_queries.get(0).getElementList()
-		    .size()];
-	    int[] relaxation_index_xss = new int[xss_queries.get(0)
-		    .getElementList().size()];
-	    int[] relaxation_limit_xss = new int[xss_queries.get(0)
-		    .getElementList().size()];
-	    for (int i = 0; i < query_to_relax.getElementList().size(); i++) {
-		CElement element = query_to_relax.getElementList().get(i);
-		int j = xss_to_relax_queries[0].getElementList().indexOf(
-			element);
-		xss_query_index[0][j] = i;
-		relaxation_index_xss[j] = relaxation_index[i];
-		relaxation_limit_xss[j] = relaxation_limit_xss[i];
-	    }
-	    relaxed_queries[0].add(new GraphRelaxationIndex(
-		    relaxation_index_xss, relaxation_limit_xss));
-	} else {
+//	if (xss_queries.get(0).getElementList().size() == query
+//		.getElementList().size()) {
+//	    xss_to_relax_queries[0] = xss_queries.get(0);
+//	    already_relaxed_xss[0] = new ArrayList<GraphRelaxationIndex>();
+//	    relaxed_queries[0] = new ArrayList<GraphRelaxationIndex>();
+//	    xss_query_index[0] = new int[xss_queries.get(0).getElementList()
+//		    .size()];
+//	    int[] relaxation_index_xss = new int[xss_queries.get(0)
+//		    .getElementList().size()];
+//	    int[] relaxation_limit_xss = new int[xss_queries.get(0)
+//		    .getElementList().size()];
+//	    for (int i = 0; i < query_to_relax.getElementList().size(); i++) {
+//		CElement element = query_to_relax.getElementList().get(i);
+//		int j = xss_to_relax_queries[0].getElementList().indexOf(
+//			element);
+//		xss_query_index[0][j] = i;
+//		relaxation_index_xss[j] = relaxation_index[i];
+//		relaxation_limit_xss[j] = relaxation_limit_xss[i];
+//	    }
+//	    relaxed_queries[0].add(new GraphRelaxationIndex(
+//		    relaxation_index_xss, relaxation_limit_xss));
+//	} else {
 	    for (int i = 0; i < xss_queries.size(); i++) {
 		xss_to_relax_queries[i] = xss_queries.get(i);
 		already_relaxed_xss[i] = new ArrayList<GraphRelaxationIndex>();
@@ -145,7 +145,7 @@ public abstract class AbstractXSSRelaxationStrategy extends
 		relaxed_queries[i].add(new GraphRelaxationIndex(
 			relaxation_index_xss, relaxation_limit_xss, !optimization));
 	    }
-	}
+//	}
 
 	this.number_mfs_query_executed = ((AbstractLatticeStrategy) xss_finders).number_of_query_executed;
 	this.duration_mfs_query_executed = ((AbstractLatticeStrategy) xss_finders).duration_of_execution;
