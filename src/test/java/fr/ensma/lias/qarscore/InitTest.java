@@ -35,13 +35,13 @@ public class InitTest {
     public final static String PATH = "c:/resources/UBA/Uni1.owl";
     public final static String PATH_ONTO = "c:/resources/UBA/univ-bench.owl";
     public final static String PATH_SATURATED = "c:/resources/UBA/univ1_saturated.nt";
-    public final static String TDB_PATH = "c:/TDB/UBA";
-    public final static String TDB_PATH_SAT= "c:/TDB/UBA_saturated";
+//    public final static String TDB_PATH = "c:/TDB/UBA";
+//    public final static String TDB_PATH_SAT= "c:/TDB/UBA_saturated";
     public final static String TDB_ALIAS = "tdb500";
     public final static int TOP_K = 50;
     
-//    final static String TDB_PATH = "/home/lias/tdb500repository";
-//    final static String TDB_PATH_SAT= "/home/lias/tdb500repository-saturated";
+    final static String TDB_PATH = "/home/lias/tdb500repository";
+    final static String TDB_PATH_SAT= "/home/lias/tdb500repository-saturated";
     
     public final static String LUBM_PREFIX = "PREFIX base: <http://swat.cse.lehigh.edu/onto/univ-bench.owl> "
 	    + "PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> "
@@ -58,10 +58,10 @@ public class InitTest {
      */
     @Before
     public void setUp(){
-//	session = SessionFactory.getJenaTDBSession(TDB_PATH_SAT);
+	session = SessionFactory.getJenaTDBSession(TDB_PATH_SAT);
 //	session = SessionFactory.getJenaTDBSession(TDB_PATH);
 //	session = SessionFactory.getEndpointSession(LUBM_FUSEKI);
-	session = SessionFactory.getEndpointSession(LUBM_SATURATED_FUSEKI);
+//	session = SessionFactory.getEndpointSession(LUBM_SATURATED_FUSEKI);
     }
 
    

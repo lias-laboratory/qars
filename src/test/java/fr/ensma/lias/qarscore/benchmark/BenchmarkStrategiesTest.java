@@ -51,7 +51,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Algorithm
      */
-    private final static String ALGO = "xss-relax";
+    private final static String ALGO = "huang";
 
     /**
      * Set queries files
