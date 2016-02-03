@@ -66,7 +66,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("one", "queries-one.test");
     }
 
-    public static String current_query_set = "one";
+    public static String current_query_set = "mixed_III";
 
     @Parameters
     public static Object[][] initialize_queries() {
@@ -266,7 +266,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    CQuery next_query = relaxed_query.next();
 
 	    Query temp_query = next_query.getSPARQLQuery();
-	    temp_query.setLimit(TOP_K);
+//	    temp_query.setLimit(TOP_K);
 	    
 	    logger.info(temp_query.toString());
 	    

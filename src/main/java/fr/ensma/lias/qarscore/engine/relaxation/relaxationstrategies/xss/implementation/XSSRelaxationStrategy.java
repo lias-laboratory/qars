@@ -201,6 +201,7 @@ public class XSSRelaxationStrategy extends AbstractXSSRelaxationStrategy {
 
 	return CQueryFactory.createCQuery(elt_relaxed_query,
 		query_to_relax.getSelectedQueryVar());
+//	return CQueryFactory.createCQuery(elt_relaxed_query);
     }
 
     protected double similarity_graph_index(GraphRelaxationIndex child,

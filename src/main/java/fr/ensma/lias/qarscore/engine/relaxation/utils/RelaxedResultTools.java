@@ -32,6 +32,7 @@ public class RelaxedResultTools {
 
     /**
      * Add a set of result in a map with their similarity without redundancy
+     * 
      * @param result
      * @param newresult
      * @param sim
@@ -39,6 +40,7 @@ public class RelaxedResultTools {
      */
     public static void addResult(LinkedHashMap<String, Double> result,
 	    JSONResultSet newresult, double sim, int limit) {
+
 	if (newresult == null) {
 	    return;
 	}
@@ -47,12 +49,12 @@ public class RelaxedResultTools {
 	    int i = 0;
 	    while ((i < newresult.getBindings().size())
 		    && (result.size() < limit)) {
-		 JsonObject sol = newresult.getBindings().get(i).getAsObject();
+		JsonObject sol = newresult.getBindings().get(i).getAsObject();
 		String newsol = sol.toString();
-		if(!result.containsKey(newsol)){
+		if (!result.containsKey(newsol)) {
 		    result.put(sol.toString(), Double.valueOf(sim));
 		}
-		i = i +1;
+		i = i + 1;
 	    }
 	} finally {
 	}

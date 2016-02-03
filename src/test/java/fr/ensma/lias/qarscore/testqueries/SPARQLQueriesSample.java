@@ -180,12 +180,12 @@ public class SPARQLQueriesSample {
     // Empty query
     public static String QUERY_14 = LUBM_PREFIX + "SELECT ?X ?Y1 "
 	    + "WHERE { "
-	    + "?X rdf:type ub:FullProfessor . "
-	    + "?X ub:doctoralDegreeFrom <http://www.University703.edu> . "
-	    + "?X ub:teacherOf <http://www.Department5.University0.edu/GraduateCourse25> . " 
+//	    + "?X rdf:type ub:FullProfessor . "
+//	    + "?X ub:doctoralDegreeFrom <http://www.University703.edu> . "
+//	    + "?X ub:teacherOf <http://www.Department5.University0.edu/GraduateCourse25> . " 
 	    + "?X ub:researchInterest  'Research10' . "
 	    + "?Y1 ub:advisor ?X . " 
-//	    + "?X  ?P0  ?R0 . "
+	    + "?X  ?P0  ?R0 . "
 //	    + "?X ?P1 ?R1 . "
 //	    + "?X ?P2 ?R2 . " 
 	    + "} " ;
@@ -193,7 +193,8 @@ public class SPARQLQueriesSample {
     // Not empty query : one answers
     public static String QUERY_15 = LUBM_PREFIX
 	    + "SELECT ?X "
-	    + "WHERE { ?X ub:undergraduateDegreeFrom <http://www.University303.edu> . "
+	    + "WHERE { "
+	    + "?X ub:undergraduateDegreeFrom <http://www.University303.edu> . "
 	    + "?X rdf:type ub:GraduateStudent. "
 	    + "?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse65> . "
 	    + "}";
