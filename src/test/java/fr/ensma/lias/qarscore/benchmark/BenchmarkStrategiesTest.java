@@ -264,11 +264,12 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    begin_query = System.currentTimeMillis();
 	    CQuery next_query = relaxed_query.next();
-	    
-	    logger.info(relaxed_query.getCurrent_relaxed_query().toString());
 
 	    Query temp_query = next_query.getSPARQLQuery();
 	    temp_query.setLimit(TOP_K);
+	    
+	    logger.info(temp_query.toString());
+	    
 	    Session session = relaxed_query.getCurrentView();
 	    JSONResultSet result = session.executeSelectQuery(temp_query
 		    .toString());
