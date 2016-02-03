@@ -71,7 +71,7 @@ public class RelaxedResultTools {
   	try {
   	    while ((results.hasNext()) && (result.size() < limit)) {
   		QuerySolution sol = results.nextSolution();
-  		result.put(sol.toString(), sim);
+  		result.put(sol.toString(), Double.valueOf(sim));
   		// logger.info(sol.toString() + "-------" + sim);
   	    }
   	} finally {
