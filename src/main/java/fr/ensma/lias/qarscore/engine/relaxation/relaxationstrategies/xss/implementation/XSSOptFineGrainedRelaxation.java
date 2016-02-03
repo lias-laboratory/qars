@@ -21,6 +21,7 @@ package fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss.implem
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.connection.SessionFactory;
+import fr.ensma.lias.qarscore.connection.implementation.JenaTDBSession;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 
@@ -45,9 +46,12 @@ public class XSSOptFineGrainedRelaxation extends XSSFineGrainedRelaxation {
 	comp_session = new Session[xss_to_relax_queries.length];
 	duration_computation_view = System.currentTimeMillis();
 	for (int i = 0; i < xss_to_relax_queries.length; i++) {
-	    comp_session[i] = SessionFactory.getModelSession(session
-		    .executeConstructQuery(xss_to_relax_queries[i]
+//	    comp_session[i] = SessionFactory.getModelSession(session
+//		    .executeConstructQuery(xss_to_relax_queries[i]
+//			    .toConstructQuery()));
+	    comp_session[i] = SessionFactory.getModelSession(((JenaTDBSession)session).executeModelConstructQuery(xss_to_relax_queries[i]
 			    .toConstructQuery()));
+
 	}
 	duration_computation_view = System.currentTimeMillis() - duration_computation_view;
     }

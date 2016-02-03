@@ -22,6 +22,8 @@ package fr.ensma.lias.qarscore.engine.relaxation.utils;
 import java.util.LinkedHashMap;
 
 import org.apache.jena.atlas.json.JsonObject;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 
 import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
 
@@ -59,4 +61,22 @@ public class RelaxedResultTools {
 	} finally {
 	}
     }
+    
+    public static void addResult(LinkedHashMap<String, Double> result, ResultSet results, double sim, int limit) {
+
+  	if (results == null) {
+  	    return;
+  	}
+
+  	try {
+  	    while ((results.hasNext()) && (result.size() < limit)) {
+  		QuerySolution sol = results.nextSolution();
+  		result.put(sol.toString(), sim);
+  		// logger.info(sol.toString() + "-------" + sim);
+  	    }
+  	} finally {
+  	}
+
+      }
+
 }

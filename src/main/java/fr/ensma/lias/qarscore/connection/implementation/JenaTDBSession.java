@@ -26,7 +26,9 @@ import java.io.InputStream;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.sparql.resultset.ResultsFormat;
@@ -131,5 +133,33 @@ public class JenaTDBSession implements Session {
 	// results.write(out, syntax);
 
 	return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    public ResultSet execute(String query) {
+
+	QueryExecution qexec = QueryExecutionFactory
+		.create(query, this.dataset);
+
+	return qexec.execSelect();
+    }
+
+    public int getResultSetSize(String query, int limit) {
+
+	int size = 0;
+
+	ResultSet results = execute(query);
+	while ((results.hasNext()) && (size < limit)) {
+	    results.nextSolution();
+	    size++;
+	}
+	return size;
+    }
+    
+    public Model executeModelConstructQuery(String query) {
+
+	QueryExecution qexec = QueryExecutionFactory
+		.create(query, this.dataset);
+	
+	return qexec.execConstruct();
     }
 }

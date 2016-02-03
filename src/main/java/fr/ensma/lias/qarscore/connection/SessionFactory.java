@@ -26,6 +26,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.Model;
 
 import fr.ensma.lias.qarscore.configuration.OutputFormat;
 import fr.ensma.lias.qarscore.connection.implementation.EndPointSession;
@@ -99,4 +100,9 @@ public class SessionFactory {
     public static Session getModelSession(InputStream data){
 	return new ModelSession(data);
     }
+    
+    public static Session getModelSession(Model data){
+	return new ModelSession(data);
+    }
+
 }

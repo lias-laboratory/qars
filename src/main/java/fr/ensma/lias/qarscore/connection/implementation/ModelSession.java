@@ -57,6 +57,16 @@ public class ModelSession implements Session {
 	MODEL = ModelFactory.createRDFSModel(model);
     }
 
+    public ModelSession(Model data) {
+	Model model = ModelFactory.createDefaultModel();
+	RDFDataMgr.read(model, Properties.DATA_SCHEMA_FILE, Lang.NTRIPLES);
+//	model.union(data);
+//	RDFDataMgr.
+//	RDFDataMgr.read(model, data,
+//		Lang.NTRIPLES);
+	MODEL = ModelFactory.createRDFSModel(model.union(data));
+    }
+
     @Override
     public String getNameSession() {
 	return null;

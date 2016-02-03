@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.jena.query.Query;
+import org.apache.jena.query.ResultSet;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -24,8 +25,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.benchmark.result.ResultStrategyExplain;
-import fr.ensma.lias.qarscore.connection.Session;
-import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
+import fr.ensma.lias.qarscore.connection.implementation.JenaTDBSession;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.AbstractRelaxationStrategy;
@@ -270,8 +270,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    
 	    logger.info(temp_query.toString());
 	    
-	    Session session = relaxed_query.getCurrentView();
-	    JSONResultSet result = session.executeSelectQuery(temp_query
+	    JenaTDBSession session = (JenaTDBSession)relaxed_query.getCurrentView();
+	     ResultSet result = session.execute(temp_query
 		    .toString());
 
 	    RelaxedResultTools.addResult(solutions, result,
@@ -336,8 +336,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 		CQuery next_query = relaxed_query.next();
 		Query temp_query = next_query.getSPARQLQuery();
 //		temp_query.setLimit(TOP_K);
-		Session session = relaxed_query.getCurrentView();
-		JSONResultSet result = session.executeSelectQuery(temp_query
+		JenaTDBSession session = (JenaTDBSession)relaxed_query.getCurrentView();
+		ResultSet result = session.execute(temp_query
 			.toString());
 
 		RelaxedResultTools.addResult(solutions, result,
