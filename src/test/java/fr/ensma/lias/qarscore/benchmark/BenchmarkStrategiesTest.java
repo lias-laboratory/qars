@@ -418,18 +418,17 @@ public class BenchmarkStrategiesTest extends InitTest {
 		sim_size.put(sim, n_value);
 	    }
 	}
+	
 	for (Double similarity : sim_size.keySet()) {
-
 	    for (Double relative_sat : sim_size.get(similarity).keySet()) {
 		Double satisfiability = similarity * relative_sat;
-		Integer size = sim_size.get(similarity).get(relative_sat)
-			.intValue();
+		Integer size = sim_size.get(similarity).get(relative_sat);
 
 		buffer.append("" + "\t"
 			+ similarity.toString().replace('.', ',') + "\t"
 			+ relative_sat.toString().replace('.', ',') + "\t"
 			+ satisfiability.toString().replace('.', ',') + "\t"
-			+ (size).toString() + "\n");
+			+ size.toString() + "\n");
 
 	    }
 	}
