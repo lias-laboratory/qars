@@ -33,6 +33,7 @@ import org.apache.jena.sparql.syntax.ElementPathBlock;
 
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
+import fr.ensma.lias.qarscore.engine.relaxation.utils.HelperRelax;
 import fr.ensma.lias.qarscore.engine.relaxation.utils.NodeRelaxed;
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 
@@ -48,10 +49,6 @@ public class TripleRelaxation {
     public static int HYBRID_ORDER = 2;
 
     public static int SUPRESS_NODE_LEVEL = -1;
-
-    private static int num_resource_release = 0;
-
-    private static int num_pred_release = 0;
 
     private int relaxation_order;
 
@@ -128,22 +125,19 @@ public class TripleRelaxation {
 	if (original_node.isURI()) {
 	    relaxed_node.put(original_node, 0);
 	    relaxed_node.putAll(model_operators.getSuperClasses(original_node));
-	    Node var_node = NodeFactory.createVariable("R"
-		    + num_resource_release++);
+	    Node var_node = NodeFactory.createVariable(HelperRelax.getNewResource());
 	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	} else if (original_node.isLiteral()) {
 	    relaxed_node.put(original_node, 0);
 	    // predicat relaxation levensteing or Hausdorff
-	    Node var_node = NodeFactory.createVariable("R"
-		    + num_resource_release++);
+	    Node var_node = NodeFactory.createVariable(HelperRelax.getNewResource());
 	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	}
 
 	else if (original_node.isConcrete()) {
 	    relaxed_node.put(original_node, 0);
 	    // release relaxation
-	    Node var_node = NodeFactory.createVariable("R"
-		    + num_resource_release++);
+	    Node var_node = NodeFactory.createVariable(HelperRelax.getNewResource());
 	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 
 	} else {
@@ -167,13 +161,13 @@ public class TripleRelaxation {
 	    relaxed_node
 		    .putAll(model_operators.getSuperProperty(original_node));
 	    Node var_node = NodeFactory
-		    .createVariable("P" + num_pred_release++);
+		    .createVariable(HelperRelax.getNewPredicat());
 	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	} else if (original_node.isLiteral()) {
 	    relaxed_node.put(original_node, 0);
 	    // predicat relaxation
 	    Node var_node = NodeFactory
-		    .createVariable("P" + num_pred_release++);
+		    .createVariable(HelperRelax.getNewPredicat());
 	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	}
 
@@ -181,7 +175,7 @@ public class TripleRelaxation {
 	    relaxed_node.put(original_node, 0);
 	    // release relaxation
 	    Node var_node = NodeFactory
-		    .createVariable("P" + num_pred_release++);
+		    .createVariable(HelperRelax.getNewPredicat());
 	    relaxed_node.put(var_node, SUPRESS_NODE_LEVEL);
 	} else {
 	    // variables relaxation (join)
@@ -476,20 +470,6 @@ public class TripleRelaxation {
      */
     public List<NodeRelaxed> getRelaxed_triple() {
 	return relaxed_triple;
-    }
-
-    /**
-     * @return the num_release
-     */
-    public static int getNum_resource_release() {
-	return num_resource_release;
-    }
-
-    /**
-     * @return the num_pred_release
-     */
-    public static int getNum_pred_release() {
-	return num_pred_release;
     }
 
     /**

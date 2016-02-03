@@ -68,8 +68,6 @@ public class TripleRelaxationTest extends InitTest {
 	TripleRelaxation relax_triple = new TripleRelaxation(conjunctiveQuery
 		.getElementList().get(0), session);
 
-	Assert.assertEquals(1, TripleRelaxation.getNum_pred_release());
-	Assert.assertEquals(1, TripleRelaxation.getNum_resource_release());
 	Assert.assertNotNull(relax_triple);
 	Assert.assertNotNull(relax_triple.getSubject_var());
 	Assert.assertTrue(relax_triple.getSubject_var().getName().equals("X"));
@@ -97,8 +95,6 @@ public class TripleRelaxationTest extends InitTest {
 	TripleRelaxation relax_triple = new TripleRelaxation(conjunctiveQuery
 		.getElementList().get(0), session, 1);
 
-	Assert.assertEquals(1, TripleRelaxation.getNum_pred_release());
-	Assert.assertEquals(1, TripleRelaxation.getNum_resource_release());
 	Assert.assertNotNull(relax_triple);
 	Assert.assertNotNull(relax_triple.getSubject_var());
 	Assert.assertTrue(relax_triple.getSubject_var().getName().equals("X"));

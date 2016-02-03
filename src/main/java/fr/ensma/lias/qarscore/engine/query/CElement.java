@@ -32,6 +32,7 @@ import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
 
+import fr.ensma.lias.qarscore.engine.relaxation.utils.HelperRelax;
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 
 /**
@@ -45,8 +46,7 @@ public class CElement {
      * give the number of triple clause make.
      */
     private static Long numberClause = (long) 1;
-
-    private static Long numberSupression = (long) 1;
+    
     /**
      * Label for represent clause
      */
@@ -339,22 +339,21 @@ public class CElement {
 	    node_subject = currentClause.getSubject();
 	} else {
 	    node_subject = NodeFactory
-		    .createVariable("SC" + numberSupression++);
+		    .createVariable(HelperRelax.getNewResource());
 	}
 	if (currentClause.getObject() instanceof Node_Variable) {
 	    node_object = currentClause.getObject();
 	} else {
-	    node_object = NodeFactory.createVariable("SC" + numberSupression++);
+	    node_object = NodeFactory.createVariable(HelperRelax.getNewResource());
 	}
 	if (currentClause.getPredicate() != null) {
 	    if (currentClause.getPredicate() instanceof Node_Variable) {
 		node_pred = currentClause.getPredicate();
 	    } else {
-		node_pred = NodeFactory.createVariable("SP"
-			+ numberSupression++);
+		node_pred = NodeFactory.createVariable(HelperRelax.getNewPredicat());
 	    }
 	} else {
-	    node_pred = NodeFactory.createVariable("SP" + numberSupression++);
+	    node_pred = NodeFactory.createVariable(HelperRelax.getNewPredicat());
 	}
 
 	new_pattern = new TriplePath(new Triple(node_subject, node_pred,

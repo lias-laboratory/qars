@@ -66,7 +66,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	QUERIES_TYPE_FILE.put("one", "queries-one.test");
     }
 
-    public static String current_query_set = "mixed_III";
+    public static String current_query_set = "one";
 
     @Parameters
     public static Object[][] initialize_queries() {
