@@ -51,7 +51,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Algorithm
      */
-    private final static String ALGO = "xss-relax";
+    private final static String ALGO = "xss-fine-grained";
 
     /**
      * Set queries files
@@ -160,7 +160,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	case "xss-relax":
 	    relaxed_query = new XSSRelaxationStrategy(conjunctiveQuery, session);
 	    break;
-	case "xss-relax-comp":
+	case "xss-fine-grained":
 	    relaxed_query = new XSSFineGrainedRelaxation(conjunctiveQuery,
 		    session);
 	    break;
