@@ -58,10 +58,10 @@ public class InitTest {
      */
     @Before
     public void setUp(){
-//	session = SessionFactory.getJenaTDBSession(TDB_PATH_SAT);
+	session = SessionFactory.getJenaTDBSession(TDB_PATH_SAT);
 //	session = SessionFactory.getJenaTDBSession(TDB_PATH);
 //	session = SessionFactory.getEndpointSession(LUBM_FUSEKI);
-	session = SessionFactory.getEndpointSession(LUBM_SATURATED_FUSEKI);
+//	session = SessionFactory.getEndpointSession(LUBM_SATURATED_FUSEKI);
     }
 
    
