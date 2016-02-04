@@ -27,6 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import fr.ensma.lias.qarscore.InitTest;
 import fr.ensma.lias.qarscore.benchmark.result.ResultStrategyExplain;
 import fr.ensma.lias.qarscore.connection.implementation.JenaTDBSession;
+import fr.ensma.lias.qarscore.connection.implementation.ModelSession;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.AbstractRelaxationStrategy;
@@ -48,14 +49,13 @@ import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss.impleme
 @RunWith(Parameterized.class)
 public class BenchmarkStrategiesTest extends InitTest {
 
-
     public final static String[] ALGO_NAME;
     static {
 	ALGO_NAME = new String[3];
-//	ALGO_NAME[0] = "huang";
-	ALGO_NAME[0] = "xss-relax";
-	ALGO_NAME[1] = "xss-fine-grained";
-	ALGO_NAME[2] = "xss-relax-opt";
+	ALGO_NAME[0] = "huang";
+//	ALGO_NAME[0] = "xss-relax";
+//	ALGO_NAME[1] = "xss-fine-grained";
+	ALGO_NAME[1] = "xss-relax-opt";
     }
     /**
      * Set queries files
@@ -83,13 +83,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    e.printStackTrace();
 	    return null;
 	}
-	Object[][] parameter = new Object[queryList.size()*ALGO_NAME.length][2];
-	int k=0;
+	Object[][] parameter = new Object[queryList.size() * ALGO_NAME.length][2];
+	int k = 0;
 	for (int j = 0; j < ALGO_NAME.length; j++) {
 	    for (int i = 0; i < queryList.size(); i++) {
 		parameter[k][1] = queryList.get(i);
 		parameter[k][0] = ALGO_NAME[j];
-		k = k+1;
+		k = k + 1;
 	    }
 	}
 	return parameter;
@@ -278,9 +278,22 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	    logger.info(temp_query.toString());
 
-	    JenaTDBSession session = (JenaTDBSession) relaxed_query
-		    .getCurrentView();
-	    ResultSet result = session.execute(temp_query.toString());
+	    ResultSet result = null;
+	    if (relaxed_query.getCurrentView() instanceof JenaTDBSession) {
+		JenaTDBSession session = (JenaTDBSession) relaxed_query
+			.getCurrentView();
+		result = session.execute(temp_query.toString());
+	    } else {
+		if (relaxed_query.getCurrentView() instanceof ModelSession) {
+		    ModelSession session = (ModelSession) relaxed_query
+			    .getCurrentView();
+		    result = session.execute(temp_query.toString());
+		}
+	    }
+
+	    // JenaTDBSession session = (JenaTDBSession) relaxed_query
+	    // .getCurrentView();
+	    // ResultSet result = session.execute(temp_query.toString());
 
 	    // RelaxedResultTools.addResult(solutions, result,
 	    // relaxed_query.getCurrent_similarity(), TOP_K);
@@ -346,9 +359,21 @@ public class BenchmarkStrategiesTest extends InitTest {
 		CQuery next_query = relaxed_query.next();
 		Query temp_query = next_query.getSPARQLQuery();
 		// temp_query.setLimit(TOP_K);
-		JenaTDBSession session = (JenaTDBSession) relaxed_query
-			.getCurrentView();
-		ResultSet result = session.execute(temp_query.toString());
+		ResultSet result = null;
+		if (relaxed_query.getCurrentView() instanceof JenaTDBSession) {
+		    JenaTDBSession session = (JenaTDBSession) relaxed_query
+			    .getCurrentView();
+		    result = session.execute(temp_query.toString());
+		} else {
+		    if (relaxed_query.getCurrentView() instanceof ModelSession) {
+			ModelSession session = (ModelSession) relaxed_query
+				.getCurrentView();
+			result = session.execute(temp_query.toString());
+		    }
+		}
+		// JenaTDBSession session = (JenaTDBSession) relaxed_query
+		// .getCurrentView();
+		// ResultSet result = session.execute(temp_query.toString());
 
 		// RelaxedResultTools.addResult(solutions, result,
 		// relaxed_query.getCurrent_similarity(), TOP_K);

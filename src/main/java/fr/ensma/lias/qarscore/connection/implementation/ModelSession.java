@@ -25,6 +25,7 @@ import java.io.InputStream;
 
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -113,4 +114,23 @@ public class ModelSession implements Session {
 
     }
 
+    public ResultSet execute(String query) {
+
+	QueryExecution qexec = QueryExecutionFactory
+		.create(query, MODEL);
+
+	return qexec.execSelect();
+    }
+
+    public int getResultSetSize(String query, int limit) {
+
+	int size = 0;
+
+	ResultSet results = execute(query);
+	while ((results.hasNext()) && (size < limit)) {
+	    results.nextSolution();
+	    size++;
+	}
+	return size;
+    }
 }
