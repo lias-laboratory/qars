@@ -48,11 +48,15 @@ import fr.ensma.lias.qarscore.engine.relaxation.relaxationstrategies.xss.impleme
 @RunWith(Parameterized.class)
 public class BenchmarkStrategiesTest extends InitTest {
 
-    /**
-     * Algorithm
-     */
-    private final static String ALGO = "xss-relax";
 
+    public final static String[] ALGO_NAME;
+    static {
+	ALGO_NAME = new String[3];
+//	ALGO_NAME[0] = "huang";
+	ALGO_NAME[0] = "xss-relax";
+	ALGO_NAME[1] = "xss-fine-grained";
+	ALGO_NAME[2] = "xss-relax-opt";
+    }
     /**
      * Set queries files
      */
@@ -79,10 +83,14 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    e.printStackTrace();
 	    return null;
 	}
-	Object[][] parameter = new Object[queryList.size()][2];
-	for (int i = 0; i < queryList.size(); i++) {
-	    parameter[i][0] = ALGO;
-	    parameter[i][1] = queryList.get(i);
+	Object[][] parameter = new Object[queryList.size()*ALGO_NAME.length][2];
+	int k=0;
+	for (int j = 0; j < ALGO_NAME.length; j++) {
+	    for (int i = 0; i < queryList.size(); i++) {
+		parameter[k][1] = queryList.get(i);
+		parameter[k][0] = ALGO_NAME[j];
+		k = k+1;
+	    }
 	}
 	return parameter;
     }
@@ -105,7 +113,7 @@ public class BenchmarkStrategiesTest extends InitTest {
      */
     private static final int NB_EXEC = 5;
     private int time_multiple = 1000;
-//     private String time_value;
+    // private String time_value;
     private String timeEvaluationCSV;
     private String answersEvaluationCSV;
     private String simEvaluationCSV;
@@ -119,7 +127,7 @@ public class BenchmarkStrategiesTest extends InitTest {
     /**
      * Algorithm execution parameter
      */
-//     private List<QueryExplain> newTestResultPairList = null;
+    // private List<QueryExplain> newTestResultPairList = null;
     private LinkedHashMap<String, Double> solutions;
     private LinkedHashMap<String, Double> solutions_rsat;
     private ResultStrategyExplain newResultExplain = null;
@@ -179,13 +187,13 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	super.setUp();
 	layout = new PatternLayout();
-//	 LocalDateTime time = LocalDateTime.now();
+	// LocalDateTime time = LocalDateTime.now();
 	String conversionPattern = "%-5p [%C{1}]: %m%n";
-//	 String conversionPattern = "%-7p %d [%t] %c %x - %m%n";
+	// String conversionPattern = "%-7p %d [%t] %c %x - %m%n";
 	layout.setConversionPattern(conversionPattern);
 
-//	 time_value = "" + time.getDayOfMonth() + time.getMonthValue()
-//	 + time.getHour() + time.getMinute() + time.getSecond();
+	// time_value = "" + time.getDayOfMonth() + time.getMonthValue()
+	// + time.getHour() + time.getMinute() + time.getSecond();
 
 	logfile = "exp-" + algorithm + "-" + "lubm" + TDB_ALIAS + "-"
 		+ current_query.description + ".log";
@@ -206,8 +214,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 		+ algorithm + "-strategy-Jena-lubm-" + TDB_ALIAS + ".csv";
 
 	try {
-//	     newTestResultPairList = this.newTestResultPairList("/"
-//	     + QUERIES_TYPE_FILE.get(current_query_set));
+	    // newTestResultPairList = this.newTestResultPairList("/"
+	    // + QUERIES_TYPE_FILE.get(current_query_set));
 	    fichierAnswers = new BufferedWriter(new FileWriter(
 		    answersEvaluationCSV.toString()));
 	    fichierSimilarity = new BufferedWriter(new FileWriter(
@@ -241,7 +249,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 	QueryExplain queryExplain = current_query;
 
-//	 for (QueryExplain queryExplain : newTestResultPairList) {
+	// for (QueryExplain queryExplain : newTestResultPairList) {
 
 	logger.info("**************************Begin QUERY "
 		+ queryExplain.description
@@ -266,18 +274,19 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    CQuery next_query = relaxed_query.next();
 
 	    Query temp_query = next_query.getSPARQLQuery();
-//	    temp_query.setLimit(TOP_K);
-	    
-	    logger.info(temp_query.toString());
-	    
-	    JenaTDBSession session = (JenaTDBSession)relaxed_query.getCurrentView();
-	     ResultSet result = session.execute(temp_query
-		    .toString());
+	    // temp_query.setLimit(TOP_K);
 
-//	    RelaxedResultTools.addResult(solutions, result,
-//		    relaxed_query.getCurrent_similarity(), TOP_K);
-	    addResult(result, relaxed_query.getCurrent_similarity(), relaxed_query.getRelativeSatisfactory(), TOP_K);
-	    
+	    logger.info(temp_query.toString());
+
+	    JenaTDBSession session = (JenaTDBSession) relaxed_query
+		    .getCurrentView();
+	    ResultSet result = session.execute(temp_query.toString());
+
+	    // RelaxedResultTools.addResult(solutions, result,
+	    // relaxed_query.getCurrent_similarity(), TOP_K);
+	    addResult(result, relaxed_query.getCurrent_similarity(),
+		    relaxed_query.getRelativeSatisfactory(), TOP_K);
+
 	    end_query = System.currentTimeMillis();
 	    duration = duration + (float) (end_query - begin_query);
 
@@ -288,8 +297,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 		    + query_answers_size + " "
 		    + ((float) (end_query - begin_query)));
 
-//	    RelaxedResultTools.addResult(solutions_rsat, result,
-//		    relaxed_query.getRelativeSatisfactory(), TOP_K);
+	    // RelaxedResultTools.addResult(solutions_rsat, result,
+	    // relaxed_query.getRelativeSatisfactory(), TOP_K);
 
 	    hasTopk = solutions.size() >= TOP_K;
 	}
@@ -298,8 +307,8 @@ public class BenchmarkStrategiesTest extends InitTest {
 	duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration_mfs_check_query_executed;
 
 	number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
-//	number_check_queries = ((AbstractRelaxationStrategy)
-//	relaxed_query).number_mfs_check_query_executed;
+	// number_check_queries = ((AbstractRelaxationStrategy)
+	// relaxed_query).number_mfs_check_query_executed;
 	number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_fine_grained_query_executed;
 
 	all_sim = ((AbstractRelaxationStrategy) relaxed_query).sim_sat;
@@ -336,16 +345,17 @@ public class BenchmarkStrategiesTest extends InitTest {
 
 		CQuery next_query = relaxed_query.next();
 		Query temp_query = next_query.getSPARQLQuery();
-//		temp_query.setLimit(TOP_K);
-		JenaTDBSession session = (JenaTDBSession)relaxed_query.getCurrentView();
-		ResultSet result = session.execute(temp_query
-			.toString());
+		// temp_query.setLimit(TOP_K);
+		JenaTDBSession session = (JenaTDBSession) relaxed_query
+			.getCurrentView();
+		ResultSet result = session.execute(temp_query.toString());
 
-//		RelaxedResultTools.addResult(solutions, result,
-//			relaxed_query.getCurrent_similarity(), TOP_K);
+		// RelaxedResultTools.addResult(solutions, result,
+		// relaxed_query.getCurrent_similarity(), TOP_K);
 
-		addResult(result, relaxed_query.getCurrent_similarity(), relaxed_query.getRelativeSatisfactory(), TOP_K);
-		
+		addResult(result, relaxed_query.getCurrent_similarity(),
+			relaxed_query.getRelativeSatisfactory(), TOP_K);
+
 		end_query = System.currentTimeMillis();
 		duration = duration + (float) (end_query - begin_query);
 
@@ -357,16 +367,16 @@ public class BenchmarkStrategiesTest extends InitTest {
 			+ query_answers_size + " "
 			+ ((float) (end_query - begin_query)));
 
-//		RelaxedResultTools.addResult(solutions_rsat, result,
-//			relaxed_query.getRelativeSatisfactory(), TOP_K);
+		// RelaxedResultTools.addResult(solutions_rsat, result,
+		// relaxed_query.getRelativeSatisfactory(), TOP_K);
 
 		hasTopk = solutions.size() >= TOP_K;
 	    }
 
 	    number_queries_mfs = ((AbstractRelaxationStrategy) relaxed_query).number_mfs_query_executed;
 	    duration_mfs_search = ((AbstractRelaxationStrategy) relaxed_query).duration_mfs_query_executed;
-//	    number_check_queries = ((AbstractRelaxationStrategy)
-//	    relaxed_query).number_mfs_check_query_executed;
+	    // number_check_queries = ((AbstractRelaxationStrategy)
+	    // relaxed_query).number_mfs_check_query_executed;
 	    number_check_queries = ((AbstractRelaxationStrategy) relaxed_query).number_fine_grained_query_executed;
 	    duration_mfs_check_search = ((AbstractRelaxationStrategy) relaxed_query).duration_mfs_check_query_executed;
 	    all_sim = ((AbstractRelaxationStrategy) relaxed_query).sim_sat;
@@ -410,7 +420,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 	    if (sim_size.containsKey(sim)) {
 		Map<Double, Integer> value = sim_size.get(sim);
 		if (value.containsKey(sat)) {
-		    //int n_size = value.get(sat) + 1;
+		    // int n_size = value.get(sat) + 1;
 		    value.replace(sat, value.get(sat) + 1);
 		} else {
 		    value.put(sat, 1);
@@ -421,7 +431,7 @@ public class BenchmarkStrategiesTest extends InitTest {
 		sim_size.put(sim, n_value);
 	    }
 	}
-	
+
 	for (Double similarity : sim_size.keySet()) {
 	    for (Double relative_sat : sim_size.get(similarity).keySet()) {
 		Double satisfiability = similarity * relative_sat;
@@ -456,22 +466,24 @@ public class BenchmarkStrategiesTest extends InitTest {
 	}
 	fichierSimilarity.write(buffer.toString());
     }
-    
+
     private void addResult(ResultSet results, double sim, double sat, int limit) {
 
-  	if (results == null) {
-  	    return;
-  	}
+	if (results == null) {
+	    return;
+	}
 
-  	try {
-  	    while ((results.hasNext()) && (solutions.size() < limit)) {
-  		QuerySolution sol = results.nextSolution();
-  		solutions.put(sol.toString(), Double.valueOf(sim));
-  		solutions_rsat.put(sol.toString(), Double.valueOf(sat));
-  	    }
-  	} finally {
-  	}
+	try {
+	    while ((results.hasNext()) && (solutions.size() < limit)) {
+		QuerySolution sol = results.nextSolution();
+		if (!solutions.containsKey(sol.toString())) {
+		    solutions.put(sol.toString(), Double.valueOf(sim));
+		    solutions_rsat.put(sol.toString(), Double.valueOf(sat));
+		}
+	    }
+	} finally {
+	}
 
-      }
+    }
 
 }
