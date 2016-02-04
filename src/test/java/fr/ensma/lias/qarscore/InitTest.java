@@ -41,7 +41,7 @@ public class InitTest {
     public final static int TOP_K = 50;
     
     final static String TDB_PATH = "/home/lias/tdb750repository";
-    final static String TDB_PATH_SAT= "/home/lias/tdb750repository-saturated";
+   final static String TDB_PATH_SAT= "/home/lias/tdb750repository-saturated";
     
     public final static String LUBM_PREFIX = "PREFIX base: <http://swat.cse.lehigh.edu/onto/univ-bench.owl> "
 	    + "PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> "
