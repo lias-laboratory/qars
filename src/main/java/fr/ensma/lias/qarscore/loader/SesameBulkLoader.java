@@ -44,7 +44,6 @@ import org.openrdf.sail.memory.MemoryStore;
 import org.openrdf.sail.nativerdf.NativeStore;
 
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
-import fr.ensma.lias.qarscore.properties.Properties;
 
 /**
  * @author Geraud FOKOU
@@ -59,13 +58,13 @@ public class SesameBulkLoader {
      * @param store
      * @return
      */
-    public static Sail inferred_data(NotifyingSail store) {
+    public static Sail inferred_data(NotifyingSail store, OntModelSpec spec) {
 
 	/**
 	 * Return a prebuilt standard configuration for the default RDFS
 	 * reasoner
 	 */
-	if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM_RDFS_INF)) {
+	if (spec.equals(OntModelSpec.OWL_MEM_RDFS_INF)) {
 	    return new ForwardChainingRDFSInferencer(store);
 	}
 
@@ -73,7 +72,7 @@ public class SesameBulkLoader {
 	 * Return a prebuilt standard configuration for the default
 	 * subclass/subproperty transitive closure reasoner.
 	 */
-	else if (Properties.getModelMemSpec().equals(
+	else if (spec.equals(
 		OntModelSpec.OWL_MEM_TRANS_INF)) {
 	    return new DirectTypeHierarchyInferencer(store);
 	}
@@ -81,17 +80,17 @@ public class SesameBulkLoader {
 	/**
 	 * Default model without inferred triple
 	 */
-	else if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_MEM)) {
+	else if (spec.equals(OntModelSpec.OWL_MEM)) {
 	    return store;
 	}
 	/**
 	 * Default model without inferred triple
 	 */
-	else if (Properties.getModelMemSpec().equals(OntModelSpec.OWL_DL_MEM)) {
+	else if (spec.equals(OntModelSpec.OWL_DL_MEM)) {
 	    return store;
 	}
 
-	else if (Properties.getModelMemSpec().equals(
+	else if (spec.equals(
 		OntModelSpec.OWL_DL_MEM_RDFS_INF)) {
 	    return new ForwardChainingRDFSInferencer(store);
 	}
@@ -99,19 +98,19 @@ public class SesameBulkLoader {
 	/**
 	 * Prebuilt standard configuration for the default OWL reasoner.
 	 */
-	else if (Properties.getModelMemSpec().equals(
+	else if (spec.equals(
 		OntModelSpec.OWL_DL_MEM_RULE_INF)) {
 	    return new ForwardChainingRDFSInferencer(store);
 	}
 
-	else if (Properties.getModelMemSpec().equals(OntModelSpec.RDFS_MEM)) {
+	else if (spec.equals(OntModelSpec.RDFS_MEM)) {
 	    return store;
 	}
 	/**
 	 * Return a prebuilt standard configuration for the default RDFS
 	 * reasoner
 	 */
-	else if (Properties.getModelMemSpec().equals(
+	else if (spec.equals(
 		OntModelSpec.RDFS_MEM_RDFS_INF)) {
 	    return new ForwardChainingRDFSInferencer(store);
 	}
@@ -120,7 +119,7 @@ public class SesameBulkLoader {
 	 * Return a prebuilt standard configuration for the default
 	 * subclass/subproperty transitive closure reasoner.
 	 */
-	else if (Properties.getModelMemSpec().equals(
+	else if (spec.equals(
 		OntModelSpec.RDFS_MEM_TRANS_INF)) {
 	    return new DirectTypeHierarchyInferencer(store);
 	}
@@ -137,7 +136,7 @@ public class SesameBulkLoader {
      * @return
      */
     public static Repository loaderNativeStore(String dataDirPath,
-	    File[] dataFiles, String baseURI, String lang) {
+	    File[] dataFiles, String baseURI, String lang, OntModelSpec spec) {
 
 	File dataDir = new File(dataDirPath);
 	if (!dataDir.isDirectory()) {
@@ -146,8 +145,8 @@ public class SesameBulkLoader {
 	}
 
 	Repository repo = new SailRepository(inferred_data(new NativeStore(
-		dataDir)));
-	loaderRepository(repo, dataFiles, baseURI, lang, true);
+		dataDir), spec));
+	loaderRepository(repo, dataFiles, baseURI, lang, spec, true);
 
 	return repo;
     }
@@ -159,7 +158,7 @@ public class SesameBulkLoader {
      * @return
      */
     public static Repository loaderMemoryStore(File[] dataFiles,
-	    String baseURI, String lang, boolean persist) {
+	    String baseURI, String lang, OntModelSpec spec, boolean persist) {
 
 	MemoryStore mem_store;
 	Repository repo = null;
@@ -170,8 +169,8 @@ public class SesameBulkLoader {
 	} else {
 	    mem_store = new MemoryStore();
 	}
-	repo = new SailRepository(inferred_data(mem_store));
-	loaderRepository(repo, dataFiles, baseURI, lang, false);
+	repo = new SailRepository(inferred_data(mem_store, spec));
+	loaderRepository(repo, dataFiles, baseURI, lang, spec, false);
 
 	return repo;
     }
@@ -202,10 +201,11 @@ public class SesameBulkLoader {
      * @param nameFolder
      * @param baseURI
      * @param lang
+     * @param spec 
      * @param close
      */
     private static void loaderRepositoryandModel(Repository repo, Model model,
-	    File[] dataFiles, String baseURI, String lang, boolean close) {
+	    File[] dataFiles, String baseURI, String lang, OntModelSpec spec, boolean close) {
 
 	RDFParser rdfParser;
 
@@ -285,8 +285,8 @@ public class SesameBulkLoader {
     }
 
     private static void loaderRepository(Repository repo, File[] dataFiles,
-	    String baseURI, String lang, boolean close) {
-	loaderRepositoryandModel(repo, null, dataFiles, baseURI, lang, close);
+	    String baseURI, String lang, OntModelSpec spec, boolean close) {
+	loaderRepositoryandModel(repo, null, dataFiles, baseURI, lang, spec, close);
     }
 
     /**
@@ -385,9 +385,9 @@ public class SesameBulkLoader {
 	}
 	String base_uri = args[2];
 	if (argsLenth == 3) {
-	    loaderMemoryStore(dataFiles, base_uri, args[1], true);
+	    loaderMemoryStore(dataFiles, base_uri, args[1], OntModelSpec.OWL_DL_MEM, true);
 	} else {
-	    loaderNativeStore(args[3], dataFiles, base_uri, args[1]);
+	    loaderNativeStore(args[3], dataFiles, base_uri, args[1], OntModelSpec.OWL_DL_MEM);
 	}
     }
 }

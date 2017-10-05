@@ -19,7 +19,6 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +26,7 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CElement;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
@@ -43,6 +43,9 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 
     protected Logger logger = Logger.getLogger(AbstractLatticeStrategy.class);
     
+    protected final int NUMBER_OF_EXPECTED_ANSWERS;
+    protected final Session SESSION;
+    
     protected CQuery actualQuery;
     protected List<CQuery> failingCauses;
     protected List<CQuery> maximalSubqueries;
@@ -50,8 +53,15 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
     /**
      * 
      */
-    public AbstractLatticeStrategy() {
-	super();
+    public AbstractLatticeStrategy(Session s, CQuery query, int answers) {
+	number_of_query_executed = 0;
+	number_of_query_reexecuted = 0;
+	size_of_cartesian_product = 0;
+	duration_of_execution = 0;
+
+	NUMBER_OF_EXPECTED_ANSWERS = answers;
+	SESSION = s;
+	actualQuery = query;
 	this.logger_init();
     }
 
@@ -84,6 +94,7 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 	 * If you aren't sure that query is an empty query
 	 */
 	CQuery anCause = getOneMFS(query);
+	
 	/**
 	 * if you are sure that query is an empty query
 	 */
@@ -226,10 +237,6 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 
     @Override
     public CQuery getOneMFS(CQuery query) {
-
-	// if (!query.isValidQuery()) {
-	// return null;
-	// }
 
 	if (hasLeastKAnswers(query)) {
 	    return CQueryFactory.createCQuery(new ArrayList<CElement>());
@@ -641,11 +648,11 @@ public abstract class AbstractLatticeStrategy implements MFSSearch {
 
     protected void logger_init() {
 
-	LocalDateTime time = LocalDateTime.now();
-	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
-		+ time.getHour() + time.getMinute() + time.getSecond();
+//	LocalDateTime time = LocalDateTime.now();
+//	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
+//		+ time.getHour() + time.getMinute() + time.getSecond();
 
-	String logfile = "mfsSearch-Process" + "-" + time_value + ".log";
+	String logfile = "mfsSearch-Process" + "-" + ".log";
 
 	PatternLayout layout = new PatternLayout();
 	String conversionPattern = "%-5p [%C{1}]: %m%n";

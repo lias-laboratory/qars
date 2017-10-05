@@ -21,6 +21,8 @@ package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation;
 
 import java.util.List;
 
+import org.apache.jena.query.Query;
+
 import fr.ensma.lias.qarscore.connection.Session;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeStrategy;
@@ -29,9 +31,6 @@ import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeS
  * @author Geraud FOKOU
  */
 public class LatticeStrategy extends AbstractLatticeStrategy {
-
-    private final int NUMBER_OF_EXPECTED_ANSWERS ;
-    private final Session SESSION;
 
     /**
      * Get a lattice strategy relaxation for a session s and a number answers of
@@ -51,29 +50,15 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
     }
 
     protected LatticeStrategy(Session s) {
-	super();
-	number_of_query_executed = 0;
-	number_of_query_reexecuted = 0;
-	size_of_cartesian_product = 0;
-	duration_of_execution = 0;
-	
-	NUMBER_OF_EXPECTED_ANSWERS = 1;
-	SESSION = s;	
+	super(s, null, 1);
     }
     
     /**
      * private constructor
      */
     protected LatticeStrategy(Session s, CQuery query, int answers) {
-	super();
-	number_of_query_executed = 0;
-	number_of_query_reexecuted = 0;
-	size_of_cartesian_product = 0;
-	duration_of_execution = 0;
-	
-	NUMBER_OF_EXPECTED_ANSWERS = answers;
-	SESSION = s;
-	actualQuery = query;
+	super(s, query, answers);
+
 	duration_of_execution = System.currentTimeMillis();
 	this.computeMFS(actualQuery);
 	duration_of_execution = System.currentTimeMillis()
@@ -95,9 +80,10 @@ public class LatticeStrategy extends AbstractLatticeStrategy {
 	}
 	
 	for(CQuery a_connex_query:queries){
-	   
+	    Query temp_query = a_connex_query.getSPARQLQuery();
+	    temp_query.setLimit(NUMBER_OF_EXPECTED_ANSWERS);
 	    number_of_query_executed ++;
-	    int nbSolution = SESSION.createStatement(a_connex_query.toString()).getResultSetSize(NUMBER_OF_EXPECTED_ANSWERS);
+	    int nbSolution = SESSION.getResultSize(temp_query.toString());
 	    
 	    /*
 	     * Think to put the right log if you don't want to execute with cartesian product

@@ -21,22 +21,20 @@ package fr.ensma.lias.qarscore.loader;
 
 import java.io.File;
 
-import org.apache.jena.ontology.OntModelSpec;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.connection.SessionFactory;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
-import fr.ensma.lias.qarscore.properties.Properties;
+import fr.ensma.lias.qarscore.connection.implementation.JenaTDBSession;
 
 /**
  * @author Geraud FOKOU
  */
 public class JenaBulkLoaderTest {
 
-    private JenaSession session;
+    @SuppressWarnings("unused")
+    private JenaTDBSession session;
 
     /**
      * Method for deleting a directory after deleting all the files and folder
@@ -78,10 +76,6 @@ public class JenaBulkLoaderTest {
     @After
     public void tearDown() {
 
-	Assert.assertNotNull(session.getDataset());
-//	Assert.assertNotNull(session.getModel());
-//	Assert.assertNotNull(session.getOntology());
-
     }
 
     /**
@@ -97,11 +91,8 @@ public class JenaBulkLoaderTest {
 
 	JenaBulkLoader.loadTDBDataset(datafiles, "OWL",
 		System.getProperty("user.dir") + "/target/TDB/LUBM1");
-
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
-	Properties.setOntoLang("OWL");
-	session = (JenaSession) SessionFactory
-		.getTDBSession("target/TDB/LUBM1");
+	session = (JenaTDBSession) SessionFactory
+		.getJenaTDBSession("target/TDB/LUBM1");
 
     }
 
@@ -112,16 +103,16 @@ public class JenaBulkLoaderTest {
     @Test
     public void testMain() {
 
-	String[] args = new String[4];
-	args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
-	args[1] = "OWL";
-	args[2] = "TDB";
-	args[3] = System.getProperty("user.dir") + "/target/TDB/LUBM1";
-	JenaBulkLoader.main(args);
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
-	Properties.setOntoLang("OWL");
-	session = (JenaSession) SessionFactory
-		.getTDBSession("target/TDB/LUBM1");
+//	String[] args = new String[4];
+//	args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
+//	args[1] = "OWL";
+//	args[2] = "TDB";
+//	args[3] = System.getProperty("user.dir") + "/target/TDB/LUBM1";
+//	JenaBulkLoader.main(args);
+//	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
+//	Properties.setOntoLang("OWL");
+	session = (JenaTDBSession) SessionFactory
+		.getJenaTDBSession("c:/TDB/UBA1");
     }
 
     /**
@@ -141,11 +132,8 @@ public class JenaBulkLoaderTest {
 	args[5] = "plsql";
 	args[6] = "test";
 	JenaBulkLoader.main(args);
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
-	Properties.setOntoLang("OWL");
-	Properties.setPostgresSdbSupport();
-	session = (JenaSession) SessionFactory
-		.getSDBSession("jdbc:postgresql://localhost:5432", "postgres",
+	session = (JenaTDBSession) SessionFactory
+		.getJenaSDBSession("jdbc:postgresql://localhost:5432", "postgres",
 			"plsql", "test");
     }
 
@@ -162,11 +150,8 @@ public class JenaBulkLoaderTest {
 	JenaBulkLoader.loadPostgresSBDDataset(datafiles, "OWL",
 		"jdbc:postgresql://localhost:5432", "postgres", "plsql",
 		"lubm1");
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
-	Properties.setOntoLang("OWL");
-	Properties.setPostgresSdbSupport();
-	session = (JenaSession) SessionFactory
-		.getSDBSession("jdbc:postgresql://localhost:5432", "postgres",
+	session = (JenaTDBSession) SessionFactory
+		.getJenaSDBSession("jdbc:postgresql://localhost:5432", "postgres",
 			"plsql", "lubm1");
 
     }

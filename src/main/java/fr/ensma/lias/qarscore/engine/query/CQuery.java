@@ -25,10 +25,12 @@ import java.util.List;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
+import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
+import org.apache.jena.sparql.syntax.Template;
 
 /**
  * @author Geraud FOKOU
@@ -626,6 +628,49 @@ public class CQuery implements Comparable<CQuery> {
     }
 
     /**
+     * Difference between the current query and another query
+     * 
+     * @param query
+     * @return
+     */
+    public CQuery difference(CQuery query) {
+
+	List<CElement> diff_elt = new ArrayList<CElement>();
+	for (int i = 0; i < this.elementList.size(); i++) {
+	    if (!query.elementList.contains(this.elementList.get(i))) {
+		diff_elt.add(this.elementList.get(i));
+	    }
+	}
+	if (diff_elt.size() == 0) {
+	    return null;
+	}
+	return CQueryFactory.createCQuery(diff_elt);
+    }
+
+    /**
+     * union of the current query and another query
+     * 
+     * @param query
+     * @return
+     */
+    public CQuery union(CQuery query) {
+
+	List<CElement> union_elt = new ArrayList<CElement>();
+	for (int i = 0; i < this.elementList.size(); i++) {
+	    if (!query.elementList.contains(this.elementList.get(i))) {
+		union_elt.add(this.elementList.get(i));
+	    }
+	}
+	for (int i = 0; i < query.elementList.size(); i++) {
+	    union_elt.add(query.elementList.get(i));
+	}
+	if (union_elt.size() == 0) {
+	    return null;
+	}
+	return CQueryFactory.createCQuery(union_elt);
+    }
+
+    /**
      * Query for having super class of a node
      * 
      * @param classNode
@@ -638,13 +683,14 @@ public class CQuery implements Comparable<CQuery> {
 		+ "WHERE {?subclass rdfs:subClassOf  ?superclass }";
 	CQuery subQuery = CQueryFactory.createCQuery(QueryFactory
 		.create(subclassOf));
-	CElement new_Element = subQuery.getElementList().get(0).replace_subject(classNode);
+	CElement new_Element = subQuery.getElementList().get(0)
+		.replace_subject(classNode);
 	subQuery.getElementList().remove(0);
 	subQuery.getElementList().add(new_Element);
-	
+
 	return subQuery;
     }
-    
+
     /**
      * Query for having super class of a node
      * 
@@ -662,8 +708,59 @@ public class CQuery implements Comparable<CQuery> {
 		.replace_object(classNode);
 	subQuery.getElementList().remove(0);
 	subQuery.getElementList().add(new_Element);
-	
+
 	return subQuery;
     }
 
+
+    /**
+     * Add triple of a query where all the concrete values are changed into variables
+     * @param query
+     * @param xss
+     * @return
+     */
+    public static CQuery addSuppressTriple(CQuery query, CQuery xss) {
+	
+	List<CElement> new_elt = new ArrayList<CElement>();
+	for(int i=0; i<query.elementList.size(); i++){
+	    if(xss.elementList.contains(query.elementList.get(i))){
+		new_elt.add(query.elementList.get(i));
+	    }
+	    else{
+		new_elt.add(query.elementList.get(i).supress_all_concrete());
+	    }
+	}
+	return CQueryFactory.createCQuery(new_elt);
+    }
+
+    /**
+     * Add triple of a query where all the concrete values are changed into variables
+     * @param query
+     * @param xss
+     * @return
+     */
+    public static CQuery mergeSuppressTriple(CQuery cQuery, CQuery cQuery2) {
+	
+	List<CElement> new_elt = new ArrayList<CElement>();
+	new_elt.addAll(cQuery.getElementList());
+	for(int i=0; i<cQuery2.elementList.size(); i++){
+	    new_elt.add(cQuery2.elementList.get(i).supress_all_concrete());
+	}
+	return CQueryFactory.createCQuery(new_elt);
+    }
+
+    /**
+     * Transform a select query to a construct query with all the triple in the where clause as template of the construct clause
+     * @param cQuery
+     * @return
+     */
+    public String toConstructQuery() {
+	Query constructQuery = QueryFactory.create(this.toString());
+	constructQuery.setQueryConstructType();
+	constructQuery.setConstructTemplate(new Template(new BasicPattern()));
+	for(int i=0; i<this.getElementList().size(); i++){
+	    constructQuery.getConstructTemplate().getBGP().add(this.getElementList().get(i).getTriple());
+	}
+	return constructQuery.toString();
+    }
 }

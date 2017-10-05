@@ -28,11 +28,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ensma.lias.qarscore.InitTest;
-import fr.ensma.lias.qarscore.SPARQLQueriesSample;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 import fr.ensma.lias.qarscore.engine.query.CQueryFactory;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
 import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.implementation.StrategyFactory;
+import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
 
 /**
  * @author Geraud FOKOU
@@ -64,7 +64,7 @@ public class MatrixStrategyStarQueryTest extends InitTest {
 
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_13);
-	relaxationStrategy = StrategyFactory.getMatrixStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getMatrixStrategy(session,
 		conjunctiveQuery);
 	Assert.assertTrue(!relaxationStrategy
 		.hasLeastKAnswers(conjunctiveQuery));
@@ -80,7 +80,7 @@ public class MatrixStrategyStarQueryTest extends InitTest {
 
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_13);
-	relaxationStrategy = StrategyFactory.getMatrixStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getMatrixStrategy(session,
 		conjunctiveQuery);
 	Assert.assertTrue(!relaxationStrategy
 		.hasLeastKAnswers(conjunctiveQuery));
@@ -99,7 +99,7 @@ public class MatrixStrategyStarQueryTest extends InitTest {
 
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_13);
-	relaxationStrategy = StrategyFactory.getMatrixStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getMatrixStrategy(session,
 		conjunctiveQuery);
 	Assert.assertTrue(!relaxationStrategy
 		.hasLeastKAnswers(conjunctiveQuery));
@@ -121,7 +121,7 @@ public class MatrixStrategyStarQueryTest extends InitTest {
 
 	CQuery conjunctiveQuery = CQueryFactory
 		.createCQuery(SPARQLQueriesSample.QUERY_13);
-	relaxationStrategy = StrategyFactory.getMatrixStrategy(sessionJena,
+	relaxationStrategy = StrategyFactory.getMatrixStrategy(session,
 		conjunctiveQuery);
 	Assert.assertTrue(!relaxationStrategy
 		.hasLeastKAnswers(conjunctiveQuery));

@@ -23,19 +23,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import fr.ensma.lias.qarscore.connection.AllConnectionTests;
-import fr.ensma.lias.qarscore.engine.query.AllQueryTests;
-import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AllRelaxationTests;
-import fr.ensma.lias.qarscore.loader.AllLoaderTests;
-import fr.ensma.lias.qarscore.parser.AllParserTests;
+import fr.ensma.lias.qarscore.benchmark.BenchmarkStrategiesTest;
 
 /**
  * @author Mickael BARON
+ * @author Geraud FOKOU
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = { 
-	AllConnectionTests.class, AllLoaderTests.class,
-	AllQueryTests.class, AllParserTests.class, AllRelaxationTests.class})
+	BenchmarkStrategiesTest.class})
 public class AllTests {
 
 }

@@ -1,41 +1,22 @@
 package fr.ensma.lias.qarscore;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.Dataset;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QueryFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.InfModel;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.tdb.TDBFactory;
-import org.apache.log4j.Logger;
+import org.apache.jena.tdb.TDBLoader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.ensma.lias.qarscore.connection.SessionFactory;
-import fr.ensma.lias.qarscore.connection.implementation.JenaSession;
-import fr.ensma.lias.qarscore.properties.Properties;
-
 public class SaturationTest extends InitTest {
 
-    final static String PATH = "c:/resources/UBA/Uni1.owl";
-    final static String PATH_ONTO = "c:/resources/UBA/univ-bench.owl";
-    final static String TDB_PATH = "c:/TDB/UBA";
-    final static String LUBM_PREFIX = "PREFIX base: <http://swat.cse.lehigh.edu/onto/univ-bench.owl> "
-	    + "PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> "
-	    + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-	    + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-	    + "PREFIX owl:  <http://www.w3.org/2002/07/owl#> "
-	    + "PREFIX xdt:  <http://www.w3.org/2001/XMLSchema#> ";
 
     @Before
     public void setUp() {
@@ -50,112 +31,47 @@ public class SaturationTest extends InitTest {
 	
 	List<String> path_entry = new ArrayList<String>();
 	path_entry.add(PATH_ONTO);
-	path_entry.add(PATH);
-	Dataset dataset = TDBFactory.createDataset(TDB_PATH);
-	Model dataModel = dataset.getDefaultModel();
-//	TDBLoader.loadModel(dataset.getDefaultModel(), path_entry, false);
-//	dataModel.commit();
+	path_entry.add(PATH_SATURATED);
+	Dataset dataset = TDBFactory.createDataset(TDB_PATH_SAT);
+	TDBLoader.loadModel(dataset.getDefaultModel(), path_entry, false);
+    }
 
-	QueryExecution query_exec = QueryExecutionFactory.create(SPARQLQueriesSample.WWW_QUERY_1,
-		dataModel);
-
-	ResultSet result = query_exec.execSelect();
-	Logger.getRootLogger().info("Result without saturation");
-	while (result.hasNext()) {
-	    QuerySolution sol = result.next();
-	    Logger.getRootLogger().info(sol.get("X"));
-	}
-
-	dataModel = ModelFactory.createInfModel(
+    @Test
+    public void testsaturationwithoutsession() {
+	
+	List<String> path_entry = new ArrayList<String>();
+	path_entry.add(PATH_ONTO);
+	path_entry.add(PATH_SATURATED);
+	Dataset dataset = TDBFactory.createDataset(TDB_PATH_SAT);
+	InfModel dataModel = ModelFactory.createInfModel(
 		ReasonerRegistry.getRDFSReasoner(), dataset.getDefaultModel());
 
-	query_exec = QueryExecutionFactory.create(SPARQLQueriesSample.WWW_QUERY_3, dataModel);
-
-	result = query_exec.execSelect();
-	Logger.getRootLogger().info("Result with saturation");
-	while (result.hasNext()) {
-	    QuerySolution sol = result.next();
-	    Logger.getRootLogger().info(sol.get("X"));
+//	TDBLoader.loadModel(dataModel, path_entry, false);
+	FileWriter out = null;
+	try {
+	    out = new FileWriter( PATH_SATURATED );
+	    dataModel.write( out, "N-TRIPLE" );
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	finally {
+	   try {
+	       out.close();
+	   }
+	   catch (IOException closeException) {
+	   }
 	}
     }
 
     @Test
     public void testwithsessionwithoutsaturation() {
-
-	Properties.setModelMemSpec(OntModelSpec.OWL_DL_MEM);
-	Properties.setOntoLang("OWL");
-	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
-
-	QueryExecution query_exec = QueryExecutionFactory.create(SPARQLQueriesSample.WWW_QUERY_3,
-		((JenaSession) sessionJena).getDataset());
-
-	ResultSet result = query_exec.execSelect();
-	Logger.getRootLogger().info("Result without saturation");
-	int num_answers = 0;
-	while (result.hasNext()) {
-	    QuerySolution sol = result.next();
-	    Logger.getRootLogger().info(sol.get("X"));
-	    num_answers = num_answers + 1;
-	}
-	 Logger.getRootLogger().info(num_answers);
     }
 
     @Test
     public void testsaturationwithsession() {
-
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
-	Properties.setOntoLang("OWL");
-	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
-
-	QueryExecution query_exec = QueryExecutionFactory.create(SPARQLQueriesSample.WWW_QUERY_3,
-		((JenaSession) sessionJena).getDataset());
-
-	ResultSet result = query_exec.execSelect();
-	Logger.getRootLogger().info(query_exec.getQuery());
-	int num_answers = 0;
-	while (result.hasNext()) {
-	    QuerySolution sol = result.next();
-	    Logger.getRootLogger().info(sol.get("X"));
-	    num_answers = num_answers + 1;
-	}
-	 Logger.getRootLogger().info(num_answers);
     }
 
     @Test
     public void executeStatisticQueryTest() {
-
-	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
-	Properties.setOntoLang("OWL");
-	sessionJena = SessionFactory.getTDBSession(TDB_PATH);
-
-	Map<String, String> allQueries = StatisticDataSetQueryTest
-		.getAllQueries();
-	for (String key : allQueries.keySet()) {
-	    try {
-		Logger.getRootLogger().info(key);
-		Query query = QueryFactory.create(allQueries.get(key));
-		List<String> varNames = query.getResultVars();
-		QueryExecution qexec = QueryExecutionFactory.create(query,
-			((JenaSession) sessionJena).getDataset());
-		try {
-		    ResultSet results = qexec.execSelect();
-		    while (results.hasNext()) {
-			QuerySolution soln = results.nextSolution();
-			String solution = "";
-			for (int i = 0; i < varNames.size() - 1; i++) {
-			    solution = solution + varNames.get(i) + ":"
-				    + soln.get(varNames.get(i)) + "; ";
-			}
-			solution = solution + varNames.get(varNames.size() - 1)
-				+ ":"
-				+ soln.get(varNames.get(varNames.size() - 1))
-				+ "; ";
-			Logger.getRootLogger().info(solution);
-		    }
-		} finally {
-		}
-	    } finally {
-	    }
-	}
     }
 }

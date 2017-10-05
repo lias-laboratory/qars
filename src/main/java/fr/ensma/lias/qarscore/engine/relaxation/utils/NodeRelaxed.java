@@ -217,8 +217,7 @@ public class NodeRelaxed {
 	return new NodeRelaxed(node_s, node_p, node_o, n_1.getSimilarity()
 		+ n_2.getSimilarity() + n_3.getSimilarity(),
 		levels);
-
-    }
+    }  
 
     /**
      * @return the node_1

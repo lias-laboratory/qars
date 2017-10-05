@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Node_Variable;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.sparql.core.TriplePath;
@@ -31,6 +32,7 @@ import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
 
+import fr.ensma.lias.qarscore.engine.relaxation.utils.HelperRelax;
 import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
 
 /**
@@ -44,7 +46,7 @@ public class CElement {
      * give the number of triple clause make.
      */
     private static Long numberClause = (long) 1;
-
+    
     /**
      * Label for represent clause
      */
@@ -53,7 +55,7 @@ public class CElement {
     /**
      * Pattern of clause
      */
-    private Element element ;
+    private Element element;
 
     /**
      * list of variables in clause pattern
@@ -76,31 +78,31 @@ public class CElement {
 
 	    label = "t" + Long.toString(ELEMENT_INDEX);
 
-	    if(currentClause.getSubject() instanceof Node_Variable){
-		 mentionnedVar.add(currentClause.getSubject());
-	    }
-	    
-//	    if (currentClause.getSubject().isVariable()) {
-//		mentionnedVar.add(currentClause.getSubject());
-//	    }
-	    
-	    if(currentClause.getPredicate() instanceof Node_Variable){
-		 mentionnedVar.add(currentClause.getPredicate());
+	    if (currentClause.getSubject() instanceof Node_Variable) {
+		mentionnedVar.add(currentClause.getSubject());
 	    }
 
-//	    if (currentClause.getPredicate() != null) {
-//		if (currentClause.getPredicate().isVariable()) {
-//		    mentionnedVar.add(currentClause.getPredicate());
-//		}
-//	    }
-	    if(currentClause.getObject() instanceof Node_Variable){
-		 mentionnedVar.add(currentClause.getObject());
+	    // if (currentClause.getSubject().isVariable()) {
+	    // mentionnedVar.add(currentClause.getSubject());
+	    // }
+
+	    if (currentClause.getPredicate() instanceof Node_Variable) {
+		mentionnedVar.add(currentClause.getPredicate());
 	    }
-//	    if (currentClause.getObject() != null) {
-//		if (currentClause.getObject().isVariable()) {
-//		    mentionnedVar.add(currentClause.getObject());
-//		}
-//	    }
+
+	    // if (currentClause.getPredicate() != null) {
+	    // if (currentClause.getPredicate().isVariable()) {
+	    // mentionnedVar.add(currentClause.getPredicate());
+	    // }
+	    // }
+	    if (currentClause.getObject() instanceof Node_Variable) {
+		mentionnedVar.add(currentClause.getObject());
+	    }
+	    // if (currentClause.getObject() != null) {
+	    // if (currentClause.getObject().isVariable()) {
+	    // mentionnedVar.add(currentClause.getObject());
+	    // }
+	    // }
 	} else if (currentElement instanceof ElementFilter) {
 	    label = "F" + Long.toString(CElement.numberClause++);
 	    element = currentElement;
@@ -318,6 +320,103 @@ public class CElement {
 	return new CElement(newPathBlock);
     }
 
+    /**
+     * replace the object of an element by another node
+     * 
+     * @param otherNode
+     * @return
+     */
+    public CElement supress_all_concrete() {
+
+	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
+		.getList().get(0);
+
+	TriplePath new_pattern;
+
+	Node node_subject, node_object, node_pred;
+
+	if (currentClause.getSubject() instanceof Node_Variable) {
+	    node_subject = currentClause.getSubject();
+	} else {
+	    node_subject = NodeFactory
+		    .createVariable(HelperRelax.getNewResource());
+	}
+	if (currentClause.getObject() instanceof Node_Variable) {
+	    node_object = currentClause.getObject();
+	} else {
+	    node_object = NodeFactory.createVariable(HelperRelax.getNewResource());
+	}
+	if (currentClause.getPredicate() != null) {
+	    if (currentClause.getPredicate() instanceof Node_Variable) {
+		node_pred = currentClause.getPredicate();
+	    } else {
+		node_pred = NodeFactory.createVariable(HelperRelax.getNewPredicat());
+	    }
+	} else {
+	    node_pred = NodeFactory.createVariable(HelperRelax.getNewPredicat());
+	}
+
+	new_pattern = new TriplePath(new Triple(node_subject, node_pred,
+		node_object));
+
+	ElementPathBlock newPathBlock = new ElementPathBlock();
+	newPathBlock.addTriple(new_pattern);
+
+	return new CElement(newPathBlock);
+    }
+
+    public Triple getTriple() {
+
+	if (((ElementPathBlock) element).getPattern().getList().get(0)
+		.isTriple()) {
+	    return ((ElementPathBlock) element).getPattern().getList().get(0)
+		    .asTriple();
+	} else {
+	    return null;
+	}
+    }
+
+    public TriplePath getTripePath() {
+
+	return ((ElementPathBlock) element).getPattern().getList().get(0);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public Node getSubject() {
+
+	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
+		.getList().get(0);
+
+	return currentClause.getSubject();
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public Node getObject() {
+
+	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
+		.getList().get(0);
+
+	return currentClause.getObject();
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public Node getPredicat() {
+
+	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
+		.getList().get(0);
+
+	return currentClause.getPredicate();
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -337,7 +436,7 @@ public class CElement {
 
 	if (otherCElement.element == this.element)
 	    return true;
-	if(this.getLabel().equals(otherCElement.getLabel())){
+	if (this.getLabel().equals(otherCElement.getLabel())) {
 	    return true;
 	}
 	if (this.element instanceof ElementPathBlock) {
@@ -367,7 +466,7 @@ public class CElement {
 	}
 	return false;
     }
-    
+
     @Override
     public int hashCode() {
 	return (int) (ELEMENT_INDEX * Long.hashCode(ELEMENT_INDEX));
