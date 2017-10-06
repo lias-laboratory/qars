@@ -125,7 +125,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2.1</version>
+				<version>3.1.0</version>
 				<executions>
 					<execution>
 						<id>create-zip-package</id>
@@ -134,7 +134,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>qars</finalName>
+							<finalName>qars-${project.version}</finalName>
 							<descriptors>
 								<descriptor>src/main/assembly/AssemblyDIST.xml</descriptor>
 							</descriptors>
