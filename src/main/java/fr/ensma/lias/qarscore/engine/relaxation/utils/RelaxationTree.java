@@ -29,159 +29,155 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public class RelaxationTree {
 
-    private CQuery current_query;
-    private double similarity_to_parent;
-    private RelaxationTree parent_query;
-    private List<RelaxationTree> child_relaxed_query;
+	private CQuery current_query;
+	private double similarity_to_parent;
+	private RelaxationTree parent_query;
+	private List<RelaxationTree> child_relaxed_query;
 
-    /**
-     * 
-     */
-    public RelaxationTree(CQuery q, RelaxationTree parent, double sim) {
-	current_query = q;
-	parent_query = parent;
-	similarity_to_parent = sim;
-	child_relaxed_query = new ArrayList<RelaxationTree>();
-    }
-
-    public RelaxationTree(CQuery q) {
-	current_query = q;
-	parent_query = null;
-	similarity_to_parent = 1;
-	child_relaxed_query = new ArrayList<RelaxationTree>();
-    }
-
-    /**
-     * @return the query
-     */
-    public CQuery getQuery() {
-	return current_query;
-    }
-
-    /**
-     * @param query
-     *            the query to set
-     */
-    public void setQuery(CQuery query) {
-	this.current_query = query;
-    }
-
-    /**
-     * @return the similarity
-     */
-    public double getSimilarity() {
-	return similarity_to_parent;
-    }
-
-    /**
-     * @param similarity
-     *            the similarity to set
-     */
-    public void setSimilarity(double similarity) {
-	this.similarity_to_parent = similarity;
-    }
-
-    /**
-     * @return the source_query
-     */
-    public RelaxationTree getSource_query() {
-	return parent_query;
-    }
-
-    /**
-     * @return the relaxed_query
-     */
-    public List<RelaxationTree> getRelaxed_query() {
-	return child_relaxed_query;
-    }
-
-    /**
-     * return all the relax queries without child
-     * 
-     * @return
-     */
-    public List<RelaxationTree> getLeaf() {
-
-	List<RelaxationTree> leaf = new ArrayList<RelaxationTree>();
-	if (child_relaxed_query.size() == 0) {
-	    leaf.add(this);
-	    return leaf;
+	/**
+	 * 
+	 */
+	public RelaxationTree(CQuery q, RelaxationTree parent, double sim) {
+		current_query = q;
+		parent_query = parent;
+		similarity_to_parent = sim;
+		child_relaxed_query = new ArrayList<RelaxationTree>();
 	}
 
-	List<RelaxationTree> temp_leaf;
-	for (int i = 0; i < child_relaxed_query.size(); i++) {
-	    temp_leaf = child_relaxed_query.get(i).getLeaf();
+	public RelaxationTree(CQuery q) {
+		current_query = q;
+		parent_query = null;
+		similarity_to_parent = 1;
+		child_relaxed_query = new ArrayList<RelaxationTree>();
+	}
 
-	    for (int j = 0; j < temp_leaf.size(); j++) {
+	/**
+	 * @return the query
+	 */
+	public CQuery getQuery() {
+		return current_query;
+	}
+
+	/**
+	 * @param query the query to set
+	 */
+	public void setQuery(CQuery query) {
+		this.current_query = query;
+	}
+
+	/**
+	 * @return the similarity
+	 */
+	public double getSimilarity() {
+		return similarity_to_parent;
+	}
+
+	/**
+	 * @param similarity the similarity to set
+	 */
+	public void setSimilarity(double similarity) {
+		this.similarity_to_parent = similarity;
+	}
+
+	/**
+	 * @return the source_query
+	 */
+	public RelaxationTree getSource_query() {
+		return parent_query;
+	}
+
+	/**
+	 * @return the relaxed_query
+	 */
+	public List<RelaxationTree> getRelaxed_query() {
+		return child_relaxed_query;
+	}
+
+	/**
+	 * return all the relax queries without child
+	 * 
+	 * @return
+	 */
+	public List<RelaxationTree> getLeaf() {
+
+		List<RelaxationTree> leaf = new ArrayList<RelaxationTree>();
+		if (child_relaxed_query.size() == 0) {
+			leaf.add(this);
+			return leaf;
+		}
+
+		List<RelaxationTree> temp_leaf;
+		for (int i = 0; i < child_relaxed_query.size(); i++) {
+			temp_leaf = child_relaxed_query.get(i).getLeaf();
+
+			for (int j = 0; j < temp_leaf.size(); j++) {
+
+				int position = 0;
+				boolean found = false;
+				while (!found) {
+					if (position == leaf.size()) {
+						found = true;
+					} else {
+						if (leaf.get(position).getSimilarity() <= temp_leaf.get(j).getSimilarity()) {
+							found = true;
+						} else {
+							position++;
+						}
+					}
+				}
+
+				leaf.add(position, temp_leaf.get(j));
+			}
+		}
+		return leaf;
+	}
+
+	/**
+	 * Add a new relaxed query in the list of relax queries of the current query
+	 * 
+	 * @param child
+	 * @return
+	 */
+	public boolean add_child(RelaxationTree child) {
+
+		if (this != child.getSource_query()) {
+			return false;
+		}
 
 		int position = 0;
 		boolean found = false;
 		while (!found) {
-		    if (position == leaf.size()) {
-			found = true;
-		    } else {
-			if (leaf.get(position).getSimilarity() <= temp_leaf
-				.get(j).getSimilarity()) {
-			    found = true;
+			if (position == child_relaxed_query.size()) {
+				found = true;
 			} else {
-			    position++;
+				if (child_relaxed_query.get(position).getSimilarity() <= child.getSimilarity()) {
+					found = true;
+				} else {
+					position++;
+				}
 			}
-		    }
 		}
-
-		leaf.add(position, temp_leaf.get(j));
-	    }
-	}
-	return leaf;
-    }
-
-    /**
-     * Add a new relaxed query in the list of relax queries of the current query
-     * 
-     * @param child
-     * @return
-     */
-    public boolean add_child(RelaxationTree child) {
-
-	if (this != child.getSource_query()) {
-	    return false;
+		child_relaxed_query.add(position, child);
+		return true;
 	}
 
-	int position = 0;
-	boolean found = false;
-	while (!found) {
-	    if (position == child_relaxed_query.size()) {
-		found = true;
-	    } else {
-		if (child_relaxed_query.get(position).getSimilarity() <= child
-			.getSimilarity()) {
-		    found = true;
-		} else {
-		    position++;
+	/**
+	 * Return the node of the relaxation Tree which has q as value
+	 * 
+	 * @param current_query
+	 * @return
+	 */
+	public RelaxationTree isInGraph(CQuery q) {
+
+		if (current_query.equals(q)) {
+			return this;
 		}
-	    }
+		for (int i = 0; i < child_relaxed_query.size(); i++) {
+			RelaxationTree temp = child_relaxed_query.get(i).isInGraph(q);
+			if (temp != null) {
+				return temp;
+			}
+		}
+		return null;
 	}
-	child_relaxed_query.add(position, child);
-	return true;
-    }
-
-    /**
-     * Return the node of the relaxation Tree which has q as value
-     * 
-     * @param current_query
-     * @return
-     */
-    public RelaxationTree isInGraph(CQuery q) {
-
-	if (current_query.equals(q)) {
-	    return this;
-	}
-	for (int i = 0; i < child_relaxed_query.size(); i++) {
-	    RelaxationTree temp = child_relaxed_query.get(i).isInGraph(q);
-	    if (temp != null) {
-		return temp;
-	    }
-	}
-	return null;
-    }
 }

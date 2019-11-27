@@ -40,435 +40,411 @@ import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
  */
 public class CElement {
 
-    private final Long ELEMENT_INDEX;
+	private final Long ELEMENT_INDEX;
 
-    /**
-     * give the number of triple clause make.
-     */
-    private static Long numberClause = (long) 1;
-    
-    /**
-     * Label for represent clause
-     */
-    private final String label;
+	/**
+	 * give the number of triple clause make.
+	 */
+	private static Long numberClause = (long) 1;
 
-    /**
-     * Pattern of clause
-     */
-    private Element element;
+	/**
+	 * Label for represent clause
+	 */
+	private final String label;
 
-    /**
-     * list of variables in clause pattern
-     */
-    private List<Node> mentionnedVar = new ArrayList<Node>();
+	/**
+	 * Pattern of clause
+	 */
+	private Element element;
 
-    /**
-     * Private constructor
-     */
-    private CElement(Element currentElement) {
+	/**
+	 * list of variables in clause pattern
+	 */
+	private List<Node> mentionnedVar = new ArrayList<Node>();
 
-	ELEMENT_INDEX = CElement.numberClause++;
+	/**
+	 * Private constructor
+	 */
+	private CElement(Element currentElement) {
 
-	if (currentElement instanceof ElementPathBlock) {
+		ELEMENT_INDEX = CElement.numberClause++;
 
-	    this.element = currentElement;
+		if (currentElement instanceof ElementPathBlock) {
 
-	    TriplePath currentClause = ((ElementPathBlock) element)
-		    .getPattern().getList().get(0);
+			this.element = currentElement;
 
-	    label = "t" + Long.toString(ELEMENT_INDEX);
+			TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
 
-	    if (currentClause.getSubject() instanceof Node_Variable) {
-		mentionnedVar.add(currentClause.getSubject());
-	    }
+			label = "t" + Long.toString(ELEMENT_INDEX);
 
-	    // if (currentClause.getSubject().isVariable()) {
-	    // mentionnedVar.add(currentClause.getSubject());
-	    // }
-
-	    if (currentClause.getPredicate() instanceof Node_Variable) {
-		mentionnedVar.add(currentClause.getPredicate());
-	    }
-
-	    // if (currentClause.getPredicate() != null) {
-	    // if (currentClause.getPredicate().isVariable()) {
-	    // mentionnedVar.add(currentClause.getPredicate());
-	    // }
-	    // }
-	    if (currentClause.getObject() instanceof Node_Variable) {
-		mentionnedVar.add(currentClause.getObject());
-	    }
-	    // if (currentClause.getObject() != null) {
-	    // if (currentClause.getObject().isVariable()) {
-	    // mentionnedVar.add(currentClause.getObject());
-	    // }
-	    // }
-	} else if (currentElement instanceof ElementFilter) {
-	    label = "F" + Long.toString(CElement.numberClause++);
-	    element = currentElement;
-
-	    for (Var var : ((ElementFilter) currentElement).getExpr()
-		    .getVarsMentioned()) {
-		mentionnedVar.add(var);
-	    }
-	} else {
-	    throw new NotYetImplementedException(
-		    "This Element type don't support by the API");
-	}
-    }
-
-    /**
-     * Replace a node by an otherNode in a path block element
-     * 
-     * @param node
-     * @param otherNode
-     * @return
-     */
-    private TriplePath replaceInPathBlock(Node node, Node otherNode) {
-
-	Node subjectNode;
-	Node predicatNode;
-	Node objectNode;
-	boolean replacement = false;
-
-	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
-		.getList().get(0);
-
-	if (currentClause.getSubject().sameValueAs(node)) {
-	    subjectNode = otherNode;
-	    replacement = true;
-	} else {
-	    subjectNode = currentClause.getSubject();
-	}
-	if (currentClause.getPredicate() != null) {
-	    if (currentClause.getPredicate().sameValueAs(node)) {
-		predicatNode = otherNode;
-		replacement = true;
-	    } else {
-		predicatNode = currentClause.getPredicate();
-	    }
-	} else {
-	    predicatNode = null;
-	}
-	if (currentClause.getObject().sameValueAs(node)) {
-	    objectNode = otherNode;
-	    replacement = true;
-	} else {
-	    objectNode = currentClause.getSubject();
-	}
-	if (replacement) {
-	    if (predicatNode == null) {
-		return new TriplePath(subjectNode, currentClause.getPath(),
-			objectNode);
-	    } else {
-		return new TriplePath(new Triple(subjectNode, predicatNode,
-			objectNode));
-	    }
-
-	} else {
-	    return currentClause;
-	}
-    }
-
-    /**
-     * Create a CTriple clause
-     * 
-     * @param triplet
-     * @return
-     */
-    public static CElement createCTriple(Element currentElement) {
-	return new CElement(currentElement);
-    }
-
-    /**
-     * @return the element
-     */
-    public Element getElement() {
-	return element;
-    }
-
-    /**
-     * @return the label
-     */
-    public String getLabel() {
-	return label;
-    }
-
-    /**
-     * get all the variables mentioned in the Element
-     * 
-     * @return
-     */
-    public List<Node> getMentionnedVar() {
-
-	List<Node> tempList = new ArrayList<Node>();
-	for (int i = 0; i < mentionnedVar.size(); i++) {
-	    tempList.add(mentionnedVar.get(i));
-	}
-	return tempList;
-    }
-
-    /**
-     * Returns the variables names present in the element
-     */
-    public List<String> getMentionnedVarsNames() {
-
-	List<String> tempList = new ArrayList<String>();
-	for (int i = 0; i < mentionnedVar.size(); i++) {
-	    tempList.add(mentionnedVar.get(i).getName());
-	}
-	return tempList;
-    }
-
-    /**
-     * replace node by othernode in this element
-     * 
-     * @param node
-     * @param otherNode
-     * @return
-     */
-    public CElement replace(Node node, Node otherNode) {
-
-	if (element instanceof ElementPathBlock) {
-
-	    TriplePath newtriplePath = replaceInPathBlock(node, otherNode);
-	    if (newtriplePath == ((ElementPathBlock) element).getPattern()
-		    .getList().get(0)) {
-		return this;
-	    }
-	    ElementPathBlock newPathBlock = new ElementPathBlock();
-	    newPathBlock.addTriple(newtriplePath);
-
-	    return new CElement(newPathBlock);
-	}
-	return null;
-    }
-
-    /**
-     * replace the subject of an element by another node
-     * 
-     * @param otherNode
-     * @return
-     */
-    public CElement replace_subject(Node otherNode) {
-
-	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
-		.getList().get(0);
-
-	TriplePath new_pattern;
-
-	if (currentClause.getPredicate() != null) {
-	    new_pattern = new TriplePath(new Triple(otherNode,
-		    currentClause.getPredicate(), currentClause.getObject()));
-	} else {
-	    new_pattern = new TriplePath(otherNode, currentClause.getPath(),
-		    currentClause.getObject());
-	}
-
-	ElementPathBlock newPathBlock = new ElementPathBlock();
-	newPathBlock.addTriple(new_pattern);
-
-	return new CElement(newPathBlock);
-    }
-
-    /**
-     * replace the predicate of an element by another node
-     * 
-     * @param otherNode
-     * @return
-     */
-    public CElement replace_predicat(Node otherNode) {
-
-	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
-		.getList().get(0);
-
-	TriplePath new_pattern;
-
-	new_pattern = new TriplePath(new Triple(currentClause.getSubject(),
-		otherNode, currentClause.getObject()));
-
-	ElementPathBlock newPathBlock = new ElementPathBlock();
-	newPathBlock.addTriple(new_pattern);
-
-	return new CElement(newPathBlock);
-    }
-
-    /**
-     * replace the object of an element by another node
-     * 
-     * @param otherNode
-     * @return
-     */
-    public CElement replace_object(Node otherNode) {
-
-	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
-		.getList().get(0);
-
-	TriplePath new_pattern;
-
-	if (currentClause.getPredicate() != null) {
-	    new_pattern = new TriplePath(new Triple(currentClause.getSubject(),
-		    currentClause.getPredicate(), otherNode));
-	} else {
-	    new_pattern = new TriplePath(currentClause.getSubject(),
-		    currentClause.getPath(), otherNode);
-	}
-
-	ElementPathBlock newPathBlock = new ElementPathBlock();
-	newPathBlock.addTriple(new_pattern);
-
-	return new CElement(newPathBlock);
-    }
-
-    /**
-     * replace the object of an element by another node
-     * 
-     * @param otherNode
-     * @return
-     */
-    public CElement supress_all_concrete() {
-
-	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
-		.getList().get(0);
-
-	TriplePath new_pattern;
-
-	Node node_subject, node_object, node_pred;
-
-	if (currentClause.getSubject() instanceof Node_Variable) {
-	    node_subject = currentClause.getSubject();
-	} else {
-	    node_subject = NodeFactory
-		    .createVariable(HelperRelax.getNewResource());
-	}
-	if (currentClause.getObject() instanceof Node_Variable) {
-	    node_object = currentClause.getObject();
-	} else {
-	    node_object = NodeFactory.createVariable(HelperRelax.getNewResource());
-	}
-	if (currentClause.getPredicate() != null) {
-	    if (currentClause.getPredicate() instanceof Node_Variable) {
-		node_pred = currentClause.getPredicate();
-	    } else {
-		node_pred = NodeFactory.createVariable(HelperRelax.getNewPredicat());
-	    }
-	} else {
-	    node_pred = NodeFactory.createVariable(HelperRelax.getNewPredicat());
-	}
-
-	new_pattern = new TriplePath(new Triple(node_subject, node_pred,
-		node_object));
-
-	ElementPathBlock newPathBlock = new ElementPathBlock();
-	newPathBlock.addTriple(new_pattern);
-
-	return new CElement(newPathBlock);
-    }
-
-    public Triple getTriple() {
-
-	if (((ElementPathBlock) element).getPattern().getList().get(0)
-		.isTriple()) {
-	    return ((ElementPathBlock) element).getPattern().getList().get(0)
-		    .asTriple();
-	} else {
-	    return null;
-	}
-    }
-
-    public TriplePath getTripePath() {
-
-	return ((ElementPathBlock) element).getPattern().getList().get(0);
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Node getSubject() {
-
-	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
-		.getList().get(0);
-
-	return currentClause.getSubject();
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Node getObject() {
-
-	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
-		.getList().get(0);
-
-	return currentClause.getObject();
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Node getPredicat() {
-
-	TriplePath currentClause = ((ElementPathBlock) element).getPattern()
-		.getList().get(0);
-
-	return currentClause.getPredicate();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-
-	if (this == obj)
-	    return true;
-	if (obj == null)
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-
-	CElement otherCElement = (CElement) obj;
-
-	if (otherCElement.element == this.element)
-	    return true;
-	if (this.getLabel().equals(otherCElement.getLabel())) {
-	    return true;
-	}
-	if (this.element instanceof ElementPathBlock) {
-	    List<TriplePath> currentTriple = ((ElementPathBlock) element)
-		    .getPattern().getList();
-	    if (otherCElement.element instanceof ElementPathBlock) {
-		List<TriplePath> otherTriple = ((ElementPathBlock) otherCElement.element)
-			.getPattern().getList();
-		if (currentTriple.size() == otherTriple.size()) {
-		    for (int i = 0; i < currentTriple.size(); i++) {
-			int j = 0;
-			boolean found = false;
-			while ((!found) && (j < currentTriple.size())) {
-			    found = currentTriple.get(i).equals(
-				    otherTriple.get(j));
-			    j++;
+			if (currentClause.getSubject() instanceof Node_Variable) {
+				mentionnedVar.add(currentClause.getSubject());
 			}
-			if (!found) {
-			    return false;
+
+			// if (currentClause.getSubject().isVariable()) {
+			// mentionnedVar.add(currentClause.getSubject());
+			// }
+
+			if (currentClause.getPredicate() instanceof Node_Variable) {
+				mentionnedVar.add(currentClause.getPredicate());
 			}
-		    }
-		    return true;
+
+			// if (currentClause.getPredicate() != null) {
+			// if (currentClause.getPredicate().isVariable()) {
+			// mentionnedVar.add(currentClause.getPredicate());
+			// }
+			// }
+			if (currentClause.getObject() instanceof Node_Variable) {
+				mentionnedVar.add(currentClause.getObject());
+			}
+			// if (currentClause.getObject() != null) {
+			// if (currentClause.getObject().isVariable()) {
+			// mentionnedVar.add(currentClause.getObject());
+			// }
+			// }
+		} else if (currentElement instanceof ElementFilter) {
+			label = "F" + Long.toString(CElement.numberClause++);
+			element = currentElement;
+
+			for (Var var : ((ElementFilter) currentElement).getExpr().getVarsMentioned()) {
+				mentionnedVar.add(var);
+			}
+		} else {
+			throw new NotYetImplementedException("This Element type don't support by the API");
+		}
+	}
+
+	/**
+	 * Replace a node by an otherNode in a path block element
+	 * 
+	 * @param node
+	 * @param otherNode
+	 * @return
+	 */
+	private TriplePath replaceInPathBlock(Node node, Node otherNode) {
+
+		Node subjectNode;
+		Node predicatNode;
+		Node objectNode;
+		boolean replacement = false;
+
+		TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
+
+		if (currentClause.getSubject().sameValueAs(node)) {
+			subjectNode = otherNode;
+			replacement = true;
+		} else {
+			subjectNode = currentClause.getSubject();
+		}
+		if (currentClause.getPredicate() != null) {
+			if (currentClause.getPredicate().sameValueAs(node)) {
+				predicatNode = otherNode;
+				replacement = true;
+			} else {
+				predicatNode = currentClause.getPredicate();
+			}
+		} else {
+			predicatNode = null;
+		}
+		if (currentClause.getObject().sameValueAs(node)) {
+			objectNode = otherNode;
+			replacement = true;
+		} else {
+			objectNode = currentClause.getSubject();
+		}
+		if (replacement) {
+			if (predicatNode == null) {
+				return new TriplePath(subjectNode, currentClause.getPath(), objectNode);
+			} else {
+				return new TriplePath(new Triple(subjectNode, predicatNode, objectNode));
+			}
+
+		} else {
+			return currentClause;
+		}
+	}
+
+	/**
+	 * Create a CTriple clause
+	 * 
+	 * @param triplet
+	 * @return
+	 */
+	public static CElement createCTriple(Element currentElement) {
+		return new CElement(currentElement);
+	}
+
+	/**
+	 * @return the element
+	 */
+	public Element getElement() {
+		return element;
+	}
+
+	/**
+	 * @return the label
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * get all the variables mentioned in the Element
+	 * 
+	 * @return
+	 */
+	public List<Node> getMentionnedVar() {
+
+		List<Node> tempList = new ArrayList<Node>();
+		for (int i = 0; i < mentionnedVar.size(); i++) {
+			tempList.add(mentionnedVar.get(i));
+		}
+		return tempList;
+	}
+
+	/**
+	 * Returns the variables names present in the element
+	 */
+	public List<String> getMentionnedVarsNames() {
+
+		List<String> tempList = new ArrayList<String>();
+		for (int i = 0; i < mentionnedVar.size(); i++) {
+			tempList.add(mentionnedVar.get(i).getName());
+		}
+		return tempList;
+	}
+
+	/**
+	 * replace node by othernode in this element
+	 * 
+	 * @param node
+	 * @param otherNode
+	 * @return
+	 */
+	public CElement replace(Node node, Node otherNode) {
+
+		if (element instanceof ElementPathBlock) {
+
+			TriplePath newtriplePath = replaceInPathBlock(node, otherNode);
+			if (newtriplePath == ((ElementPathBlock) element).getPattern().getList().get(0)) {
+				return this;
+			}
+			ElementPathBlock newPathBlock = new ElementPathBlock();
+			newPathBlock.addTriple(newtriplePath);
+
+			return new CElement(newPathBlock);
+		}
+		return null;
+	}
+
+	/**
+	 * replace the subject of an element by another node
+	 * 
+	 * @param otherNode
+	 * @return
+	 */
+	public CElement replace_subject(Node otherNode) {
+
+		TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
+
+		TriplePath new_pattern;
+
+		if (currentClause.getPredicate() != null) {
+			new_pattern = new TriplePath(
+					new Triple(otherNode, currentClause.getPredicate(), currentClause.getObject()));
+		} else {
+			new_pattern = new TriplePath(otherNode, currentClause.getPath(), currentClause.getObject());
+		}
+
+		ElementPathBlock newPathBlock = new ElementPathBlock();
+		newPathBlock.addTriple(new_pattern);
+
+		return new CElement(newPathBlock);
+	}
+
+	/**
+	 * replace the predicate of an element by another node
+	 * 
+	 * @param otherNode
+	 * @return
+	 */
+	public CElement replace_predicat(Node otherNode) {
+
+		TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
+
+		TriplePath new_pattern;
+
+		new_pattern = new TriplePath(new Triple(currentClause.getSubject(), otherNode, currentClause.getObject()));
+
+		ElementPathBlock newPathBlock = new ElementPathBlock();
+		newPathBlock.addTriple(new_pattern);
+
+		return new CElement(newPathBlock);
+	}
+
+	/**
+	 * replace the object of an element by another node
+	 * 
+	 * @param otherNode
+	 * @return
+	 */
+	public CElement replace_object(Node otherNode) {
+
+		TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
+
+		TriplePath new_pattern;
+
+		if (currentClause.getPredicate() != null) {
+			new_pattern = new TriplePath(
+					new Triple(currentClause.getSubject(), currentClause.getPredicate(), otherNode));
+		} else {
+			new_pattern = new TriplePath(currentClause.getSubject(), currentClause.getPath(), otherNode);
+		}
+
+		ElementPathBlock newPathBlock = new ElementPathBlock();
+		newPathBlock.addTriple(new_pattern);
+
+		return new CElement(newPathBlock);
+	}
+
+	/**
+	 * replace the object of an element by another node
+	 * 
+	 * @param otherNode
+	 * @return
+	 */
+	public CElement supress_all_concrete() {
+
+		TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
+
+		TriplePath new_pattern;
+
+		Node node_subject, node_object, node_pred;
+
+		if (currentClause.getSubject() instanceof Node_Variable) {
+			node_subject = currentClause.getSubject();
+		} else {
+			node_subject = NodeFactory.createVariable(HelperRelax.getNewResource());
+		}
+		if (currentClause.getObject() instanceof Node_Variable) {
+			node_object = currentClause.getObject();
+		} else {
+			node_object = NodeFactory.createVariable(HelperRelax.getNewResource());
+		}
+		if (currentClause.getPredicate() != null) {
+			if (currentClause.getPredicate() instanceof Node_Variable) {
+				node_pred = currentClause.getPredicate();
+			} else {
+				node_pred = NodeFactory.createVariable(HelperRelax.getNewPredicat());
+			}
+		} else {
+			node_pred = NodeFactory.createVariable(HelperRelax.getNewPredicat());
+		}
+
+		new_pattern = new TriplePath(new Triple(node_subject, node_pred, node_object));
+
+		ElementPathBlock newPathBlock = new ElementPathBlock();
+		newPathBlock.addTriple(new_pattern);
+
+		return new CElement(newPathBlock);
+	}
+
+	public Triple getTriple() {
+
+		if (((ElementPathBlock) element).getPattern().getList().get(0).isTriple()) {
+			return ((ElementPathBlock) element).getPattern().getList().get(0).asTriple();
+		} else {
+			return null;
+		}
+	}
+
+	public TriplePath getTripePath() {
+
+		return ((ElementPathBlock) element).getPattern().getList().get(0);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Node getSubject() {
+
+		TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
+
+		return currentClause.getSubject();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Node getObject() {
+
+		TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
+
+		return currentClause.getObject();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Node getPredicat() {
+
+		TriplePath currentClause = ((ElementPathBlock) element).getPattern().getList().get(0);
+
+		return currentClause.getPredicate();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+
+		CElement otherCElement = (CElement) obj;
+
+		if (otherCElement.element == this.element)
+			return true;
+		if (this.getLabel().equals(otherCElement.getLabel())) {
+			return true;
+		}
+		if (this.element instanceof ElementPathBlock) {
+			List<TriplePath> currentTriple = ((ElementPathBlock) element).getPattern().getList();
+			if (otherCElement.element instanceof ElementPathBlock) {
+				List<TriplePath> otherTriple = ((ElementPathBlock) otherCElement.element).getPattern().getList();
+				if (currentTriple.size() == otherTriple.size()) {
+					for (int i = 0; i < currentTriple.size(); i++) {
+						int j = 0;
+						boolean found = false;
+						while ((!found) && (j < currentTriple.size())) {
+							found = currentTriple.get(i).equals(otherTriple.get(j));
+							j++;
+						}
+						if (!found) {
+							return false;
+						}
+					}
+					return true;
+				}
+				return false;
+			}
+			return false;
 		}
 		return false;
-	    }
-	    return false;
 	}
-	return false;
-    }
 
-    @Override
-    public int hashCode() {
-	return (int) (ELEMENT_INDEX * Long.hashCode(ELEMENT_INDEX));
-    }
+	@Override
+	public int hashCode() {
+		return (int) (ELEMENT_INDEX * Long.hashCode(ELEMENT_INDEX));
+	}
 }

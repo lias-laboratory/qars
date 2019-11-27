@@ -30,57 +30,56 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
 /**
  * @author Geraud FOKOU
  */
-public class CQueryHashMap implements CQueryIndexMap{
+public class CQueryHashMap implements CQueryIndexMap {
 
-    protected Logger logger = Logger.getRootLogger();
-    public Map<String, Integer> mapIndex;
-    
-    /**
-     * 
-     */
-    public CQueryHashMap() {
-	mapIndex = new HashMap<String, Integer>(20);
-    }
+	protected Logger logger = Logger.getRootLogger();
+	public Map<String, Integer> mapIndex;
 
-    @Override
-    public boolean contains(CQuery query){
-	
-	return this.mapIndex.containsKey(query.getQueryLabel());
-    }
-    
-    @Override
-    public Integer get(CQuery query){
-	
-	return this.mapIndex.get(query.getQueryLabel());
-    }
-
-    @Override
-    public void put(CQuery query, Integer numberAnswers) {
-	
-	this.mapIndex.put(query.getQueryLabel(), numberAnswers);
-    }
-    
-    public Set<String> getKeySet(){
-	
-	return this.mapIndex.keySet();
-    }
-
-    @Override
-    public Integer indexEvaluationQuery(CQuery query) {
-	
-	
-	Integer numberAnswer = this.mapIndex.get(query.getQueryLabel());
-	
-	if(numberAnswer!=null){
-	    logger.info("Execution of : "+query.getQueryLabel()+"                use equality relation");
+	/**
+	 * 
+	 */
+	public CQueryHashMap() {
+		mapIndex = new HashMap<String, Integer>(20);
 	}
-	
-	return numberAnswer;
-    }
 
-    @Override
-    public int size() {
-	
-	return this.mapIndex.size();
-    }
+	@Override
+	public boolean contains(CQuery query) {
+
+		return this.mapIndex.containsKey(query.getQueryLabel());
+	}
+
+	@Override
+	public Integer get(CQuery query) {
+
+		return this.mapIndex.get(query.getQueryLabel());
+	}
+
+	@Override
+	public void put(CQuery query, Integer numberAnswers) {
+
+		this.mapIndex.put(query.getQueryLabel(), numberAnswers);
+	}
+
+	public Set<String> getKeySet() {
+
+		return this.mapIndex.keySet();
+	}
+
+	@Override
+	public Integer indexEvaluationQuery(CQuery query) {
+
+		Integer numberAnswer = this.mapIndex.get(query.getQueryLabel());
+
+		if (numberAnswer != null) {
+			logger.info("Execution of : " + query.getQueryLabel() + "                use equality relation");
+		}
+
+		return numberAnswer;
+	}
+
+	@Override
+	public int size() {
+
+		return this.mapIndex.size();
+	}
 }

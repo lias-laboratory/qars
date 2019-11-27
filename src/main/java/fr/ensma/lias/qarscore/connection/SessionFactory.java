@@ -40,69 +40,66 @@ import fr.ensma.lias.qarscore.connection.implementation.SesameSession;
  */
 public class SessionFactory {
 
-    /**
-     * Get a session for a SDB RDF dataset
-     * 
-     * @param url
-     * @param login
-     * @param password
-     * @param nameDB
-     * @return
-     */
-    public static Session getJenaSDBSession(String url, String login,
-	    String password, String nameDB) {
-	Connection connect = null;
+	/**
+	 * Get a session for a SDB RDF dataset
+	 * 
+	 * @param url
+	 * @param login
+	 * @param password
+	 * @param nameDB
+	 * @return
+	 */
+	public static Session getJenaSDBSession(String url, String login, String password, String nameDB) {
+		Connection connect = null;
 
-	try {
-	    Class.forName("org.postgresql.Driver");
-	    connect = DriverManager.getConnection(url + nameDB.toLowerCase(),
-		    login, password);
-	} catch (SQLException e) {
-	    e.printStackTrace();
-	} catch (ClassNotFoundException e) {
-	    e.printStackTrace();
+		try {
+			Class.forName("org.postgresql.Driver");
+			connect = DriverManager.getConnection(url + nameDB.toLowerCase(), login, password);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		if (connect == null)
+			return null;
+
+		return JenaSDBSession.getSDBSession(connect);
 	}
 
-	if (connect == null)
-	    return null;
+	/**
+	 * Get a Session for a TDB dataset
+	 * 
+	 * @param folder
+	 * @return
+	 */
+	public static Session getJenaTDBSession(String folder) {
+		return JenaTDBSession.getTDBSession(folder);
+	}
 
-	return JenaSDBSession.getSDBSession(connect);
-    }
+	public static Session getNativeSesameSession(String folder) {
+		return SesameSession.getNativeSesameSession(folder);
+	}
 
-    /**
-     * Get a Session for a TDB dataset
-     * 
-     * @param folder
-     * @return
-     */
-    public static Session getJenaTDBSession(String folder) {
-	return JenaTDBSession.getTDBSession(folder);
-    }
-    
-    public static Session getNativeSesameSession(String folder){
-	return SesameSession.getNativeSesameSession(folder);
-    }
+	public static Session getInMemorySesameSession(File[] datafiles, String baseURI, String lang, OntModelSpec spec) {
+		return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang, spec);
+	}
 
-    public static Session getInMemorySesameSession(File[] datafiles,
-	    String baseURI, String lang, OntModelSpec spec) {
-	return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang, spec);
-    }
-    
-    public static Session getInMemorySesameSession(File[] datafiles,
-	    String baseURI, String lang, OntModelSpec spec, boolean persist) {
-	return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang, spec, persist);
-    }
+	public static Session getInMemorySesameSession(File[] datafiles, String baseURI, String lang, OntModelSpec spec,
+			boolean persist) {
+		return SesameSession.getInMemorySesameSession(datafiles, baseURI, lang, spec, persist);
+	}
 
-    public static Session getEndpointSession(String url){
-	return new EndPointSession.Builder().url(url).outputFormat(OutputFormat.JSON).build();
-    }
-    
-    public static Session getModelSession(InputStream data){
-	return new ModelSession(data);
-    }
-    
-    public static Session getModelSession(Model data){
-	return new ModelSession(data);
-    }
+	public static Session getEndpointSession(String url) {
+		return new EndPointSession.Builder().url(url).outputFormat(OutputFormat.JSON).build();
+	}
+
+	public static Session getModelSession(InputStream data) {
+		return new ModelSession(data);
+	}
+
+	public static Session getModelSession(Model data) {
+		return new ModelSession(data);
+	}
 
 }

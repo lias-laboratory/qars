@@ -33,75 +33,71 @@ import fr.ensma.lias.qarscore.connection.implementation.JenaTDBSession;
  */
 public class JenaBulkLoaderTest {
 
-    @SuppressWarnings("unused")
-    private JenaTDBSession session;
+	@SuppressWarnings("unused")
+	private JenaTDBSession session;
 
-    /**
-     * Method for deleting a directory after deleting all the files and folder
-     * in this directory
-     * 
-     * @param folder
-     * @return
-     */
-    private boolean deleteDirectory(File folder) {
-	if (!folder.isDirectory()) {
-	    return folder.delete();
+	/**
+	 * Method for deleting a directory after deleting all the files and folder in
+	 * this directory
+	 * 
+	 * @param folder
+	 * @return
+	 */
+	private boolean deleteDirectory(File folder) {
+		if (!folder.isDirectory()) {
+			return folder.delete();
+		}
+
+		for (File dataFile : folder.listFiles()) {
+			deleteDirectory(dataFile);
+		}
+
+		return folder.delete();
 	}
 
-	for (File dataFile : folder.listFiles()) {
-	    deleteDirectory(dataFile);
+	/**
+	 * Delete the TDB folder if it exist and creates a new
+	 */
+	@Before
+	public void setUp() {
+
+		File folderTDB = new File(System.getProperty("user.dir") + "/target/TDB/LUBM1");
+		if (folderTDB.exists()) {
+			deleteDirectory(folderTDB);
+		}
+		folderTDB.mkdirs();
+
 	}
 
-	return folder.delete();
-    }
+	/**
+	 * Delete a TDB folder
+	 */
+	@After
+	public void tearDown() {
 
-    /**
-     * Delete the TDB folder if it exist and creates a new
-     */
-    @Before
-    public void setUp() {
-
-	File folderTDB = new File(System.getProperty("user.dir")
-		+ "/target/TDB/LUBM1");
-	if (folderTDB.exists()) {
-	    deleteDirectory(folderTDB);
 	}
-	folderTDB.mkdirs();
 
-    }
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.loader.JenaBulkLoader#loadTDBDataset(java.io.File[], java.lang.String, java.lang.String)}
+	 */
+	@Test
+	public void testLoadTDBDataset() {
 
-    /**
-     * Delete a TDB folder
-     */
-    @After
-    public void tearDown() {
+		File[] datafiles = new File[1];
+		datafiles[0] = new File(System.getProperty("user.dir") + "/src/test/resources/LUBM1/lubm1.owl");
 
-    }
+		JenaBulkLoader.loadTDBDataset(datafiles, "OWL", System.getProperty("user.dir") + "/target/TDB/LUBM1");
+		session = (JenaTDBSession) SessionFactory.getJenaTDBSession("target/TDB/LUBM1");
 
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.loader.JenaBulkLoader#loadTDBDataset(java.io.File[], java.lang.String, java.lang.String)}
-     */
-    @Test
-    public void testLoadTDBDataset() {
+	}
 
-	File[] datafiles = new File[1];
-	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/resources/LUBM1/lubm1.owl");
-
-	JenaBulkLoader.loadTDBDataset(datafiles, "OWL",
-		System.getProperty("user.dir") + "/target/TDB/LUBM1");
-	session = (JenaTDBSession) SessionFactory
-		.getJenaTDBSession("target/TDB/LUBM1");
-
-    }
-
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.loader.JenaBulkLoader#main(java.lang.String[])}
-     */
-    @Test
-    public void testMain() {
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.loader.JenaBulkLoader#main(java.lang.String[])}
+	 */
+	@Test
+	public void testMain() {
 
 //	String[] args = new String[4];
 //	args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
@@ -111,49 +107,44 @@ public class JenaBulkLoaderTest {
 //	JenaBulkLoader.main(args);
 //	Properties.setModelMemSpec(OntModelSpec.OWL_MEM_RDFS_INF);
 //	Properties.setOntoLang("OWL");
-	session = (JenaTDBSession) SessionFactory
-		.getJenaTDBSession("c:/TDB/UBA1");
-    }
+		session = (JenaTDBSession) SessionFactory.getJenaTDBSession("c:/TDB/UBA1");
+	}
 
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.loader.JenaBulkLoader#loadPostgresSBDDataset(java.io.File[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
-     * .
-     */
-    @Test
-    public void testLoadPostgresSBDDataset() {
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.loader.JenaBulkLoader#loadPostgresSBDDataset(java.io.File[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
+	 * .
+	 */
+	@Test
+	public void testLoadPostgresSBDDataset() {
 
-	String[] args = new String[6];
-	args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
-	args[1] = "OWL";
-	args[2] = "POSTGRES";
-	args[3] = "jdbc:postgresql://localhost:5432";
-	args[4] = "postgres";
-	args[5] = "plsql";
-	args[6] = "test";
-	JenaBulkLoader.main(args);
-	session = (JenaTDBSession) SessionFactory
-		.getJenaSDBSession("jdbc:postgresql://localhost:5432", "postgres",
-			"plsql", "test");
-    }
+		String[] args = new String[6];
+		args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
+		args[1] = "OWL";
+		args[2] = "POSTGRES";
+		args[3] = "jdbc:postgresql://localhost:5432";
+		args[4] = "postgres";
+		args[5] = "plsql";
+		args[6] = "test";
+		JenaBulkLoader.main(args);
+		session = (JenaTDBSession) SessionFactory.getJenaSDBSession("jdbc:postgresql://localhost:5432", "postgres",
+				"plsql", "test");
+	}
 
-    /**
-     * 
-     */
-    @Test
-    public void testLoadSDBDataset() {
+	/**
+	 * 
+	 */
+	@Test
+	public void testLoadSDBDataset() {
 
-	File[] datafiles = new File[1];
-	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/resources/LUBM1/lubm1.owl");
+		File[] datafiles = new File[1];
+		datafiles[0] = new File(System.getProperty("user.dir") + "/src/test/resources/LUBM1/lubm1.owl");
 
-	JenaBulkLoader.loadPostgresSBDDataset(datafiles, "OWL",
-		"jdbc:postgresql://localhost:5432", "postgres", "plsql",
-		"lubm1");
-	session = (JenaTDBSession) SessionFactory
-		.getJenaSDBSession("jdbc:postgresql://localhost:5432", "postgres",
-			"plsql", "lubm1");
+		JenaBulkLoader.loadPostgresSBDDataset(datafiles, "OWL", "jdbc:postgresql://localhost:5432", "postgres", "plsql",
+				"lubm1");
+		session = (JenaTDBSession) SessionFactory.getJenaSDBSession("jdbc:postgresql://localhost:5432", "postgres",
+				"plsql", "lubm1");
 
-    }
+	}
 
 }

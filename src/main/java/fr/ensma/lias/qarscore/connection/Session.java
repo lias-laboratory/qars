@@ -24,16 +24,18 @@ import java.io.InputStream;
 import fr.ensma.lias.qarscore.connection.metadata.DatasetOntologyMetaData;
 import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
 
-
-
 /**
  * @author Geraud FOKOU
  */
 public interface Session {
-    
-    String getNameSession();
-    JSONResultSet executeSelectQuery(String query);
-    int getResultSize(String query);
-    DatasetOntologyMetaData getOntology();
-    InputStream executeConstructQuery(String query);
+
+	String getNameSession();
+
+	JSONResultSet executeSelectQuery(String query);
+
+	int getResultSize(String query);
+
+	DatasetOntologyMetaData getOntology();
+
+	InputStream executeConstructQuery(String query);
 }

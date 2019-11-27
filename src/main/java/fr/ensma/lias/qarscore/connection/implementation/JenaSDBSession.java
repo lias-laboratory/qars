@@ -50,113 +50,107 @@ import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
  */
 public class JenaSDBSession implements Session {
 
-    protected Logger logger = Logger.getLogger(JenaSDBSession.class);
+	protected Logger logger = Logger.getLogger(JenaSDBSession.class);
 
-    /**
-     * Only one session is allowed for an instance of the program
-     */
-    protected static Session session;
+	/**
+	 * Only one session is allowed for an instance of the program
+	 */
+	protected static Session session;
 
-    /**
-     * Url of the dataset
-     */
-    protected String url;
+	/**
+	 * Url of the dataset
+	 */
+	protected String url;
 
-    /**
-     * Only for SDB Database
-     */
-    protected Store store;
+	/**
+	 * Only for SDB Database
+	 */
+	protected Store store;
 
-    /**
-     * Dataset use for querying
-     */
-    protected Dataset dataset;
+	/**
+	 * Dataset use for querying
+	 */
+	protected Dataset dataset;
 
-    /**
-     * Statistic of the ontology
-     */
-    protected DatasetOntologyMetaData ontologyStat;
+	/**
+	 * Statistic of the ontology
+	 */
+	protected DatasetOntologyMetaData ontologyStat;
 
-    /**
-     * Construct a SDB Session if there isn't existed
-     */
-    public static Session getSDBSession(Connection connect) {
-	if (session != null) {
-	    return session;
+	/**
+	 * Construct a SDB Session if there isn't existed
+	 */
+	public static Session getSDBSession(Connection connect) {
+		if (session != null) {
+			return session;
+		}
+
+		JenaSDBSession sdbsession = new JenaSDBSession();
+		SDBConnection connectSDB = SDBFactory.createConnection(connect);
+		StoreDesc storeDesc = new StoreDesc(LayoutType.LayoutTripleNodesHash, DatabaseType.PostgreSQL);
+		sdbsession.store = StoreFactory.create(storeDesc, connectSDB);
+		sdbsession.dataset = SDBFactory.connectDataset(sdbsession.store);
+		try {
+			sdbsession.url = connect.getMetaData().getUserName();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		sdbsession.ontologyStat = DatasetOntologyMetaData.getInstance(sdbsession);
+		session = sdbsession;
+		return sdbsession;
 	}
 
-	JenaSDBSession sdbsession = new JenaSDBSession();
-	SDBConnection connectSDB = SDBFactory.createConnection(connect);
-	StoreDesc storeDesc = new StoreDesc(LayoutType.LayoutTripleNodesHash,
-		DatabaseType.PostgreSQL);
-	sdbsession.store = StoreFactory.create(storeDesc, connectSDB);
-	sdbsession.dataset = SDBFactory.connectDataset(sdbsession.store);
-	try {
-	    sdbsession.url = connect.getMetaData().getUserName();
-	} catch (SQLException e) {
-	    e.printStackTrace();
+	private JenaSDBSession() {
+
 	}
-	sdbsession.ontologyStat = DatasetOntologyMetaData
-		.getInstance(sdbsession);
-	session = sdbsession;
-	return sdbsession;
-    }
 
-    private JenaSDBSession() {
-
-    }
-
-    @Override
-    public String getNameSession() {
-	if (url != null) {
-	    return url.substring(url.indexOf("/") + 1);
+	@Override
+	public String getNameSession() {
+		if (url != null) {
+			return url.substring(url.indexOf("/") + 1);
+		}
+		return null;
 	}
-	return null;
-    }
 
-    @Override
-    public JSONResultSet executeSelectQuery(String query) {
+	@Override
+	public JSONResultSet executeSelectQuery(String query) {
 
-	QueryExecution qexec = QueryExecutionFactory
-		.create(query, this.dataset);
+		QueryExecution qexec = QueryExecutionFactory.create(query, this.dataset);
 
 //	ResultSet results = qexec.execSelect();
-	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	ResultSetFormatter.output(outputStream, qexec.execSelect(),
-		ResultsFormat.FMT_RS_JSON);
-	ByteArrayInputStream input = new ByteArrayInputStream(
-		outputStream.toByteArray());
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ResultSetFormatter.output(outputStream, qexec.execSelect(), ResultsFormat.FMT_RS_JSON);
+		ByteArrayInputStream input = new ByteArrayInputStream(outputStream.toByteArray());
 
-	return JSONResultSet.getJSONResultSet(input);
+		return JSONResultSet.getJSONResultSet(input);
 
-    }
+	}
 
-    @Override
-    public int getResultSize(String query) {
+	@Override
+	public int getResultSize(String query) {
 
-	JSONResultSet result = this.executeSelectQuery(query);
-	return result.getBindings().size();
-    }
+		JSONResultSet result = this.executeSelectQuery(query);
+		return result.getBindings().size();
+	}
 
-    @Override
-    public DatasetOntologyMetaData getOntology() {
-	return ontologyStat;
-    }
+	@Override
+	public DatasetOntologyMetaData getOntology() {
+		return ontologyStat;
+	}
 
-    @Override
-    public InputStream executeConstructQuery(String query) {
+	@Override
+	public InputStream executeConstructQuery(String query) {
 
-	QueryExecution qexec = QueryExecutionFactory
-		.create(query, this.dataset);
+		QueryExecution qexec = QueryExecutionFactory.create(query, this.dataset);
 //	Model results = qexec.execConstruct();
-	ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-	RDFDataMgr.write(out, qexec.execConstruct(), Lang.NTRIPLES);
+		RDFDataMgr.write(out, qexec.execConstruct(), Lang.NTRIPLES);
 
-	// String syntax = "N-TRIPLE"; // also try "RDF/XML-ABBREV" , "N-TRIPLE"
-	// and "TURTLE"
-	// results.write(out, syntax);
+		// String syntax = "N-TRIPLE"; // also try "RDF/XML-ABBREV" , "N-TRIPLE"
+		// and "TURTLE"
+		// results.write(out, syntax);
 
-	return new ByteArrayInputStream(out.toByteArray());
-    }
+		return new ByteArrayInputStream(out.toByteArray());
+	}
 }

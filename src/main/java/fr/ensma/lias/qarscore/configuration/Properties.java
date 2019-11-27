@@ -19,69 +19,66 @@
  **********************************************************************************/
 package fr.ensma.lias.qarscore.configuration;
 
-
 /**
  * @author Geraud FOKOU
  */
 public class Properties {
-    
-    public static final String SUPER_CLASS_FILE = "LIST_SUPER_CLASSES.properties";
-    
-    public static final String INSTANCE_CLASS_SIZE_FILE = "NUMBER_INSTANCE_CLASS.properties";
-    
-    public static final String SUPER_PROPERTY_FILE = "LIST_SUPER_PROPERTIES.properties";
-    
-    public static final String TRIPLET_PROPERTY_SIZE_FILE = "NUMBER_TRIPLET_PROPERTY.properties";
-    
-    public static final String TRIPLET_SIZE_FILE = "NUMBER_TRIPLET.properties";
-    
-    public static final String INSTANCE_SIZE_FILE = "NUMBER_INSTANCE.properties";
-    
-    public static final String DATA_SCHEMA_FILE = "src/test/resources/univ-bench.nt";
-    
-    private static String RELAXATION_STRATEGY = "AUTO";
-    
-    private static int RELAXATION_ANSWERS_SIZE = 1;
-    
-    /**
-     * @return the RELAXATION_STRATEGY
-     */
-    public static String getRELAXATION_STRATEGY() {
-        return RELAXATION_STRATEGY;
-    }
 
+	public static final String SUPER_CLASS_FILE = "LIST_SUPER_CLASSES.properties";
 
-    public static void setlatticeStrategy(){
-	RELAXATION_STRATEGY = "LBA";
-    }
-    
-    public static void setlatticeOptimizeStrategy(){
-	RELAXATION_STRATEGY = "LBA/OPT";
-    }
+	public static final String INSTANCE_CLASS_SIZE_FILE = "NUMBER_INSTANCE_CLASS.properties";
 
-    public static void setMatrixStrategy(){
-	RELAXATION_STRATEGY = "MBA";
-    }
+	public static final String SUPER_PROPERTY_FILE = "LIST_SUPER_PROPERTIES.properties";
 
+	public static final String TRIPLET_PROPERTY_SIZE_FILE = "NUMBER_TRIPLET_PROPERTY.properties";
 
-    public static void setIshmaelStrategy(){
-	RELAXATION_STRATEGY = "ISHMAEL";
-    }
+	public static final String TRIPLET_SIZE_FILE = "NUMBER_TRIPLET.properties";
 
-    public static void setSimilarityStrategy(){
-	RELAXATION_STRATEGY = "SIM";
-    }
-    
-    public static void setAutomaticStrategy(int size){
-	RELAXATION_STRATEGY = "AUTO";
-	RELAXATION_ANSWERS_SIZE = size;
-    }
+	public static final String INSTANCE_SIZE_FILE = "NUMBER_INSTANCE.properties";
 
-    /**
-     * @return the rELAXATION_ANSWERS_SIZE
-     */
-    public static int getRELAXATION_ANSWERS_SIZE() {
-        return RELAXATION_ANSWERS_SIZE;
-    }
+	public static final String DATA_SCHEMA_FILE = "src/test/resources/univ-bench.nt";
+
+	private static String RELAXATION_STRATEGY = "AUTO";
+
+	private static int RELAXATION_ANSWERS_SIZE = 1;
+
+	/**
+	 * @return the RELAXATION_STRATEGY
+	 */
+	public static String getRELAXATION_STRATEGY() {
+		return RELAXATION_STRATEGY;
+	}
+
+	public static void setlatticeStrategy() {
+		RELAXATION_STRATEGY = "LBA";
+	}
+
+	public static void setlatticeOptimizeStrategy() {
+		RELAXATION_STRATEGY = "LBA/OPT";
+	}
+
+	public static void setMatrixStrategy() {
+		RELAXATION_STRATEGY = "MBA";
+	}
+
+	public static void setIshmaelStrategy() {
+		RELAXATION_STRATEGY = "ISHMAEL";
+	}
+
+	public static void setSimilarityStrategy() {
+		RELAXATION_STRATEGY = "SIM";
+	}
+
+	public static void setAutomaticStrategy(int size) {
+		RELAXATION_STRATEGY = "AUTO";
+		RELAXATION_ANSWERS_SIZE = size;
+	}
+
+	/**
+	 * @return the rELAXATION_ANSWERS_SIZE
+	 */
+	public static int getRELAXATION_ANSWERS_SIZE() {
+		return RELAXATION_ANSWERS_SIZE;
+	}
 
 }

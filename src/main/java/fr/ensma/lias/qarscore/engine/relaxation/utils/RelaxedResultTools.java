@@ -32,51 +32,49 @@ import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
  */
 public class RelaxedResultTools {
 
-    /**
-     * Add a set of result in a map with their similarity without redundancy
-     * 
-     * @param result
-     * @param newresult
-     * @param sim
-     * @param limit
-     */
-    public static void addResult(LinkedHashMap<String, Double> result,
-	    JSONResultSet newresult, double sim, int limit) {
+	/**
+	 * Add a set of result in a map with their similarity without redundancy
+	 * 
+	 * @param result
+	 * @param newresult
+	 * @param sim
+	 * @param limit
+	 */
+	public static void addResult(LinkedHashMap<String, Double> result, JSONResultSet newresult, double sim, int limit) {
 
-	if (newresult == null) {
-	    return;
-	}
-
-	try {
-	    int i = 0;
-	    while ((i < newresult.getBindings().size())
-		    && (result.size() < limit)) {
-		JsonObject sol = newresult.getBindings().get(i).getAsObject();
-		String newsol = sol.toString();
-		if (!result.containsKey(newsol)) {
-		    result.put(sol.toString(), Double.valueOf(sim));
+		if (newresult == null) {
+			return;
 		}
-		i = i + 1;
-	    }
-	} finally {
+
+		try {
+			int i = 0;
+			while ((i < newresult.getBindings().size()) && (result.size() < limit)) {
+				JsonObject sol = newresult.getBindings().get(i).getAsObject();
+				String newsol = sol.toString();
+				if (!result.containsKey(newsol)) {
+					result.put(sol.toString(), Double.valueOf(sim));
+				}
+				i = i + 1;
+			}
+		} finally {
+		}
 	}
-    }
-    
-    public static void addResult(LinkedHashMap<String, Double> result, ResultSet results, double sim, int limit) {
 
-  	if (results == null) {
-  	    return;
-  	}
+	public static void addResult(LinkedHashMap<String, Double> result, ResultSet results, double sim, int limit) {
 
-  	try {
-  	    while ((results.hasNext()) && (result.size() < limit)) {
-  		QuerySolution sol = results.nextSolution();
-  		result.put(sol.toString(), Double.valueOf(sim));
-  		// logger.info(sol.toString() + "-------" + sim);
-  	    }
-  	} finally {
-  	}
+		if (results == null) {
+			return;
+		}
 
-      }
+		try {
+			while ((results.hasNext()) && (result.size() < limit)) {
+				QuerySolution sol = results.nextSolution();
+				result.put(sol.toString(), Double.valueOf(sim));
+				// logger.info(sol.toString() + "-------" + sim);
+			}
+		} finally {
+		}
+
+	}
 
 }

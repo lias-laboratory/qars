@@ -26,46 +26,40 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public class RelaxationNodes {
 
-    private CQuery relaxed_query;
-    private double similarity_to_original;
-    
+	private CQuery relaxed_query;
+	private double similarity_to_original;
 
-    /**
-     * Constructor without parameter
-     */
-    public RelaxationNodes() {
-	relaxed_query = null;
-	similarity_to_original = 0;
-    }
+	/**
+	 * Constructor without parameter
+	 */
+	public RelaxationNodes() {
+		relaxed_query = null;
+		similarity_to_original = 0;
+	}
 
+	/**
+	 * @param current_query
+	 * @param parent_query
+	 * @param similarity_to_parent
+	 */
+	public RelaxationNodes(CQuery relaxed_query, double similarity_to_source) {
+		super();
+		this.relaxed_query = relaxed_query;
+		this.similarity_to_original = similarity_to_source;
+	}
 
-    /**
-     * @param current_query
-     * @param parent_query
-     * @param similarity_to_parent
-     */
-    public RelaxationNodes(CQuery relaxed_query,
-	    double similarity_to_source) {
-	super();
-	this.relaxed_query = relaxed_query;
-	this.similarity_to_original = similarity_to_source;
-    }
+	/**
+	 * @return the relaxed_query
+	 */
+	public CQuery getRelaxed_query() {
+		return relaxed_query;
+	}
 
+	/**
+	 * @return the similarity_to_original
+	 */
+	public double getSimilarity_to_original() {
+		return similarity_to_original;
+	}
 
-    /**
-     * @return the relaxed_query
-     */
-    public CQuery getRelaxed_query() {
-        return relaxed_query;
-    }
-
-
-    /**
-     * @return the similarity_to_original
-     */
-    public double getSimilarity_to_original() {
-        return similarity_to_original;
-    }
-    
-    
 }

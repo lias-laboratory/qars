@@ -35,58 +35,60 @@ import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
  */
 public class JSONParserCQueryTest extends InitTest {
 
-    private Logger logger;
+	private Logger logger;
 
-    @Before
-    public void setUp() {
-	super.setUp();
-	logger = Logger.getRootLogger();
-    }
+	@Before
+	public void setUp() {
+		super.setUp();
+		logger = Logger.getRootLogger();
+	}
 
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
 
-    @After
-    public void tearDown() throws Exception {
-	super.tearDown();
-    }
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.parser.JSONParserCQuery#JSONParserCQuery(fr.ensma.lias.qarscore.engine.query.CQuery)}.
+	 */
+	@Test
+	public void testJSONParserCQuery() {
+		// TODO
+	}
 
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.parser.JSONParserCQuery#JSONParserCQuery(fr.ensma.lias.qarscore.engine.query.CQuery)}.
-     */
-    @Test
-    public void testJSONParserCQuery() {
-	 // TODO
-    }
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.parser.JSONParserCQuery#getListNodeJs()}.
+	 */
+	@Test
+	public void testGetListNodeJs() {
+		// TODO
+	}
 
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.parser.JSONParserCQuery#getListNodeJs()}.
-     */
-    @Test
-    public void testGetListNodeJs() {
-	 // TODO
-    }
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.parser.JSONParserCQuery#getListEdgesProperties()}.
+	 */
+	@Test
+	public void testGetListEdgesProperties() {
+		// TODO
+	}
 
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.parser.JSONParserCQuery#getListEdgesProperties()}.
-     */
-    @Test
-    public void testGetListEdgesProperties() {
-	 // TODO
-    }
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.parser.JSONParserCQuery#getParser()}.
+	 */
+	@Test
+	public void testGetParser() {
+		CQuery conjunctiveQuery = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_17);
+		JSONParserCQuery parser = new JSONParserCQuery(conjunctiveQuery);
+		Assert.assertNotNull(parser.getListNodeJs());
+		Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
 
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.parser.JSONParserCQuery#getParser()}.
-     */
-    @Test
-    public void testGetParser() {
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_17);
-	JSONParserCQuery parser = new JSONParserCQuery(conjunctiveQuery);
-	Assert.assertNotNull(parser.getListNodeJs());
-	Assert.assertTrue(!parser.getListEdgesProperties().isEmpty());
-	
-	logger.info(parser.getParser());
+		logger.info(parser.getParser());
 
-	 // TODO
-    }
+		// TODO
+	}
 
 }

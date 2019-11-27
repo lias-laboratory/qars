@@ -43,213 +43,203 @@ import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
  */
 public class EndPointSession implements Session {
 
-    protected Logger logger = Logger.getLogger(EndPointSession.class);
+	protected Logger logger = Logger.getLogger(EndPointSession.class);
 
-    protected String url;
+	protected String url;
 
-    protected String defaultGraphURI;
+	protected String defaultGraphURI;
 
-    protected OutputFormat outputFormat;
+	protected OutputFormat outputFormat;
 
-    protected URL baseURL;
+	protected URL baseURL;
 
-    protected Integer softLimit = Integer.MIN_VALUE;
+	protected Integer softLimit = Integer.MIN_VALUE;
 
-    protected DatasetOntologyMetaData ontologyStat;
+	protected DatasetOntologyMetaData ontologyStat;
 
-    /**
-     * 
-     */
-    public EndPointSession() {
-    }
-
-    public static class Builder {
-
-	private String url;
-
-	private String defaultGraphURI;
-
-	private OutputFormat outputFormat;
-
-	private Integer softLimit = Integer.MIN_VALUE;
-
-	public Builder url(String url) {
-	    this.url = url;
-	    return this;
+	/**
+	 * 
+	 */
+	public EndPointSession() {
 	}
 
-	public Builder defaultGraphURI(String pDefaultGraphURI) {
-	    this.defaultGraphURI = pDefaultGraphURI;
-	    return this;
+	public static class Builder {
+
+		private String url;
+
+		private String defaultGraphURI;
+
+		private OutputFormat outputFormat;
+
+		private Integer softLimit = Integer.MIN_VALUE;
+
+		public Builder url(String url) {
+			this.url = url;
+			return this;
+		}
+
+		public Builder defaultGraphURI(String pDefaultGraphURI) {
+			this.defaultGraphURI = pDefaultGraphURI;
+			return this;
+		}
+
+		public Builder outputFormat(OutputFormat pOutputFormat) {
+			this.outputFormat = pOutputFormat;
+			return this;
+		}
+
+		public Builder softLimit(Integer pSoftLimit) {
+			this.softLimit = pSoftLimit;
+			return this;
+		}
+
+		public EndPointSession build() {
+			EndPointSession sparqlEndpointConfig = new EndPointSession();
+			sparqlEndpointConfig.url = this.url;
+			sparqlEndpointConfig.defaultGraphURI = this.defaultGraphURI;
+			sparqlEndpointConfig.outputFormat = this.outputFormat;
+			sparqlEndpointConfig.softLimit = this.softLimit;
+			sparqlEndpointConfig.ontologyStat = DatasetOntologyMetaData.getInstance(sparqlEndpointConfig);
+
+			return sparqlEndpointConfig;
+		}
 	}
 
-	public Builder outputFormat(OutputFormat pOutputFormat) {
-	    this.outputFormat = pOutputFormat;
-	    return this;
+	public void setOutputFormat(OutputFormat outputFormat) {
+		this.outputFormat = outputFormat;
 	}
 
-	public Builder softLimit(Integer pSoftLimit) {
-	    this.softLimit = pSoftLimit;
-	    return this;
+	public URL getBaseURL() throws MalformedURLException {
+		if (baseURL == null) {
+			baseURL = new URL(url);
+		}
+		return baseURL;
 	}
 
-	public EndPointSession build() {
-	    EndPointSession sparqlEndpointConfig = new EndPointSession();
-	    sparqlEndpointConfig.url = this.url;
-	    sparqlEndpointConfig.defaultGraphURI = this.defaultGraphURI;
-	    sparqlEndpointConfig.outputFormat = this.outputFormat;
-	    sparqlEndpointConfig.softLimit = this.softLimit;
-	    sparqlEndpointConfig.ontologyStat = DatasetOntologyMetaData
-		    .getInstance(sparqlEndpointConfig);
+	private String readResponse(HttpURLConnection connection)
+			throws MalformedURLException, ProtocolException, IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-	    return sparqlEndpointConfig;
-	}
-    }
-
-    public void setOutputFormat(OutputFormat outputFormat) {
-	this.outputFormat = outputFormat;
-    }
-
-    public URL getBaseURL() throws MalformedURLException {
-	if (baseURL == null) {
-	    baseURL = new URL(url);
-	}
-	return baseURL;
-    }
-
-    private String readResponse(HttpURLConnection connection)
-	    throws MalformedURLException, ProtocolException, IOException {
-	BufferedReader in = new BufferedReader(new InputStreamReader(
-		connection.getInputStream()));
-
-	StringBuilder responseBuilder = new StringBuilder();
-	String str;
-	while (null != ((str = in.readLine()))) {
-	    responseBuilder.append(str + System.getProperty("line.separator"));
-	}
-	in.close();
-	return responseBuilder.toString();
-    }
-
-    /**
-     * Queries the repository and returns the result in the requested format
-     * 
-     * @param sparql
-     * @param format
-     * @param softLimit
-     * @return the result in the requested format
-     * @throws MalformedURLException
-     * @throws ProtocolException
-     * @throws IOException
-     */
-    public String query(String sparql) throws MalformedURLException,
-	    ProtocolException, IOException {
-	OutputFormat refOutputFormat = null;
-
-	if (outputFormat == null) {
-	    refOutputFormat = OutputFormat.JSON;
-	} else {
-	    refOutputFormat = outputFormat;
+		StringBuilder responseBuilder = new StringBuilder();
+		String str;
+		while (null != ((str = in.readLine()))) {
+			responseBuilder.append(str + System.getProperty("line.separator"));
+		}
+		in.close();
+		return responseBuilder.toString();
 	}
 
-	HttpURLConnection connection = (HttpURLConnection) this.getBaseURL()
-		.openConnection();
+	/**
+	 * Queries the repository and returns the result in the requested format
+	 * 
+	 * @param sparql
+	 * @param format
+	 * @param softLimit
+	 * @return the result in the requested format
+	 * @throws MalformedURLException
+	 * @throws ProtocolException
+	 * @throws IOException
+	 */
+	public String query(String sparql) throws MalformedURLException, ProtocolException, IOException {
+		OutputFormat refOutputFormat = null;
 
-	connection.setDoOutput(true);
-	connection.setDoInput(true);
-	connection.setRequestMethod("POST");
-	connection.setRequestProperty("Content-Type",
-		"application/x-www-form-urlencoded");
-	connection.setRequestProperty("Accept", refOutputFormat.getMimeType());
+		if (outputFormat == null) {
+			refOutputFormat = OutputFormat.JSON;
+		} else {
+			refOutputFormat = outputFormat;
+		}
 
-	StringBuffer queryString = new StringBuffer();
-	queryString.append("&query=" + URLEncoder.encode(sparql, "UTF-8"));
+		HttpURLConnection connection = (HttpURLConnection) this.getBaseURL().openConnection();
 
-	if (softLimit != Integer.MIN_VALUE) {
-	    queryString.append("&soft-limit=" + softLimit);
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		connection.setRequestProperty("Accept", refOutputFormat.getMimeType());
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("&query=" + URLEncoder.encode(sparql, "UTF-8"));
+
+		if (softLimit != Integer.MIN_VALUE) {
+			queryString.append("&soft-limit=" + softLimit);
+		}
+
+		if (defaultGraphURI != null) {
+			queryString.append("&default-graph-uri=" + URLEncoder.encode(defaultGraphURI, "UTF-8"));
+		}
+
+		DataOutputStream ps = new DataOutputStream(connection.getOutputStream());
+		ps.writeBytes(queryString.toString());
+
+		ps.flush();
+		ps.close();
+
+		return readResponse(connection);
 	}
 
-	if (defaultGraphURI != null) {
-	    queryString.append("&default-graph-uri="
-		    + URLEncoder.encode(defaultGraphURI, "UTF-8"));
+	@Override
+	public String getNameSession() {
+
+		String tempUrl = url.substring(0, url.lastIndexOf("/"));
+		tempUrl = tempUrl.substring(tempUrl.lastIndexOf("/") + 1);
+		return tempUrl;
 	}
 
-	DataOutputStream ps = new DataOutputStream(connection.getOutputStream());
-	ps.writeBytes(queryString.toString());
+	@Override
+	public JSONResultSet executeSelectQuery(String query) {
 
-	ps.flush();
-	ps.close();
-
-	return readResponse(connection);
-    }
-
-    @Override
-    public String getNameSession() {
-
-	String tempUrl = url.substring(0, url.lastIndexOf("/"));
-	tempUrl = tempUrl.substring(tempUrl.lastIndexOf("/") + 1);
-	return tempUrl;
-    }
-
-    @Override
-    public JSONResultSet executeSelectQuery(String query) {
-
-	try {
-	    return JSONResultSet.getJSONResultSet(this.query(query));
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    return null;
+		try {
+			return JSONResultSet.getJSONResultSet(this.query(query));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
-    }
 
-    @Override
-    public int getResultSize(String query) {
+	@Override
+	public int getResultSize(String query) {
 
-	JSONResultSet result = this.executeSelectQuery(query);
-	return result.getBindings().size();
-    }
-
-    @Override
-    public DatasetOntologyMetaData getOntology() {
-	return ontologyStat;
-    }
-
-    @Override
-    public InputStream executeConstructQuery(String query) {
-
-	OutputFormat refOutputFormat = OutputFormat.N_TRIPLES;
-	HttpURLConnection connection;
-
-	try {
-	    connection = (HttpURLConnection) this.getBaseURL().openConnection();
-	    connection.setDoOutput(true);
-	    connection.setDoInput(true);
-	    connection.setRequestMethod("POST");
-	    connection.setRequestProperty("Content-Type",
-		    "application/x-www-form-urlencoded");
-	    connection.setRequestProperty("Accept",
-		    refOutputFormat.getMimeType());
-
-	    StringBuffer queryString = new StringBuffer();
-	    queryString.append("&query=" + URLEncoder.encode(query, "UTF-8"));
-
-	    if (defaultGraphURI != null) {
-		queryString.append("&default-graph-uri="
-			+ URLEncoder.encode(defaultGraphURI, "UTF-8"));
-	    }
-
-	    DataOutputStream ps = new DataOutputStream(
-		    connection.getOutputStream());
-	    ps.writeBytes(queryString.toString());
-
-	    ps.flush();
-	    ps.close();
-
-	    return connection.getInputStream();
-	    
-	} catch (IOException e) {
-	    e.printStackTrace();
+		JSONResultSet result = this.executeSelectQuery(query);
+		return result.getBindings().size();
 	}
-	return null;
-    }
+
+	@Override
+	public DatasetOntologyMetaData getOntology() {
+		return ontologyStat;
+	}
+
+	@Override
+	public InputStream executeConstructQuery(String query) {
+
+		OutputFormat refOutputFormat = OutputFormat.N_TRIPLES;
+		HttpURLConnection connection;
+
+		try {
+			connection = (HttpURLConnection) this.getBaseURL().openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			connection.setRequestProperty("Accept", refOutputFormat.getMimeType());
+
+			StringBuffer queryString = new StringBuffer();
+			queryString.append("&query=" + URLEncoder.encode(query, "UTF-8"));
+
+			if (defaultGraphURI != null) {
+				queryString.append("&default-graph-uri=" + URLEncoder.encode(defaultGraphURI, "UTF-8"));
+			}
+
+			DataOutputStream ps = new DataOutputStream(connection.getOutputStream());
+			ps.writeBytes(queryString.toString());
+
+			ps.flush();
+			ps.close();
+
+			return connection.getInputStream();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

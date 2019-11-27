@@ -30,8 +30,7 @@ import fr.ensma.lias.qarscore.benchmark.BenchmarkStrategiesTest;
  * @author Geraud FOKOU
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { 
-	BenchmarkStrategiesTest.class})
+@SuiteClasses(value = { BenchmarkStrategiesTest.class })
 public class AllTests {
 
 }

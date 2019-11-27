@@ -30,25 +30,25 @@ import fr.ensma.lias.qarscore.InitTest;
  */
 public class EdgesJSONTest extends InitTest {
 
-    @SuppressWarnings("unused")
-    private Logger logger;
+	@SuppressWarnings("unused")
+	private Logger logger;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() {
-	super.setUp();
-	logger = Logger.getRootLogger();
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() {
+		super.setUp();
+		logger = Logger.getRootLogger();
+	}
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-	super.tearDown();
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
 
 //    @Test
 //    public void testEdgesConstruction() {

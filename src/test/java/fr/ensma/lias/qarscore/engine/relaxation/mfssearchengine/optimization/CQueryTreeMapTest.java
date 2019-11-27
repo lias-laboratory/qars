@@ -34,114 +34,108 @@ import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
  */
 public class CQueryTreeMapTest {
 
-    private CQuery conjunctiveQuery;
-    private CQueryTreeMap indexOfQuery;
-    
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-	
-	conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_10);
-	
-	Assert.assertEquals(conjunctiveQuery.getElementList().size(), 15);
-	conjunctiveQuery.getElementList().remove(2);
-	conjunctiveQuery.getElementList().remove(2);
-	conjunctiveQuery.getElementList().remove(3);
-	conjunctiveQuery.getElementList().remove(5);
-	conjunctiveQuery.getElementList().remove(3);
-	
-	Assert.assertEquals(conjunctiveQuery.getElementList().size(), 10);
-	indexOfQuery = new CQueryTreeMap(conjunctiveQuery, 1);
-	
-	
-	CQuery firstSub = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_10);
-	
-	Assert.assertEquals(firstSub.getElementList().size(), 15);
-	firstSub.getElementList().remove(2);
-	firstSub.getElementList().remove(2);
-	firstSub.getElementList().remove(3);
-	firstSub.getElementList().remove(3);
-	firstSub.getElementList().remove(3);
-	firstSub.getElementList().remove(5);
-	Assert.assertEquals(firstSub.getElementList().size(), 9);
-	
-	indexOfQuery.put(firstSub, 0);
-	
-	CQuery firstSup = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_10);
-	
-	firstSup.getElementList().remove(2);
-	firstSup.getElementList().remove(3);
-	firstSup.getElementList().remove(5);
-	
-	indexOfQuery.put(firstSup, 0);
-	
-	CQuery firstIncomp = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_10);
-	
-	firstIncomp.getElementList().remove(2);
-	firstIncomp.getElementList().remove(2);
-	firstIncomp.getElementList().remove(3);
-	firstIncomp.getElementList().remove(3);
-	firstIncomp.getElementList().remove(7);
-	
-	indexOfQuery.put(firstIncomp, 0);
-    }
+	private CQuery conjunctiveQuery;
+	private CQueryTreeMap indexOfQuery;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
 
+		conjunctiveQuery = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_10);
 
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.optimization.CQueryTreeMap#contains(java.lang.Comparable)}.
-     */
-    @Test
-    public void testContains() {
-	
-	CQuery firstIncomp = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_10);
-	
-	firstIncomp.getElementList().remove(2);
-	firstIncomp.getElementList().remove(2);
-	firstIncomp.getElementList().remove(3);
-	firstIncomp.getElementList().remove(3);
-	firstIncomp.getElementList().remove(7);
-	
-	Assert.assertTrue(indexOfQuery.contains(firstIncomp));
-	Assert.assertTrue(indexOfQuery.contains(conjunctiveQuery));
-	
-	firstIncomp.getElementList().remove(0);
-	Assert.assertFalse(indexOfQuery.contains(firstIncomp));
-	
-    }
+		Assert.assertEquals(conjunctiveQuery.getElementList().size(), 15);
+		conjunctiveQuery.getElementList().remove(2);
+		conjunctiveQuery.getElementList().remove(2);
+		conjunctiveQuery.getElementList().remove(3);
+		conjunctiveQuery.getElementList().remove(5);
+		conjunctiveQuery.getElementList().remove(3);
 
-    /**
-     * Test method for {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.optimization.CQueryTreeMap#get(java.lang.Comparable)}.
-     */
-    @Test
-    public void testGet() {
-	Assert.assertEquals(1, indexOfQuery.get(conjunctiveQuery).intValue());
-	
-	CQuery firstSup = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_10);
-	
-	firstSup.getElementList().remove(2);
-	firstSup.getElementList().remove(3);
-	firstSup.getElementList().remove(5);
+		Assert.assertEquals(conjunctiveQuery.getElementList().size(), 10);
+		indexOfQuery = new CQueryTreeMap(conjunctiveQuery, 1);
 
-	Assert.assertEquals(0, indexOfQuery.get(firstSup).intValue());
-	
-	firstSup.getElementList().remove(0);
-	
-	Assert.assertEquals(null, indexOfQuery.get(firstSup));
-	
-    }
+		CQuery firstSub = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_10);
+
+		Assert.assertEquals(firstSub.getElementList().size(), 15);
+		firstSub.getElementList().remove(2);
+		firstSub.getElementList().remove(2);
+		firstSub.getElementList().remove(3);
+		firstSub.getElementList().remove(3);
+		firstSub.getElementList().remove(3);
+		firstSub.getElementList().remove(5);
+		Assert.assertEquals(firstSub.getElementList().size(), 9);
+
+		indexOfQuery.put(firstSub, 0);
+
+		CQuery firstSup = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_10);
+
+		firstSup.getElementList().remove(2);
+		firstSup.getElementList().remove(3);
+		firstSup.getElementList().remove(5);
+
+		indexOfQuery.put(firstSup, 0);
+
+		CQuery firstIncomp = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_10);
+
+		firstIncomp.getElementList().remove(2);
+		firstIncomp.getElementList().remove(2);
+		firstIncomp.getElementList().remove(3);
+		firstIncomp.getElementList().remove(3);
+		firstIncomp.getElementList().remove(7);
+
+		indexOfQuery.put(firstIncomp, 0);
+	}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.optimization.CQueryTreeMap#contains(java.lang.Comparable)}.
+	 */
+	@Test
+	public void testContains() {
+
+		CQuery firstIncomp = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_10);
+
+		firstIncomp.getElementList().remove(2);
+		firstIncomp.getElementList().remove(2);
+		firstIncomp.getElementList().remove(3);
+		firstIncomp.getElementList().remove(3);
+		firstIncomp.getElementList().remove(7);
+
+		Assert.assertTrue(indexOfQuery.contains(firstIncomp));
+		Assert.assertTrue(indexOfQuery.contains(conjunctiveQuery));
+
+		firstIncomp.getElementList().remove(0);
+		Assert.assertFalse(indexOfQuery.contains(firstIncomp));
+
+	}
+
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.optimization.CQueryTreeMap#get(java.lang.Comparable)}.
+	 */
+	@Test
+	public void testGet() {
+		Assert.assertEquals(1, indexOfQuery.get(conjunctiveQuery).intValue());
+
+		CQuery firstSup = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_10);
+
+		firstSup.getElementList().remove(2);
+		firstSup.getElementList().remove(3);
+		firstSup.getElementList().remove(5);
+
+		Assert.assertEquals(0, indexOfQuery.get(firstSup).intValue());
+
+		firstSup.getElementList().remove(0);
+
+		Assert.assertEquals(null, indexOfQuery.get(firstSup));
+
+	}
 }

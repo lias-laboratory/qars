@@ -46,71 +46,69 @@ import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
  */
 public class EndPointSessionTest {
 
+	private EndPointSession session;
 
-    private EndPointSession session;
+	@Before
+	public void setUp() {
+		session = new EndPointSession.Builder().url("http://localhost:3030/lubm1saturated/sparql")
+				.outputFormat(OutputFormat.JSON).build();
+	}
 
-    @Before
-    public void setUp() {
-	session = new EndPointSession.Builder().url("http://localhost:3030/lubm1saturated/sparql").outputFormat(OutputFormat.JSON).build();
-    }
+	@After
+	public void teardDown() {
+	}
 
-    @After
-    public void teardDown() {
-   }
-
-    @Test
-    public void testEndPointSession() {
-	try {
-	    String result = session.query(QueryConfig.LIST_SUPER_CLASSES);
-	    JsonObject jsonObj = JSON.parse(result);
-	    for(String key: jsonObj.keySet()){
-		JsonObject newJson = jsonObj.get(key).getAsObject();
-		for(String key2: newJson.keySet()){
-		    System.out.println(key2+"--->"+newJson.get(key2)+"--->"+newJson.get(key2).getAsObject());
+	@Test
+	public void testEndPointSession() {
+		try {
+			String result = session.query(QueryConfig.LIST_SUPER_CLASSES);
+			JsonObject jsonObj = JSON.parse(result);
+			for (String key : jsonObj.keySet()) {
+				JsonObject newJson = jsonObj.get(key).getAsObject();
+				for (String key2 : newJson.keySet()) {
+					System.out.println(key2 + "--->" + newJson.get(key2) + "--->" + newJson.get(key2).getAsObject());
+				}
+				System.out.println(key + "--->" + jsonObj.get(key));
+			}
+			System.out.println(jsonObj.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		System.out.println(key+"--->"+jsonObj.get(key));
-	    }
-	    System.out.println(jsonObj.toString());
-	} catch (IOException e) {
-	    e.printStackTrace();
 	}
-    }
-   
-    @Test
-    public void testEndPointSessionQuery() {
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_14);
+
+	@Test
+	public void testEndPointSessionQuery() {
+		CQuery conjunctiveQuery = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_14);
 //	conjunctiveQuery.getElementList().remove(0);
-	System.out.println(conjunctiveQuery.toString());
+		System.out.println(conjunctiveQuery.toString());
 //	JSONResultSet result = JSONResultSet.getJSONResultSet(session.executeSelectQuery(conjunctiveQuery.toString()));
-	JSONResultSet result = session.executeSelectQuery(SPARQLQueriesSample.QUERY_14);
-	int j = 0;
-	while(result.next()){
-	    j++;
-	    System.out.println("*********************************************************************");
-	    for (int i=0; i<result.getVars().size(); i++){
-		System.out.println(result.getString(result.getVar(i)));
-	    }
-	    System.out.println("*********************************************************************");
+		JSONResultSet result = session.executeSelectQuery(SPARQLQueriesSample.QUERY_14);
+		int j = 0;
+		while (result.next()) {
+			j++;
+			System.out.println("*********************************************************************");
+			for (int i = 0; i < result.getVars().size(); i++) {
+				System.out.println(result.getString(result.getVar(i)));
+			}
+			System.out.println("*********************************************************************");
+		}
+		System.out.println("size " + j);
 	}
-	System.out.println("size "+j);
-    }
 
-    @Test
-    public void testConstructQueryExecution() {
-	Query query = QueryFactory.create(SPARQLQueriesSample.EDBT_QUERY_1);
-	CQuery conjunctiveQuery14 = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.EDBT_QUERY_1);
-	Assert.assertTrue(query.isSelectType());
-	query.setQueryConstructType();
-	query.setConstructTemplate(new Template(new BasicPattern()));
-	System.out.println(query.getConstructTemplate().getBGP());
-	query.getConstructTemplate().getBGP().add(conjunctiveQuery14.getElementList().get(0).getTriple());
-	query.getConstructTemplate().getBGP().add(conjunctiveQuery14.getElementList().get(1).getTriple());
-	System.out.println(query.getConstructTemplate().getBGP());
-	System.out.println(query.getQueryPattern().toString());
+	@Test
+	public void testConstructQueryExecution() {
+		Query query = QueryFactory.create(SPARQLQueriesSample.EDBT_QUERY_1);
+		CQuery conjunctiveQuery14 = CQueryFactory.createCQuery(SPARQLQueriesSample.EDBT_QUERY_1);
+		Assert.assertTrue(query.isSelectType());
+		query.setQueryConstructType();
+		query.setConstructTemplate(new Template(new BasicPattern()));
+		System.out.println(query.getConstructTemplate().getBGP());
+		query.getConstructTemplate().getBGP().add(conjunctiveQuery14.getElementList().get(0).getTriple());
+		query.getConstructTemplate().getBGP().add(conjunctiveQuery14.getElementList().get(1).getTriple());
+		System.out.println(query.getConstructTemplate().getBGP());
+		System.out.println(query.getQueryPattern().toString());
 
-	InputStream result = session.executeConstructQuery(query.toString());
-	System.out.println(result.toString());
-    }
+		InputStream result = session.executeConstructQuery(query.toString());
+		System.out.println(result.toString());
+	}
 }

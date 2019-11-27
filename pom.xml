@@ -5,6 +5,18 @@
 	<artifactId>qarscore</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<description>Query-and-Relax System (QaRS) is designed to facilitate the exploitation of large knowledge bases.</description>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<jena.version>3.0.0</jena.version>
+		<junit.version>4.12</junit.version>
+		<combinatoricslib.version>2.1</combinatoricslib.version>
+		<roaringbitmap.version>0.5.9</roaringbitmap.version>
+		<sesame.version>4.0.0</sesame.version>
+		<maven.surefire.version>2.16</maven.surefire.version>
+		<maven.resources.version>2.6</maven.resources.version>
+		<maven.compiler.version>3.1</maven.compiler.version>
+	</properties>
 	<developers>
 		<developer>
 			<id>baronm</id>
@@ -43,12 +55,12 @@
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-sdb</artifactId>
-			<version>3.0.0</version>
+			<version>${jena.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-tdb</artifactId>
-			<version>3.0.0</version>
+			<version>${jena.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>postgresql</groupId>
@@ -59,38 +71,38 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.combinatoricslib</groupId>
 			<artifactId>combinatoricslib</artifactId>
-			<version>2.1</version>
+			<version>${combinatoricslib.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.roaringbitmap</groupId>
 			<artifactId>RoaringBitmap</artifactId>
-			<version>0.5.9</version>
+			<version>${roaringbitmap.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-sail-nativerdf</artifactId>
-			<version>4.0.0</version>
+			<version>${sesame.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-sail-memory</artifactId>
-			<version>4.0.0</version>
+			<version>${sesame.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository-sail</artifactId>
-			<version>4.0.0</version>
+			<version>${sesame.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-queryresultio-sparqljson</artifactId>
-			<version>4.0.0</version>
+			<version>${sesame.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -98,9 +110,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.16</version>
+				<version>${maven.surefire.version}</version>
 				<configuration>
- 					<argLine>-Xmx12g -XX:MaxPermSize8g -XX:PermSize4g</argLine>
+ 					<!-- <argLine>-Xmx12g</argLine> -->
 					<skipTests>false</skipTests>
 					<test>AllTests.java</test>
 				</configuration>
@@ -108,7 +120,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
+				<version>${maven.resources.version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>
@@ -116,16 +128,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>${maven.compiler.version}</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.0</version>
 				<executions>
 					<execution>
 						<id>create-zip-package</id>

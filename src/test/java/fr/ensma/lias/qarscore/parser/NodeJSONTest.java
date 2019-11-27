@@ -30,31 +30,31 @@ import fr.ensma.lias.qarscore.InitTest;
  */
 public class NodeJSONTest extends InitTest {
 
-    @SuppressWarnings("unused")
-    private Logger logger;
+	@SuppressWarnings("unused")
+	private Logger logger;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() {
-	super.setUp();
-	logger = Logger.getRootLogger();
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() {
+		super.setUp();
+		logger = Logger.getRootLogger();
+	}
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-	super.tearDown();
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
 
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.parser.NodeJSON#NodeJSON(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
-     * .
-     */
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.parser.NodeJSON#NodeJSON(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}
+	 * .
+	 */
 //    @Test
 //    public void testNodeJSON() {
 //
@@ -77,10 +77,10 @@ public class NodeJSONTest extends InitTest {
 //	}
 //    }
 
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.parser.NodeJSON#getAttributesNames()}.
-     */
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.parser.NodeJSON#getAttributesNames()}.
+	 */
 //    @Test
 //    public void testGetAttributesNames() {
 //	ExtendedIterator<OntClass> listRoot = ((JenaSession)sessionJena).getOntology()

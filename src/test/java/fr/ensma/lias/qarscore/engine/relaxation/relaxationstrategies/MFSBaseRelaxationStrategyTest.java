@@ -38,47 +38,44 @@ import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
  */
 public class MFSBaseRelaxationStrategyTest extends InitTest {
 
-    /* (non-Javadoc)
-     * @see fr.ensma.lias.qarscore.InitTest#setUp()
-     */
-    @Before
-    public void setUp() {
-	super.setUp();
-    }
-
-    /* (non-Javadoc)
-     * @see fr.ensma.lias.qarscore.InitTest#tearDown()
-     */
-    @After
-    public void tearDown() throws Exception {
-	super.tearDown();
-    }
-    
-    @Test
-    public void testRelaxationWithMFSStrategy(){
-	
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.WWW_QUERY_7);
-	
-	long begin = System.currentTimeMillis();
-	RelaxationStrategy relaxed_query = new MFSBaseRelaxationStrategy(conjunctiveQuery, session);
-	boolean hasTopk =false;
-	int number_answers = 0;
-	int number_relaxed_queries = 0;
-	while ((!hasTopk)&&(relaxed_query.hasNext())){
-	    JSONResultSet result = session.executeSelectQuery(relaxed_query.next().toString());
-	    int query_answers_size = result.getBindings().size();
-	    number_answers = number_answers + query_answers_size;
-	    hasTopk = number_answers >= TOP_K;
-	    
-	    number_relaxed_queries = number_relaxed_queries + 1;
-	    Logger.getRootLogger().info(relaxed_query.getCurrent_relaxed_query().toString()+" "+relaxed_query.getCurrent_similarity()+" "+relaxed_query.getCurrent_level().toString()+" "+query_answers_size);
+	@Before
+	public void setUp() {
+		super.setUp();
 	}
-	
-	long end = System.currentTimeMillis();
-	long duration = end - begin ;
-	int number_queries_mfs = ((AbstractMFSRelaxationStrategy)relaxed_query).number_mfs_query_executed;
-	long duration_mfs_search = ((AbstractMFSRelaxationStrategy)relaxed_query).duration_mfs_query_executed;
-	Logger.getRootLogger().info(number_queries_mfs+" "+duration_mfs_search+" "+number_relaxed_queries+" "+duration+" "+number_answers);
-    }
+
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
+
+	@Test
+	public void testRelaxationWithMFSStrategy() {
+
+		CQuery conjunctiveQuery = CQueryFactory.createCQuery(SPARQLQueriesSample.WWW_QUERY_7);
+
+		long begin = System.currentTimeMillis();
+		RelaxationStrategy relaxed_query = new MFSBaseRelaxationStrategy(conjunctiveQuery, session);
+		boolean hasTopk = false;
+		int number_answers = 0;
+		int number_relaxed_queries = 0;
+		while ((!hasTopk) && (relaxed_query.hasNext())) {
+			JSONResultSet result = session.executeSelectQuery(relaxed_query.next().toString());
+			int query_answers_size = result.getBindings().size();
+			number_answers = number_answers + query_answers_size;
+			hasTopk = number_answers >= TOP_K;
+
+			number_relaxed_queries = number_relaxed_queries + 1;
+			Logger.getRootLogger()
+					.info(relaxed_query.getCurrent_relaxed_query().toString() + " "
+							+ relaxed_query.getCurrent_similarity() + " " + relaxed_query.getCurrent_level().toString()
+							+ " " + query_answers_size);
+		}
+
+		long end = System.currentTimeMillis();
+		long duration = end - begin;
+		int number_queries_mfs = ((AbstractMFSRelaxationStrategy) relaxed_query).number_mfs_query_executed;
+		long duration_mfs_search = ((AbstractMFSRelaxationStrategy) relaxed_query).duration_mfs_query_executed;
+		Logger.getRootLogger().info(number_queries_mfs + " " + duration_mfs_search + " " + number_relaxed_queries + " "
+				+ duration + " " + number_answers);
+	}
 }

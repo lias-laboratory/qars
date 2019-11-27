@@ -33,275 +33,243 @@ import org.apache.jena.util.iterator.ExtendedIterator;
  */
 public class JSONParserModel {
 
-    /**
-     * List of JSon nodes of the model parsed
-     */
-    private List<NodeJSON> listNodeJs;
+	/**
+	 * List of JSon nodes of the model parsed
+	 */
+	private List<NodeJSON> listNodeJs;
 
-    /**
-     * List of JSon edges for properties of the model parsed
-     */
-    private List<EdgesJSON> listEdgesProperties;
+	/**
+	 * List of JSon edges for properties of the model parsed
+	 */
+	private List<EdgesJSON> listEdgesProperties;
 
-    /**
-     * List of Json edges for subclasses relation of the model parsed
-     */
-    private List<EdgesJSON> listEdgesSubclass;
+	/**
+	 * List of Json edges for subclasses relation of the model parsed
+	 */
+	private List<EdgesJSON> listEdgesSubclass;
 
-    /**
-     * Model to parse
-     */
-    private final OntModel MODEL_TO_PARSE;
+	/**
+	 * Model to parse
+	 */
+	private final OntModel MODEL_TO_PARSE;
 
-    /**
-     * @param model
-     */
-    public JSONParserModel(OntModel model) {
-	super();
-	MODEL_TO_PARSE = model;
-	listNodeJs = new ArrayList<NodeJSON>();
-	listEdgesProperties = new ArrayList<EdgesJSON>();
-	listEdgesSubclass = new ArrayList<EdgesJSON>();
-	this.parseOntClass();
-	this.parseOntProperty();
-	this.parseSubClassRelation();
-    }
-
-    public JSONParserModel(OntModel model, List<String> excludedClasses) {
-	super();
-	MODEL_TO_PARSE = model;
-	listNodeJs = new ArrayList<NodeJSON>();
-	listEdgesProperties = new ArrayList<EdgesJSON>();
-	listEdgesSubclass = new ArrayList<EdgesJSON>();
-	this.parseOntClass();
-	List<NodeJSON> tempNodes = new ArrayList<NodeJSON>();
-	tempNodes.addAll(listNodeJs);
-	for (NodeJSON node : tempNodes) {
-	    if (excludedClasses.contains(node.getNodeLabel())) {
-		listNodeJs.remove(node);
-	    }
+	/**
+	 * @param model
+	 */
+	public JSONParserModel(OntModel model) {
+		super();
+		MODEL_TO_PARSE = model;
+		listNodeJs = new ArrayList<NodeJSON>();
+		listEdgesProperties = new ArrayList<EdgesJSON>();
+		listEdgesSubclass = new ArrayList<EdgesJSON>();
+		this.parseOntClass();
+		this.parseOntProperty();
+		this.parseSubClassRelation();
 	}
-	this.parseOntProperty();
-	this.parseSubClassRelation();
-    }
 
-    /**
-     * Parse all the class of the current ontology to node of JSON
-     */
-    private void parseOntClass() {
-
-	ExtendedIterator<OntClass> listClass = MODEL_TO_PARSE
-		.listNamedClasses();
-
-	while (listClass.hasNext()) {
-	    OntClass currentClass = listClass.next();
-
-	    if (currentClass.getURI() == null) {
-		continue;
-	    }
-	    if (currentClass.isIntersectionClass()) {
-		continue;
-	    }
-	    if (currentClass.isRestriction()) {
-		continue;
-	    }
-	    NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(),
-		    currentClass.getNameSpace(),
-		    MODEL_TO_PARSE.getNsURIPrefix(currentClass.getNameSpace()),
-		    currentClass.getURI(), currentClass.getLocalName());
-
-	    ExtendedIterator<DatatypeProperty> allProperties = MODEL_TO_PARSE
-		    .listDatatypeProperties();
-
-	    while (allProperties.hasNext()) {
-		DatatypeProperty currentProperty = allProperties.next();
-		if (currentProperty.getDomain() != null) {
-		    if (currentProperty.getDomain().getURI()
-			    .equalsIgnoreCase(currentClass.getURI())) {
-			if (currentProperty.getRange() == null) {
-			    nodejs.add(currentProperty.getLocalName(),
-				    "string", currentProperty.getURI());
-			} else {
-			    nodejs.add(currentProperty.getLocalName(),
-				    currentProperty.getRange().getLocalName(),
-				    currentProperty.getURI());
+	public JSONParserModel(OntModel model, List<String> excludedClasses) {
+		super();
+		MODEL_TO_PARSE = model;
+		listNodeJs = new ArrayList<NodeJSON>();
+		listEdgesProperties = new ArrayList<EdgesJSON>();
+		listEdgesSubclass = new ArrayList<EdgesJSON>();
+		this.parseOntClass();
+		List<NodeJSON> tempNodes = new ArrayList<NodeJSON>();
+		tempNodes.addAll(listNodeJs);
+		for (NodeJSON node : tempNodes) {
+			if (excludedClasses.contains(node.getNodeLabel())) {
+				listNodeJs.remove(node);
 			}
-		    }
 		}
-	    }
-	    listNodeJs.add(nodejs);
-
+		this.parseOntProperty();
+		this.parseSubClassRelation();
 	}
-	return;
-    }
 
-    /**
-     * Parse all the object properties of the current ontology to Edge of JSON
-     */
-    private void parseOntProperty() {
+	/**
+	 * Parse all the class of the current ontology to node of JSON
+	 */
+	private void parseOntClass() {
 
-	ExtendedIterator<ObjectProperty> allObjectProperties = MODEL_TO_PARSE
-		.listObjectProperties();
+		ExtendedIterator<OntClass> listClass = MODEL_TO_PARSE.listNamedClasses();
 
-	while (allObjectProperties.hasNext()) {
+		while (listClass.hasNext()) {
+			OntClass currentClass = listClass.next();
 
-	    ObjectProperty currentProperty = allObjectProperties.next();
+			if (currentClass.getURI() == null) {
+				continue;
+			}
+			if (currentClass.isIntersectionClass()) {
+				continue;
+			}
+			if (currentClass.isRestriction()) {
+				continue;
+			}
+			NodeJSON nodejs = new NodeJSON(currentClass.getLocalName(), currentClass.getNameSpace(),
+					MODEL_TO_PARSE.getNsURIPrefix(currentClass.getNameSpace()), currentClass.getURI(),
+					currentClass.getLocalName());
 
-	    if ((currentProperty.getDomain() != null)
-		    && (currentProperty.getRange() != null)) {
-		NodeJSON sourceEdge = getNodeJSON(currentProperty.getDomain()
-			.getURI());
-		NodeJSON destinationEdge = getNodeJSON(currentProperty
-			.getRange().getURI());
-		if ((sourceEdge != null) && (destinationEdge != null)) {
-		    EdgesJSON edge = new EdgesJSON(
-			    currentProperty.getLocalName(),
-			    currentProperty.getNameSpace(),
-			    MODEL_TO_PARSE.getNsURIPrefix(currentProperty
-				    .getNameSpace()), currentProperty.getURI(),
-			    currentProperty.getLocalName(), "ObjectProperty",
-			    sourceEdge, destinationEdge);
-		    listEdgesProperties.add(edge);
+			ExtendedIterator<DatatypeProperty> allProperties = MODEL_TO_PARSE.listDatatypeProperties();
+
+			while (allProperties.hasNext()) {
+				DatatypeProperty currentProperty = allProperties.next();
+				if (currentProperty.getDomain() != null) {
+					if (currentProperty.getDomain().getURI().equalsIgnoreCase(currentClass.getURI())) {
+						if (currentProperty.getRange() == null) {
+							nodejs.add(currentProperty.getLocalName(), "string", currentProperty.getURI());
+						} else {
+							nodejs.add(currentProperty.getLocalName(), currentProperty.getRange().getLocalName(),
+									currentProperty.getURI());
+						}
+					}
+				}
+			}
+			listNodeJs.add(nodejs);
+
 		}
-	    }
+		return;
 	}
-	return;
-    }
 
-    /**
-     * Parse all the subclasses relation to edges json relation
-     */
-    private void parseSubClassRelation() {
+	/**
+	 * Parse all the object properties of the current ontology to Edge of JSON
+	 */
+	private void parseOntProperty() {
 
-	for (NodeJSON currentNode : listNodeJs) {
-	    OntClass currentClass = MODEL_TO_PARSE.getOntClass(currentNode
-		    .getNodeIRI());
-	    ExtendedIterator<OntClass> childClasses = currentClass
-		    .listSubClasses(true);
-	    while (childClasses.hasNext()) {
-		OntClass currentChildClass = childClasses.next();
-		NodeJSON currentChildNodeJson = getNodeJSON(currentChildClass
-			.getURI());
-		if (currentChildNodeJson != null) {
-		    EdgesJSON edge = new EdgesJSON("SubClassOf",
-			    "http://www.w3.org/2000/01/rdf-schema#", "rdfs",
-			    "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-			    "SubClassOf", "SubClassOf", currentChildNodeJson,
-			    currentNode);
-		    listEdgesSubclass.add(edge);
+		ExtendedIterator<ObjectProperty> allObjectProperties = MODEL_TO_PARSE.listObjectProperties();
+
+		while (allObjectProperties.hasNext()) {
+
+			ObjectProperty currentProperty = allObjectProperties.next();
+
+			if ((currentProperty.getDomain() != null) && (currentProperty.getRange() != null)) {
+				NodeJSON sourceEdge = getNodeJSON(currentProperty.getDomain().getURI());
+				NodeJSON destinationEdge = getNodeJSON(currentProperty.getRange().getURI());
+				if ((sourceEdge != null) && (destinationEdge != null)) {
+					EdgesJSON edge = new EdgesJSON(currentProperty.getLocalName(), currentProperty.getNameSpace(),
+							MODEL_TO_PARSE.getNsURIPrefix(currentProperty.getNameSpace()), currentProperty.getURI(),
+							currentProperty.getLocalName(), "ObjectProperty", sourceEdge, destinationEdge);
+					listEdgesProperties.add(edge);
+				}
+			}
 		}
-	    }
+		return;
 	}
-    }
 
-    /**
-     * find a node JSon in the list with a specific URI uri
-     * 
-     * @param uri
-     * @return
-     */
-    private NodeJSON getNodeJSON(String uri) {
+	/**
+	 * Parse all the subclasses relation to edges json relation
+	 */
+	private void parseSubClassRelation() {
 
-	boolean found = false;
-	int i = 0;
-
-	while ((i < listNodeJs.size()) && (!found)) {
-	    found = listNodeJs.get(i).getNodeIRI().equalsIgnoreCase(uri);
-	    i = i + 1;
-	}
-	if (found) {
-	    return listNodeJs.get(i - 1);
-	}
-	return null;
-    }
-
-    /**
-     * @return the listNodeJs
-     */
-    public List<NodeJSON> getListNodeJs() {
-	return listNodeJs;
-    }
-
-    /**
-     * @return the listEdgesProperties
-     */
-    public List<EdgesJSON> getListEdgesProperties() {
-	return listEdgesProperties;
-    }
-
-    /**
-     * @return the listEdgesSubclass
-     */
-    public List<EdgesJSON> getListEdgesSubclass() {
-	return listEdgesSubclass;
-    }
-
-    /**
-     * return the String representation of the JSON model for the specified
-     * model
-     * 
-     * @return
-     */
-    public String getParser() {
-
-	String resulJson = "{\"nodes\" : [";
-
-	if (listNodeJs.size() == 1) {
-	    resulJson = resulJson + ", " + listNodeJs.get(0).toString() + "]";
-	} else {
-	    if (listNodeJs.size() > 1) {
-		resulJson = resulJson + listNodeJs.get(0).toString();
-		for (int i = 1; i < listNodeJs.size() - 1; i++) {
-		    resulJson = resulJson + ", " + listNodeJs.get(i).toString();
+		for (NodeJSON currentNode : listNodeJs) {
+			OntClass currentClass = MODEL_TO_PARSE.getOntClass(currentNode.getNodeIRI());
+			ExtendedIterator<OntClass> childClasses = currentClass.listSubClasses(true);
+			while (childClasses.hasNext()) {
+				OntClass currentChildClass = childClasses.next();
+				NodeJSON currentChildNodeJson = getNodeJSON(currentChildClass.getURI());
+				if (currentChildNodeJson != null) {
+					EdgesJSON edge = new EdgesJSON("SubClassOf", "http://www.w3.org/2000/01/rdf-schema#", "rdfs",
+							"http://www.w3.org/2000/01/rdf-schema#subClassOf", "SubClassOf", "SubClassOf",
+							currentChildNodeJson, currentNode);
+					listEdgesSubclass.add(edge);
+				}
+			}
 		}
-		resulJson = resulJson + ", "
-			+ listNodeJs.get(listNodeJs.size() - 1).toString()
-			+ "]";
-	    } else {
-		resulJson = resulJson + "]";
-	    }
 	}
 
-	resulJson = resulJson + ", \"edges\" : [";
+	/**
+	 * find a node JSon in the list with a specific URI uri
+	 * 
+	 * @param uri
+	 * @return
+	 */
+	private NodeJSON getNodeJSON(String uri) {
 
-	if (listEdgesProperties.size() == 1) {
-	    resulJson = resulJson + listEdgesProperties.get(0).toString();
-	} else {
-	    if (listEdgesProperties.size() > 1) {
-		resulJson = resulJson + listEdgesProperties.get(0).toString();
-		for (int i = 1; i < listEdgesProperties.size() - 1; i++) {
-		    resulJson = resulJson + ", "
-			    + listEdgesProperties.get(i).toString();
+		boolean found = false;
+		int i = 0;
+
+		while ((i < listNodeJs.size()) && (!found)) {
+			found = listNodeJs.get(i).getNodeIRI().equalsIgnoreCase(uri);
+			i = i + 1;
 		}
-		resulJson = resulJson
-			+ ", "
-			+ listEdgesProperties.get(
-				listEdgesProperties.size() - 1).toString();
-	    }
-	}
-
-	if (listEdgesSubclass.size() == 1) {
-	    resulJson = resulJson + ", " + listEdgesSubclass.get(0).toString()
-		    + "]";
-	} else {
-	    if (listEdgesSubclass.size() > 1) {
-		resulJson = resulJson + ", "
-			+ listEdgesSubclass.get(0).toString();
-		for (int i = 1; i < listEdgesSubclass.size() - 1; i++) {
-		    resulJson = resulJson + ", "
-			    + listEdgesSubclass.get(i).toString();
+		if (found) {
+			return listNodeJs.get(i - 1);
 		}
-		resulJson = resulJson
-			+ ", "
-			+ listEdgesSubclass.get(listEdgesSubclass.size() - 1)
-				.toString() + "]";
-	    } else {
-		resulJson = resulJson + "]";
-	    }
+		return null;
 	}
 
-	resulJson = resulJson + "} ";
+	/**
+	 * @return the listNodeJs
+	 */
+	public List<NodeJSON> getListNodeJs() {
+		return listNodeJs;
+	}
 
-	return resulJson;
-    }
+	/**
+	 * @return the listEdgesProperties
+	 */
+	public List<EdgesJSON> getListEdgesProperties() {
+		return listEdgesProperties;
+	}
+
+	/**
+	 * @return the listEdgesSubclass
+	 */
+	public List<EdgesJSON> getListEdgesSubclass() {
+		return listEdgesSubclass;
+	}
+
+	/**
+	 * return the String representation of the JSON model for the specified model
+	 * 
+	 * @return
+	 */
+	public String getParser() {
+
+		String resulJson = "{\"nodes\" : [";
+
+		if (listNodeJs.size() == 1) {
+			resulJson = resulJson + ", " + listNodeJs.get(0).toString() + "]";
+		} else {
+			if (listNodeJs.size() > 1) {
+				resulJson = resulJson + listNodeJs.get(0).toString();
+				for (int i = 1; i < listNodeJs.size() - 1; i++) {
+					resulJson = resulJson + ", " + listNodeJs.get(i).toString();
+				}
+				resulJson = resulJson + ", " + listNodeJs.get(listNodeJs.size() - 1).toString() + "]";
+			} else {
+				resulJson = resulJson + "]";
+			}
+		}
+
+		resulJson = resulJson + ", \"edges\" : [";
+
+		if (listEdgesProperties.size() == 1) {
+			resulJson = resulJson + listEdgesProperties.get(0).toString();
+		} else {
+			if (listEdgesProperties.size() > 1) {
+				resulJson = resulJson + listEdgesProperties.get(0).toString();
+				for (int i = 1; i < listEdgesProperties.size() - 1; i++) {
+					resulJson = resulJson + ", " + listEdgesProperties.get(i).toString();
+				}
+				resulJson = resulJson + ", " + listEdgesProperties.get(listEdgesProperties.size() - 1).toString();
+			}
+		}
+
+		if (listEdgesSubclass.size() == 1) {
+			resulJson = resulJson + ", " + listEdgesSubclass.get(0).toString() + "]";
+		} else {
+			if (listEdgesSubclass.size() > 1) {
+				resulJson = resulJson + ", " + listEdgesSubclass.get(0).toString();
+				for (int i = 1; i < listEdgesSubclass.size() - 1; i++) {
+					resulJson = resulJson + ", " + listEdgesSubclass.get(i).toString();
+				}
+				resulJson = resulJson + ", " + listEdgesSubclass.get(listEdgesSubclass.size() - 1).toString() + "]";
+			} else {
+				resulJson = resulJson + "]";
+			}
+		}
+
+		resulJson = resulJson + "} ";
+
+		return resulJson;
+	}
 }

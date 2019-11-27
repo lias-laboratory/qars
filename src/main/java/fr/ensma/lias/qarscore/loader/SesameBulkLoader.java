@@ -50,344 +50,330 @@ import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
  */
 public class SesameBulkLoader {
 
-    private static final String MEMORY_PATH = "target/Sesame/MemoryRepository/";
-
-    /**
-     * Apply inference on data base on the user's property
-     * 
-     * @param store
-     * @return
-     */
-    public static Sail inferred_data(NotifyingSail store, OntModelSpec spec) {
+	private static final String MEMORY_PATH = "target/Sesame/MemoryRepository/";
 
 	/**
-	 * Return a prebuilt standard configuration for the default RDFS
-	 * reasoner
+	 * Apply inference on data base on the user's property
+	 * 
+	 * @param store
+	 * @return
 	 */
-	if (spec.equals(OntModelSpec.OWL_MEM_RDFS_INF)) {
-	    return new ForwardChainingRDFSInferencer(store);
+	public static Sail inferred_data(NotifyingSail store, OntModelSpec spec) {
+
+		/**
+		 * Return a prebuilt standard configuration for the default RDFS reasoner
+		 */
+		if (spec.equals(OntModelSpec.OWL_MEM_RDFS_INF)) {
+			return new ForwardChainingRDFSInferencer(store);
+		}
+
+		/**
+		 * Return a prebuilt standard configuration for the default subclass/subproperty
+		 * transitive closure reasoner.
+		 */
+		else if (spec.equals(OntModelSpec.OWL_MEM_TRANS_INF)) {
+			return new DirectTypeHierarchyInferencer(store);
+		}
+
+		/**
+		 * Default model without inferred triple
+		 */
+		else if (spec.equals(OntModelSpec.OWL_MEM)) {
+			return store;
+		}
+		/**
+		 * Default model without inferred triple
+		 */
+		else if (spec.equals(OntModelSpec.OWL_DL_MEM)) {
+			return store;
+		}
+
+		else if (spec.equals(OntModelSpec.OWL_DL_MEM_RDFS_INF)) {
+			return new ForwardChainingRDFSInferencer(store);
+		}
+
+		/**
+		 * Prebuilt standard configuration for the default OWL reasoner.
+		 */
+		else if (spec.equals(OntModelSpec.OWL_DL_MEM_RULE_INF)) {
+			return new ForwardChainingRDFSInferencer(store);
+		}
+
+		else if (spec.equals(OntModelSpec.RDFS_MEM)) {
+			return store;
+		}
+		/**
+		 * Return a prebuilt standard configuration for the default RDFS reasoner
+		 */
+		else if (spec.equals(OntModelSpec.RDFS_MEM_RDFS_INF)) {
+			return new ForwardChainingRDFSInferencer(store);
+		}
+
+		/**
+		 * Return a prebuilt standard configuration for the default subclass/subproperty
+		 * transitive closure reasoner.
+		 */
+		else if (spec.equals(OntModelSpec.RDFS_MEM_TRANS_INF)) {
+			return new DirectTypeHierarchyInferencer(store);
+		}
+
+		else {
+			throw new NotYetImplementedException("unknow ontology specification");
+		}
 	}
 
 	/**
-	 * Return a prebuilt standard configuration for the default
-	 * subclass/subproperty transitive closure reasoner.
+	 * Load data on disk using a native store class with B-tree indexing
+	 * 
+	 * @return
 	 */
-	else if (spec.equals(
-		OntModelSpec.OWL_MEM_TRANS_INF)) {
-	    return new DirectTypeHierarchyInferencer(store);
+	public static Repository loaderNativeStore(String dataDirPath, File[] dataFiles, String baseURI, String lang,
+			OntModelSpec spec) {
+
+		File dataDir = new File(dataDirPath);
+		if (!dataDir.isDirectory()) {
+			throw new IllegalArgumentException("illegal parameter: Directory path expected");
+		}
+
+		Repository repo = new SailRepository(inferred_data(new NativeStore(dataDir), spec));
+		loaderRepository(repo, dataFiles, baseURI, lang, spec, true);
+
+		return repo;
 	}
 
 	/**
-	 * Default model without inferred triple
+	 * Load data in memory using a memory store class can use file on disk for
+	 * persitant storage
+	 * 
+	 * @return
 	 */
-	else if (spec.equals(OntModelSpec.OWL_MEM)) {
-	    return store;
+	public static Repository loaderMemoryStore(File[] dataFiles, String baseURI, String lang, OntModelSpec spec,
+			boolean persist) {
+
+		MemoryStore mem_store;
+		Repository repo = null;
+		if (persist) {
+			File dataDir = new File(MEMORY_PATH + "LUBM1");
+			mem_store = new MemoryStore(dataDir);
+			mem_store.setSyncDelay(Long.MAX_VALUE);
+		} else {
+			mem_store = new MemoryStore();
+		}
+		repo = new SailRepository(inferred_data(mem_store, spec));
+		loaderRepository(repo, dataFiles, baseURI, lang, spec, false);
+
+		return repo;
 	}
+
+	// /**
+	// * Load data in memory using a memory store class can use file on disk for
+	// * persitant storage
+	// *
+	// * @return
+	// */
+	// public static Repository loaderMemoryStore(File[] dataFiles,
+	// String baseURI, String lang) {
+	//
+	// MemoryStore mem_store;
+	// mem_store = new MemoryStore();
+	// mem_store.setSyncDelay(Long.MAX_VALUE);
+	// Repository repo = new SailRepository(inferred_data(mem_store));
+	// loaderRepository(repo, dataFiles, baseURI, lang, true);
+	//
+	// return repo;
+	// }
+
 	/**
-	 * Default model without inferred triple
+	 * Load data in folder'file into the Repository repo and the Model model
+	 * 
+	 * @param repo
+	 * @param model
+	 * @param nameFolder
+	 * @param baseURI
+	 * @param lang
+	 * @param spec
+	 * @param close
 	 */
-	else if (spec.equals(OntModelSpec.OWL_DL_MEM)) {
-	    return store;
-	}
+	private static void loaderRepositoryandModel(Repository repo, Model model, File[] dataFiles, String baseURI,
+			String lang, OntModelSpec spec, boolean close) {
 
-	else if (spec.equals(
-		OntModelSpec.OWL_DL_MEM_RDFS_INF)) {
-	    return new ForwardChainingRDFSInferencer(store);
-	}
+		RDFParser rdfParser;
 
-	/**
-	 * Prebuilt standard configuration for the default OWL reasoner.
-	 */
-	else if (spec.equals(
-		OntModelSpec.OWL_DL_MEM_RULE_INF)) {
-	    return new ForwardChainingRDFSInferencer(store);
-	}
+		switch (lang.toUpperCase()) {
 
-	else if (spec.equals(OntModelSpec.RDFS_MEM)) {
-	    return store;
-	}
-	/**
-	 * Return a prebuilt standard configuration for the default RDFS
-	 * reasoner
-	 */
-	else if (spec.equals(
-		OntModelSpec.RDFS_MEM_RDFS_INF)) {
-	    return new ForwardChainingRDFSInferencer(store);
-	}
+		case "OWL":
+			rdfParser = Rio.createParser(RDFFormat.RDFXML);
+			break;
 
-	/**
-	 * Return a prebuilt standard configuration for the default
-	 * subclass/subproperty transitive closure reasoner.
-	 */
-	else if (spec.equals(
-		OntModelSpec.RDFS_MEM_TRANS_INF)) {
-	    return new DirectTypeHierarchyInferencer(store);
-	}
+		case "RDF/XML":
+			rdfParser = Rio.createParser(RDFFormat.RDFXML);
+			break;
 
-	else {
-	    throw new NotYetImplementedException(
-		    "unknow ontology specification");
-	}
-    }
+		case "N3":
+			rdfParser = Rio.createParser(RDFFormat.N3);
+			break;
 
-    /**
-     * Load data on disk using a native store class with B-tree indexing
-     * 
-     * @return
-     */
-    public static Repository loaderNativeStore(String dataDirPath,
-	    File[] dataFiles, String baseURI, String lang, OntModelSpec spec) {
+		case "RDF":
+			rdfParser = Rio.createParser(RDFFormat.RDFXML);
+			break;
 
-	File dataDir = new File(dataDirPath);
-	if (!dataDir.isDirectory()) {
-	    throw new IllegalArgumentException(
-		    "illegal parameter: Directory path expected");
-	}
+		case "NT":
+			rdfParser = Rio.createParser(RDFFormat.NTRIPLES);
+			break;
 
-	Repository repo = new SailRepository(inferred_data(new NativeStore(
-		dataDir), spec));
-	loaderRepository(repo, dataFiles, baseURI, lang, spec, true);
+		case "DAML":
+			rdfParser = Rio.createParser(RDFFormat.RDFXML);
+			break;
 
-	return repo;
-    }
+		case "TURTLE":
+			rdfParser = Rio.createParser(RDFFormat.TURTLE);
+			break;
 
-    /**
-     * Load data in memory using a memory store class can use file on disk for
-     * persitant storage
-     * 
-     * @return
-     */
-    public static Repository loaderMemoryStore(File[] dataFiles,
-	    String baseURI, String lang, OntModelSpec spec, boolean persist) {
+		default:
+			throw new IllegalArgumentException("wrong ontology language");
+		}
 
-	MemoryStore mem_store;
-	Repository repo = null;
-	if (persist) {
-	    File dataDir = new File(MEMORY_PATH + "LUBM1");
-	    mem_store = new MemoryStore(dataDir);
-	    mem_store.setSyncDelay(Long.MAX_VALUE);
-	} else {
-	    mem_store = new MemoryStore();
-	}
-	repo = new SailRepository(inferred_data(mem_store, spec));
-	loaderRepository(repo, dataFiles, baseURI, lang, spec, false);
-
-	return repo;
-    }
-
-    // /**
-    // * Load data in memory using a memory store class can use file on disk for
-    // * persitant storage
-    // *
-    // * @return
-    // */
-    // public static Repository loaderMemoryStore(File[] dataFiles,
-    // String baseURI, String lang) {
-    //
-    // MemoryStore mem_store;
-    // mem_store = new MemoryStore();
-    // mem_store.setSyncDelay(Long.MAX_VALUE);
-    // Repository repo = new SailRepository(inferred_data(mem_store));
-    // loaderRepository(repo, dataFiles, baseURI, lang, true);
-    //
-    // return repo;
-    // }
-
-    /**
-     * Load data in folder'file into the Repository repo and the Model model
-     * 
-     * @param repo
-     * @param model
-     * @param nameFolder
-     * @param baseURI
-     * @param lang
-     * @param spec 
-     * @param close
-     */
-    private static void loaderRepositoryandModel(Repository repo, Model model,
-	    File[] dataFiles, String baseURI, String lang, OntModelSpec spec, boolean close) {
-
-	RDFParser rdfParser;
-
-	switch (lang.toUpperCase()) {
-
-	case "OWL":
-	    rdfParser = Rio.createParser(RDFFormat.RDFXML);
-	    break;
-
-	case "RDF/XML":
-	    rdfParser = Rio.createParser(RDFFormat.RDFXML);
-	    break;
-
-	case "N3":
-	    rdfParser = Rio.createParser(RDFFormat.N3);
-	    break;
-
-	case "RDF":
-	    rdfParser = Rio.createParser(RDFFormat.RDFXML);
-	    break;
-
-	case "NT":
-	    rdfParser = Rio.createParser(RDFFormat.NTRIPLES);
-	    break;
-
-	case "DAML":
-	    rdfParser = Rio.createParser(RDFFormat.RDFXML);
-	    break;
-
-	case "TURTLE":
-	    rdfParser = Rio.createParser(RDFFormat.TURTLE);
-	    break;
-
-	default:
-	    throw new IllegalArgumentException("wrong ontology language");
-	}
-
-	Resource context = null;
-	if (model != null) {
-	    rdfParser.setRDFHandler(new StatementCollector(model));
-	}
-
-	repo.initialize();
-
-	for (File dataFile : dataFiles) {
-	    URI currentUri = dataFile.toURI();
-	    String currentUrl = null;
-	    try {
-		currentUrl = currentUri.toURL().toString();
+		Resource context = null;
 		if (model != null) {
-		    rdfParser
-			    .parse(currentUri.toURL().openStream(), currentUrl);
-		    context = model.contexts().iterator().next();
+			rdfParser.setRDFHandler(new StatementCollector(model));
 		}
-		repo.getConnection().add(currentUri.toURL(), baseURI,
-			rdfParser.getRDFFormat(), context);
-	    } catch (MalformedURLException e) {
-		e.printStackTrace();
-	    } catch (RDFParseException e) {
-		e.printStackTrace();
-	    } catch (RDFHandlerException e) {
-		e.printStackTrace();
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
+
+		repo.initialize();
+
+		for (File dataFile : dataFiles) {
+			URI currentUri = dataFile.toURI();
+			String currentUrl = null;
+			try {
+				currentUrl = currentUri.toURL().toString();
+				if (model != null) {
+					rdfParser.parse(currentUri.toURL().openStream(), currentUrl);
+					context = model.contexts().iterator().next();
+				}
+				repo.getConnection().add(currentUri.toURL(), baseURI, rdfParser.getRDFFormat(), context);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (RDFParseException e) {
+				e.printStackTrace();
+			} catch (RDFHandlerException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		repo.getConnection().commit();
+
+		if (close) {
+			repo.getConnection().close();
+			repo.shutDown();
+
+		}
+
+		return;
 	}
 
-	repo.getConnection().commit();
-
-	if (close) {
-	    repo.getConnection().close();
-	    repo.shutDown();
-
+	private static void loaderRepository(Repository repo, File[] dataFiles, String baseURI, String lang,
+			OntModelSpec spec, boolean close) {
+		loaderRepositoryandModel(repo, null, dataFiles, baseURI, lang, spec, close);
 	}
 
-	return;
-    }
+	/**
+	 * main of BulkLoader, use for loading a specific data set in Sesame triple
+	 * store BulkLoader Folder/File name, Onto_Lang, base_URI "Repository path"
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
 
-    private static void loaderRepository(Repository repo, File[] dataFiles,
-	    String baseURI, String lang, OntModelSpec spec, boolean close) {
-	loaderRepositoryandModel(repo, null, dataFiles, baseURI, lang, spec, close);
-    }
+		int argsLenth = args.length;
+		if (argsLenth < 3) {
+			throw new IllegalArgumentException("illegal number of parameter");
+		}
 
-    /**
-     * main of BulkLoader, use for loading a specific data set in Sesame triple
-     * store BulkLoader Folder/File name, Onto_Lang, base_URI "Repository path"
-     * 
-     * @param args
-     */
-    public static void main(String[] args) {
+		String nameFolder = args[0];
+		File dataFolder = new File(nameFolder);
+		File[] dataFiles;
 
-	int argsLenth = args.length;
-	if (argsLenth < 3) {
-	    throw new IllegalArgumentException("illegal number of parameter");
+		if (!dataFolder.exists()) {
+			throw new IllegalArgumentException("File doesn't exist");
+		}
+
+		FilenameFilter fileExt;
+		switch (args[1].toUpperCase()) {
+
+		case "OWL":
+			fileExt = new FilenameFilter() {
+				@Override
+				public boolean accept(File sourceFolder, String name) {
+					return name.toLowerCase().endsWith(".owl");
+				}
+			};
+			break;
+
+		case "N3":
+			fileExt = new FilenameFilter() {
+				@Override
+				public boolean accept(File sourceFolder, String name) {
+					return name.toLowerCase().endsWith(".n3");
+				}
+			};
+			break;
+
+		case "RDF":
+			fileExt = new FilenameFilter() {
+				@Override
+				public boolean accept(File sourceFolder, String name) {
+					return name.toLowerCase().endsWith(".rdf");
+				}
+			};
+			break;
+
+		case "NT":
+			fileExt = new FilenameFilter() {
+				@Override
+				public boolean accept(File sourceFolder, String name) {
+					return name.toLowerCase().endsWith(".nt");
+				}
+			};
+			break;
+
+		case "DAML":
+			fileExt = new FilenameFilter() {
+				@Override
+				public boolean accept(File sourceFolder, String name) {
+					return name.toLowerCase().endsWith(".daml");
+				}
+			};
+			break;
+
+		case "TURTLE":
+			fileExt = new FilenameFilter() {
+				@Override
+				public boolean accept(File sourceFolder, String name) {
+					return name.toLowerCase().endsWith(".ttl");
+				}
+			};
+			break;
+
+		default:
+			throw new IllegalArgumentException("wrong ontology language");
+		}
+
+		if (dataFolder.isDirectory()) {
+			dataFiles = dataFolder.listFiles(fileExt);
+		} else {
+			if (fileExt.accept(dataFolder.getParentFile(), dataFolder.getName())) {
+				dataFiles = new File[1];
+				dataFiles[0] = dataFolder;
+			} else {
+				throw new IllegalArgumentException("Incompatible File and language");
+			}
+		}
+		String base_uri = args[2];
+		if (argsLenth == 3) {
+			loaderMemoryStore(dataFiles, base_uri, args[1], OntModelSpec.OWL_DL_MEM, true);
+		} else {
+			loaderNativeStore(args[3], dataFiles, base_uri, args[1], OntModelSpec.OWL_DL_MEM);
+		}
 	}
-
-	String nameFolder = args[0];
-	File dataFolder = new File(nameFolder);
-	File[] dataFiles;
-
-	if (!dataFolder.exists()) {
-	    throw new IllegalArgumentException("File doesn't exist");
-	}
-
-	FilenameFilter fileExt;
-	switch (args[1].toUpperCase()) {
-
-	case "OWL":
-	    fileExt = new FilenameFilter() {
-		@Override
-		public boolean accept(File sourceFolder, String name) {
-		    return name.toLowerCase().endsWith(".owl");
-		}
-	    };
-	    break;
-
-	case "N3":
-	    fileExt = new FilenameFilter() {
-		@Override
-		public boolean accept(File sourceFolder, String name) {
-		    return name.toLowerCase().endsWith(".n3");
-		}
-	    };
-	    break;
-
-	case "RDF":
-	    fileExt = new FilenameFilter() {
-		@Override
-		public boolean accept(File sourceFolder, String name) {
-		    return name.toLowerCase().endsWith(".rdf");
-		}
-	    };
-	    break;
-
-	case "NT":
-	    fileExt = new FilenameFilter() {
-		@Override
-		public boolean accept(File sourceFolder, String name) {
-		    return name.toLowerCase().endsWith(".nt");
-		}
-	    };
-	    break;
-
-	case "DAML":
-	    fileExt = new FilenameFilter() {
-		@Override
-		public boolean accept(File sourceFolder, String name) {
-		    return name.toLowerCase().endsWith(".daml");
-		}
-	    };
-	    break;
-
-	case "TURTLE":
-	    fileExt = new FilenameFilter() {
-		@Override
-		public boolean accept(File sourceFolder, String name) {
-		    return name.toLowerCase().endsWith(".ttl");
-		}
-	    };
-	    break;
-
-	default:
-	    throw new IllegalArgumentException("wrong ontology language");
-	}
-
-	if (dataFolder.isDirectory()) {
-	    dataFiles = dataFolder.listFiles(fileExt);
-	} else {
-	    if (fileExt
-		    .accept(dataFolder.getParentFile(), dataFolder.getName())) {
-		dataFiles = new File[1];
-		dataFiles[0] = dataFolder;
-	    } else {
-		throw new IllegalArgumentException(
-			"Incompatible File and language");
-	    }
-	}
-	String base_uri = args[2];
-	if (argsLenth == 3) {
-	    loaderMemoryStore(dataFiles, base_uri, args[1], OntModelSpec.OWL_DL_MEM, true);
-	} else {
-	    loaderNativeStore(args[3], dataFiles, base_uri, args[1], OntModelSpec.OWL_DL_MEM);
-	}
-    }
 }

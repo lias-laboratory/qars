@@ -28,132 +28,123 @@ import fr.ensma.lias.qarscore.loader.SesameBulkLoader;
  */
 public class SesameSession implements Session {
 
-    /**
-     * Only one session is allowed for an instance of the program
-     */
-    protected static Session session;
+	/**
+	 * Only one session is allowed for an instance of the program
+	 */
+	protected static Session session;
 
-    /**
-     * Url of the dataset
-     */
-    protected String url;
+	/**
+	 * Url of the dataset
+	 */
+	protected String url;
 
-    /**
-     * Data repository for sesame
-     */
-    private Repository repository;
+	/**
+	 * Data repository for sesame
+	 */
+	private Repository repository;
 
-    /**
-     * Statistic of the ontology
-     */
-    protected DatasetOntologyMetaData ontologyStat;
+	/**
+	 * Statistic of the ontology
+	 */
+	protected DatasetOntologyMetaData ontologyStat;
 
-    /**
-     * Construct a Sesame Session if there isn't existed
-     */
-    public static Session getNativeSesameSession(String repositoryPath) {
+	/**
+	 * Construct a Sesame Session if there isn't existed
+	 */
+	public static Session getNativeSesameSession(String repositoryPath) {
 
-	if (session != null) {
-	    return session;
+		if (session != null) {
+			return session;
+		}
+		SesameSession sesameSession = new SesameSession();
+		File dataDir = new File(repositoryPath);
+		if (!dataDir.isDirectory()) {
+			throw new IllegalArgumentException("illegal parameter: Directory path expected");
+		}
+		sesameSession.repository = new SailRepository(new NativeStore(dataDir));
+		sesameSession.url = repositoryPath;
+		sesameSession.ontologyStat = DatasetOntologyMetaData.getInstance(sesameSession);
+		session = sesameSession;
+		return session;
 	}
-	SesameSession sesameSession = new SesameSession();
-	File dataDir = new File(repositoryPath);
-	if (!dataDir.isDirectory()) {
-	    throw new IllegalArgumentException(
-		    "illegal parameter: Directory path expected");
+
+	public static Session getInMemorySesameSession(File[] datafiles, String baseURI, String lang, OntModelSpec spec,
+			boolean persist) {
+
+		if (session != null) {
+			return session;
+		}
+		SesameSession sesameSession = new SesameSession();
+		sesameSession.repository = SesameBulkLoader.loaderMemoryStore(datafiles, baseURI, lang, spec, persist);
+		sesameSession.url = null;
+		sesameSession.ontologyStat = DatasetOntologyMetaData.getInstance(sesameSession);
+		session = sesameSession;
+		return session;
+
 	}
-	sesameSession.repository = new SailRepository(new NativeStore(dataDir));
-	sesameSession.url = repositoryPath;
-	sesameSession.ontologyStat = DatasetOntologyMetaData
-		.getInstance(sesameSession);
-	session = sesameSession;
-	return session;
-    }
 
-    public static Session getInMemorySesameSession(File[] datafiles,
-	    String baseURI, String lang, OntModelSpec spec, boolean persist) {
-
-	if (session != null) {
-	    return session;
+	/**
+	 * 
+	 */
+	public SesameSession() {
 	}
-	SesameSession sesameSession = new SesameSession();
-	sesameSession.repository = SesameBulkLoader.loaderMemoryStore(
-		datafiles, baseURI, lang, spec, persist);
-	sesameSession.url = null;
-	sesameSession.ontologyStat = DatasetOntologyMetaData
-		.getInstance(sesameSession);
-	session = sesameSession;
-	return session;
 
-    }
+	/**
+	 * Construct a Sesame Session if there isn't existed
+	 */
+	public static Session getInMemorySesameSession(File[] dataFiles, String baseURI, String lang, OntModelSpec spec) {
 
-    /**
-     * 
-     */
-    public SesameSession() {
-    }
-
-    /**
-     * Construct a Sesame Session if there isn't existed
-     */
-    public static Session getInMemorySesameSession(File[] dataFiles,
-	    String baseURI, String lang, OntModelSpec spec) {
-
-	return getInMemorySesameSession(dataFiles, baseURI, lang, spec, false);
-    }
-
-    /**
-     * @return the repository
-     */
-    public Repository getRepository() {
-	return repository;
-    }
-
-    @Override
-    public String getNameSession() {
-	if (url != null) {
-	    return url.substring(url.indexOf("/") + 1);
+		return getInMemorySesameSession(dataFiles, baseURI, lang, spec, false);
 	}
-	return null;
-    }
 
-    @Override
-    public JSONResultSet executeSelectQuery(String query) {
+	/**
+	 * @return the repository
+	 */
+	public Repository getRepository() {
+		return repository;
+	}
 
-	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	TupleQueryResultHandler writer = new SPARQLResultsJSONWriter(
-		outputStream);
-	TupleQuery sesameQuery = this.repository.getConnection()
-		.prepareTupleQuery(query);
-	sesameQuery.evaluate(writer);
+	@Override
+	public String getNameSession() {
+		if (url != null) {
+			return url.substring(url.indexOf("/") + 1);
+		}
+		return null;
+	}
 
-	ByteArrayInputStream input = new ByteArrayInputStream(
-		outputStream.toByteArray());
+	@Override
+	public JSONResultSet executeSelectQuery(String query) {
 
-	return JSONResultSet.getJSONResultSet(input);
-    }
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		TupleQueryResultHandler writer = new SPARQLResultsJSONWriter(outputStream);
+		TupleQuery sesameQuery = this.repository.getConnection().prepareTupleQuery(query);
+		sesameQuery.evaluate(writer);
 
-    @Override
-    public int getResultSize(String query) {
+		ByteArrayInputStream input = new ByteArrayInputStream(outputStream.toByteArray());
 
-	JSONResultSet result = this.executeSelectQuery(query);
-	return result.getBindings().size();
-    }
+		return JSONResultSet.getJSONResultSet(input);
+	}
 
-    @Override
-    public DatasetOntologyMetaData getOntology() {
-	return ontologyStat;
-    }
+	@Override
+	public int getResultSize(String query) {
 
-    @Override
-    public InputStream executeConstructQuery(String query) {
+		JSONResultSet result = this.executeSelectQuery(query);
+		return result.getBindings().size();
+	}
 
-	GraphQuery sesamequery = this.repository.getConnection()
-		.prepareGraphQuery(query);
-	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	RDFWriter writer = Rio.createWriter(RDFFormat.NTRIPLES, outputStream);
-	sesamequery.evaluate(writer);
+	@Override
+	public DatasetOntologyMetaData getOntology() {
+		return ontologyStat;
+	}
 
-	return new ByteArrayInputStream(outputStream.toByteArray());
-    }
+	@Override
+	public InputStream executeConstructQuery(String query) {
+
+		GraphQuery sesamequery = this.repository.getConnection().prepareGraphQuery(query);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		RDFWriter writer = Rio.createWriter(RDFFormat.NTRIPLES, outputStream);
+		sesamequery.evaluate(writer);
+
+		return new ByteArrayInputStream(outputStream.toByteArray());
+	}
 }

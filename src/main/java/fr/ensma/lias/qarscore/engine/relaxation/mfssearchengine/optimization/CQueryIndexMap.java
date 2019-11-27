@@ -22,19 +22,19 @@ package fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.optimization;
 import fr.ensma.lias.qarscore.engine.query.CQuery;
 
 /**
- * @author Geraud FOKOU
- * Index interface uses for retrieving queries which has been already execute
+ * @author Geraud FOKOU Index interface uses for retrieving queries which has
+ *         been already execute
  */
 public interface CQueryIndexMap {
-    
-    boolean contains(CQuery query);
-    
-    Integer get(CQuery query);
-    
-    void put (CQuery query, Integer numberAnswers);
-    
-    Integer indexEvaluationQuery(CQuery query);
-    
-    int size();
-    
+
+	boolean contains(CQuery query);
+
+	Integer get(CQuery query);
+
+	void put(CQuery query, Integer numberAnswers);
+
+	Integer indexEvaluationQuery(CQuery query);
+
+	int size();
+
 }

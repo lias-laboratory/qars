@@ -27,125 +27,121 @@ import java.util.List;
  */
 public class GraphRelaxationIndex {
 
-    private int[] element_index_limit;
-    private int[] element_index;
-    private int start_index = 0;
-    private boolean with_redundance;
+	private int[] element_index_limit;
+	private int[] element_index;
+	private int start_index = 0;
+	private boolean with_redundance;
 
-    public GraphRelaxationIndex(int[] index, int[] index_limit) {
+	public GraphRelaxationIndex(int[] index, int[] index_limit) {
+		element_index = index;
+		element_index_limit = index_limit;
+		start_index = 0;
+		with_redundance = true;
+	}
 
-	element_index = index;
-	element_index_limit = index_limit;
-	start_index = 0;
-	with_redundance = true;
-    }
+	public GraphRelaxationIndex(int[] index, int[] index_limit, boolean redundant) {
 
-    public GraphRelaxationIndex(int[] index, int[] index_limit,
-	    boolean redundant) {
+		element_index = index;
+		element_index_limit = index_limit;
+		start_index = 0;
+		with_redundance = redundant;
+	}
 
-	element_index = index;
-	element_index_limit = index_limit;
-	start_index = 0;
-	with_redundance = redundant;
-    }
+	public GraphRelaxationIndex(int[] index, int[] index_limit, int s_index) {
 
-    public GraphRelaxationIndex(int[] index, int[] index_limit, int s_index) {
+		element_index = index;
+		element_index_limit = index_limit;
+		start_index = s_index;
+		with_redundance = false;
+	}
 
-	element_index = index;
-	element_index_limit = index_limit;
-	start_index = s_index;
-	with_redundance = false;
-    }
+	private GraphRelaxationIndex[] generate_distinct_child() {
 
-    private GraphRelaxationIndex[] generate_distinct_child() {
+		List<GraphRelaxationIndex> child_list = new ArrayList<GraphRelaxationIndex>();
 
-	List<GraphRelaxationIndex> child_list = new ArrayList<GraphRelaxationIndex>();
-
-	for (int i = start_index; i < element_index.length; i++) {
-	    if (element_index[i] + 1 < element_index_limit[i]) {
-		int[] child = new int[element_index.length];
-		for (int j = 0; j < element_index.length; j++) {
-		    child[j] = element_index[j];
+		for (int i = start_index; i < element_index.length; i++) {
+			if (element_index[i] + 1 < element_index_limit[i]) {
+				int[] child = new int[element_index.length];
+				for (int j = 0; j < element_index.length; j++) {
+					child[j] = element_index[j];
+				}
+				child[i] = element_index[i] + 1;
+				child_list.add(new GraphRelaxationIndex(child, element_index_limit, i));
+			}
 		}
-		child[i] = element_index[i] + 1;
-		child_list.add(new GraphRelaxationIndex(child,
-			element_index_limit, i));
-	    }
-	}
 
-	GraphRelaxationIndex[] child_elt = new GraphRelaxationIndex[child_list
-		.size()];
-	for (int i = 0; i < child_list.size(); i++) {
-	    child_elt[i] = child_list.get(i);
-	}
-	return child_elt;
-    }
-
-    private GraphRelaxationIndex[] generate_redundant_child() {
-
-	List<GraphRelaxationIndex> child_list = new ArrayList<GraphRelaxationIndex>();
-	for (int i = 0; i < element_index.length; i++) {
-	    if (element_index[i] + 1 < element_index_limit[i]) {
-		int[] child = new int[element_index.length];
-		for (int j = 0; j < element_index.length; j++) {
-		    child[j] = element_index[j];
+		GraphRelaxationIndex[] child_elt = new GraphRelaxationIndex[child_list.size()];
+		for (int i = 0; i < child_list.size(); i++) {
+			child_elt[i] = child_list.get(i);
 		}
-		child[i] = element_index[i] + 1;
-		child_list.add(new GraphRelaxationIndex(child,
-			element_index_limit, true));
-	    }
+		return child_elt;
 	}
 
-	GraphRelaxationIndex[] child_elt = new GraphRelaxationIndex[child_list
-		.size()];
-	for (int i = 0; i < child_list.size(); i++) {
-	    child_elt[i] = child_list.get(i);
-	}
-	return child_elt;
+	private GraphRelaxationIndex[] generate_redundant_child() {
 
-    }
+		List<GraphRelaxationIndex> child_list = new ArrayList<GraphRelaxationIndex>();
+		for (int i = 0; i < element_index.length; i++) {
+			if (element_index[i] + 1 < element_index_limit[i]) {
+				int[] child = new int[element_index.length];
+				for (int j = 0; j < element_index.length; j++) {
+					child[j] = element_index[j];
+				}
+				child[i] = element_index[i] + 1;
+				child_list.add(new GraphRelaxationIndex(child, element_index_limit, true));
+			}
+		}
 
-    /**
-     * @return the element_index
-     */
-    public int[] getElement_index() {
-	return element_index;
-    }
+		GraphRelaxationIndex[] child_elt = new GraphRelaxationIndex[child_list.size()];
+		for (int i = 0; i < child_list.size(); i++) {
+			child_elt[i] = child_list.get(i);
+		}
+		return child_elt;
 
-    /**
-     * @return the child_elt
-     */
-    public GraphRelaxationIndex[] getChild_elt() {
+	}
 
-	if (this.with_redundance) {
-	    return generate_redundant_child();
-	} else {
-	    return generate_distinct_child();
+	/**
+	 * @return the element_index
+	 */
+	public int[] getElement_index() {
+		return element_index;
 	}
-    }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-	
-	if(!(obj instanceof GraphRelaxationIndex)){
-	    return false;
+	/**
+	 * @return the child_elt
+	 */
+	public GraphRelaxationIndex[] getChild_elt() {
+
+		if (this.with_redundance) {
+			return generate_redundant_child();
+		} else {
+			return generate_distinct_child();
+		}
 	}
-	GraphRelaxationIndex other = (GraphRelaxationIndex)obj;
-	
-	if(this == obj){
-	    return true;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+
+		if (!(obj instanceof GraphRelaxationIndex)) {
+			return false;
+		}
+		GraphRelaxationIndex other = (GraphRelaxationIndex) obj;
+
+		if (this == obj) {
+			return true;
+		}
+		if (this.element_index.length != other.element_index.length) {
+			return false;
+		}
+		for (int i = 0; i < this.element_index.length; i++) {
+			if (element_index[i] != other.element_index[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
-	if(this.element_index.length != other.element_index.length){
-	    return false;
-	}
-	for (int i=0; i<this.element_index.length; i++){
-	    if(element_index[i]!=other.element_index[i]){
-		return false;
-	    }
-	}
-	return true;
-    }
 }

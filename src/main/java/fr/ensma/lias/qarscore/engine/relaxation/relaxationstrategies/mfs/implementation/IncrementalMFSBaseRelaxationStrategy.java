@@ -32,134 +32,121 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
 /**
  * @author Geraud FOKOU
  */
-public class IncrementalMFSBaseRelaxationStrategy extends
-	MFSBaseOptimizedRelaxationStrategy {
+public class IncrementalMFSBaseRelaxationStrategy extends MFSBaseOptimizedRelaxationStrategy {
 
-    /**
-     * @param query
-     * @param s
-     */
-    public IncrementalMFSBaseRelaxationStrategy(CQuery query, Session s) {
-	super(query, s);
-    }
-
-    /**
-     * @param query
-     * @param s
-     * @param optimization
-     */
-    public IncrementalMFSBaseRelaxationStrategy(CQuery query, Session s,
-	    boolean optimization) {
-	super(query, s, optimization);
-    }
-
-    /**
-     * Check if a relax query include or not an MFS
-     * 
-     * @param relax_graph_node
-     * @return
-     */
-    protected boolean check_mfs(GraphRelaxationIndex relax_graph_node) {
-
-	int i = 0;
-	boolean has_mfs = false;
-	List<Integer> relaxed_mfs = new ArrayList<Integer>();
-	List<int[]> degree_relaxed_mfs = new ArrayList<int[]>();
-
-	int[] current_relax_query = relax_graph_node.getElement_index();
-
-	while ((i < mfs_elt_index.size()) && (!has_mfs)) {
-
-	    int[] current_mfs_degree = new int[mfs_elt_index.get(i).length];
-	    for (int j = 0; j < mfs_elt_index.get(i).length; j++) {
-		current_mfs_degree[j] = current_relax_query[mfs_elt_index
-			.get(i)[j]];
-	    }
-
-	    boolean is_mfs = is_in_mfs_degree(mfs_degree_by_index.get(i),
-		    current_mfs_degree);
-
-	    if ((!is_mfs)
-		    && (!is_in_mfs_degree(repaire_mfs_degree_by_index.get(i),
-			    current_mfs_degree))) {
-		relaxed_mfs.add(i);
-		degree_relaxed_mfs.add(current_mfs_degree);
-	    }
-	    has_mfs = has_mfs || is_mfs;
-	    i = i + 1;
+	/**
+	 * @param query
+	 * @param s
+	 */
+	public IncrementalMFSBaseRelaxationStrategy(CQuery query, Session s) {
+		super(query, s);
 	}
 
-	if (has_mfs) {
-	    failed_relaxed_queries.add(relax_graph_node);
-	    return has_mfs;
-	} else {
-	    List<Integer> repaired_mfs = add_relaxed_mfs(relax_graph_node,
-		    relaxed_mfs, degree_relaxed_mfs);
-	    relaxed_mfs.removeAll(repaired_mfs);
-	    List<int[]> new_mfs = add_new_mfs(relax_graph_node, relaxed_mfs,
-		    repaired_mfs);
-	    return (!relaxed_mfs.isEmpty()) || (!new_mfs.isEmpty());
-	}
-    }
-
-    protected List<int[]> add_new_mfs(
-	    GraphRelaxationIndex relax_graph_node,
-	    List<Integer> mfs_current_query,
-	    List<Integer> mfs_repaired_current_query) {
-
-	List<int[]> new_mfs_founded = new ArrayList<int[]>();
-	int[] current_relax_query = relax_graph_node.getElement_index();
-
-	if (mfs_repaired_current_query.isEmpty()) {
-	    return new_mfs_founded;
+	/**
+	 * @param query
+	 * @param s
+	 * @param optimization
+	 */
+	public IncrementalMFSBaseRelaxationStrategy(CQuery query, Session s, boolean optimization) {
+		super(query, s, optimization);
 	}
 
-	List<CQuery> mfs_subqueries = new ArrayList<CQuery>();
-	List<CQuery> elt_mfs_subqueries = new ArrayList<CQuery>();
-	for (int j = 0; j < mfs_current_query.size(); j++) {
-	     int[] current_mfs_index = mfs_elt_index
-		    .get(mfs_current_query.get(j));
-	    mfs_subqueries.add(CQueryFactory.createCQuery(get_element_list(
-		    current_relax_query, current_mfs_index)));
-	}
+	/**
+	 * Check if a relax query include or not an MFS
+	 * 
+	 * @param relax_graph_node
+	 * @return
+	 */
+	protected boolean check_mfs(GraphRelaxationIndex relax_graph_node) {
 
-	for (int j = 0; j < mfs_repaired_current_query.size(); j++) {
-	     int[] current_sub_mfs_index = mfs_elt_index
-		    .get(mfs_repaired_current_query.get(j));
-	    elt_mfs_subqueries.add(CQueryFactory.createCQuery(get_element_list(
-		    current_relax_query, current_sub_mfs_index)));
-	}
+		int i = 0;
+		boolean has_mfs = false;
+		List<Integer> relaxed_mfs = new ArrayList<Integer>();
+		List<int[]> degree_relaxed_mfs = new ArrayList<int[]>();
 
-	CQuery current_relaxed_query = CQueryFactory
-		.createCQuery(get_element_list(current_relax_query,
-			this.query_index));
+		int[] current_relax_query = relax_graph_node.getElement_index();
 
-	long begin = System.currentTimeMillis();
-	List<CQuery> mfs_list = this.mfs_finders.getOtherMFS(
-		current_relaxed_query, mfs_subqueries, elt_mfs_subqueries);
-	logger.info("Finding Big MFS "+ mfs_list.size() + " "+((AbstractLatticeStrategy)this.mfs_finders).number_of_query_executed);
-	this.duration_mfs_check_query_executed = this.duration_mfs_check_query_executed + (System.currentTimeMillis()-begin);
-	this.number_mfs_check_query_executed = this.number_mfs_check_query_executed +  ((AbstractLatticeStrategy)this.mfs_finders).number_of_query_executed;
-	
-	for (int j = 0; j < mfs_list.size(); j++) {
-	    
-	    new_mfs_founded.add(j, new int[mfs_list.get(j).getElementList().size()]);
-	    List<int[]> degree_new_mfs_founded = new ArrayList<int[]>();
-	    degree_new_mfs_founded.add(new int[mfs_list.get(j).getElementList()
-		    .size()]);
-	    for(int i=0; i<current_relax_query.length; i++){
-		CElement elt = this.getRelaxedElement(i, current_relax_query[i]);
-		int k = 0;
-		if (mfs_list.get(j).contain(elt)) {
-		    new_mfs_founded.get(j)[k] = i;
-		    degree_new_mfs_founded.get(0)[k] = current_relax_query[i];
+		while ((i < mfs_elt_index.size()) && (!has_mfs)) {
+
+			int[] current_mfs_degree = new int[mfs_elt_index.get(i).length];
+			for (int j = 0; j < mfs_elt_index.get(i).length; j++) {
+				current_mfs_degree[j] = current_relax_query[mfs_elt_index.get(i)[j]];
+			}
+
+			boolean is_mfs = is_in_mfs_degree(mfs_degree_by_index.get(i), current_mfs_degree);
+
+			if ((!is_mfs) && (!is_in_mfs_degree(repaire_mfs_degree_by_index.get(i), current_mfs_degree))) {
+				relaxed_mfs.add(i);
+				degree_relaxed_mfs.add(current_mfs_degree);
+			}
+			has_mfs = has_mfs || is_mfs;
+			i = i + 1;
 		}
-	    }
-	    mfs_elt_index.add(new_mfs_founded.get(j));
-	    repaire_mfs_degree_by_index.add(new ArrayList<int[]>());
-	    mfs_degree_by_index.add(degree_new_mfs_founded);
+
+		if (has_mfs) {
+			failed_relaxed_queries.add(relax_graph_node);
+			return has_mfs;
+		} else {
+			List<Integer> repaired_mfs = add_relaxed_mfs(relax_graph_node, relaxed_mfs, degree_relaxed_mfs);
+			relaxed_mfs.removeAll(repaired_mfs);
+			List<int[]> new_mfs = add_new_mfs(relax_graph_node, relaxed_mfs, repaired_mfs);
+			return (!relaxed_mfs.isEmpty()) || (!new_mfs.isEmpty());
+		}
 	}
-	
-	return new_mfs_founded;
-    }
+
+	protected List<int[]> add_new_mfs(GraphRelaxationIndex relax_graph_node, List<Integer> mfs_current_query,
+			List<Integer> mfs_repaired_current_query) {
+
+		List<int[]> new_mfs_founded = new ArrayList<int[]>();
+		int[] current_relax_query = relax_graph_node.getElement_index();
+
+		if (mfs_repaired_current_query.isEmpty()) {
+			return new_mfs_founded;
+		}
+
+		List<CQuery> mfs_subqueries = new ArrayList<CQuery>();
+		List<CQuery> elt_mfs_subqueries = new ArrayList<CQuery>();
+		for (int j = 0; j < mfs_current_query.size(); j++) {
+			int[] current_mfs_index = mfs_elt_index.get(mfs_current_query.get(j));
+			mfs_subqueries.add(CQueryFactory.createCQuery(get_element_list(current_relax_query, current_mfs_index)));
+		}
+
+		for (int j = 0; j < mfs_repaired_current_query.size(); j++) {
+			int[] current_sub_mfs_index = mfs_elt_index.get(mfs_repaired_current_query.get(j));
+			elt_mfs_subqueries
+					.add(CQueryFactory.createCQuery(get_element_list(current_relax_query, current_sub_mfs_index)));
+		}
+
+		CQuery current_relaxed_query = CQueryFactory
+				.createCQuery(get_element_list(current_relax_query, this.query_index));
+
+		long begin = System.currentTimeMillis();
+		List<CQuery> mfs_list = this.mfs_finders.getOtherMFS(current_relaxed_query, mfs_subqueries, elt_mfs_subqueries);
+		logger.info("Finding Big MFS " + mfs_list.size() + " "
+				+ ((AbstractLatticeStrategy) this.mfs_finders).number_of_query_executed);
+		this.duration_mfs_check_query_executed = this.duration_mfs_check_query_executed
+				+ (System.currentTimeMillis() - begin);
+		this.number_mfs_check_query_executed = this.number_mfs_check_query_executed
+				+ ((AbstractLatticeStrategy) this.mfs_finders).number_of_query_executed;
+
+		for (int j = 0; j < mfs_list.size(); j++) {
+
+			new_mfs_founded.add(j, new int[mfs_list.get(j).getElementList().size()]);
+			List<int[]> degree_new_mfs_founded = new ArrayList<int[]>();
+			degree_new_mfs_founded.add(new int[mfs_list.get(j).getElementList().size()]);
+			for (int i = 0; i < current_relax_query.length; i++) {
+				CElement elt = this.getRelaxedElement(i, current_relax_query[i]);
+				int k = 0;
+				if (mfs_list.get(j).contain(elt)) {
+					new_mfs_founded.get(j)[k] = i;
+					degree_new_mfs_founded.get(0)[k] = current_relax_query[i];
+				}
+			}
+			mfs_elt_index.add(new_mfs_founded.get(j));
+			repaire_mfs_degree_by_index.add(new ArrayList<int[]>());
+			mfs_degree_by_index.add(degree_new_mfs_founded);
+		}
+
+		return new_mfs_founded;
+	}
 }

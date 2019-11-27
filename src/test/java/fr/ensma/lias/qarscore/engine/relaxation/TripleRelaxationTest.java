@@ -37,80 +37,65 @@ import fr.ensma.lias.qarscore.testqueries.SPARQLQueriesSample;
  */
 public class TripleRelaxationTest extends InitTest {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see fr.ensma.lias.qarscore.connection.SessionTDBTest#setUp()
-     */
-    @Before
-    public void setUp() {
-	super.setUp();
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-	super.tearDown();
-    }
-
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.engine.relaxation.operators.TripleRelaxation#TripleRelaxation(com.hp.hpl.jena.sparql.core.TriplePath, fr.ensma.lias.qarscore.connection.Session)}
-     * .
-     */
-    @Test
-    public void testTripleRelaxation() {
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_1);
-
-	TripleRelaxation relax_triple = new TripleRelaxation(conjunctiveQuery
-		.getElementList().get(0), session);
-
-	Assert.assertNotNull(relax_triple);
-	Assert.assertNotNull(relax_triple.getSubject_var());
-	Assert.assertTrue(relax_triple.getSubject_var().getName().equals("X"));
-	Assert.assertNull(relax_triple.getObject_var());
-	Assert.assertNull(relax_triple.getPredicat_var());
-	Assert.assertNull(relax_triple.getRelaxed_subject());
-	Assert.assertEquals(5, relax_triple.getRelaxed_object().size());
-	Assert.assertEquals(2, relax_triple.getRelaxed_predicat().size());
-	Assert.assertEquals(10, relax_triple.getRelaxed_triple().size());
-	while (relax_triple.hasNext()) {
-	    NodeRelaxed triple = relax_triple.next_relaxed_triple();
-	    Logger.getRootLogger().info(
-		    triple.getNode_1() + " " + triple.getNode_2() + " "
-			    + triple.getNode_3() + " :"
-			    + triple.getSimilarity() + " :"
-			    + triple.getRelaxation_level());
+	@Before
+	public void setUp() {
+		super.setUp();
 	}
-    }
 
-    @Test
-    public void testTripleRelaxationWithOrder() {
-	CQuery conjunctiveQuery = CQueryFactory
-		.createCQuery(SPARQLQueriesSample.QUERY_1);
-
-	TripleRelaxation relax_triple = new TripleRelaxation(conjunctiveQuery
-		.getElementList().get(0), session, 1);
-
-	Assert.assertNotNull(relax_triple);
-	Assert.assertNotNull(relax_triple.getSubject_var());
-	Assert.assertTrue(relax_triple.getSubject_var().getName().equals("X"));
-	Assert.assertNull(relax_triple.getObject_var());
-	Assert.assertNull(relax_triple.getPredicat_var());
-	Assert.assertNull(relax_triple.getRelaxed_subject());
-	Assert.assertEquals(5, relax_triple.getRelaxed_object().size());
-	Assert.assertEquals(2, relax_triple.getRelaxed_predicat().size());
-	Assert.assertEquals(10, relax_triple.getRelaxed_triple().size());
-	for (NodeRelaxed triple : relax_triple.getRelaxed_triple()) {
-	    Logger.getRootLogger().info(
-		    triple.getNode_1() + " " + triple.getNode_2() + " "
-			    + triple.getNode_3() + " :"
-			    + triple.getSimilarity() + " :"
-			    + triple.getRelaxation_level());
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
 	}
-    }
+
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.engine.relaxation.operators.TripleRelaxation#TripleRelaxation(com.hp.hpl.jena.sparql.core.TriplePath, fr.ensma.lias.qarscore.connection.Session)}
+	 * .
+	 */
+	@Test
+	public void testTripleRelaxation() {
+		CQuery conjunctiveQuery = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_1);
+
+		TripleRelaxation relax_triple = new TripleRelaxation(conjunctiveQuery.getElementList().get(0), session);
+
+		Assert.assertNotNull(relax_triple);
+		Assert.assertNotNull(relax_triple.getSubject_var());
+		Assert.assertTrue(relax_triple.getSubject_var().getName().equals("X"));
+		Assert.assertNull(relax_triple.getObject_var());
+		Assert.assertNull(relax_triple.getPredicat_var());
+		Assert.assertNull(relax_triple.getRelaxed_subject());
+		Assert.assertEquals(5, relax_triple.getRelaxed_object().size());
+		Assert.assertEquals(2, relax_triple.getRelaxed_predicat().size());
+		Assert.assertEquals(10, relax_triple.getRelaxed_triple().size());
+		while (relax_triple.hasNext()) {
+			NodeRelaxed triple = relax_triple.next_relaxed_triple();
+			Logger.getRootLogger().info(triple.getNode_1() + " " + triple.getNode_2() + " " + triple.getNode_3() + " :"
+					+ triple.getSimilarity() + " :" + triple.getRelaxation_level());
+		}
+	}
+
+	@Test
+	public void testTripleRelaxationWithOrder() {
+		CQuery conjunctiveQuery = CQueryFactory.createCQuery(SPARQLQueriesSample.QUERY_1);
+
+		TripleRelaxation relax_triple = new TripleRelaxation(conjunctiveQuery.getElementList().get(0), session, 1);
+
+		Assert.assertNotNull(relax_triple);
+		Assert.assertNotNull(relax_triple.getSubject_var());
+		Assert.assertTrue(relax_triple.getSubject_var().getName().equals("X"));
+		Assert.assertNull(relax_triple.getObject_var());
+		Assert.assertNull(relax_triple.getPredicat_var());
+		Assert.assertNull(relax_triple.getRelaxed_subject());
+		Assert.assertEquals(5, relax_triple.getRelaxed_object().size());
+		Assert.assertEquals(2, relax_triple.getRelaxed_predicat().size());
+		Assert.assertEquals(10, relax_triple.getRelaxed_triple().size());
+		for (NodeRelaxed triple : relax_triple.getRelaxed_triple()) {
+			Logger.getRootLogger().info(triple.getNode_1() + " " + triple.getNode_2() + " " + triple.getNode_3() + " :"
+					+ triple.getSimilarity() + " :" + triple.getRelaxation_level());
+		}
+	}
 
 }

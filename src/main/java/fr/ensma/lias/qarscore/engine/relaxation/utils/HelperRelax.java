@@ -24,29 +24,29 @@ package fr.ensma.lias.qarscore.engine.relaxation.utils;
  */
 public class HelperRelax {
 
-    private static int num_resource_release = 0;
+	private static int num_resource_release = 0;
 
-    private static int num_pred_release = 0;
-    
-    /**
-     * 
-     */
-    public HelperRelax() {
-	// TODO Auto-generated constructor stub
-    }
-    
-    public static String getNewResource(){
-	
-	String name = "R"+num_resource_release;
-	num_resource_release++;
-	return name;
-    }
-    
-    public static String getNewPredicat(){
-	
-	String name = "P"+num_pred_release;
-	num_pred_release++;
-	return name;
-    }
-    
+	private static int num_pred_release = 0;
+
+	/**
+	 * 
+	 */
+	public HelperRelax() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static String getNewResource() {
+
+		String name = "R" + num_resource_release;
+		num_resource_release++;
+		return name;
+	}
+
+	public static String getNewPredicat() {
+
+		String name = "P" + num_pred_release;
+		num_pred_release++;
+		return name;
+	}
+
 }

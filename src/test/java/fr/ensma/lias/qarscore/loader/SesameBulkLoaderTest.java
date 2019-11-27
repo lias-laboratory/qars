@@ -35,119 +35,114 @@ import fr.ensma.lias.qarscore.connection.implementation.SesameSession;
  */
 public class SesameBulkLoaderTest {
 
-    private SesameSession session;
+	private SesameSession session;
 
-    /**
-     * Method for deleting a directory after deleting all the files and folder
-     * in this directory
-     * 
-     * @param folder
-     * @return
-     */
-    private boolean deleteDirectory(File folder) {
-	if (!folder.isDirectory()) {
-	    return folder.delete();
+	/**
+	 * Method for deleting a directory after deleting all the files and folder in
+	 * this directory
+	 * 
+	 * @param folder
+	 * @return
+	 */
+	private boolean deleteDirectory(File folder) {
+		if (!folder.isDirectory()) {
+			return folder.delete();
+		}
+
+		for (File dataFile : folder.listFiles()) {
+			deleteDirectory(dataFile);
+		}
+
+		return folder.delete();
 	}
 
-	for (File dataFile : folder.listFiles()) {
-	    deleteDirectory(dataFile);
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+
+		File folderTDB = new File("target/Sesame/NativeRepository/LUBM1");
+		if (folderTDB.exists()) {
+			deleteDirectory(folderTDB);
+		}
+		folderTDB.mkdirs();
 	}
 
-	return folder.delete();
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-
-	File folderTDB = new File("target/Sesame/NativeRepository/LUBM1");
-	if (folderTDB.exists()) {
-	    deleteDirectory(folderTDB);
+		Assert.assertNotNull(session.getRepository());
 	}
-	folderTDB.mkdirs();
-    }
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.loader.SesameBulkLoaderTest#loadRepositoryMemory(java.io.File[], java.lang.String, java.lang.String)}
+	 * .
+	 */
+	@Test
+	public void testLoadRepositoryMemory() {
 
-	Assert.assertNotNull(session.getRepository());
-    }
+		String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
+		File[] datafiles = new File[1];
+		datafiles[0] = new File(System.getProperty("user.dir") + "/src/test/resources/LUBM1/lubm1.owl");
 
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.loader.SesameBulkLoaderTest#loadRepositoryMemory(java.io.File[], java.lang.String, java.lang.String)}
-     * .
-     */
-    @Test
-    public void testLoadRepositoryMemory() {
-	
-	String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
-	File[] datafiles = new File[1];
-	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/resources/LUBM1/lubm1.owl");
-	
-	session = (SesameSession) SessionFactory.getInMemorySesameSession(
-		datafiles, baseURI, "RDF/XML", OntModelSpec.OWL_DL_MEM, true);
-	
-	Assert.assertNotNull(session.getRepository());
-    }
+		session = (SesameSession) SessionFactory.getInMemorySesameSession(datafiles, baseURI, "RDF/XML",
+				OntModelSpec.OWL_DL_MEM, true);
 
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.loader.SesameBulkLoaderTest#loadRepositoryMemory(java.io.File[], java.lang.String, java.lang.String)}
-     * .
-     */
-    @Test
-    public void testLoadRepositoryInMemory() {
+		Assert.assertNotNull(session.getRepository());
+	}
 
-	String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
-	File[] datafiles = new File[1];
-	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/resources/LUBM1/lubm1.owl");
-	session = (SesameSession) SessionFactory.getInMemorySesameSession(
-		datafiles, baseURI, "RDF/XML", OntModelSpec.OWL_DL_MEM);
-	Assert.assertNotNull(session.getRepository());	
-    }
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.loader.SesameBulkLoaderTest#loadRepositoryMemory(java.io.File[], java.lang.String, java.lang.String)}
+	 * .
+	 */
+	@Test
+	public void testLoadRepositoryInMemory() {
 
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.loader.SesameBulkLoaderTest#loadNativeRepository(java.lang.String, java.io.File[], java.lang.String, java.lang.String)}
-     * .
-     */
-    @Test
-    public void testLoadNativeRepository() {
+		String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
+		File[] datafiles = new File[1];
+		datafiles[0] = new File(System.getProperty("user.dir") + "/src/test/resources/LUBM1/lubm1.owl");
+		session = (SesameSession) SessionFactory.getInMemorySesameSession(datafiles, baseURI, "RDF/XML",
+				OntModelSpec.OWL_DL_MEM);
+		Assert.assertNotNull(session.getRepository());
+	}
 
-	String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
-	File[] datafiles = new File[1];
-	datafiles[0] = new File(System.getProperty("user.dir")
-		+ "/src/test/resources/LUBM1/lubm1.owl");
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.loader.SesameBulkLoaderTest#loadNativeRepository(java.lang.String, java.io.File[], java.lang.String, java.lang.String)}
+	 * .
+	 */
+	@Test
+	public void testLoadNativeRepository() {
 
-	SesameBulkLoader.loaderNativeStore("target/Sesame/NativeRepository/LUBM1",
-		datafiles, baseURI, "RDF/XML", OntModelSpec.OWL_MEM);
-	session = (SesameSession) SessionFactory
-		.getNativeSesameSession("target/Sesame/NativeRepository/LUBM1");
-    }
+		String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
+		File[] datafiles = new File[1];
+		datafiles[0] = new File(System.getProperty("user.dir") + "/src/test/resources/LUBM1/lubm1.owl");
 
-    /**
-     * Test method for
-     * {@link fr.ensma.lias.qarscore.loader.SesameBulkLoaderTest#main(java.lang.String[])}
-     * .
-     */
-    @Test
-    public void testMain() {
+		SesameBulkLoader.loaderNativeStore("target/Sesame/NativeRepository/LUBM1", datafiles, baseURI, "RDF/XML",
+				OntModelSpec.OWL_MEM);
+		session = (SesameSession) SessionFactory.getNativeSesameSession("target/Sesame/NativeRepository/LUBM1");
+	}
 
-	String[] args = new String[4];
-	args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
-	args[1] = "RDF/XML";
-	args[2] = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
-	args[3] = "target/Sesame/NativeRepository/LUBM1";
-	SesameBulkLoader.main(args);
-	session = (SesameSession) SessionFactory
-		.getNativeSesameSession("target/Sesame/NativeRepository/LUBM1");
-    }
+	/**
+	 * Test method for
+	 * {@link fr.ensma.lias.qarscore.loader.SesameBulkLoaderTest#main(java.lang.String[])}
+	 * .
+	 */
+	@Test
+	public void testMain() {
+
+		String[] args = new String[4];
+		args[0] = System.getProperty("user.dir") + "/src/test/resources/LUBM1";
+		args[1] = "RDF/XML";
+		args[2] = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
+		args[3] = "target/Sesame/NativeRepository/LUBM1";
+		SesameBulkLoader.main(args);
+		session = (SesameSession) SessionFactory.getNativeSesameSession("target/Sesame/NativeRepository/LUBM1");
+	}
 }

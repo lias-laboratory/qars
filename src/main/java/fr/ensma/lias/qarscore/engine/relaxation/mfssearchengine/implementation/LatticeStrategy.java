@@ -32,78 +32,81 @@ import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.AbstractLatticeS
  */
 public class LatticeStrategy extends AbstractLatticeStrategy {
 
-    /**
-     * Get a lattice strategy relaxation for a session s and a number answers of
-     * wanted answers
-     * 
-     * @param s
-     * @param answers
-     * @return
-     */
-    protected static LatticeStrategy getLatticeStrategy(Session s,
-	    CQuery query, int answers) {
-	return new LatticeStrategy(s, query, answers);
-    }
-    
-    protected static LatticeStrategy getLatticeStrategy(Session s) {
-	return new LatticeStrategy(s);
-    }
-
-    protected LatticeStrategy(Session s) {
-	super(s, null, 1);
-    }
-    
-    /**
-     * private constructor
-     */
-    protected LatticeStrategy(Session s, CQuery query, int answers) {
-	super(s, query, answers);
-
-	duration_of_execution = System.currentTimeMillis();
-	this.computeMFS(actualQuery);
-	duration_of_execution = System.currentTimeMillis()
-		- duration_of_execution;
-    }
-  
-    @Override
-    public boolean hasLeastKAnswers(CQuery query) {
-	
-/**	use the following code for execution without cartesian product
- 
-	List<CQuery> queries = new ArrayList<CQuery>();
-	queries.add(query);
-*/	
-	List<CQuery> queries = query.getCartesianProduct();
-	if(queries.size()!=1){
-	    size_of_cartesian_product++;
-	    logger.info("*******************Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
+	/**
+	 * Get a lattice strategy relaxation for a session s and a number answers of
+	 * wanted answers
+	 * 
+	 * @param s
+	 * @param answers
+	 * @return
+	 */
+	protected static LatticeStrategy getLatticeStrategy(Session s, CQuery query, int answers) {
+		return new LatticeStrategy(s, query, answers);
 	}
-	
-	for(CQuery a_connex_query:queries){
-	    Query temp_query = a_connex_query.getSPARQLQuery();
-	    temp_query.setLimit(NUMBER_OF_EXPECTED_ANSWERS);
-	    number_of_query_executed ++;
-	    int nbSolution = SESSION.getResultSize(temp_query.toString());
-	    
-	    /*
-	     * Think to put the right log if you don't want to execute with cartesian product
-	     */
-	    if(nbSolution >= NUMBER_OF_EXPECTED_ANSWERS){
-		logger.info("Execution of : "+a_connex_query.getQueryLabel()+"                           Succes "+nbSolution);
-	    }
-	    else {
-		logger.info("Execution of : "+a_connex_query.getQueryLabel()+"                           Echec "+nbSolution);
-		if(queries.size()!=1){
-		    logger.info("*******************End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
+
+	protected static LatticeStrategy getLatticeStrategy(Session s) {
+		return new LatticeStrategy(s);
+	}
+
+	protected LatticeStrategy(Session s) {
+		super(s, null, 1);
+	}
+
+	/**
+	 * private constructor
+	 */
+	protected LatticeStrategy(Session s, CQuery query, int answers) {
+		super(s, query, answers);
+
+		duration_of_execution = System.currentTimeMillis();
+		this.computeMFS(actualQuery);
+		duration_of_execution = System.currentTimeMillis() - duration_of_execution;
+	}
+
+	@Override
+	public boolean hasLeastKAnswers(CQuery query) {
+
+		/**
+		 * use the following code for execution without cartesian product
+		 * 
+		 * List<CQuery> queries = new ArrayList<CQuery>(); queries.add(query);
+		 */
+		List<CQuery> queries = query.getCartesianProduct();
+		if (queries.size() != 1) {
+			size_of_cartesian_product++;
+			logger.info("*******************Execution of query with cartesian product: " + query.getQueryLabel()
+					+ "**********************************");
 		}
-		return false;
-	    }
-	}
-	
-	if(queries.size()!=1){
-	    logger.info("*******************End Execution of query with cartesian product: "+query.getQueryLabel()+"**********************************");
-	}
 
-	return true;
-    }
+		for (CQuery a_connex_query : queries) {
+			Query temp_query = a_connex_query.getSPARQLQuery();
+			temp_query.setLimit(NUMBER_OF_EXPECTED_ANSWERS);
+			number_of_query_executed++;
+			int nbSolution = SESSION.getResultSize(temp_query.toString());
+
+			/*
+			 * Think to put the right log if you don't want to execute with cartesian
+			 * product
+			 */
+			if (nbSolution >= NUMBER_OF_EXPECTED_ANSWERS) {
+				logger.info("Execution of : " + a_connex_query.getQueryLabel() + "                           Succes "
+						+ nbSolution);
+			} else {
+				logger.info("Execution of : " + a_connex_query.getQueryLabel() + "                           Echec "
+						+ nbSolution);
+				if (queries.size() != 1) {
+					logger.info("*******************End Execution of query with cartesian product: "
+							+ query.getQueryLabel() + "**********************************");
+				}
+				return false;
+			}
+		}
+
+		if (queries.size() != 1) {
+			logger.info("*******************End Execution of query with cartesian product: " + query.getQueryLabel()
+					+ "**********************************");
+		}
+
+		return true;
+	}
 }

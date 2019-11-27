@@ -24,30 +24,30 @@ package fr.ensma.lias.qarscore.exception;
  */
 public class NotYetImplementedException extends RuntimeException {
 
-    private static final long serialVersionUID = 1346560659118448325L;
+	private static final long serialVersionUID = 1346560659118448325L;
 
-    public NotYetImplementedException() {
-    }
+	public NotYetImplementedException() {
+	}
 
-    /**
-     * @param arg0
-     */
-    public NotYetImplementedException(String arg0) {
-	super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public NotYetImplementedException(String arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     */
-    public NotYetImplementedException(Throwable arg0) {
-	super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public NotYetImplementedException(Throwable arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public NotYetImplementedException(String arg0, Throwable arg1) {
-	super(arg0, arg1);
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public NotYetImplementedException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
 }

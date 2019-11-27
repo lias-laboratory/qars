@@ -40,158 +40,153 @@ import fr.ensma.lias.qarscore.exception.NotYetImplementedException;
  */
 public class CQueryFactory {
 
-    /**
-     * List of Simple literal create
-     */
-    private static List<CElement> elementList;
+	/**
+	 * List of Simple literal create
+	 */
+	private static List<CElement> elementList;
 
-    /**
-     * List of group element
-     */
-    private static List<ElementGroup> groupList;
+	/**
+	 * List of group element
+	 */
+	private static List<ElementGroup> groupList;
 
-    /**
-     * extract clause in an element of SPARQL query
-     * 
-     * @param element
-     */
-    private static void getClause(Element element) {
+	/**
+	 * extract clause in an element of SPARQL query
+	 * 
+	 * @param element
+	 */
+	private static void getClause(Element element) {
 
-	if (element instanceof ElementPathBlock) {
-	    List<TriplePath> triplePathList = ((ElementPathBlock) element)
-		    .getPattern().getList();
+		if (element instanceof ElementPathBlock) {
+			List<TriplePath> triplePathList = ((ElementPathBlock) element).getPattern().getList();
 
-	    for (TriplePath triplePath : triplePathList) {
-		ElementPathBlock currentTripleElt = new ElementPathBlock();
-		currentTripleElt.addTriplePath(triplePath);
-		elementList.add(CElement.createCTriple(currentTripleElt));
-	    }
-	}
-
-	else if (element instanceof ElementFilter) {
-
-	    Expr expression = ((ElementFilter) element).getExpr();
-	    getClause(expression);
-	}
-
-	else if (element instanceof ElementGroup) {
-
-	    for (Element elementInGroup : ((ElementGroup) element)
-		    .getElements()) {
-		if (elementInGroup instanceof ElementGroup) {
-		    groupList.add((ElementGroup) elementInGroup);
-		} else {
-		    getClause(elementInGroup);
+			for (TriplePath triplePath : triplePathList) {
+				ElementPathBlock currentTripleElt = new ElementPathBlock();
+				currentTripleElt.addTriplePath(triplePath);
+				elementList.add(CElement.createCTriple(currentTripleElt));
+			}
 		}
-	    }
+
+		else if (element instanceof ElementFilter) {
+
+			Expr expression = ((ElementFilter) element).getExpr();
+			getClause(expression);
+		}
+
+		else if (element instanceof ElementGroup) {
+
+			for (Element elementInGroup : ((ElementGroup) element).getElements()) {
+				if (elementInGroup instanceof ElementGroup) {
+					groupList.add((ElementGroup) elementInGroup);
+				} else {
+					getClause(elementInGroup);
+				}
+			}
+		}
+
+		else {
+			throw new NotYetImplementedException("This Element type don't support by the API");
+		}
 	}
 
-	else {
-	    throw new NotYetImplementedException(
-		    "This Element type don't support by the API");
-	}
-    }
+	/**
+	 * Extract clause in an expression of SPARQL query
+	 * 
+	 * @param expression
+	 */
+	private static void getClause(Expr expression) {
+		if (expression instanceof E_LogicalAnd) {
+			ElementFilter currentFilterElt = new ElementFilter(((E_LogicalAnd) expression).getArg1());
+			elementList.add(CElement.createCTriple(currentFilterElt));
 
-    /**
-     * Extract clause in an expression of SPARQL query
-     * 
-     * @param expression
-     */
-    private static void getClause(Expr expression) {
-	if (expression instanceof E_LogicalAnd) {
-	    ElementFilter currentFilterElt = new ElementFilter(
-		    ((E_LogicalAnd) expression).getArg1());
-	    elementList.add(CElement.createCTriple(currentFilterElt));
-
-	    currentFilterElt = new ElementFilter(
-		    ((E_LogicalAnd) expression).getArg2());
-	    elementList.add(CElement.createCTriple(currentFilterElt));
-	} else {
-	    ElementFilter currentFilterElt = new ElementFilter(expression);
-	    elementList.add(CElement.createCTriple(currentFilterElt));
-	}
-    }
-
-    /**
-     * For a SPARQL Query query creates the corresponding CQuery
-     * 
-     * @param query
-     * @return
-     */
-    public static CQuery createCQuery(Query query) {
-	groupList = new ArrayList<ElementGroup>();
-	elementList = new ArrayList<CElement>();
-	groupList.add((ElementGroup) query.getQueryPattern());
-
-	for (int i = 0; i < groupList.size(); i++) {
-	    getClause(groupList.get(i));
+			currentFilterElt = new ElementFilter(((E_LogicalAnd) expression).getArg2());
+			elementList.add(CElement.createCTriple(currentFilterElt));
+		} else {
+			ElementFilter currentFilterElt = new ElementFilter(expression);
+			elementList.add(CElement.createCTriple(currentFilterElt));
+		}
 	}
 
-	List<Node> selectedQueryVar = new ArrayList<Node>();
-	selectedQueryVar.addAll(query.getProjectVars());
+	/**
+	 * For a SPARQL Query query creates the corresponding CQuery
+	 * 
+	 * @param query
+	 * @return
+	 */
+	public static CQuery createCQuery(Query query) {
+		groupList = new ArrayList<ElementGroup>();
+		elementList = new ArrayList<CElement>();
+		groupList.add((ElementGroup) query.getQueryPattern());
 
-	return CQuery.createCQuery(elementList, groupList, selectedQueryVar);
-    }
+		for (int i = 0; i < groupList.size(); i++) {
+			getClause(groupList.get(i));
+		}
 
-    /**
-     * Create a copy a CQuery
-     * 
-     * @param query
-     * @return
-     */
-    public static CQuery cloneCQuery(CQuery query) {
+		List<Node> selectedQueryVar = new ArrayList<Node>();
+		selectedQueryVar.addAll(query.getProjectVars());
 
-	groupList = new ArrayList<ElementGroup>();
-	elementList = new ArrayList<CElement>();
-
-	for (CElement elt : query.getElementList()) {
-	    elementList.add(elt);
+		return CQuery.createCQuery(elementList, groupList, selectedQueryVar);
 	}
 
-	for (ElementGroup groupe : query.getGroupList()) {
-	    groupList.add(groupe);
+	/**
+	 * Create a copy a CQuery
+	 * 
+	 * @param query
+	 * @return
+	 */
+	public static CQuery cloneCQuery(CQuery query) {
+
+		groupList = new ArrayList<ElementGroup>();
+		elementList = new ArrayList<CElement>();
+
+		for (CElement elt : query.getElementList()) {
+			elementList.add(elt);
+		}
+
+		for (ElementGroup groupe : query.getGroupList()) {
+			groupList.add(groupe);
+		}
+
+		List<Node> selectedQueryVar = new ArrayList<Node>();
+
+		for (Node varNode : query.getSelectedQueryVar()) {
+			selectedQueryVar.add(varNode);
+		}
+
+		return CQuery.createCQuery(elementList, groupList, selectedQueryVar);
 	}
 
-	List<Node> selectedQueryVar = new ArrayList<Node>();
-
-	for (Node varNode : query.getSelectedQueryVar()) {
-	    selectedQueryVar.add(varNode);
+	/**
+	 * Create a conjunctive query with a SPARQL string query
+	 * 
+	 * @param sparqlQuery
+	 * @return
+	 */
+	public static CQuery createCQuery(String sparqlQuery) {
+		return createCQuery(QueryFactory.create(sparqlQuery));
 	}
 
-	return CQuery.createCQuery(elementList, groupList, selectedQueryVar);
-    }
+	/**
+	 * creates a start query with a list of elements
+	 * 
+	 * @param elements
+	 * @return
+	 */
+	public static CQuery createCQuery(List<CElement> elements) {
 
-    /**
-     * Create a conjunctive query with a SPARQL string query
-     * 
-     * @param sparqlQuery
-     * @return
-     */
-    public static CQuery createCQuery(String sparqlQuery) {
-	return createCQuery(QueryFactory.create(sparqlQuery));
-    }
+		return CQuery.createCQuery(elements, null, null);
+	}
 
-    /**
-     * creates a start query with a list of elements
-     * 
-     * @param elements
-     * @return
-     */
-    public static CQuery createCQuery(List<CElement> elements) {
+	/**
+	 * creates a start query with a list of elements with a precise list of selected
+	 * var
+	 * 
+	 * @param elements
+	 * @return
+	 */
+	public static CQuery createCQuery(List<CElement> elements, List<Node> selectedQueryVars) {
 
-	return CQuery.createCQuery(elements, null, null);
-    }
-
-    /**
-     * creates a start query with a list of elements
-     * with a precise list of selected var
-     * 
-     * @param elements
-     * @return
-     */
-    public static CQuery createCQuery(List<CElement> elements, List<Node> selectedQueryVars) {
-
-	return CQuery.createCQuery(elements, null, selectedQueryVars);
-    }
+		return CQuery.createCQuery(elements, null, selectedQueryVars);
+	}
 
 }

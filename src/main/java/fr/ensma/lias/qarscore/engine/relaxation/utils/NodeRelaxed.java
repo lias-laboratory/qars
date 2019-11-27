@@ -26,39 +26,39 @@ import org.apache.jena.graph.Node;
  */
 public class NodeRelaxed {
 
-    /**
-     * The first relaxed node
-     */
-    private Node node_1;
+	/**
+	 * The first relaxed node
+	 */
+	private Node node_1;
 
-    /**
-     * The second relaxed node
-     */
-    private Node node_2;
+	/**
+	 * The second relaxed node
+	 */
+	private Node node_2;
 
-    /**
-     * The third relaxed node
-     */
-    private Node node_3;
+	/**
+	 * The third relaxed node
+	 */
+	private Node node_3;
 
-    /**
-     * The similarity of the relaxed node
-     */
-    private double similarity;
+	/**
+	 * The similarity of the relaxed node
+	 */
+	private double similarity;
 
-    /**
-     * the level of the relaxation for the node
-     */
-    private int[] relaxation_level;
+	/**
+	 * the level of the relaxation for the node
+	 */
+	private int[] relaxation_level;
 
-    /**
-     * 
-     * @param node_s
-     * @param n_2
-     * @param n_3
-     * @param similarity
-     * @param relaxation_level
-     */
+	/**
+	 * 
+	 * @param node_s
+	 * @param n_2
+	 * @param n_3
+	 * @param similarity
+	 * @param relaxation_level
+	 */
 //    public NodeRelaxed(Node node_s, Node node_p, Node node_o,
 //	    double similarity, int relaxation_level) {
 //
@@ -70,188 +70,183 @@ public class NodeRelaxed {
 //	this.relaxation_level [0] = relaxation_level;
 //    }
 
+	public NodeRelaxed(Node node_s, Node node_p, Node node_o, double similarity2, int[] levels) {
 
-    public NodeRelaxed(Node node_s, Node node_p, Node node_o,
-	    double similarity2, int[] levels) {
-	
-	this.node_1 = node_s;
-	this.node_2 = node_p;
-	this.node_3 = node_o;
-	this.similarity = similarity2;
-	this.relaxation_level = levels;
-    }
-
-    public NodeRelaxed(NodeRelaxed n_1) {
-
-	this.node_1 = n_1.getNode_1();
-	this.node_2 = n_1.getNode_2();
-	this.node_3 = n_1.getNode_3();
-	this.similarity = n_1.getSimilarity();
-	this.relaxation_level = n_1.getRelaxation_level();
-    }
-
-    /**
-     * 
-     * @param n_1
-     * @param n_2
-     * @return
-     */
-    public static NodeRelaxed merge(NodeRelaxed n_1, NodeRelaxed n_2) {
-
-	Node node_s;
-	Node node_p;
-	Node node_o;
-	int [] levels = new int[3];
-	
-	if (n_1.getNode_1() != null) {
-	    if (n_2.getNode_1() != null) {
-		throw new IllegalArgumentException("Incompatibles nodes");
-	    } else {
-		node_s = n_1.getNode_1();
-		levels[0] = n_1.getRelaxation_level()[0];
-	    }
-	} else {
-	    node_s = n_2.getNode_1();
-	    levels[0] = n_2.getRelaxation_level()[0];
+		this.node_1 = node_s;
+		this.node_2 = node_p;
+		this.node_3 = node_o;
+		this.similarity = similarity2;
+		this.relaxation_level = levels;
 	}
 
-	if (n_1.getNode_2() != null) {
-	    if (n_2.getNode_2() != null) {
-		throw new IllegalArgumentException("Incompatibles nodes");
-	    } else {
-		node_p = n_1.getNode_2();
-		levels[1] = n_1.getRelaxation_level()[1];
-	    }
-	} else {
-	    node_p = n_2.getNode_2();
-	    levels[1] = n_2.getRelaxation_level()[1];
+	public NodeRelaxed(NodeRelaxed n_1) {
+
+		this.node_1 = n_1.getNode_1();
+		this.node_2 = n_1.getNode_2();
+		this.node_3 = n_1.getNode_3();
+		this.similarity = n_1.getSimilarity();
+		this.relaxation_level = n_1.getRelaxation_level();
 	}
 
-	if (n_1.getNode_3() != null) {
-	    if (n_2.getNode_3() != null) {
-		throw new IllegalArgumentException("Incompatibles nodes");
-	    } else {
-		node_o = n_1.getNode_3();
-		levels[2] = n_1.getRelaxation_level()[2];
-	    }
-	} else {
-	    node_o = n_2.getNode_3();
-	    levels[2] = n_2.getRelaxation_level()[2];
-	}
+	/**
+	 * 
+	 * @param n_1
+	 * @param n_2
+	 * @return
+	 */
+	public static NodeRelaxed merge(NodeRelaxed n_1, NodeRelaxed n_2) {
 
-	return new NodeRelaxed(node_s, node_p, node_o, n_1.getSimilarity()
-		+ n_2.getSimilarity(), levels);
-    }
+		Node node_s;
+		Node node_p;
+		Node node_o;
+		int[] levels = new int[3];
 
-    public static NodeRelaxed merge(NodeRelaxed n_1, NodeRelaxed n_2,
-	    NodeRelaxed n_3) {
-
-	Node node_s;
-	Node node_p;
-	Node node_o;
-	int [] levels = new int[3];
-	
-	if (n_1.getNode_1() != null) {
-	    if ((n_2.getNode_1() != null) || (n_3.getNode_1() != null)) {
-		throw new IllegalArgumentException("Incompatibles nodes");
-	    } else {
-		node_s = n_1.getNode_1();
-		levels[0] = n_1.getRelaxation_level()[0];
-	    }
-	} else {
-	    if (n_2.getNode_1() != null) {
-		if (n_3.getNode_1() != null) {
-		    throw new IllegalArgumentException("Incompatibles nodes");
+		if (n_1.getNode_1() != null) {
+			if (n_2.getNode_1() != null) {
+				throw new IllegalArgumentException("Incompatibles nodes");
+			} else {
+				node_s = n_1.getNode_1();
+				levels[0] = n_1.getRelaxation_level()[0];
+			}
 		} else {
-		    node_s = n_2.getNode_1();
-		    levels[0] = n_2.getRelaxation_level()[0];
+			node_s = n_2.getNode_1();
+			levels[0] = n_2.getRelaxation_level()[0];
 		}
-	    } else {
-		node_s = n_3.getNode_1();
-		levels[0] = n_3.getRelaxation_level()[0];
-	    }
-	}
 
-	if (n_1.getNode_2() != null) {
-	    if ((n_2.getNode_2() != null) || (n_3.getNode_2() != null)) {
-		throw new IllegalArgumentException("Incompatibles nodes");
-	    } else {
-		node_p = n_1.getNode_2();
-		levels[1] = n_1.getRelaxation_level()[1];
-	    }
-	} else {
-	    if (n_2.getNode_2() != null) {
-		if (n_3.getNode_2() != null) {
-		    throw new IllegalArgumentException("Incompatibles nodes");
+		if (n_1.getNode_2() != null) {
+			if (n_2.getNode_2() != null) {
+				throw new IllegalArgumentException("Incompatibles nodes");
+			} else {
+				node_p = n_1.getNode_2();
+				levels[1] = n_1.getRelaxation_level()[1];
+			}
 		} else {
-		    node_p = n_2.getNode_2();
-		    levels[1] = n_2.getRelaxation_level()[1];
+			node_p = n_2.getNode_2();
+			levels[1] = n_2.getRelaxation_level()[1];
 		}
-	    } else {
-		node_p = n_3.getNode_2();
-		levels[1] = n_3.getRelaxation_level()[1];
-	    }
-	}
 
-	if (n_1.getNode_3() != null) {
-	    if ((n_2.getNode_3() != null) || (n_3.getNode_3() != null)) {
-		throw new IllegalArgumentException("Incompatibles nodes");
-	    } else {
-		node_o = n_1.getNode_3();
-		levels[2] = n_1.getRelaxation_level()[2];
-	    }
-	} else {
-	    if (n_2.getNode_3() != null) {
-		if (n_3.getNode_3() != null) {
-		    throw new IllegalArgumentException("Incompatibles nodes");
+		if (n_1.getNode_3() != null) {
+			if (n_2.getNode_3() != null) {
+				throw new IllegalArgumentException("Incompatibles nodes");
+			} else {
+				node_o = n_1.getNode_3();
+				levels[2] = n_1.getRelaxation_level()[2];
+			}
 		} else {
-		    node_o = n_2.getNode_3();
-		    levels[2] = n_2.getRelaxation_level()[2];
+			node_o = n_2.getNode_3();
+			levels[2] = n_2.getRelaxation_level()[2];
 		}
-	    } else {
-		node_o = n_3.getNode_3();
-		levels[2] = n_3.getRelaxation_level()[2];
-	    }
+
+		return new NodeRelaxed(node_s, node_p, node_o, n_1.getSimilarity() + n_2.getSimilarity(), levels);
 	}
-	
-	return new NodeRelaxed(node_s, node_p, node_o, n_1.getSimilarity()
-		+ n_2.getSimilarity() + n_3.getSimilarity(),
-		levels);
-    }  
 
-    /**
-     * @return the node_1
-     */
-    public Node getNode_1() {
-	return node_1;
-    }
+	public static NodeRelaxed merge(NodeRelaxed n_1, NodeRelaxed n_2, NodeRelaxed n_3) {
 
-    /**
-     * @return the node_2
-     */
-    public Node getNode_2() {
-	return node_2;
-    }
+		Node node_s;
+		Node node_p;
+		Node node_o;
+		int[] levels = new int[3];
 
-    /**
-     * @return the node_3
-     */
-    public Node getNode_3() {
-	return node_3;
-    }
+		if (n_1.getNode_1() != null) {
+			if ((n_2.getNode_1() != null) || (n_3.getNode_1() != null)) {
+				throw new IllegalArgumentException("Incompatibles nodes");
+			} else {
+				node_s = n_1.getNode_1();
+				levels[0] = n_1.getRelaxation_level()[0];
+			}
+		} else {
+			if (n_2.getNode_1() != null) {
+				if (n_3.getNode_1() != null) {
+					throw new IllegalArgumentException("Incompatibles nodes");
+				} else {
+					node_s = n_2.getNode_1();
+					levels[0] = n_2.getRelaxation_level()[0];
+				}
+			} else {
+				node_s = n_3.getNode_1();
+				levels[0] = n_3.getRelaxation_level()[0];
+			}
+		}
 
-    /**
-     * @return the similarity
-     */
-    public double getSimilarity() {
-	return similarity;
-    }
+		if (n_1.getNode_2() != null) {
+			if ((n_2.getNode_2() != null) || (n_3.getNode_2() != null)) {
+				throw new IllegalArgumentException("Incompatibles nodes");
+			} else {
+				node_p = n_1.getNode_2();
+				levels[1] = n_1.getRelaxation_level()[1];
+			}
+		} else {
+			if (n_2.getNode_2() != null) {
+				if (n_3.getNode_2() != null) {
+					throw new IllegalArgumentException("Incompatibles nodes");
+				} else {
+					node_p = n_2.getNode_2();
+					levels[1] = n_2.getRelaxation_level()[1];
+				}
+			} else {
+				node_p = n_3.getNode_2();
+				levels[1] = n_3.getRelaxation_level()[1];
+			}
+		}
 
-    /**
-     * @return the relaxation_level
-     */
-    public int[] getRelaxation_level() {
-	return relaxation_level;
-    }
+		if (n_1.getNode_3() != null) {
+			if ((n_2.getNode_3() != null) || (n_3.getNode_3() != null)) {
+				throw new IllegalArgumentException("Incompatibles nodes");
+			} else {
+				node_o = n_1.getNode_3();
+				levels[2] = n_1.getRelaxation_level()[2];
+			}
+		} else {
+			if (n_2.getNode_3() != null) {
+				if (n_3.getNode_3() != null) {
+					throw new IllegalArgumentException("Incompatibles nodes");
+				} else {
+					node_o = n_2.getNode_3();
+					levels[2] = n_2.getRelaxation_level()[2];
+				}
+			} else {
+				node_o = n_3.getNode_3();
+				levels[2] = n_3.getRelaxation_level()[2];
+			}
+		}
+
+		return new NodeRelaxed(node_s, node_p, node_o, n_1.getSimilarity() + n_2.getSimilarity() + n_3.getSimilarity(),
+				levels);
+	}
+
+	/**
+	 * @return the node_1
+	 */
+	public Node getNode_1() {
+		return node_1;
+	}
+
+	/**
+	 * @return the node_2
+	 */
+	public Node getNode_2() {
+		return node_2;
+	}
+
+	/**
+	 * @return the node_3
+	 */
+	public Node getNode_3() {
+		return node_3;
+	}
+
+	/**
+	 * @return the similarity
+	 */
+	public double getSimilarity() {
+		return similarity;
+	}
+
+	/**
+	 * @return the relaxation_level
+	 */
+	public int[] getRelaxation_level() {
+		return relaxation_level;
+	}
 
 }

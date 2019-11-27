@@ -34,211 +34,191 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public class JSONParserCQuery {
 
-    private List<NodeJSON> listNodeJs;
+	private List<NodeJSON> listNodeJs;
 
-    private List<EdgesJSON> listEdgesProperties;
+	private List<EdgesJSON> listEdgesProperties;
 
-    private final CQuery query;
+	private final CQuery query;
 
-    public JSONParserCQuery(CQuery q) {
-	super();
-	query = q;
-	listNodeJs = new ArrayList<NodeJSON>();
-	listEdgesProperties = new ArrayList<EdgesJSON>();
-	this.parse_query_node();
-	this.parse_query_path();
-    }
-
-    private void parse_query_node() {
-
-	for (CElement element : query.getElementList()) {
-	    if (element.getElement() instanceof ElementPathBlock) {
-		TriplePath current_element = ((ElementPathBlock) element
-			.getElement()).getPattern().getList().get(0);
-		addNodeJs(current_element.getSubject());
-		addNodeJs(current_element.getObject());
-	    }
-	    // else todo
+	public JSONParserCQuery(CQuery q) {
+		super();
+		query = q;
+		listNodeJs = new ArrayList<NodeJSON>();
+		listEdgesProperties = new ArrayList<EdgesJSON>();
+		this.parse_query_node();
+		this.parse_query_path();
 	}
-    }
 
-    private void addNodeJs(Node node) {
+	private void parse_query_node() {
 
-	if (node.isVariable()) {
-	    if (getNodeJSON(node.getName()) == null) {
-		NodeJSON nodejs = new NodeJSON(node.getName(), "", "",
-			node.getName(), node.getName());
-		listNodeJs.add(nodejs);
-	    }
-	} else {
-	    if (node.isURI()) {
-		if (getNodeJSON(node.getLocalName()) == null) {
-		    NodeJSON nodejs = new NodeJSON(node.getLocalName(),
-			    node.getNameSpace(), "", node.getURI(),
-			    node.getLocalName());
-		    listNodeJs.add(nodejs);
-		}
-	    } else {
-		if (node.isLiteral()) {
-		    if (getNodeJSON(node.getLiteral().toString()) == null) {
-			NodeJSON nodejs = new NodeJSON(node.getLiteral()
-				.toString(), "", "", node.getLiteral()
-				.toString(), node.getLiteral().toString());
-			listNodeJs.add(nodejs);
-		    }
-		} else {
-		    if (node.isBlank()) {
-			if (getNodeJSON(node.getBlankNodeLabel()) == null) {
-			    NodeJSON nodejs = new NodeJSON(
-				    node.getBlankNodeLabel(), "", "",
-				    node.getBlankNodeLabel(),
-				    node.getBlankNodeLabel());
-			    listNodeJs.add(nodejs);
+		for (CElement element : query.getElementList()) {
+			if (element.getElement() instanceof ElementPathBlock) {
+				TriplePath current_element = ((ElementPathBlock) element.getElement()).getPattern().getList().get(0);
+				addNodeJs(current_element.getSubject());
+				addNodeJs(current_element.getObject());
 			}
-		    }
-		    // else todo
+			// else todo
 		}
-	    }
-
 	}
-    }
 
-    private void parse_query_path() {
+	private void addNodeJs(Node node) {
 
-	for (CElement element : query.getElementList()) {
-	    if (element.getElement() instanceof ElementPathBlock) {
-		TriplePath current_element = ((ElementPathBlock) element
-			.getElement()).getPattern().getList().get(0);
-		if (current_element.getPredicate() != null) {
-		    EdgesJSON edge = new EdgesJSON(current_element
-			    .getPredicate().getLocalName(), current_element
-			    .getPredicate().getNameSpace(), "", current_element
-			    .getPredicate().getURI(), current_element
-			    .getPredicate().getLocalName(), "ObjectProperty");
-		    NodeJSON source = this.getNodeJSON(current_element
-			    .getSubject());
-		    NodeJSON destination = this.getNodeJSON(current_element
-			    .getObject());
-		    edge.setEdgeSource(source);
-		    edge.setEdgeDestination(destination);
-		    listEdgesProperties.add(edge);
+		if (node.isVariable()) {
+			if (getNodeJSON(node.getName()) == null) {
+				NodeJSON nodejs = new NodeJSON(node.getName(), "", "", node.getName(), node.getName());
+				listNodeJs.add(nodejs);
+			}
 		} else {
-		    EdgesJSON edge = new EdgesJSON(current_element.getPath()
-			    .toString(), "", "", current_element.getPath()
-			    .toString(), current_element.getPath().toString(),
-			    "ObjectProperty");
-		    NodeJSON source = this.getNodeJSON(current_element
-			    .getSubject());
-		    NodeJSON destination = this.getNodeJSON(current_element
-			    .getObject());
-		    edge.setEdgeSource(source);
-		    edge.setEdgeDestination(destination);
-		    listEdgesProperties.add(edge);
+			if (node.isURI()) {
+				if (getNodeJSON(node.getLocalName()) == null) {
+					NodeJSON nodejs = new NodeJSON(node.getLocalName(), node.getNameSpace(), "", node.getURI(),
+							node.getLocalName());
+					listNodeJs.add(nodejs);
+				}
+			} else {
+				if (node.isLiteral()) {
+					if (getNodeJSON(node.getLiteral().toString()) == null) {
+						NodeJSON nodejs = new NodeJSON(node.getLiteral().toString(), "", "",
+								node.getLiteral().toString(), node.getLiteral().toString());
+						listNodeJs.add(nodejs);
+					}
+				} else {
+					if (node.isBlank()) {
+						if (getNodeJSON(node.getBlankNodeLabel()) == null) {
+							NodeJSON nodejs = new NodeJSON(node.getBlankNodeLabel(), "", "", node.getBlankNodeLabel(),
+									node.getBlankNodeLabel());
+							listNodeJs.add(nodejs);
+						}
+					}
+					// else todo
+				}
+			}
+
 		}
-	    }
-	    // else todo
 	}
 
-	return;
-    }
+	private void parse_query_path() {
 
-    /**
-     * find a node JSon in the list with a specific URI uri
-     * 
-     * @param uri
-     * @return
-     */
-    private NodeJSON getNodeJSON(String uri) {
+		for (CElement element : query.getElementList()) {
+			if (element.getElement() instanceof ElementPathBlock) {
+				TriplePath current_element = ((ElementPathBlock) element.getElement()).getPattern().getList().get(0);
+				if (current_element.getPredicate() != null) {
+					EdgesJSON edge = new EdgesJSON(current_element.getPredicate().getLocalName(),
+							current_element.getPredicate().getNameSpace(), "", current_element.getPredicate().getURI(),
+							current_element.getPredicate().getLocalName(), "ObjectProperty");
+					NodeJSON source = this.getNodeJSON(current_element.getSubject());
+					NodeJSON destination = this.getNodeJSON(current_element.getObject());
+					edge.setEdgeSource(source);
+					edge.setEdgeDestination(destination);
+					listEdgesProperties.add(edge);
+				} else {
+					EdgesJSON edge = new EdgesJSON(current_element.getPath().toString(), "", "",
+							current_element.getPath().toString(), current_element.getPath().toString(),
+							"ObjectProperty");
+					NodeJSON source = this.getNodeJSON(current_element.getSubject());
+					NodeJSON destination = this.getNodeJSON(current_element.getObject());
+					edge.setEdgeSource(source);
+					edge.setEdgeDestination(destination);
+					listEdgesProperties.add(edge);
+				}
+			}
+			// else todo
+		}
 
-	boolean found = false;
-	int i = 0;
-
-	while ((i < listNodeJs.size()) && (!found)) {
-	    found = listNodeJs.get(i).getNodeIRI().equalsIgnoreCase(uri);
-	    i = i + 1;
+		return;
 	}
-	if (found) {
-	    return listNodeJs.get(i - 1);
+
+	/**
+	 * find a node JSon in the list with a specific URI uri
+	 * 
+	 * @param uri
+	 * @return
+	 */
+	private NodeJSON getNodeJSON(String uri) {
+
+		boolean found = false;
+		int i = 0;
+
+		while ((i < listNodeJs.size()) && (!found)) {
+			found = listNodeJs.get(i).getNodeIRI().equalsIgnoreCase(uri);
+			i = i + 1;
+		}
+		if (found) {
+			return listNodeJs.get(i - 1);
+		}
+		return null;
 	}
-	return null;
-    }
 
-    private NodeJSON getNodeJSON(Node node) {
+	private NodeJSON getNodeJSON(Node node) {
 
-	String name = "";
-	if (node.isVariable()) {
-	    name = node.getName();
-	} else {
-	    if (node.isURI()) {
-		name = node.getURI();
-	    } else {
-		if (node.isLiteral()) {
-		    name = node.getLiteral().toString();
+		String name = "";
+		if (node.isVariable()) {
+			name = node.getName();
 		} else {
-		    if (node.isBlank()) {
-			name = node.getBlankNodeLabel();
-		    }
-		    // else todo
+			if (node.isURI()) {
+				name = node.getURI();
+			} else {
+				if (node.isLiteral()) {
+					name = node.getLiteral().toString();
+				} else {
+					if (node.isBlank()) {
+						name = node.getBlankNodeLabel();
+					}
+					// else todo
+				}
+			}
 		}
-	    }
+		return this.getNodeJSON(name);
 	}
-	return this.getNodeJSON(name);
-    }
 
-    /**
-     * @return the listNodeJs
-     */
-    public List<NodeJSON> getListNodeJs() {
-	return listNodeJs;
-    }
+	/**
+	 * @return the listNodeJs
+	 */
+	public List<NodeJSON> getListNodeJs() {
+		return listNodeJs;
+	}
 
-    /**
-     * @return the listEdgesProperties
-     */
-    public List<EdgesJSON> getListEdgesProperties() {
-	return listEdgesProperties;
-    }
+	/**
+	 * @return the listEdgesProperties
+	 */
+	public List<EdgesJSON> getListEdgesProperties() {
+		return listEdgesProperties;
+	}
 
-    public String getParser() {
+	public String getParser() {
 
-	String resulJson = "{\"nodes\" : [";
+		String resulJson = "{\"nodes\" : [";
 
-	if (listNodeJs.size() == 1) {
-	    resulJson = resulJson + ", " + listNodeJs.get(0).toString() + "]";
-	} else {
-	    if (listNodeJs.size() > 1) {
-		resulJson = resulJson + listNodeJs.get(0).toString();
-		for (int i = 1; i < listNodeJs.size() - 1; i++) {
-		    resulJson = resulJson + ", " + listNodeJs.get(i).toString();
+		if (listNodeJs.size() == 1) {
+			resulJson = resulJson + ", " + listNodeJs.get(0).toString() + "]";
+		} else {
+			if (listNodeJs.size() > 1) {
+				resulJson = resulJson + listNodeJs.get(0).toString();
+				for (int i = 1; i < listNodeJs.size() - 1; i++) {
+					resulJson = resulJson + ", " + listNodeJs.get(i).toString();
+				}
+				resulJson = resulJson + ", " + listNodeJs.get(listNodeJs.size() - 1).toString() + "]";
+			} else {
+				resulJson = resulJson + "]";
+			}
 		}
-		resulJson = resulJson + ", "
-			+ listNodeJs.get(listNodeJs.size() - 1).toString()
-			+ "]";
-	    } else {
+
+		resulJson = resulJson + ", \"edges\" : [";
+
+		if (listEdgesProperties.size() == 1) {
+			resulJson = resulJson + listEdgesProperties.get(0).toString();
+		} else {
+			if (listEdgesProperties.size() > 1) {
+				resulJson = resulJson + listEdgesProperties.get(0).toString();
+				for (int i = 1; i < listEdgesProperties.size() - 1; i++) {
+					resulJson = resulJson + ", " + listEdgesProperties.get(i).toString();
+				}
+				resulJson = resulJson + ", " + listEdgesProperties.get(listEdgesProperties.size() - 1).toString();
+			}
+		}
 		resulJson = resulJson + "]";
-	    }
+		resulJson = resulJson + "} ";
+
+		return resulJson;
 	}
-
-	resulJson = resulJson + ", \"edges\" : [";
-
-	if (listEdgesProperties.size() == 1) {
-	    resulJson = resulJson + listEdgesProperties.get(0).toString();
-	} else {
-	    if (listEdgesProperties.size() > 1) {
-		resulJson = resulJson + listEdgesProperties.get(0).toString();
-		for (int i = 1; i < listEdgesProperties.size() - 1; i++) {
-		    resulJson = resulJson + ", "
-			    + listEdgesProperties.get(i).toString();
-		}
-		resulJson = resulJson
-			+ ", "
-			+ listEdgesProperties.get(
-				listEdgesProperties.size() - 1).toString();
-	    }
-	}
-	resulJson = resulJson + "]";
-	resulJson = resulJson + "} ";
-
-	return resulJson;
-    }
 }

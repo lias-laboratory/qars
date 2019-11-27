@@ -40,354 +40,323 @@ import fr.ensma.lias.qarscore.connection.Session;
 
 public class DatasetOntologyMetaData {
 
-    private final static String FOLDER_STAT = "Statistic/";
+	private final static String FOLDER_STAT = "Statistic/";
 
-    // Constants for RDF prefixes
-    public static String PREFIX_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-    public static String PREFIX_RDFS = "http://www.w3.org/2000/01/rdf-schema#";
-    public static String PREFIX_OWL = "http://www.w3.org/2002/07/owl#";
-    public static String PREFIX_DATASET = "http://swat.cse.lehigh.edu/onto/univ-bench.owl#";
+	// Constants for RDF prefixes
+	public static String PREFIX_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	public static String PREFIX_RDFS = "http://www.w3.org/2000/01/rdf-schema#";
+	public static String PREFIX_OWL = "http://www.w3.org/2002/07/owl#";
+	public static String PREFIX_DATASET = "http://swat.cse.lehigh.edu/onto/univ-bench.owl#";
 
-    public static String RDFS_SUBCLASSOF = PREFIX_RDFS + "subClassOf";
-    public static String RDFS_SUBPROPERTYOF = PREFIX_RDFS + "subPropertyOf";
-    public static String RDF_TYPE = PREFIX_RDF + "type";
-    private int nbInstances;
-    private int nbTriples;
+	public static String RDFS_SUBCLASSOF = PREFIX_RDFS + "subClassOf";
+	public static String RDFS_SUBPROPERTYOF = PREFIX_RDFS + "subPropertyOf";
+	public static String RDF_TYPE = PREFIX_RDF + "type";
+	private int nbInstances;
+	private int nbTriples;
 
-    // coded as a singleton
-    private static DatasetOntologyMetaData instance;
+	// coded as a singleton
+	private static DatasetOntologyMetaData instance;
 
-    private Map<String, String> subClassOf;
-    private Map<String, Integer> instances;
+	private Map<String, String> subClassOf;
+	private Map<String, Integer> instances;
 
-    private Map<String, String> subPropertyOf;
-    private Map<String, Integer> triples;
+	private Map<String, String> subPropertyOf;
+	private Map<String, Integer> triples;
 
-    private int getNbInstances() {
-	return nbInstances;
-    }
-
-    private int getNbTriples() {
-	return nbTriples;
-    }
-
-    public void setNbInstances(int nbInstances) {
-	this.nbInstances = nbInstances;
-    }
-
-    public void setNbTriples(int nbTriples) {
-	this.nbTriples = nbTriples;
-    }
-
-    private DatasetOntologyMetaData(Session session) {
-	subClassOf = new HashMap<String, String>();
-	instances = new HashMap<String, Integer>();
-	subPropertyOf = new HashMap<String, String>();
-	triples = new HashMap<String, Integer>();
-	try {
-	    if (!loadfiles(session.getNameSession())) {
-		this.setOntologyMetaData(session);
-	    }
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    this.setOntologyMetaData(session);
-	}
-    }
-
-    public void addSuperClass(String aClass, String superClass) {
-	subClassOf.put(aClass, superClass);
-    }
-
-    public void addSuperProperty(String aProp, String superProp) {
-	subPropertyOf.put(aProp, superProp);
-    }
-
-    public void addInstances(String aClass, int nbInstances) {
-	instances.put(aClass, nbInstances);
-    }
-
-    public String getSuperClass(String aClass) {
-	return subClassOf.get(aClass);
-    }
-
-    public void addTriples(String aProp, int nbTriples) {
-	// System.out.println(aProp + " --> " + nbTriples);
-	triples.put(aProp, nbTriples);
-    }
-
-    // information content of the class
-    public double getIcClass(String aClass) {
-	double nbInstanceClass = getNbInstances(aClass);
-	// we change slightly the number of instances of the class
-	// so that the similarity of a superclass is stronger than replacing it
-	// with a variable
-	if (nbInstanceClass == 0) {
-	    nbInstanceClass = 0.5;
-	}
-	double res = -Math.log10((double) nbInstanceClass / getNbInstances());
-	return res;
-    }
-
-    private int getNbInstances(String aClass) {
-	Integer res = instances.get(aClass);
-	if (res == null) {
-	    System.out.println("The class : " + aClass
-		    + " does not have any stat");
-	    return -1;
-	}
-	return res;
-    }
-
-    public final static DatasetOntologyMetaData getInstance(Session session) {
-	if (instance == null) {
-	    instance = new DatasetOntologyMetaData(session);
-	}
-	return instance;
-    }
-
-    public String getSuperProperty(String aProp) {
-	return subPropertyOf.get(aProp);
-    }
-
-    // information content of the property
-    public double getIcProperty(String aProp) {
-	double res = -Math.log10((double) getNbTriples(aProp) / getNbTriples());
-	if (res == 0)
-	    res = 0.0001;
-	return res;
-    }
-
-    private int getNbTriples(String aProp) {
-	Integer res = triples.get(aProp);
-	if (res == null) {
-	    System.out.println("The property: " + aProp
-		    + " does not have any stat");
-	    return -1;
-	}
-	return res;
-    }
-
-    /**
-     * Compute statistic of the data session session
-     * 
-     * @param session
-     */
-    private void setOntologyMetaData(Session session) {
-
-	File statfolder = new File(FOLDER_STAT + session.getNameSession());
-	statfolder.mkdirs();
-
-	JSONResultSet resultJson = session
-		.executeSelectQuery(QueryConfig.LIST_SUPER_CLASSES);
-	while (resultJson.next()) {
-	    String classe = resultJson.getString("classe");
-	    String directsuperclasses = resultJson
-		    .getString("directsuperclasses");
-	    this.addSuperClass(classe.substring(1, classe.length() - 1),
-		    directsuperclasses.substring(1,
-			    directsuperclasses.length() - 1));
+	private int getNbInstances() {
+		return nbInstances;
 	}
 
-	try {
-	    FileWriter out = new FileWriter(FOLDER_STAT
-		    + session.getNameSession()
-		    + "/LIST_SUPER_CLASSES.properties");
-	    out.write(resultJson.toString());
-	    out.close();
-	} catch (IOException e) {
-	    e.printStackTrace();
+	private int getNbTriples() {
+		return nbTriples;
 	}
 
-	resultJson = session
-		.executeSelectQuery(QueryConfig.NUMBER_INSTANCE_CLASS);
-	while (resultJson.next()) {
-	    String classe = resultJson.getString("classe");
-	    this.addInstances(classe.substring(1, classe.length() - 1),
-		    resultJson.getInt("numberInstance"));
+	public void setNbInstances(int nbInstances) {
+		this.nbInstances = nbInstances;
 	}
 
-	try {
-	    FileWriter out = new FileWriter(FOLDER_STAT
-		    + session.getNameSession()
-		    + "/NUMBER_INSTANCE_CLASS.properties");
-	    out.write(resultJson.toString());
-	    out.close();
-	} catch (IOException e) {
-	    e.printStackTrace();
+	public void setNbTriples(int nbTriples) {
+		this.nbTriples = nbTriples;
 	}
 
-	resultJson = session
-		.executeSelectQuery(QueryConfig.LIST_SUPER_PROPERTIES);
-	while (resultJson.next()) {
-	    String property = resultJson.getString("property");
-	    String directsuperproperty = resultJson
-		    .getString("directsuperproperty");
-	    this.addSuperProperty(
-		    property.substring(1, property.length() - 1),
-		    directsuperproperty.substring(1,
-			    directsuperproperty.length() - 1));
+	private DatasetOntologyMetaData(Session session) {
+		subClassOf = new HashMap<String, String>();
+		instances = new HashMap<String, Integer>();
+		subPropertyOf = new HashMap<String, String>();
+		triples = new HashMap<String, Integer>();
+		try {
+			if (!loadfiles(session.getNameSession())) {
+				this.setOntologyMetaData(session);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.setOntologyMetaData(session);
+		}
 	}
 
-	try {
-	    FileWriter out = new FileWriter(FOLDER_STAT
-		    + session.getNameSession()
-		    + "/LIST_SUPER_PROPERTIES.properties");
-	    out.write(resultJson.toString());
-	    out.close();
-	} catch (IOException e) {
-	    e.printStackTrace();
+	public void addSuperClass(String aClass, String superClass) {
+		subClassOf.put(aClass, superClass);
 	}
 
-	resultJson = session
-		.executeSelectQuery(QueryConfig.NUMBER_TRIPLET_PROPERTY);
-	while (resultJson.next()) {
-	    String property = resultJson.getString("property");
-	    this.addTriples(property.substring(1, property.length() - 1),
-		    resultJson.getInt("numberProperty"));
+	public void addSuperProperty(String aProp, String superProp) {
+		subPropertyOf.put(aProp, superProp);
 	}
 
-	try {
-	    FileWriter out = new FileWriter(FOLDER_STAT
-		    + session.getNameSession()
-		    + "/NUMBER_TRIPLET_PROPERTY.properties");
-	    out.write(resultJson.toString());
-	    out.close();
-	} catch (IOException e) {
-	    e.printStackTrace();
+	public void addInstances(String aClass, int nbInstances) {
+		instances.put(aClass, nbInstances);
 	}
 
-	resultJson = session.executeSelectQuery(QueryConfig.NUMBER_TRIPLET);
-	while (resultJson.next()) {
-	    this.setNbTriples(resultJson.getInt("numberTriplet"));
+	public String getSuperClass(String aClass) {
+		return subClassOf.get(aClass);
 	}
 
-	try {
-	    FileWriter out = new FileWriter(FOLDER_STAT
-		    + session.getNameSession() + "/NUMBER_TRIPLET.properties");
-	    out.write(resultJson.toString());
-	    out.close();
-	} catch (IOException e) {
-	    e.printStackTrace();
+	public void addTriples(String aProp, int nbTriples) {
+		// System.out.println(aProp + " --> " + nbTriples);
+		triples.put(aProp, nbTriples);
 	}
 
-	resultJson = session.executeSelectQuery(QueryConfig.NUMBER_INSTANCE);
-	while (resultJson.next()) {
-	    this.setNbInstances(resultJson.getInt("numberInstance"));
+	// information content of the class
+	public double getIcClass(String aClass) {
+		double nbInstanceClass = getNbInstances(aClass);
+		// we change slightly the number of instances of the class
+		// so that the similarity of a superclass is stronger than replacing it
+		// with a variable
+		if (nbInstanceClass == 0) {
+			nbInstanceClass = 0.5;
+		}
+		double res = -Math.log10((double) nbInstanceClass / getNbInstances());
+		return res;
 	}
 
-	try {
-	    FileWriter out = new FileWriter(FOLDER_STAT
-		    + session.getNameSession() + "/NUMBER_INSTANCE.properties");
-	    out.write(resultJson.toString());
-	    out.close();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * Load statistic store in the folder foldername if it exists
-     * 
-     * @param foldername
-     * @return
-     * @throws IOException
-     */
-    private boolean loadfiles(String foldername) throws IOException {
-
-	if (foldername == null) {
-	    return false;
-	}
-	File statfolder = new File(FOLDER_STAT + foldername);
-	if (!statfolder.exists()) {
-	    return false;
-	}
-	if (!statfolder.isDirectory()) {
-	    return false;
+	private int getNbInstances(String aClass) {
+		Integer res = instances.get(aClass);
+		if (res == null) {
+			System.out.println("The class : " + aClass + " does not have any stat");
+			return -1;
+		}
+		return res;
 	}
 
-	JSONResultSet resultJson = JSONResultSet.getJSONResultSet(this
-		.readfile(statfolder.getCanonicalPath() + "/"
-			+ Properties.SUPER_CLASS_FILE));
-	while (resultJson.next()) {
-	    String classe = resultJson.getString("classe");
-	    String directsuperclasses = resultJson
-		    .getString("directsuperclasses");
-	    this.addSuperClass(classe.substring(1, classe.length() - 1),
-		    directsuperclasses.substring(1,
-			    directsuperclasses.length() - 1));
+	public final static DatasetOntologyMetaData getInstance(Session session) {
+		if (instance == null) {
+			instance = new DatasetOntologyMetaData(session);
+		}
+		return instance;
 	}
 
-	resultJson = JSONResultSet
-		.getJSONResultSet(this.readfile(statfolder.getCanonicalPath()
-			+ "/" + Properties.INSTANCE_CLASS_SIZE_FILE));
-	while (resultJson.next()) {
-	    String classe = resultJson.getString("classe");
-	    this.addInstances(classe.substring(1, classe.length() - 1),
-		    resultJson.getInt("numberInstance"));
+	public String getSuperProperty(String aProp) {
+		return subPropertyOf.get(aProp);
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath() + "/" + Properties.SUPER_PROPERTY_FILE));
-	while (resultJson.next()) {
-	    String property = resultJson.getString("property");
-	    String directsuperproperty = resultJson
-		    .getString("directsuperproperty");
-	    this.addSuperProperty(
-		    property.substring(1, property.length() - 1),
-		    directsuperproperty.substring(1,
-			    directsuperproperty.length() - 1));
+	// information content of the property
+	public double getIcProperty(String aProp) {
+		double res = -Math.log10((double) getNbTriples(aProp) / getNbTriples());
+		if (res == 0)
+			res = 0.0001;
+		return res;
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath()
-		+ "/"
-		+ Properties.TRIPLET_PROPERTY_SIZE_FILE));
-	while (resultJson.next()) {
-	    String property = resultJson.getString("property");
-	    this.addTriples(property.substring(1, property.length() - 1),
-		    resultJson.getInt("numberProperty"));
+	private int getNbTriples(String aProp) {
+		Integer res = triples.get(aProp);
+		if (res == null) {
+			System.out.println("The property: " + aProp + " does not have any stat");
+			return -1;
+		}
+		return res;
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath() + "/" + Properties.TRIPLET_SIZE_FILE));
-	while (resultJson.next()) {
-	    this.setNbTriples(resultJson.getInt("numberTriplet"));
+	/**
+	 * Compute statistic of the data session session
+	 * 
+	 * @param session
+	 */
+	private void setOntologyMetaData(Session session) {
+
+		File statfolder = new File(FOLDER_STAT + session.getNameSession());
+		statfolder.mkdirs();
+
+		JSONResultSet resultJson = session.executeSelectQuery(QueryConfig.LIST_SUPER_CLASSES);
+		while (resultJson.next()) {
+			String classe = resultJson.getString("classe");
+			String directsuperclasses = resultJson.getString("directsuperclasses");
+			this.addSuperClass(classe.substring(1, classe.length() - 1),
+					directsuperclasses.substring(1, directsuperclasses.length() - 1));
+		}
+
+		try {
+			FileWriter out = new FileWriter(FOLDER_STAT + session.getNameSession() + "/LIST_SUPER_CLASSES.properties");
+			out.write(resultJson.toString());
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		resultJson = session.executeSelectQuery(QueryConfig.NUMBER_INSTANCE_CLASS);
+		while (resultJson.next()) {
+			String classe = resultJson.getString("classe");
+			this.addInstances(classe.substring(1, classe.length() - 1), resultJson.getInt("numberInstance"));
+		}
+
+		try {
+			FileWriter out = new FileWriter(
+					FOLDER_STAT + session.getNameSession() + "/NUMBER_INSTANCE_CLASS.properties");
+			out.write(resultJson.toString());
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		resultJson = session.executeSelectQuery(QueryConfig.LIST_SUPER_PROPERTIES);
+		while (resultJson.next()) {
+			String property = resultJson.getString("property");
+			String directsuperproperty = resultJson.getString("directsuperproperty");
+			this.addSuperProperty(property.substring(1, property.length() - 1),
+					directsuperproperty.substring(1, directsuperproperty.length() - 1));
+		}
+
+		try {
+			FileWriter out = new FileWriter(
+					FOLDER_STAT + session.getNameSession() + "/LIST_SUPER_PROPERTIES.properties");
+			out.write(resultJson.toString());
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		resultJson = session.executeSelectQuery(QueryConfig.NUMBER_TRIPLET_PROPERTY);
+		while (resultJson.next()) {
+			String property = resultJson.getString("property");
+			this.addTriples(property.substring(1, property.length() - 1), resultJson.getInt("numberProperty"));
+		}
+
+		try {
+			FileWriter out = new FileWriter(
+					FOLDER_STAT + session.getNameSession() + "/NUMBER_TRIPLET_PROPERTY.properties");
+			out.write(resultJson.toString());
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		resultJson = session.executeSelectQuery(QueryConfig.NUMBER_TRIPLET);
+		while (resultJson.next()) {
+			this.setNbTriples(resultJson.getInt("numberTriplet"));
+		}
+
+		try {
+			FileWriter out = new FileWriter(FOLDER_STAT + session.getNameSession() + "/NUMBER_TRIPLET.properties");
+			out.write(resultJson.toString());
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		resultJson = session.executeSelectQuery(QueryConfig.NUMBER_INSTANCE);
+		while (resultJson.next()) {
+			this.setNbInstances(resultJson.getInt("numberInstance"));
+		}
+
+		try {
+			FileWriter out = new FileWriter(FOLDER_STAT + session.getNameSession() + "/NUMBER_INSTANCE.properties");
+			out.write(resultJson.toString());
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	resultJson = JSONResultSet.getJSONResultSet(this.readfile(statfolder
-		.getCanonicalPath() + "/" + Properties.INSTANCE_SIZE_FILE));
-	while (resultJson.next()) {
-	    this.setNbInstances(resultJson.getInt("numberInstance"));
+	/**
+	 * Load statistic store in the folder foldername if it exists
+	 * 
+	 * @param foldername
+	 * @return
+	 * @throws IOException
+	 */
+	private boolean loadfiles(String foldername) throws IOException {
+
+		if (foldername == null) {
+			return false;
+		}
+		File statfolder = new File(FOLDER_STAT + foldername);
+		if (!statfolder.exists()) {
+			return false;
+		}
+		if (!statfolder.isDirectory()) {
+			return false;
+		}
+
+		JSONResultSet resultJson = JSONResultSet
+				.getJSONResultSet(this.readfile(statfolder.getCanonicalPath() + "/" + Properties.SUPER_CLASS_FILE));
+		while (resultJson.next()) {
+			String classe = resultJson.getString("classe");
+			String directsuperclasses = resultJson.getString("directsuperclasses");
+			this.addSuperClass(classe.substring(1, classe.length() - 1),
+					directsuperclasses.substring(1, directsuperclasses.length() - 1));
+		}
+
+		resultJson = JSONResultSet.getJSONResultSet(
+				this.readfile(statfolder.getCanonicalPath() + "/" + Properties.INSTANCE_CLASS_SIZE_FILE));
+		while (resultJson.next()) {
+			String classe = resultJson.getString("classe");
+			this.addInstances(classe.substring(1, classe.length() - 1), resultJson.getInt("numberInstance"));
+		}
+
+		resultJson = JSONResultSet
+				.getJSONResultSet(this.readfile(statfolder.getCanonicalPath() + "/" + Properties.SUPER_PROPERTY_FILE));
+		while (resultJson.next()) {
+			String property = resultJson.getString("property");
+			String directsuperproperty = resultJson.getString("directsuperproperty");
+			this.addSuperProperty(property.substring(1, property.length() - 1),
+					directsuperproperty.substring(1, directsuperproperty.length() - 1));
+		}
+
+		resultJson = JSONResultSet.getJSONResultSet(
+				this.readfile(statfolder.getCanonicalPath() + "/" + Properties.TRIPLET_PROPERTY_SIZE_FILE));
+		while (resultJson.next()) {
+			String property = resultJson.getString("property");
+			this.addTriples(property.substring(1, property.length() - 1), resultJson.getInt("numberProperty"));
+		}
+
+		resultJson = JSONResultSet
+				.getJSONResultSet(this.readfile(statfolder.getCanonicalPath() + "/" + Properties.TRIPLET_SIZE_FILE));
+		while (resultJson.next()) {
+			this.setNbTriples(resultJson.getInt("numberTriplet"));
+		}
+
+		resultJson = JSONResultSet
+				.getJSONResultSet(this.readfile(statfolder.getCanonicalPath() + "/" + Properties.INSTANCE_SIZE_FILE));
+		while (resultJson.next()) {
+			this.setNbInstances(resultJson.getInt("numberInstance"));
+		}
+
+		return true;
 	}
 
-	return true;
-    }
+	/**
+	 * Read a file
+	 * 
+	 * @param pathname
+	 * @return
+	 * @throws IOException
+	 */
+	private String readfile(String pathname) throws IOException {
 
-    /**
-     * Read a file
-     * 
-     * @param pathname
-     * @return
-     * @throws IOException
-     */
-    private String readfile(String pathname) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(pathname));
+		String everything;
 
-	BufferedReader br = new BufferedReader(new FileReader(pathname));
-	String everything;
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
 
-	try {
-	    StringBuilder sb = new StringBuilder();
-	    String line = br.readLine();
-
-	    while (line != null) {
-		sb.append(line);
-		sb.append(System.lineSeparator());
-		line = br.readLine();
-	    }
-	    everything = sb.toString();
-	} finally {
-	    br.close();
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				line = br.readLine();
+			}
+			everything = sb.toString();
+		} finally {
+			br.close();
+		}
+		return everything;
 	}
-	return everything;
-    }
 }

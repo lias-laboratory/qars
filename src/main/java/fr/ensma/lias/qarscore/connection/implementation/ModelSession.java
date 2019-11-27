@@ -43,94 +43,90 @@ import fr.ensma.lias.qarscore.connection.metadata.JSONResultSet;
  */
 public class ModelSession implements Session {
 
-    private final Model MODEL;
+	private final Model MODEL;
 
-    /**
-     * 
-     */
-    public ModelSession(InputStream data) {
-	Model model = ModelFactory.createDefaultModel();
-	// String syntax = "N-TRIPLE";
-	// MODEL.read(new ByteArrayInputStream(data.getBytes()), syntax);
-	RDFDataMgr.read(model, Properties.DATA_SCHEMA_FILE, Lang.NTRIPLES);
-	RDFDataMgr.read(model, data,
-		Lang.NTRIPLES);
-	MODEL = ModelFactory.createRDFSModel(model);
-    }
+	/**
+	 * 
+	 */
+	public ModelSession(InputStream data) {
+		Model model = ModelFactory.createDefaultModel();
+		// String syntax = "N-TRIPLE";
+		// MODEL.read(new ByteArrayInputStream(data.getBytes()), syntax);
+		RDFDataMgr.read(model, Properties.DATA_SCHEMA_FILE, Lang.NTRIPLES);
+		RDFDataMgr.read(model, data, Lang.NTRIPLES);
+		MODEL = ModelFactory.createRDFSModel(model);
+	}
 
-    public ModelSession(Model data) {
-	Model model = ModelFactory.createDefaultModel();
-	RDFDataMgr.read(model, Properties.DATA_SCHEMA_FILE, Lang.NTRIPLES);
+	public ModelSession(Model data) {
+		Model model = ModelFactory.createDefaultModel();
+		RDFDataMgr.read(model, Properties.DATA_SCHEMA_FILE, Lang.NTRIPLES);
 //	model.union(data);
 //	RDFDataMgr.
 //	RDFDataMgr.read(model, data,
 //		Lang.NTRIPLES);
-	MODEL = ModelFactory.createRDFSModel(model.union(data));
-    }
+		MODEL = ModelFactory.createRDFSModel(model.union(data));
+	}
 
-    @Override
-    public String getNameSession() {
-	return null;
-    }
+	@Override
+	public String getNameSession() {
+		return null;
+	}
 
-    @Override
-    public JSONResultSet executeSelectQuery(String query) {
-	QueryExecution qexec = QueryExecutionFactory.create(query, MODEL);
+	@Override
+	public JSONResultSet executeSelectQuery(String query) {
+		QueryExecution qexec = QueryExecutionFactory.create(query, MODEL);
 
 //	ResultSet results = qexec.execSelect();
-	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	ResultSetFormatter.output(outputStream, qexec.execSelect(),
-		ResultsFormat.FMT_RS_JSON);
-	ByteArrayInputStream input = new ByteArrayInputStream(
-		outputStream.toByteArray());
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ResultSetFormatter.output(outputStream, qexec.execSelect(), ResultsFormat.FMT_RS_JSON);
+		ByteArrayInputStream input = new ByteArrayInputStream(outputStream.toByteArray());
 
-	return JSONResultSet.getJSONResultSet(input);
-    }
-
-    @Override
-    public int getResultSize(String query) {
-	JSONResultSet result = this.executeSelectQuery(query);
-	return result.getBindings().size();
-    }
-
-    @Override
-    public DatasetOntologyMetaData getOntology() {
-	return null;
-    }
-
-    @Override
-    public InputStream executeConstructQuery(String query) {
-
-	QueryExecution qexec = QueryExecutionFactory.create(query, MODEL);
-//	Model results = qexec.execConstruct();
-	ByteArrayOutputStream out = new ByteArrayOutputStream();
-	RDFDataMgr.write(out, qexec.execConstruct(), Lang.NTRIPLES);
-
-	// String syntax = "N-TRIPLE"; // also try "RDF/XML-ABBREV" , "N-TRIPLE"
-	// and "TURTLE"
-	// results.write(out, syntax);
-
-	return new ByteArrayInputStream(out.toByteArray());
-
-    }
-
-    public ResultSet execute(String query) {
-
-	QueryExecution qexec = QueryExecutionFactory
-		.create(query, MODEL);
-
-	return qexec.execSelect();
-    }
-
-    public int getResultSetSize(String query, int limit) {
-
-	int size = 0;
-
-	ResultSet results = execute(query);
-	while ((results.hasNext()) && (size < limit)) {
-	    results.nextSolution();
-	    size++;
+		return JSONResultSet.getJSONResultSet(input);
 	}
-	return size;
-    }
+
+	@Override
+	public int getResultSize(String query) {
+		JSONResultSet result = this.executeSelectQuery(query);
+		return result.getBindings().size();
+	}
+
+	@Override
+	public DatasetOntologyMetaData getOntology() {
+		return null;
+	}
+
+	@Override
+	public InputStream executeConstructQuery(String query) {
+
+		QueryExecution qexec = QueryExecutionFactory.create(query, MODEL);
+//	Model results = qexec.execConstruct();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		RDFDataMgr.write(out, qexec.execConstruct(), Lang.NTRIPLES);
+
+		// String syntax = "N-TRIPLE"; // also try "RDF/XML-ABBREV" , "N-TRIPLE"
+		// and "TURTLE"
+		// results.write(out, syntax);
+
+		return new ByteArrayInputStream(out.toByteArray());
+
+	}
+
+	public ResultSet execute(String query) {
+
+		QueryExecution qexec = QueryExecutionFactory.create(query, MODEL);
+
+		return qexec.execSelect();
+	}
+
+	public int getResultSetSize(String query, int limit) {
+
+		int size = 0;
+
+		ResultSet results = execute(query);
+		while ((results.hasNext()) && (size < limit)) {
+			results.nextSolution();
+			size++;
+		}
+		return size;
+	}
 }

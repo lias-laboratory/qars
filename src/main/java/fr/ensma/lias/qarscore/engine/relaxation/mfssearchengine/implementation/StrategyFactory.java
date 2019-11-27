@@ -28,58 +28,55 @@ import fr.ensma.lias.qarscore.engine.relaxation.mfssearchengine.MFSSearch;
  */
 public class StrategyFactory {
 
-    
-    public static MFSSearch getDefaultLatticeStrategy(Session session,
-	    CQuery query, int limitAnswers) {
-	return LatticeDFSStrategy.getLatticeDFSStrategy(session, query, limitAnswers);
-    }
-
-    public static MFSSearch getLatticeStrategy(Session session, CQuery query, int limitAnswers) {
-
-	return getLatticeStrategy(session, query, limitAnswers, false);
-    }
-
-    public static MFSSearch getLatticeStrategy(Session session, CQuery query) {
-	return getLatticeStrategy(session, query, 1, false);
-    }
-
-    public static MFSSearch getLatticeStrategy(Session session, CQuery query, boolean index) {
-	return getLatticeStrategy(session, query, 1, index);
-    }
-
-    public static MFSSearch getLatticeDFSStrategy(Session session) {
-	return LatticeDFSStrategy.getLatticeDFSStrategy(session, null, 1);
-    }
-    
-    public static MFSSearch getLatticeStrategy(Session session, boolean index) {
-	if (!index) {
-	    return LatticeStrategy.getLatticeStrategy(session);
-	} else {
-	    return LatticeStrategyWithIndex.getLatticeStrategyWithIndex(session);
+	public static MFSSearch getDefaultLatticeStrategy(Session session, CQuery query, int limitAnswers) {
+		return LatticeDFSStrategy.getLatticeDFSStrategy(session, query, limitAnswers);
 	}
-    }
 
-    public static MFSSearch getLatticeStrategy(Session session, CQuery query, int limitAnswers,
-	    boolean index) {
+	public static MFSSearch getLatticeStrategy(Session session, CQuery query, int limitAnswers) {
 
-	if (!index) {
-	    return LatticeStrategy.getLatticeStrategy(session, query, limitAnswers);
-	} else {
-	    return LatticeStrategyWithIndex.getLatticeStrategyWithIndex(session, query, limitAnswers);
+		return getLatticeStrategy(session, query, limitAnswers, false);
 	}
-    }
 
-    public static MFSSearch getMatrixStrategy(Session session, CQuery query, int limitAnswers) {
-	if (query.isStarQuery()) {
-	    return new MatrixStrategyStarQuery(session, query, limitAnswers);
+	public static MFSSearch getLatticeStrategy(Session session, CQuery query) {
+		return getLatticeStrategy(session, query, 1, false);
 	}
-	return new MatrixStrategyAllQuery(session, query, limitAnswers);
-    }
 
-    public static MFSSearch getMatrixStrategy(Session session, CQuery query) {
-	if (query.isStarQuery()) {
-	    return new MatrixStrategyStarQuery(session, query, 1);
+	public static MFSSearch getLatticeStrategy(Session session, CQuery query, boolean index) {
+		return getLatticeStrategy(session, query, 1, index);
 	}
-	return new MatrixStrategyAllQuery(session, query, 1);
-    }
+
+	public static MFSSearch getLatticeDFSStrategy(Session session) {
+		return LatticeDFSStrategy.getLatticeDFSStrategy(session, null, 1);
+	}
+
+	public static MFSSearch getLatticeStrategy(Session session, boolean index) {
+		if (!index) {
+			return LatticeStrategy.getLatticeStrategy(session);
+		} else {
+			return LatticeStrategyWithIndex.getLatticeStrategyWithIndex(session);
+		}
+	}
+
+	public static MFSSearch getLatticeStrategy(Session session, CQuery query, int limitAnswers, boolean index) {
+
+		if (!index) {
+			return LatticeStrategy.getLatticeStrategy(session, query, limitAnswers);
+		} else {
+			return LatticeStrategyWithIndex.getLatticeStrategyWithIndex(session, query, limitAnswers);
+		}
+	}
+
+	public static MFSSearch getMatrixStrategy(Session session, CQuery query, int limitAnswers) {
+		if (query.isStarQuery()) {
+			return new MatrixStrategyStarQuery(session, query, limitAnswers);
+		}
+		return new MatrixStrategyAllQuery(session, query, limitAnswers);
+	}
+
+	public static MFSSearch getMatrixStrategy(Session session, CQuery query) {
+		if (query.isStarQuery()) {
+			return new MatrixStrategyStarQuery(session, query, 1);
+		}
+		return new MatrixStrategyAllQuery(session, query, 1);
+	}
 }

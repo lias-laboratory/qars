@@ -30,23 +30,23 @@ import fr.ensma.lias.qarscore.engine.query.CQuery;
  */
 public interface RelaxationStrategy {
 
-    public boolean hasNext() ;
+	boolean hasNext();
 
-    public Double getCurrent_similarity();
+	Double getCurrent_similarity();
 
-    public List<int[]> getCurrent_level();
+	List<int[]> getCurrent_level();
 
-    public CQuery getQuery_to_relax();
-    
-    public CQuery getCurrent_relaxed_query();
-    
-    public CElement  getRelaxedElement(CElement triple, int relaxation_rank);
-    
-    public CQuery next();
-    
-    public CQuery[] getAllRelaxedQueries();
+	CQuery getQuery_to_relax();
 
-    public Session getCurrentView();
-    
-    public double getRelativeSatisfactory();
+	CQuery getCurrent_relaxed_query();
+
+	CElement getRelaxedElement(CElement triple, int relaxation_rank);
+
+	CQuery next();
+
+	CQuery[] getAllRelaxedQueries();
+
+	Session getCurrentView();
+
+	double getRelativeSatisfactory();
 }

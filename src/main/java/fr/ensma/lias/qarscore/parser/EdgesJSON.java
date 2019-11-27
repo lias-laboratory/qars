@@ -24,193 +24,189 @@ package fr.ensma.lias.qarscore.parser;
  */
 public class EdgesJSON {
 
-    /**
-     * The node's name
-     */
-    private String edgeName;
+	/**
+	 * The node's name
+	 */
+	private String edgeName;
 
-    /**
-     * The URI of the current Node
-     */
-    private String edgeNameSpace;
+	/**
+	 * The URI of the current Node
+	 */
+	private String edgeNameSpace;
 
-    /**
-     * The prefix label of the current Node
-     */
-    private String edgeNameSpaceLabel;
+	/**
+	 * The prefix label of the current Node
+	 */
+	private String edgeNameSpaceLabel;
 
-    /**
-     * the ID of the current Node
-     */
-    private String edgeIRI;
+	/**
+	 * the ID of the current Node
+	 */
+	private String edgeIRI;
 
-    /**
-     * The label of the current Node
-     */
-    private String edgeLabel;
+	/**
+	 * The label of the current Node
+	 */
+	private String edgeLabel;
 
-    /**
-     * Type of this Edge (Datatype or Object Type)
-     */
-    private String edgeType;
+	/**
+	 * Type of this Edge (Datatype or Object Type)
+	 */
+	private String edgeType;
 
-    /**
-     * Source node of the edge (Domain)
-     */
-    private NodeJSON edgeSource;
+	/**
+	 * Source node of the edge (Domain)
+	 */
+	private NodeJSON edgeSource;
 
-    /**
-     * Destination node of the edge (Range)
-     */
-    private NodeJSON edgeDestination;
+	/**
+	 * Destination node of the edge (Range)
+	 */
+	private NodeJSON edgeDestination;
 
-    /**
-     * @param edgeName
-     * @param edgeNameSpace
-     * @param edgeIRI
-     * @param edgeLabel
-     * @param edgeType
-     */
-    public EdgesJSON(String edgeName, String edgeNameSpace, String prefixLabel,
-	    String edgeIRI, String edgeLabel, String edgeType) {
-	super();
-	this.edgeName = edgeName;
-	this.edgeNameSpace = edgeNameSpace;
-	this.edgeNameSpaceLabel = prefixLabel;
-	this.edgeIRI = edgeIRI;
-	this.edgeLabel = edgeLabel;
-	this.edgeType = edgeType;
-    }
-
-    /**
-     * @param edgeName
-     * @param edgeNameSpace
-     * @param edgeIRI
-     * @param edgeLabel
-     * @param edgeType
-     * @param edgeSource
-     * @param edgeDestination
-     */
-    public EdgesJSON(String edgeName, String edgeNameSpace, String prefixLabel,
-	    String edgeIRI, String edgeLabel, String edgeType,
-	    NodeJSON edgeSource, NodeJSON edgeDestination) {
-	super();
-	this.edgeName = edgeName;
-	this.edgeNameSpace = edgeNameSpace;
-	this.edgeNameSpaceLabel = prefixLabel;
-	this.edgeIRI = edgeIRI;
-	this.edgeLabel = edgeLabel;
-	this.edgeType = edgeType;
-	this.edgeSource = edgeSource;
-	this.edgeDestination = edgeDestination;
-    }
-
-    /**
-     * @return the edgeName
-     */
-    public String getEdgeName() {
-	return edgeName;
-    }
-
-    /**
-     * @return the edgeNameSpace
-     */
-    public String getEdgeNameSpace() {
-	return edgeNameSpace;
-    }
-
-    /**
-     * @param edgeNameSpace
-     *            the edgeNameSpace to set
-     */
-    public void setEdgeNameSpace(String edgeNameSpace) {
-	this.edgeNameSpace = edgeNameSpace;
-    }
-
-    /**
-     * @return the edgeNameSpaceLabel
-     */
-    public String getEdgeNameSpaceLabel() {
-	return edgeNameSpaceLabel;
-    }
-
-    /**
-     * @return the edgeIRI
-     */
-    public String getEdgeIRI() {
-	return edgeIRI;
-    }
-
-    /**
-     * @return the edgeLabel
-     */
-    public String getEdgeLabel() {
-	return edgeLabel;
-    }
-
-    /**
-     * @return the edgeType
-     */
-    public String getEdgeType() {
-	return edgeType;
-    }
-
-    /**
-     * @return the edgeSource
-     */
-    public NodeJSON getEdgeSource() {
-	return edgeSource;
-    }
-
-    /**
-     * @param edgeSource
-     *            the edgeSource to set
-     */
-    public void setEdgeSource(NodeJSON edgeSource) {
-	this.edgeSource = edgeSource;
-    }
-
-    /**
-     * @return the edgeDestination
-     */
-    public NodeJSON getEdgeDestination() {
-	return edgeDestination;
-    }
-
-    /**
-     * @param edgeDestination
-     *            the edgeDestination to set
-     */
-    public void setEdgeDestination(NodeJSON edgeDestination) {
-	this.edgeDestination = edgeDestination;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-
-	String edge = "{";
-	if ((edgeDestination == null) || (edgeSource == null)) {
-	    edge = edge + "}";
-	    return edge;
+	/**
+	 * @param edgeName
+	 * @param edgeNameSpace
+	 * @param edgeIRI
+	 * @param edgeLabel
+	 * @param edgeType
+	 */
+	public EdgesJSON(String edgeName, String edgeNameSpace, String prefixLabel, String edgeIRI, String edgeLabel,
+			String edgeType) {
+		super();
+		this.edgeName = edgeName;
+		this.edgeNameSpace = edgeNameSpace;
+		this.edgeNameSpaceLabel = prefixLabel;
+		this.edgeIRI = edgeIRI;
+		this.edgeLabel = edgeLabel;
+		this.edgeType = edgeType;
 	}
-	edge = edge + "\"name\" : \"" + edgeLabel + "\",";
-	edge = edge + "\"from\" : \"" + edgeSource.getNodeLabel() + "\",";
-	edge = edge + "\"to\" : \"" + edgeDestination.getNodeLabel() + "\",";
 
-	if (edgeType.equalsIgnoreCase("ObjectProperty")) {
-	    edge = edge + "\"type\" : \"relation\"}";
-	} else {
-	    if (edgeType.equalsIgnoreCase("SubClassOf")) {
-		edge = edge + "\"type\" : \"inheritance\"}";
-	    } else {
-		edge = edge + "\"type\" : " + edgeType + "}";
-	    }
+	/**
+	 * @param edgeName
+	 * @param edgeNameSpace
+	 * @param edgeIRI
+	 * @param edgeLabel
+	 * @param edgeType
+	 * @param edgeSource
+	 * @param edgeDestination
+	 */
+	public EdgesJSON(String edgeName, String edgeNameSpace, String prefixLabel, String edgeIRI, String edgeLabel,
+			String edgeType, NodeJSON edgeSource, NodeJSON edgeDestination) {
+		super();
+		this.edgeName = edgeName;
+		this.edgeNameSpace = edgeNameSpace;
+		this.edgeNameSpaceLabel = prefixLabel;
+		this.edgeIRI = edgeIRI;
+		this.edgeLabel = edgeLabel;
+		this.edgeType = edgeType;
+		this.edgeSource = edgeSource;
+		this.edgeDestination = edgeDestination;
 	}
-	return edge;
-    }
+
+	/**
+	 * @return the edgeName
+	 */
+	public String getEdgeName() {
+		return edgeName;
+	}
+
+	/**
+	 * @return the edgeNameSpace
+	 */
+	public String getEdgeNameSpace() {
+		return edgeNameSpace;
+	}
+
+	/**
+	 * @param edgeNameSpace the edgeNameSpace to set
+	 */
+	public void setEdgeNameSpace(String edgeNameSpace) {
+		this.edgeNameSpace = edgeNameSpace;
+	}
+
+	/**
+	 * @return the edgeNameSpaceLabel
+	 */
+	public String getEdgeNameSpaceLabel() {
+		return edgeNameSpaceLabel;
+	}
+
+	/**
+	 * @return the edgeIRI
+	 */
+	public String getEdgeIRI() {
+		return edgeIRI;
+	}
+
+	/**
+	 * @return the edgeLabel
+	 */
+	public String getEdgeLabel() {
+		return edgeLabel;
+	}
+
+	/**
+	 * @return the edgeType
+	 */
+	public String getEdgeType() {
+		return edgeType;
+	}
+
+	/**
+	 * @return the edgeSource
+	 */
+	public NodeJSON getEdgeSource() {
+		return edgeSource;
+	}
+
+	/**
+	 * @param edgeSource the edgeSource to set
+	 */
+	public void setEdgeSource(NodeJSON edgeSource) {
+		this.edgeSource = edgeSource;
+	}
+
+	/**
+	 * @return the edgeDestination
+	 */
+	public NodeJSON getEdgeDestination() {
+		return edgeDestination;
+	}
+
+	/**
+	 * @param edgeDestination the edgeDestination to set
+	 */
+	public void setEdgeDestination(NodeJSON edgeDestination) {
+		this.edgeDestination = edgeDestination;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+
+		String edge = "{";
+		if ((edgeDestination == null) || (edgeSource == null)) {
+			edge = edge + "}";
+			return edge;
+		}
+		edge = edge + "\"name\" : \"" + edgeLabel + "\",";
+		edge = edge + "\"from\" : \"" + edgeSource.getNodeLabel() + "\",";
+		edge = edge + "\"to\" : \"" + edgeDestination.getNodeLabel() + "\",";
+
+		if (edgeType.equalsIgnoreCase("ObjectProperty")) {
+			edge = edge + "\"type\" : \"relation\"}";
+		} else {
+			if (edgeType.equalsIgnoreCase("SubClassOf")) {
+				edge = edge + "\"type\" : \"inheritance\"}";
+			} else {
+				edge = edge + "\"type\" : " + edgeType + "}";
+			}
+		}
+		return edge;
+	}
 }

@@ -28,27 +28,27 @@ import fr.ensma.lias.qarscore.InitTest;
 /**
  * @author Geraud FOKOU
  */
-public class JSONParserModelTest extends InitTest{
+public class JSONParserModelTest extends InitTest {
 
-    @SuppressWarnings("unused")
-    private Logger logger;
+	@SuppressWarnings("unused")
+	private Logger logger;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() {
-	super.setUp();
-	logger = Logger.getRootLogger();
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() {
+		super.setUp();
+		logger = Logger.getRootLogger();
+	}
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-	super.tearDown();
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
 
 //    @Test
 //    public void TestGetListNodeJs(){

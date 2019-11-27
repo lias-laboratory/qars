@@ -29,29 +29,29 @@ import fr.ensma.lias.qarscore.engine.relaxation.utils.GraphRelaxationIndex;
  */
 public class BasicOptimizedRelaxation extends AbstractMFSRelaxationStrategy {
 
-    /**
-     * @param query
-     * @param s
-     */
-    public BasicOptimizedRelaxation(CQuery query, Session s) {
-	super(query, s, true);
-    }
-
-    @Override
-    public CQuery next() {
-	
-	if (this.relaxed_queries.isEmpty()) {
-	    return null;
-	}
-	GraphRelaxationIndex relax_graph_node = relaxed_queries.remove(0);
-
-	for (int j = 0; j < relax_graph_node.getChild_elt().length; j++) {
-	    this.insert_relaxation_graph_node(relax_graph_node.getChild_elt()[j]);
+	/**
+	 * @param query
+	 * @param s
+	 */
+	public BasicOptimizedRelaxation(CQuery query, Session s) {
+		super(query, s, true);
 	}
 
-	already_relaxed_queries.add(relax_graph_node);
-	current_relaxed_query = this.getQuery(relax_graph_node);
+	@Override
+	public CQuery next() {
 
-	return current_relaxed_query;
-    }
+		if (this.relaxed_queries.isEmpty()) {
+			return null;
+		}
+		GraphRelaxationIndex relax_graph_node = relaxed_queries.remove(0);
+
+		for (int j = 0; j < relax_graph_node.getChild_elt().length; j++) {
+			this.insert_relaxation_graph_node(relax_graph_node.getChild_elt()[j]);
+		}
+
+		already_relaxed_queries.add(relax_graph_node);
+		current_relaxed_query = this.getQuery(relax_graph_node);
+
+		return current_relaxed_query;
+	}
 }

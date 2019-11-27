@@ -27,8 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Geraud FOKOU
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { NodeJSONTest.class, EdgesJSONTest.class,
-	JSONParserModelTest.class })
+@SuiteClasses(value = { NodeJSONTest.class, EdgesJSONTest.class, JSONParserModelTest.class })
 public class AllParserTests {
 
 }

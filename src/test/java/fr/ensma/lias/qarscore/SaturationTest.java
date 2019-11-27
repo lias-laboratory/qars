@@ -17,61 +17,57 @@ import org.junit.Test;
 
 public class SaturationTest extends InitTest {
 
+	@Before
+	public void setUp() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    @After
-    public void tearDown() throws Exception {
-    }
+	@Test
+	public void testwithoutsession() {
 
-    @Test
-    public void testwithoutsession() {
-	
-	List<String> path_entry = new ArrayList<String>();
-	path_entry.add(PATH_ONTO);
-	path_entry.add(PATH_SATURATED);
-	Dataset dataset = TDBFactory.createDataset(TDB_PATH_SAT);
-	TDBLoader.loadModel(dataset.getDefaultModel(), path_entry, false);
-    }
+		List<String> path_entry = new ArrayList<String>();
+		path_entry.add(PATH_ONTO);
+		path_entry.add(PATH_SATURATED);
+		Dataset dataset = TDBFactory.createDataset(TDB_PATH_SAT);
+		TDBLoader.loadModel(dataset.getDefaultModel(), path_entry, false);
+	}
 
-    @Test
-    public void testsaturationwithoutsession() {
-	
-	List<String> path_entry = new ArrayList<String>();
-	path_entry.add(PATH_ONTO);
-	path_entry.add(PATH_SATURATED);
-	Dataset dataset = TDBFactory.createDataset(TDB_PATH_SAT);
-	InfModel dataModel = ModelFactory.createInfModel(
-		ReasonerRegistry.getRDFSReasoner(), dataset.getDefaultModel());
+	@Test
+	public void testsaturationwithoutsession() {
+
+		List<String> path_entry = new ArrayList<String>();
+		path_entry.add(PATH_ONTO);
+		path_entry.add(PATH_SATURATED);
+		Dataset dataset = TDBFactory.createDataset(TDB_PATH_SAT);
+		InfModel dataModel = ModelFactory.createInfModel(ReasonerRegistry.getRDFSReasoner(), dataset.getDefaultModel());
 
 //	TDBLoader.loadModel(dataModel, path_entry, false);
-	FileWriter out = null;
-	try {
-	    out = new FileWriter( PATH_SATURATED );
-	    dataModel.write( out, "N-TRIPLE" );
-	} catch (IOException e) {
-	    e.printStackTrace();
+		FileWriter out = null;
+		try {
+			out = new FileWriter(PATH_SATURATED);
+			dataModel.write(out, "N-TRIPLE");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				out.close();
+			} catch (IOException closeException) {
+			}
+		}
 	}
-	finally {
-	   try {
-	       out.close();
-	   }
-	   catch (IOException closeException) {
-	   }
+
+	@Test
+	public void testwithsessionwithoutsaturation() {
 	}
-    }
 
-    @Test
-    public void testwithsessionwithoutsaturation() {
-    }
+	@Test
+	public void testsaturationwithsession() {
+	}
 
-    @Test
-    public void testsaturationwithsession() {
-    }
-
-    @Test
-    public void executeStatisticQueryTest() {
-    }
+	@Test
+	public void executeStatisticQueryTest() {
+	}
 }

@@ -31,33 +31,33 @@ import org.apache.log4j.PatternLayout;
  */
 public abstract class AbstractRelaxationStrategy implements RelaxationStrategy {
 
-    protected Logger logger = Logger.getLogger(AbstractRelaxationStrategy.class);
-    
-    public int number_mfs_query_executed =0;
-    public int number_mfs_check_query_executed =0;
-    public int number_fine_grained_query_executed =0;
-    public long duration_mfs_query_executed =0;
-    public long duration_mfs_check_query_executed =0;
-    public long duration_computation_view =0;
-    public Map<Double, Double> sim_sat =  new LinkedHashMap<Double, Double>();
+	protected Logger logger = Logger.getLogger(AbstractRelaxationStrategy.class);
 
-    protected void logger_init() {
+	public int number_mfs_query_executed = 0;
+	public int number_mfs_check_query_executed = 0;
+	public int number_fine_grained_query_executed = 0;
+	public long duration_mfs_query_executed = 0;
+	public long duration_mfs_check_query_executed = 0;
+	public long duration_computation_view = 0;
+	public Map<Double, Double> sim_sat = new LinkedHashMap<Double, Double>();
+
+	protected void logger_init() {
 
 //	LocalDateTime time = LocalDateTime.now();
 //	String time_value = "" + time.getDayOfMonth() + time.getMonthValue()
 //		+ time.getHour() + time.getMinute() + time.getSecond();
 
-	String logfile = this.getClass().getSimpleName() + "-Process" + ".log";
+		String logfile = this.getClass().getSimpleName() + "-Process" + ".log";
 
-	PatternLayout layout = new PatternLayout();
-	String conversionPattern = "%-5p [%C{1}]: %m%n";
-	layout.setConversionPattern(conversionPattern);
+		PatternLayout layout = new PatternLayout();
+		String conversionPattern = "%-5p [%C{1}]: %m%n";
+		layout.setConversionPattern(conversionPattern);
 
-	FileAppender fileAppender = new FileAppender();
-	fileAppender.setFile(logfile);
-	fileAppender.setLayout(layout);
-	fileAppender.activateOptions();
-	logger.removeAllAppenders();
-	logger.addAppender(fileAppender);
-    }
+		FileAppender fileAppender = new FileAppender();
+		fileAppender.setFile(logfile);
+		fileAppender.setLayout(layout);
+		fileAppender.activateOptions();
+		logger.removeAllAppenders();
+		logger.addAppender(fileAppender);
+	}
 }
