@@ -155,7 +155,7 @@
 	</build>
 	<ciManagement>
 		<system>Jenkins</system>
-		<url>https://ci-lias.ensma.fr/job/QaRSCore/</url>
+		<url>https://ci-lias.ensma.fr/job/qarscore/</url>
 	</ciManagement>
 	<distributionManagement>
 		<repository>
