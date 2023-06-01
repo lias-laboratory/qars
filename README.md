@@ -219,7 +219,7 @@ RelaxationStrategy relaxedQuery = new MFSBaseRelaxationStrategy(conjunctiveQuery
 * Géraud FOKOU, Stéphane JEAN, Allel HADJALI, Mickael BARON, _Cooperative Techniques for SPARQL Query Relaxation in RDF Databases_, In Proceedings of the 12th Extended Semantic Web Conference (ESWC 2015).
 * Géraud FOKOU, Stéphane JEAN, Allel HADJALI, Mickael BARON, _Cooperative Techniques for SPARQL Query Relaxation in RDF Databases_, Technical Report available at "Report_MFS_XSS.pdf":http://www.lias-lab.fr/publications/16873/Report_MFS_XSS.pdf
 
-## Software licence agreement
+## Software license agreement
 
 Details the license agreement of QaRS4UKB: [LICENSE](LICENSE)
 
